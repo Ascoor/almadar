@@ -1,0 +1,68 @@
+import { Routes, Route, Link } from "react-router-dom";
+ 
+
+// استيراد الصفحات
+import Local from "./pages/Contracts/Local";
+import International from "./pages/Contracts/International";
+import Investigations from "./pages/LegalAdvice/Investigations";
+import Consultations from "./pages/LegalAdvice/Consultations";
+
+export default function App() {
+  return ( 
+      <div className="min-h-screen flex bg-green-50 text-gray-800 font-sans">
+        {/* Sidebar */}
+        <aside className="w-72 bg-gray-200 text-gray-800 p-4 space-y-4">
+          <div className="flex justify-center mb-6">
+            <img
+              src="https://www.almadar.ly/_layouts/15/AlmadarPortal/1033/images/Logo.svg"
+              alt="شعار المدار"
+              className="h-16"
+            />
+          </div>
+          <nav className="space-y-4">
+            <div>
+              <h2 className="font-semibold text-lg">قسم العقود</h2>
+              <ul className="ml-4 mt-2 space-y-1 text-sm">
+                <li><Link to="/contracts/local" className="block p-2 rounded hover:bg-green-600 hover:text-white">وحدة التعاقدات المحلية</Link></li>
+                <li><Link to="/contracts/international" className="block p-2 rounded hover:bg-green-600 hover:text-white">وحدة التعاقدات الخارجية</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="font-semibold text-lg">قسم الرأي والفتوى</h2>
+              <ul className="ml-4 mt-2 space-y-1 text-sm">
+                <li><Link to="/legal/investigations" className="block p-2 rounded hover:bg-green-600 hover:text-white">وحدة التحقيقات ومتابعة التشريعات </Link></li>
+                <li><Link to="/legal/consultations" className="block p-2 rounded hover:bg-green-600 hover:text-white">وحدة المشورة القانونية والتقاضي</Link></li>
+              </ul>
+            </div>
+          </nav>
+        </aside>
+
+        {/* Main content */}
+        <main className="flex-1 p-6">
+          <header className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">لوحة التحكم</h2>
+            <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">تسجيل الخروج</button>
+          </header>
+
+          <Routes>
+            <Route path="/contracts/local" element={<Local />} />
+            <Route path="/contracts/international" element={<International />} />
+            <Route path="/legal/investigations" element={<Investigations />} />
+            <Route path="/legal/consultations" element={<Consultations />} />
+            <Route path="*" element={
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white p-4 rounded shadow">
+                  <h3 className="text-lg font-semibold mb-2">مرحباً بك في الشؤون القانونية</h3>
+                  <p>اختر القسم المناسب من القائمة الجانبية للوصول إلى وحدات العمل.</p>
+                </div>
+                <div className="bg-white p-4 rounded shadow">
+                  <h3 className="text-lg font-semibold mb-2">الإشعارات</h3>
+                  <p>لا توجد إشعارات حالياً.</p>
+                </div>
+              </div>
+            } />
+          </Routes>
+        </main>
+      </div> 
+  );
+}
