@@ -10,9 +10,16 @@ class InvestigationAction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'investigation_id', 'date', 'type', 'officer', 'required', 'result', 'status',
+        'investigation_id',
+        'action_date',
+        'action_type',
+        'officer_name',
+        'requirements',
+        'results',
+        'status',
     ];
 
+    // علاقة الإجراء إلى التحقيق
     public function investigation()
     {
         return $this->belongsTo(Investigation::class);

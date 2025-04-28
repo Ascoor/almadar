@@ -9,19 +9,18 @@ class InvestigationSeeder extends Seeder
 {
     public function run(): void
     {
-        $investigations = [
-            [
-                'employee_id' => 1,
-                'source' => 'إدارة الشكاوى',
-                'subject' => 'تأخير في العمل',
-                'case_number' => 'INV-001',
-                'decision' => 'إنذار كتابي',
-                'status' => 'مغلق',
-            ],
-        ];
+        $sources = ['إدارة الموارد البشرية', 'الشؤون القانونية', 'الإدارة العامة', 'الرقابة والتفتيش'];
+        $subjects = ['تأخير متكرر', 'سوء سلوك وظيفي', 'خروج دون إذن', 'إفشاء أسرار عمل', 'تقصير في الأداء'];
 
-        foreach ($investigations as $inv) {
-            Investigation::create($inv);
+        foreach (range(1, 10) as $i) {
+            Investigation::create([
+                'employee_name' => 'موظف ' . $i,
+                'source' => $sources[array_rand($sources)],
+                'subject' => $subjects[array_rand($subjects)],
+                'case_number' => 'INV-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'decision' => null,
+                'status' => 'open',
+            ]);
         }
     }
 }

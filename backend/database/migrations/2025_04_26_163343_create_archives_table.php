@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title')->nullable(); // عنوان المستند أو اسمه
             $table->string('file_path'); // مسار الملف (PDF أو Word)
             $table->longText('extracted_text')->nullable(); // النص المستخرج لعملية البحث
-            $table->enum('file_type', ['pdf', 'word'])->default('pdf');
+ 
             $table->timestamps();
         });
     }

@@ -1,13 +1,15 @@
+// داخل ملف ContractsTabs.jsx
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Local from './Local';
-import International from './International';
-import { getContracts, getContractCategories } from '../../services/api/contracts';
-import ContractModal from './ContractModal';
-import ContractDetails from './ContractDetails'; 
-import api from '../../services/api/axiosConfig'; 
+import Local from '../components/Contracts/Local';
+import International from '../components/Contracts/International';
+import { getContracts, getContractCategories } from '../services/api/contracts'; // أضفنا الاستيراد
+import ContractModal from '../components/Contracts/ContractModal';
+import ContractDetails from '../components/Contracts/ContractDetails';
+import { ToastContainer, toast } from 'react-toastify';
 
-export default function ContractsTabs() {
+
+export default function Contracts() {
   const [activeTab, setActiveTab] = useState('local');
   const [contracts, setContracts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -21,13 +23,13 @@ export default function ContractsTabs() {
   }, []);
 
   useEffect(() => {
-    setSelectedContract(null); // إغلاق التفاصيل عند تغيير التاب
+    setSelectedContract(null);
   }, [activeTab]);
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (detailsRef.current && !detailsRef.current.contains(event.target)) {
-        setSelectedContract(null); // يغلق التفاصيل لو ضغط خارج
+        setSelectedContract(null);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -36,23 +38,22 @@ export default function ContractsTabs() {
   const loadContracts = async () => {
     try {
       const res = await getContracts();
-      setContracts(res?.data?.data || []);
+      const contractsData = res?.data?.data || []; // ✅ تصحيح
+      setContracts(contractsData);
     } catch (error) {
       console.error(error);
+      toast.error('فشل تحميل العقود');
     }
   };
-
+  
   const loadCategories = async () => {
     try {
       const res = await getContractCategories();
-      setCategories(res.data.data || []);
+      setCategories(res?.data?.data || []);
     } catch (error) {
       console.error(error);
     }
   };
-
-  const localContracts = contracts.filter(c => c.scope === 'local');
-  const internationalContracts = contracts.filter(c => c.scope === 'international');
 
   const handleAddContract = () => {
     setSelectedContract(null);
@@ -67,15 +68,14 @@ export default function ContractsTabs() {
   const handleSelectContract = (contract) => {
     setSelectedContract(contract);
   };
+ 
 
-  const handleSaveContract = () => {
-    setIsModalOpen(false);
-    loadContracts();
-  };
+  const localContracts = contracts.filter(c => c.scope === 'local');
+  const internationalContracts = contracts.filter(c => c.scope === 'international');
 
   return (
     <div className="w-full p-4 space-y-6 shadow-lg bg-yellow-100/50 dark:bg-green-900/50 rounded-lg">
-      {/* زر الإضافة */}
+      <ToastContainer />
       <div className="flex justify-start mb-4">
         <button 
           onClick={handleAddContract}
@@ -85,7 +85,6 @@ export default function ContractsTabs() {
         </button>
       </div>
 
-      {/* التابات */}
       <div className="flex justify-center gap-4">
         <button
           onClick={() => setActiveTab('local')}
@@ -101,7 +100,6 @@ export default function ContractsTabs() {
         </button>
       </div>
 
-      {/* عرض الجداول مع تفاصيل العقد */}
       <div className="mt-8 min-h-[300px]">
         <AnimatePresence mode="wait">
           {activeTab === 'local' ? (
@@ -129,7 +127,6 @@ export default function ContractsTabs() {
           )}
         </AnimatePresence>
 
-        {/* تفاصيل العقد المختار */}
         {selectedContract && (
           <div ref={detailsRef}>
             <ContractDetails selected={selectedContract} onClose={() => setSelectedContract(null)} />
@@ -137,14 +134,15 @@ export default function ContractsTabs() {
         )}
       </div>
 
-      {/* مودال إضافة أو تعديل */}
       <ContractModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveContract}
-        initialData={selectedContract}
-        categories={categories}
-      />
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  initialData={selectedContract}
+  categories={categories}
+  reloadContracts={loadContracts} // ✅ نرسل دالة تحميل العقود إلى المودال
+/>
+
     </div>
   );
 }
+

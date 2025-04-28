@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreignId('contract_category_id')->constrained('contract_categories')->onDelete('cascade');
             $table->enum('scope', ['local', 'international']); // فقط دولي أو محلي
             $table->string('number')->unique();
+            $table->string('contract_parties'); // عنوان العقد
             $table->double('value', 18, 2)->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

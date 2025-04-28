@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Archive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpWord\IOFactory;
-use Spatie\PdfToText\Pdf;
 
 class ArchiveController extends Controller
 {
@@ -25,7 +23,7 @@ class ArchiveController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'model_type' => 'nullable|string', // لو مرتبط بموديل تاني
+            'model_type' => 'nullable|string',
             'model_id' => 'nullable|integer',
             'title' => 'required|string|max:255',
             'file' => 'required|file|mimes:pdf,docx|max:10240', // 10MB
@@ -35,28 +33,12 @@ class ArchiveController extends Controller
         $extension = $file->getClientOriginalExtension();
         $path = $file->store('archives/files', 'public');
 
-        $extractedText = '';
-
-        if ($extension === 'pdf') {
-            $extractedText = Pdf::getText(storage_path('app/public/' . $path));
-        } elseif ($extension === 'docx') {
-            $phpWord = IOFactory::load(storage_path('app/public/' . $path));
-            foreach ($phpWord->getSections() as $section) {
-                foreach ($section->getElements() as $element) {
-                    if (method_exists($element, 'getText')) {
-                        $extractedText .= $element->getText() . ' ';
-                    }
-                }
-            }
-        }
-
         $archive = Archive::create([
             'model_type' => $validated['model_type'] ?? null,
             'model_id' => $validated['model_id'] ?? null,
             'title' => $validated['title'],
             'file_path' => $path,
-            'extracted_text' => $extractedText,
-            'file_type' => $extension === 'pdf' ? 'pdf' : 'word',
+            'extracted_text' => null, // بدون استخراج نص
         ]);
 
         return response()->json([
@@ -84,34 +66,18 @@ class ArchiveController extends Controller
         ]);
 
         if ($request->hasFile('file')) {
-            // حذف القديم
+            // حذف الملف القديم إن وجد
             if ($archive->file_path && Storage::disk('public')->exists($archive->file_path)) {
                 Storage::disk('public')->delete($archive->file_path);
             }
 
+            // رفع الملف الجديد
             $file = $request->file('file');
-            $extension = $file->getClientOriginalExtension();
             $path = $file->store('archives/files', 'public');
-
-            $extractedText = '';
-
-            if ($extension === 'pdf') {
-                $extractedText = Pdf::getText(storage_path('app/public/' . $path));
-            } elseif ($extension === 'docx') {
-                $phpWord = IOFactory::load(storage_path('app/public/' . $path));
-                foreach ($phpWord->getSections() as $section) {
-                    foreach ($section->getElements() as $element) {
-                        if (method_exists($element, 'getText')) {
-                            $extractedText .= $element->getText() . ' ';
-                        }
-                    }
-                }
-            }
 
             $archive->update([
                 'file_path' => $path,
-                'extracted_text' => $extractedText,
-                'file_type' => $extension === 'pdf' ? 'pdf' : 'word',
+                'extracted_text' => null, // لا حاجة للنص
             ]);
         }
 

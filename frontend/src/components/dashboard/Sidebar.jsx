@@ -4,7 +4,7 @@ import { useSidebar } from '../../utils/SidebarContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogoArt, LogoText } from '../../assets/images';
 import {
-  FaHome, FaUsers, FaBars, FaHandshake, FaUniversity,
+  FaHome, FaUsers, FaBars, FaHandshake, FaArchive,
   FaBalanceScale, FaFeatherAlt, FaGavel, FaFileContract,
   FaChevronDown, FaChevronRight
 } from 'react-icons/fa';
@@ -43,6 +43,7 @@ const Sidebar = () => {
       ],
     },
     { label: 'المستخدمين', to: '/users', icon: <FaUsers /> },
+    { label: 'الأرشيف', to: '/archive', icon: <FaArchive /> },
   ];
 
   const getLinkClasses = (isActive, isOpen) =>

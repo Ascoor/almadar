@@ -3,15 +3,17 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useSpinner } from '../../context/SpinnerContext';
 import GlobalSpinner from '../common/Spinners/GlobalSpinner';
 import { lazy } from 'react';  
+ 
 
 const Home = lazy(() => import('../dashboard/Dashboard'));
  
 const ProfileUser = lazy(() => import('../Settings/ProfileUser'));  
-const Contracts = lazy(() => import('../../pages/Contracts/index.jsx')); 
-const Investigations = lazy(() => import('../../pages/LegalAdvice/Investigations.jsx'));
+const Contracts = lazy(() => import('../../pages/ContractsPage.jsx')); 
+const Investigations = lazy(() => import('../../pages/Investigations.jsx'));
 const Consultations = lazy(() => import('../../pages/LegalAdvice/Consultations.jsx'));
 const Litigations = lazy(() => import('../../pages/Litigations/index.jsx'));
 const UsersList = lazy(() => import('../Users/index.jsx'));
+const ArchivePage = lazy(() => import('../../pages/ArchivePage.jsx'));
 
 const NotFound = () => (
   <h1 className="text-center text-red-500">404 - Page Not Found</h1>
@@ -40,6 +42,8 @@ const AuthRoutes = () => {
          
 
           <Route path="/contracts" element={<Contracts />} />
+  
+          <Route path="/archive" element={<ArchivePage />} />
   
   <Route path="/legal/investigations" element={<Investigations />} />
   <Route path="/legal/consultations" element={<Consultations />} />

@@ -2,41 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Contract;
+use App\Models\Archive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class ContractController extends Controller
 {
-    // index
     public function index()
     {
         $contracts = Contract::with('category')->latest()->paginate(15);
         return response()->json($contracts);
     }
 
-    // store
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'contract_category_id' => 'required|exists:contract_categories,id',
-            'scope' => 'required|in:local,international',
-            'number' => 'required|string|unique:contracts,number',
-            'value' => 'nullable|numeric',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'notes' => 'nullable|string',
-            'status' => 'required|in:active,expired,terminated,pending,cancelled',
-            'summary' => 'nullable|string',
-            'attachment' => 'nullable|file|mimes:pdf|max:5120',
-        ]);
+        $validated = $this->validateContract($request);
+
+        $validated['value'] = $this->normalizeValue($validated['value']);
 
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('attachments/contracts', 'public');
+            try {
+                $validated['attachment'] = $this->storeAttachment($request->file('attachment'), $validated['scope']);
+            } catch (\Exception $e) {
+                $this->logAttachmentError($e);
+                return $this->attachmentErrorResponse();
+            }
         }
 
         $contract = Contract::create($validated);
+
+        // ✅ إضافة إلى جدول الأرشيف إذا تم رفع مرفق
+        if (!empty($validated['attachment'])) {
+            $this->storeArchive($contract);
+        }
 
         return response()->json([
             'message' => 'تم إنشاء العقد بنجاح.',
@@ -44,20 +44,59 @@ class ContractController extends Controller
         ], 201);
     }
 
-    // show
-    public function show(Contract $contract)
-    {
-        $contract->load('category');
-        return response()->json($contract);
-    }
-
-    // update
     public function update(Request $request, Contract $contract)
     {
-        $validated = $request->validate([
+        $validated = $this->validateContract($request, $contract->id);
+
+        $validated['value'] = $this->normalizeValue($validated['value']);
+
+        if ($request->hasFile('attachment')) {
+            try {
+                $this->deleteOldAttachment($contract->attachment);
+                $validated['attachment'] = $this->storeAttachment($request->file('attachment'), $validated['scope']);
+            } catch (\Exception $e) {
+                $this->logAttachmentError($e);
+                return $this->attachmentErrorResponse();
+            }
+        }
+
+        $contract->update($validated);
+
+        // ✅ إذا تم رفع مرفق جديد بعد التحديث: أضف للأرشيف
+        if (!empty($validated['attachment'])) {
+            $this->storeArchive($contract);
+        }
+
+        return response()->json([
+            'message' => 'تم تحديث العقد بنجاح.',
+            'contract' => $contract,
+        ]);
+    }
+
+    public function destroy(Contract $contract)
+    {
+        $this->deleteOldAttachment($contract->attachment);
+        $contract->delete();
+
+        return response()->json([
+            'message' => 'تم حذف العقد بنجاح.',
+        ]);
+    }
+
+    // --- Helpers --- //
+
+    private function validateContract(Request $request, $contractId = null)
+    {
+        $uniqueRule = 'unique:contracts,number';
+        if ($contractId) {
+            $uniqueRule .= ',' . $contractId;
+        }
+
+        return $request->validate([
             'contract_category_id' => 'required|exists:contract_categories,id',
             'scope' => 'required|in:local,international',
-            'number' => 'required|string|unique:contracts,number,' . $contract->id,
+            'number' => ['required', 'string', $uniqueRule],
+            'contract_parties' => 'required|string',
             'value' => 'nullable|numeric',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
@@ -66,33 +105,64 @@ class ContractController extends Controller
             'summary' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf|max:5120',
         ]);
+    }
 
-        if ($request->hasFile('attachment')) {
-            if ($contract->attachment) {
-                Storage::disk('public')->delete($contract->attachment);
-            }
-            $validated['attachment'] = $request->file('attachment')->store('attachments/contracts', 'public');
+    private function normalizeValue($value)
+    {
+        return $value !== null ? (float) $value : null;
+    }
+
+    private function storeAttachment($file, $scope)
+    {
+        $folder = 'attachments/contracts/' . $scope;
+
+        if (!Storage::disk('public')->exists($folder)) {
+            Storage::disk('public')->makeDirectory($folder, 0755, true);
         }
 
-        $contract->update($validated);
+        return $file->store($folder, 'public');
+    }
 
-        return response()->json([
-            'message' => 'تم تحديث العقد بنجاح.',
-            'contract' => $contract,
+    private function deleteOldAttachment($attachmentPath)
+    {
+        if ($attachmentPath && Storage::disk('public')->exists($attachmentPath)) {
+            Storage::disk('public')->delete($attachmentPath);
+        }
+    }
+
+    private function logAttachmentError(\Exception $e)
+    {
+        Log::error('Attachment upload failed.', [
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString(),
         ]);
     }
 
-    // destroy
-    public function destroy(Contract $contract)
+    private function attachmentErrorResponse()
     {
-        if ($contract->attachment) {
-            Storage::disk('public')->delete($contract->attachment);
+        return response()->json([
+            'message' => 'فشل رفع المرفق. راجع سجل الأخطاء.',
+            'errors' => ['attachment' => ['فشل رفع المرفق.']],
+        ], 422);
+    }
+
+    /**
+     * ✅ تخزين سجل جديد في جدول الأرشيف
+     */
+    private function storeArchive(Contract $contract)
+    {
+        if (!$contract->attachment) {
+            return;
         }
 
-        $contract->delete();
-
-        return response()->json([
-            'message' => 'تم حذف العقد بنجاح.',
+        Archive::create([
+            'model_type' => 'Contract',
+            'model_id' => $contract->id,
+            'title' => $contract->category?->name . ' - ' . ($contract->scope === 'local' ? 'محلي' : 'دولي'),
+            'file_path' => $contract->attachment,
+            'extracted_text' => $contract->contract_parties,
         ]);
     }
 }

@@ -13,6 +13,7 @@ class Contract extends Model
         'contract_category_id',
         'scope',
         'number',
+        'contract_parties',
         'value',
         'start_date',
         'end_date',

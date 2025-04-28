@@ -10,14 +10,16 @@ class Investigation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'employee_id', 'source', 'subject', 'case_number', 'decision', 'status',
+        'employee_name',
+        'source',
+        'decision',  
+        'subject',
+        'case_number',
+        'status',
+        'notes',
     ];
 
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class);
-    }
-
+    // علاقة تحقيق إلى إجراءات
     public function actions()
     {
         return $this->hasMany(InvestigationAction::class);

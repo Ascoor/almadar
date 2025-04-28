@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             ContractCategoriesSeeder::class, // الأول الأنواع
             ContractsSeeder::class,     // بعدين العقود
+            
+    InvestigationSeeder::class,
+    InvestigationActionSeeder::class,
         ]);
     }
 }

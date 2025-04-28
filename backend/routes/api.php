@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserRolePermissionController;
+use App\Http\Controllers\ArchiveController;
 
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ContractController;
@@ -38,12 +39,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('employees', EmployeeController::class);
 
     // ✅ Contracts (Local + International)
+
     Route::apiResource('contracts', ContractController::class);
     Route::apiResource('contract-categories', ContractCategoryController::class);
-
+    Route::apiResource('archives', ArchiveController::class);
     // ✅ Investigations
     Route::apiResource('investigations', InvestigationController::class);
-
+ 
     // ✅ Legislations
     Route::apiResource('legislations', LegislationController::class);
 

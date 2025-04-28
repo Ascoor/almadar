@@ -4,7 +4,8 @@ import Header from '../components/dashboard/Header';
 import { useSidebar } from '../utils/SidebarContext';
 import AuthRoutes from '../components/layout/AuthRoutes';
 import { motion } from 'framer-motion';
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const AuthWrapper = () => {
   const { isSidebarOpen, isMobile, isTablet } = useSidebar();
 
@@ -54,7 +55,19 @@ const AuthWrapper = () => {
 
         {/* AuthRoutes Content */}
         <div className="flex-1 overflow-y-auto p-6 md:p-8">
-          <div className="w-full flex justify-center">
+
+        <ToastContainer 
+  position="top-center"
+  autoClose={3000}
+  hideProgressBar
+  newestOnTop
+  closeOnClick
+  rtl
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+/>    <div className="w-full flex justify-center">
+            
             <main className="w-full max-w-screen-xl p-4 md:p-6 lg:p-8 bg-gray-300/50 dark:bg-almadar-green-darker/50 shadow-lg rounded-lg">
               <AuthRoutes />
             </main>

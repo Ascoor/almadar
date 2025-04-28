@@ -13,14 +13,16 @@ return new class extends Migration
     {
         Schema::create('investigations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->string('source');
-            $table->string('subject');
-            $table->string('case_number');
-            $table->string('decision')->nullable();
-            $table->enum('status', ['open', 'closed', 'pending'])->default('open');
+            $table->string('employee_name');            // اسم الموظف
+            $table->string('source');                    // الجهة المحيل منها
+            $table->string('subject');         
+            $table->string('decision')->nullable(); // ✅ إضافة هذا السطر          // موضوع التحقيق
+            $table->string('case_number')->nullable();   // رقم الدعوى أو التحقيق
+            $table->enum('status', ['open', 'in_progress', 'closed'])->default('open'); // حالة التحقيق
+            $table->text('notes')->nullable();           // ملاحظات إضافية
             $table->timestamps();
         });
+        
     }
     
 
