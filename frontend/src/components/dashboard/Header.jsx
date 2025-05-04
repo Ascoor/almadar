@@ -23,9 +23,9 @@ const Header = () => {
       initial="hidden"
       animate="visible"
       className={`fixed top-0 right-0 left-0 z-20 
-        bg-gradient-to-r from-almadar-yellow-dark via-almadar-yellow to-almadar-green 
-        dark:bg-gradient-to-l dark:from-almadar-green-darker dark:via-almadar-green-dark dark:to-almadar-green-dark
-        border-b-4 border-almadar-green dark:border-white 
+        bg-gradient-to-r from-almadar-sidebar-light via-almadar-sidebar to-almadar-sidebar 
+        dark:bg-gradient-to-l dark:from-almadar-blue-dark dark:via-almadar-blue-dark dark:to-almadar-sidebar-dark
+        border-b-4 border-almadar-sidebar-danger dark:border-almadar-mint-light
         shadow-md transition-all duration-300 ${isSidebarOpen ? 'md:mr-72' : 'md:mr-16'}
       `}
     >

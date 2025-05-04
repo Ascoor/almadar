@@ -9,9 +9,9 @@ const Home = lazy(() => import('../dashboard/Dashboard'));
  
 const ProfileUser = lazy(() => import('../Settings/ProfileUser'));  
 const Contracts = lazy(() => import('../../pages/ContractsPage.jsx')); 
-const Investigations = lazy(() => import('../../pages/Investigations.jsx'));
-const Consultations = lazy(() => import('../../pages/LegalAdvice/Consultations.jsx'));
-const Litigations = lazy(() => import('../../pages/Litigations/index.jsx'));
+const Investigations = lazy(() => import('../../pages/InvestigationsPage.jsx'));
+const LegalAdvices = lazy(() => import('../../pages/LegalAdvicePage.jsx'));
+const Litigations = lazy(() => import('../../pages/LitigationsPage.jsx'));
 const UsersList = lazy(() => import('../Users/index.jsx'));
 const ArchivePage = lazy(() => import('../../pages/ArchivePage.jsx'));
 
@@ -46,7 +46,7 @@ const AuthRoutes = () => {
           <Route path="/archive" element={<ArchivePage />} />
   
   <Route path="/legal/investigations" element={<Investigations />} />
-  <Route path="/legal/consultations" element={<Consultations />} />
+  <Route path="/legal/legal-advices" element={<LegalAdvices />} />
   <Route path="/legal/litigations" element={<Litigations />} />
 
           <Route path="*" element={<NotFound />} />

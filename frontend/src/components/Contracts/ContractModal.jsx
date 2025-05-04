@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { createContract, updateContract } from "../../services/api/contracts"; // استدعاء APIs هنا!
 
+import API_CONFIG from "../../config/config";
 export default function ContractModal({ isOpen, onClose, initialData = null, categories = [], reloadContracts }) {
 
   const [form, setForm] = useState({
@@ -76,8 +77,10 @@ useEffect(() => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.attachment && !form.oldAttachment) {
-      toast.error("يجب رفع مرفق PDF أو الإبقاء على الملف القديم.");
+  
+    // تحقق من الحقول الإلزامية فقط
+    if (!form.contract_category_id || !form.scope || !form.number || !form.contract_parties || !form.status) {
+      toast.error("الرجاء ملء جميع الحقول الإلزامية.");
       return;
     }
   
@@ -85,28 +88,29 @@ useEffect(() => {
       setLoading(true);
   
       const payload = new FormData();
-      payload.append("contract_category_id", form.contract_category_id?.toString() || "");
-      payload.append("scope", form.scope?.toString() || "");
-      payload.append("contract_parties", form.contract_parties || "");
-      payload.append("number", form.number?.toString() || "");
-      payload.append("value", form.value ? form.value.toString() : "");
+      payload.append("contract_category_id", form.contract_category_id);
+      payload.append("scope", form.scope);
+      payload.append("contract_parties", form.contract_parties);
+      payload.append("number", form.number);
+      payload.append("value", form.value || "");
       payload.append("start_date", form.start_date || "");
       payload.append("end_date", form.end_date || "");
       payload.append("notes", form.notes || "");
-      payload.append("status", form.status?.toString() || "");
+      payload.append("status", form.status);
       payload.append("summary", form.summary || "");
   
-      // 📌 فقط لو في ملف مرفوع جديد، أرفقه
+      // ✅ فقط إذا رفع المستخدم ملف جديد، نضيفه
       if (form.attachment instanceof File) {
         payload.append("attachment", form.attachment);
       }
   
-      // ⚡ لو تعديل، نرسل _method
       if (form.id) {
+        // تعديل
         payload.append("_method", "PUT");
         await updateContract(form.id, payload);
         toast.success("تم تعديل العقد بنجاح 🎉");
       } else {
+        // إضافة جديدة
         await createContract(payload);
         toast.success("تم إضافة العقد بنجاح 🎉");
       }
@@ -116,11 +120,13 @@ useEffect(() => {
       resetForm();
     } catch (error) {
       console.error(error?.response?.data || error);
-      toast.error("حدث خطأ أثناء حفظ العقد. تحقق من البيانات المدخلة.");
+      toast.error("حدث خطأ أثناء حفظ العقد. تحقق من البيانات.");
     } finally {
       setLoading(false);
     }
   };
+  
+
   
   if (!isOpen) return null;
 
@@ -129,13 +135,13 @@ useEffect(() => {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh] relative">
         {loading && (
           <div className="absolute inset-0 bg-white/70 dark:bg-gray-800/70 flex items-center justify-center z-50">
-            <div className="text-lg font-bold text-almadar-green dark:text-almadar-yellow animate-pulse">
+            <div className="text-lg font-bold text-almadar-blue dark:text-almadar-yellow animate-pulse">
               جاري الحفظ...
             </div>
           </div>
         )}
 
-        <h2 className="text-2xl font-bold mb-6 text-almadar-green dark:text-almadar-yellow">
+        <h2 className="text-2xl font-bold mb-6 text-almadar-blue dark:text-almadar-yellow">
           {initialData ? "تعديل العقد" : "إضافة عقد جديد"}
         </h2>
 
@@ -311,7 +317,8 @@ useEffect(() => {
               <div className="mt-2 text-green-600 text-sm">{form.attachment.name}</div>
             ) : form.oldAttachment ? (
               <a
-                href={`/storage/${form.oldAttachment}`}
+              href={`${API_CONFIG.baseURL}/storage/${form.oldAttachment}`}
+         
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-2 text-blue-500 text-sm block underline"
@@ -334,7 +341,7 @@ useEffect(() => {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 rounded-lg bg-almadar-green hover:bg-emerald-700 dark:bg-almadar-yellow text-white dark:text-black font-bold"
+              className="px-6 py-2 rounded-lg bg-almadar-blue hover:bg-emerald-700 dark:bg-almadar-yellow text-white dark:text-black font-bold"
             >
               حفظ
             </button>

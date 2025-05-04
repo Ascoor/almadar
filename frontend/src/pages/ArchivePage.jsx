@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getArchiveFiles } from "../services/api/archives";
 import { FaFolder, FaFolderOpen, FaChevronDown, FaChevronLeft, FaFilePdf } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
+import SectionHeader from "../components/common/SectionHeader";
+import { ArchiveSection } from "../assets/icons";
 
 export default function ArchivePage() {
   const [archives, setArchives] = useState({});
@@ -43,7 +45,7 @@ export default function ArchivePage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[50vh] text-almadar-green dark:text-almadar-yellow text-lg font-bold">
+      <div className="flex justify-center items-center h-[50vh] text-almadar-blue dark:text-almadar-yellow text-lg font-bold">
         جاري التحميل...
       </div>
     );
@@ -51,10 +53,9 @@ export default function ArchivePage() {
 
   return (
     <div className="p-6 space-y-8">
+      <SectionHeader icon={ArchiveSection} listName="الأرشيف" showBackButton={false} />
       <ToastContainer />
-      <h1 className="text-3xl font-bold text-center text-almadar-green dark:text-almadar-yellow">
-        الأرشيف
-      </h1>
+ 
 
       {Object.keys(archives).length === 0 ? (
         <div className="text-center text-gray-500 dark:text-gray-400">
@@ -66,7 +67,7 @@ export default function ArchivePage() {
             {/* عنوان المجلد */}
             <div
               onClick={() => toggleFolder(modelType)}
-              className="flex items-center gap-2 text-xl font-semibold text-almadar-green dark:text-almadar-yellow cursor-pointer"
+              className="flex items-center gap-2 text-xl font-semibold text-almadar-blue dark:text-almadar-yellow cursor-pointer"
             >
               {openFolders[modelType] ? <FaFolderOpen /> : <FaFolder />}
               {openFolders[modelType] ? (

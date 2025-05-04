@@ -3,8 +3,8 @@ import fakeData from '../../Data';
 import { FaBullhorn, FaClock, FaTasks } from 'react-icons/fa';
 
 const cardStyle = `
-  bg-gradient-to-br from-almadar-green-light/20 to-almadar-green/10 
-  dark:bg-gradient-to-br dark:from-almadar-gray-dark/90 dark:to-almadar-green-darker/80 
+  bg-gradient-to-br from-almadar-blue-light/20 to-almadar-blue/10 
+  dark:bg-gradient-to-br dark:from-almadar-mint-dark/90 dark:to-almadar-blue-darker/80 
   p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 
   transition-all duration-300
 `;
@@ -14,7 +14,7 @@ const tableStyle = `
 `;
 
 const theadStyle = `
-  bg-almadar-green text-white text-sm md:text-base
+  bg-almadar-blue text-white text-sm md:text-base
 `;
 
 const thTdStyle = `
@@ -23,12 +23,12 @@ const thTdStyle = `
 `;
 
 const rowHoverStyle = `
-  hover:bg-almadar-green/30 dark:hover:bg-almadar-green/40 transition-all duration-300
+  hover:bg-almadar-blue/30 dark:hover:bg-almadar-blue/40 transition-all duration-300
 `;
 
 const CardWrapper = ({ title, icon, children }) => (
   <div className={cardStyle}>
-    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-almadar-gray-dark dark:text-yellow-400">
+    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-almadar-mint-dark dark:text-yellow-400">
       {icon} {title}
     </h3>
     <div className="overflow-x-auto">{children}</div>

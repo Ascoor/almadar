@@ -36,7 +36,7 @@ const CustomPagination = ({
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="px-3 py-1 text-sm border borderalmadar-gray-light rounded-md bg-white dark:bg-gray-700 text-gray-600 dark:textalmadar-gray-light hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50"
+        className="px-3 py-1 text-sm border borderalmadar-mint-light rounded-md bg-white dark:bg-gray-700 text-gray-600 dark:textalmadar-mint-light hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50"
       >
         السابق
       </button>
@@ -49,7 +49,7 @@ const CustomPagination = ({
           className={`px-3 py-1 text-sm border rounded-md ${
             page === currentPage
               ? 'bg-violet-600 text-white border-violet-600'
-              : 'bg-white dark:bg-gray-700 text-gray-600 dark:textalmadar-gray-light hover:bg-gray-100 dark:hover:bg-gray-600'
+              : 'bg-white dark:bg-gray-700 text-gray-600 dark:textalmadar-mint-light hover:bg-gray-100 dark:hover:bg-gray-600'
           }`}
         >
           {page}
@@ -60,7 +60,7 @@ const CustomPagination = ({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-3 py-1 text-sm border borderalmadar-gray-light rounded-md bg-white dark:bg-gray-700 text-gray-600 dark:textalmadar-gray-light hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50"
+        className="px-3 py-1 text-sm border borderalmadar-mint-light rounded-md bg-white dark:bg-gray-700 text-gray-600 dark:textalmadar-mint-light hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50"
       >
         التالي
       </button>

@@ -24,7 +24,7 @@ const Register = ({ toggleLoginForm, handleFormClose }) => {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-sm bgalmadar-gray-dark text-white rounded-3xl p-8 shadow-lg shadow-blue-200/30 transform hover:scale-105 transition-all duration-300">
+      <div className="w-full max-w-sm bgalmadar-mint-dark text-white rounded-3xl p-8 shadow-lg shadow-blue-200/30 transform hover:scale-105 transition-all duration-300">
         <h2 className="text-3xl font-bold text-center text-blue-200/70 mb-4">
           إنشاء حساب
         </h2>

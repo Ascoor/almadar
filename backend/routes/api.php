@@ -49,8 +49,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // ✅ Legislations
     Route::apiResource('legislations', LegislationController::class);
 
-    // ✅ Investigation Actions
-    Route::apiResource('investigation-actions', InvestigationActionController::class);
 
     // ✅ Legal Advices
     Route::apiResource('legal-advices', LegalAdviceController::class);
@@ -73,5 +71,28 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/{userId}/revoke-permission', [UserRolePermissionController::class, 'revokePermission']);
     Route::get('/users/{userId}/permissions', [UserRolePermissionController::class, 'permissions']);
 
+    Route::prefix('investigations/{investigation}')->controller(InvestigationActionController::class)->group(function () {
+        Route::get('actions', 'index')->name('investigations.actions.index');           // ✅ عرض جميع الإجراءات
+        Route::post('actions', 'store')->name('investigations.actions.store');          // ✅ إضافة إجراء
+        Route::get('actions/{action}', 'show')->name('investigations.actions.show');    // ✅ عرض إجراء محدد
+        Route::put('actions/{action}', 'update')->name('investigations.actions.update');// ✅ تعديل إجراء
+        Route::delete('actions/{action}', 'destroy')->name('investigations.actions.destroy'); // ✅ حذف إجراء
+    });
  
+
+    Route::prefix('litigations')->group(function () {
+        // ✅ المسارات الرئيسية
+        Route::get('/', [LitigationController::class, 'index']);               // جلب كل القضايا
+        Route::post('/', [LitigationController::class, 'store']);              // إنشاء قضية جديدة
+        Route::put('{litigation}', [LitigationController::class, 'update']);   // تعديل قضية
+        Route::delete('{litigation}', [LitigationController::class, 'destroy']); // حذف قضية
+    
+        // ✅ الإجراءات المرتبطة بقضية
+        Route::prefix('{litigation}/actions')->group(function () {
+            Route::get('/', [LitigationActionController::class, 'index']);     // عرض الإجراءات
+            Route::post('/', [LitigationActionController::class, 'store']);    // إضافة إجراء
+            Route::put('{action}', [LitigationActionController::class, 'update']); // تعديل إجراء
+            Route::delete('{action}', [LitigationActionController::class, 'destroy']); // حذف إجراء
+        });
+    });
 });

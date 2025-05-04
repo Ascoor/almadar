@@ -12,9 +12,9 @@ export { default as LogoBlue } from '../images/logo-blue.png';
 export { default as WelcomeImage } from '../images/welcome-page.webp';
 export { default as WelcomeBackground } from '../images/welcome.webp';
 export { default as WelcomePatren } from '../images/logo512.png';
-export { default as WelcomeLogo } from '../images/logo512.png';
+export { default as WelcomeLogo } from '../images/welcome-logo.png';
 export { default as LandingPageImg } from '../images/landing.png';
-
+export { default as Triangle } from '../images/obj_triangle.png';
 export { default as Slider1 } from '../images/home-img/home-slider1.jpeg';
 export { default as Slider2 } from '../images/home-img/slide-2.png';
 export { default as Slider3 } from '../images/home-img/home-slider3.png';

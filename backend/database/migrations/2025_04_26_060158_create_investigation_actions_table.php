@@ -14,11 +14,11 @@ return new class extends Migration
     Schema::create('investigation_actions', function (Blueprint $table) {
         $table->id();
         $table->foreignId('investigation_id')->constrained('investigations')->onDelete('cascade');
-        $table->date('action_date');              // تاريخ الإجراء
-        $table->string('action_type');             // نوع الإجراء (جلسة استماع، استجواب، تقرير...)
-        $table->string('officer_name');            // اسم المسؤول عن الإجراء
-        $table->text('requirements')->nullable(); // المطلوبات
-        $table->text('results')->nullable();       // النتائج المنجزة
+        $table->date('action_date');              
+        $table->string('action_type');           
+        $table->string('officer_name');            
+        $table->text('requirements')->nullable(); 
+        $table->text('results')->nullable();      
         $table->enum('status', ['pending', 'done', 'cancelled', 'in_review'])->default('pending');
         $table->timestamps();
     });

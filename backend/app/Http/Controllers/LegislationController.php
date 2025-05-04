@@ -13,11 +13,8 @@ class LegislationController extends Controller
 {
     public function index()
     {
-        $legislations = Legislation::all();
-        return response()->json([
-            'status' => true,
-            'data' => $legislations,
-        ]);
+        $legislations  = Legislation::with('actions')->latest()->paginate(10);
+        return response()->json($legislations);
     }
 
     public function show($id)

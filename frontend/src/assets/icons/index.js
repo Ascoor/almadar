@@ -20,12 +20,17 @@ export { default as LogoNav } from './logo512.png';
 export { default as ServiceIcon } from './service-icon.png';
 export { default as ServiceSection } from './service-section.png';
 export { default as SearchIcon } from './search-icon.png';
-export { default as MainLegalCases } from '../icons/legcases-icon.png';
+export { default as ContractSection } from '../icons/contracts-icon.png';
 export { default as MainSessions } from '../icons/sessions-icon.png';
 export { default as MainClients } from '../icons/customers-icon.png';
+export { default as MainLegalCases } from '../icons/legcases-icon.png';
+export { default as ArchiveSection } from '../icons/archives-icon.png';
 export { default as MainProcedures } from '../icons/peocedures-icon.png';
+export { default as LegalAdviceIcon } from '../icons/doc-icon.png';
 export { default as MainCourts } from '../icons/courts-icon.png';
 export { default as MainProceduresIcon } from '../icons/MainProcedures.png';
+export { default as InvestigationSection } from '../icons/case-icon.png';
+
 export { default as MainSessionsIcon } from '../icons/main-session-icon.png';
 export { default as MainLawyers } from '../icons/lawyers-icon.png';
 export { default as ClientSectionIcon } from '../icons/client-section.png';

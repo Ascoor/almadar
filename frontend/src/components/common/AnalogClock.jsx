@@ -50,13 +50,13 @@ const AnalogClock = () => {
     <svg
       width={2 * radius}
       height={2 * radius}
-      className="drop-shadow-md ring-almadar-green shadow-md   shadow-almadar-green dark:shadow-almadar-orange-dark dark:shadow-bottom  rounded-full "
+      className="drop-shadow-md ring-almadar-blue shadow-md   shadow-almadar-blue dark:shadow-almadar-orange-dark dark:shadow-bottom  rounded-full "
     >
       <circle
         cx={center}
         cy={center}
         r={radius - 4}
-        className="fill-white dark:fill-orange-200/80 stroke-almadar-green   dark:stroke-orange-400 stroke-4"
+        className="fill-white dark:fill-orange-200/80 stroke-almadar-blue   dark:stroke-orange-400 stroke-4"
       />
       {renderNumbers()}
       <line {...handStyle(hourAngle, radius * 0.5, 'black', 4)} />

@@ -82,7 +82,7 @@ function UserMenu({ align = 'left' }) {
             <li>
               <Link
                 to="/settings"
-                className="font-medium text-sm text-almadar-green-dark dark:text-almadar-orange-light hover:text-violet-400 dark:hover:text-violet-400 flex items-center py-2 px-4"
+                className="font-medium text-sm text-almadar-blue-dark dark:text-almadar-orange-light hover:text-violet-400 dark:hover:text-violet-400 flex items-center py-2 px-4"
                 onClick={() => setDropdownOpen(false)}
               >
                 الإعدادات

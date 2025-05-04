@@ -23,7 +23,7 @@ const InputField = ({
           value={value}
           onChange={onChange}
           disabled={readOnly}
-          className="mt-1 block w-full px-4 py-2 border rounded-md bg-gray-200 dark:bg-gray-700 textalmadar-gray-dark dark:text-white borderalmadar-gray-light dark:border-gray-600 focus:outline-none focus:ring focus:ring-blue-300 dark:focus:ring-blue-600"
+          className="mt-1 block w-full px-4 py-2 border rounded-md bg-gray-200 dark:bg-gray-700 textalmadar-mint-dark dark:text-white borderalmadar-mint-light dark:border-gray-600 focus:outline-none focus:ring focus:ring-blue-300 dark:focus:ring-blue-600"
         >
           <option value="">{placeholder}</option>
           {options.map((option) => (
@@ -40,7 +40,7 @@ const InputField = ({
           onChange={onChange}
           readOnly={readOnly}
           placeholder={placeholder}
-          className="mt-1 block w-full px-4 py-2 border rounded-md bg-gray-200 dark:bg-gray-700 textalmadar-gray-dark dark:text-white borderalmadar-gray-light dark:border-gray-600 focus:outline-none focus:ring focus:ring-blue-300 dark:focus:ring-blue-600"
+          className="mt-1 block w-full px-4 py-2 border rounded-md bg-gray-200 dark:bg-gray-700 textalmadar-mint-dark dark:text-white borderalmadar-mint-light dark:border-gray-600 focus:outline-none focus:ring focus:ring-blue-300 dark:focus:ring-blue-600"
           icon={icon}
         />
       )}

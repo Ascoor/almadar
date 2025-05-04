@@ -54,39 +54,34 @@ const Home = () => {
   
 
   return (
-    <div className="p-4 mt-16 xl:max-w-7xl xl:mx-auto w-full bg-gray-200/50 dark:bg-gray-800 shadow-lg shadow-almadar-green-light">
- 
+    <div className="p-6 mt-16 xl:max-w-7xl xl:mx-auto w-full  shadow-lg rounded-lg">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 pb-4">
+      <MainCard
+        count={counts.legalSessionCount}
+        icon={MainSessions}
+        label="الجلسات"
+        route="/legal-sessions"
+      />
+      <MainCard
+        count={counts.legCaseCount}
+        icon={MainLegalCases}
+        label="القضايا"
+      />
+      <MainCard
+        count={counts.procedureCount}
+        icon={MainProcedures}
+        label="الإجراءات"
+      />
+      <MainCard
+        count={counts.clientCount}
+        icon={MainClients}
+        label="العملاء"
+      />
+    </div>   
 
-      {/* عرض النتائج */}
-      
-        <>
-          {/* عرض البطاقات الرئيسية */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 pb-4">
-            <MainCard
-              count={counts.legalSessionCount}
-              icon={MainSessions}
-              label="الجلسات"
-              route="/legal-sessions"
-            />
-            <MainCard
-              count={counts.legCaseCount}
-              icon={MainLegalCases}
-              label="القضايا"
-            />
-            <MainCard
-              count={counts.procedureCount}
-              icon={MainProcedures}
-              label="الإجراءات"
-            />
-            <MainCard
-              count={counts.clientCount}
-              icon={MainClients}
-              label="العملاء"
-            />
-          </div>
-
+<>
           {/* عرض البطاقات المتقدمة */}
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 pb-4 bg-gray-400/40 dark:bg-almadar-green">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 pb-4 ">
             <DashboardCard01 isDarkMode={isDarkMode} />
             <DashboardCard02 isDarkMode={isDarkMode} />
             <DashboardCard03 isDarkMode={isDarkMode} />
@@ -94,7 +89,6 @@ const Home = () => {
             <DashboardCard05 isDarkMode={isDarkMode} />
             <DashboardCard06 isDarkMode={isDarkMode} />
           </div>
-
           {/* تقويم */}
           <Suspense fallback={<HomeSpinner />}>
             <div className="mt-10">

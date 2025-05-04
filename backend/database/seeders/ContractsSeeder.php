@@ -32,10 +32,20 @@ class ContractsSeeder extends Seeder
             'شركة الرؤية',
             'شركة التطوير الشامل',
             'شركة الفجر الجديد',
+            'شركة النور الساطع',
+            'شركة الزهراء',
+            'شركة الأفق الجديد',
+            'شركة النجاح المتجدد',
+            'شركة المحيط',
+            'شركة الخليج للأعمال',
+            'شركة الفجر الزاهر',
+            'شركة سماء المستقبل',
+            'شركة الإتقان',
+            'شركة العالم المتطور'
         ];
 
-        // إنشاء 5 عقود محلية
-        for ($i = 1; $i <= 5; $i++) {
+        // إنشاء 25 عقد محلي
+        for ($i = 1; $i <= 25; $i++) {
             Contract::create([
                 'contract_category_id' => $categories->random()->id,
                 'scope' => 'local',
@@ -51,8 +61,8 @@ class ContractsSeeder extends Seeder
             ]);
         }
 
-        // إنشاء 5 عقود دولية
-        for ($i = 1; $i <= 5; $i++) {
+        // إنشاء 25 عقد دولي
+        for ($i = 26; $i <= 50; $i++) {
             Contract::create([
                 'contract_category_id' => $categories->random()->id,
                 'scope' => 'international',

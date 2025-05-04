@@ -29,14 +29,14 @@ const UsersList = () => {
 
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-almadar-green-dark dark:text-white">قائمة الموظفين</h2>
+      <h2 className="text-2xl font-bold mb-4 text-almadar-blue-dark dark:text-white">قائمة الموظفين</h2>
       {users.length === 0 ? (
         <div className="text-center text-gray-500">لا يوجد موظفين مسجلين.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="bg-almadar-green text-white">
+              <tr className="bg-almadar-blue text-white">
                 <th className="p-3 text-right">#</th>
                 <th className="p-3 text-right">الاسم</th>
                 <th className="p-3 text-right">البريد الالكتروني</th>

@@ -44,8 +44,8 @@ const ManagementSettings = () => {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bgalmadar-gray-dark p-6">
-      <h1 className="text-3xl md:text-4xl font-bold textalmadar-gray-dark dark:text-gray-100 mb-8 text-center tracking-wide">
+    <section className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bgalmadar-mint-dark p-6">
+      <h1 className="text-3xl md:text-4xl font-bold textalmadar-mint-dark dark:text-gray-100 mb-8 text-center tracking-wide">
         إدارة المكتب
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl mb-6">
@@ -53,7 +53,7 @@ const ManagementSettings = () => {
           <button
             key={tab.value}
             onClick={() => setActiveTab(tab.value)}
-            className={`flex items-center justify-center bg-gray-200 dark:bg-gray-800 textalmadar-gray-dark dark:text-gray-100 rounded-lg px-6 py-4 transition-transform transform hover:scale-105 ${
+            className={`flex items-center justify-center bg-gray-200 dark:bg-gray-800 textalmadar-mint-dark dark:text-gray-100 rounded-lg px-6 py-4 transition-transform transform hover:scale-105 ${
               activeTab === tab.value ? 'bg-blue-500 text-white' : ''
             }`}
           >

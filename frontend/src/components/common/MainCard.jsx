@@ -28,15 +28,15 @@ const MainCard = ({ count, icon, label, route }) => {
       onTouchStart={() => setIsInteracting(true)}
       onTouchEnd={() => setIsInteracting(false)}
       onClick={() => navigate(route)}
-      className="cursor-pointer bg-gradient-to-br from-almadar-green-light/40 to-almadar-green/30 dark:bg-gradient-to-br dark:from-almadar-gray-dark/80 dark:to-almadar-green-darker/80 backdrop-blur rounded-3xl p-6 shadow-lg dark:shadow-almadar-green-light flex items-center justify-between w-full max-w-sm transition-all duration-300 ease-in-out transform hover:scale-105"
+      className="cursor-pointer bg-gradient-to-br from-almadar-blue-light/40 to-almadar-blue/30 dark:bg-gradient-to-br dark:from-almadar-mint-dark/80 dark:to-almadar-blue-darker/80 backdrop-blur rounded-3xl p-6 shadow-lg dark:shadow-almadar-blue-light flex items-center justify-between w-full max-w-sm transition-all duration-300 ease-in-out transform hover:scale-105"
     >
       {/* نصوص البطاقة */}
       <div className="flex flex-col items-start ml-4">
-        <div className="text-lg font-bold text-almadar-gray dark:text-yellow-400 tracking-wide mb-2">
+        <div className="text-lg font-bold text-almadar-mintray dark:text-yellow-400 tracking-wide mb-2">
           {label}
         </div>
 
-        <div className="text-3xl font-extrabold text-almadar-green dark:text-white tracking-tight">
+        <div className="text-3xl font-extrabold text-almadar-blue dark:text-white tracking-tight">
           {count}
         </div>
       </div>

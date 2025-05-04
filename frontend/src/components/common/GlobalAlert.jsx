@@ -43,7 +43,7 @@ const GlobalAlert = ({ type, message, onClose }) => {
           setVisible(false);
           setTimeout(onClose, 300);
         }}
-        className="text-white hover:textalmadar-gray-light transition text-lg"
+        className="text-white hover:textalmadar-mint-light transition text-lg"
       >
         ×
       </button>

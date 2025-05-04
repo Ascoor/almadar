@@ -1,64 +1,88 @@
-import React from "react";
-import API_CONFIG from "../../config/config";
+import React, { useState } from "react";
+import TableComponent from "../common/TableComponent";
+import { FaPlus } from "react-icons/fa";
+import ContractModal from "./ContractModal";
+import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
+import { deleteContract } from "../../services/api/contracts";
+import { toast } from "react-toastify";
 
-export default function Local({ contracts = [], onEditContract, onSelectContract }) {
+export default function Local({ contracts = [], reloadContracts, categories }) {
+  const [selectedContract, setSelectedContract] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [contractToDelete, setContractToDelete] = useState(null); // 🆕
+
+  const handleAdd = () => {
+    setSelectedContract(null);
+    setIsModalOpen(true);
+  };
+  const handleEdit = (contract) => {
+    setSelectedContract(contract); // لا حاجة للبحث مجددًا
+    setIsModalOpen(true);
+  };
+  
+
+  const confirmDelete = (contract) => {
+    setContractToDelete(contract);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!contractToDelete) return;
+
+    try {
+      await deleteContract(contractToDelete.id);
+      toast.success("✅ تم حذف العقد بنجاح");
+      reloadContracts();
+    } catch (error) {
+      console.error("Error deleting contract:", error);
+      toast.error("❌ فشل حذف العقد، حاول مرة أخرى");
+    } finally {
+      setContractToDelete(null);
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl text-center font-bold text-almadar-green dark:text-almadar-yellow border-b-2 border-almadar-green dark:border-almadar-yellow pb-2">
-        التعاقدات المحلية
-      </h1>
-
-      <div className="overflow-auto bg-white dark:bg-gray-800 p-5 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-        {contracts.length > 0 ? (
-          <table className="min-w-full text-sm text-center border border-gray-300 text-almadar-gray-darker dark:text-gray-100 dark:border-gray-700">
-            <thead className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-almadar-yellow-light">
-              <tr>
-                <th>رقم العقد</th>
-                <th>القيمة</th>
-                <th>التصنيف</th>
-                <th>الحالة</th>
-                <th>مرفق</th>
-                <th>خيارات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {contracts.map(contract => (
-                <tr
-                  key={contract.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                  onClick={() => onSelectContract(contract)}
-                >
-                  <td>{contract.number}</td>
-                  <td>{contract.value?.toLocaleString()} ﷼</td>
-                  <td>{contract.category?.name}</td>
-                  <td>{contract.status}</td>
-                  <td>
-                    {contract.attachment ? (
-                      <a href={`${API_CONFIG.baseURL}/storage/${contract.attachment}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                        عرض
-                      </a>
-                    ) : (
-                      <span className="text-gray-400">لا يوجد</span>
-                    )}
-                  </td>
-                  <td>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); onEditContract(contract); }}
-                      className="text-almadar-green-dark dark:text-almadar-green-light hover:underline font-medium"
-                    >
-                      تعديل
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-            لا توجد تعاقدات محلية متاحة.
-          </div>
+    <>
+      <TableComponent
+        data={contracts}
+        headers={[
+          { key: "number", text: "رقم العقد" },
+          { key: "category_name", text: "التصنيف" },
+          { key: "contract_parties", text: "المتعاقد معه" },
+          { key: "value", text: "القيمة" },
+          { key: "attachment", text: "المرفق" },
+          { key: "status", text: "الحالة" },
+        ]}
+        customRenderers={{
+          category_name: (row) => row?.category?.name || "—",
+        }}
+        onEdit={handleEdit}
+        onDelete={confirmDelete} // 🆕
+        renderAddButton={() => (
+          <button
+            onClick={handleAdd}
+            className="flex items-center gap-2 px-4 py-2 bg-almadar-blue text-white dark:bg-almadar-sky dark:text-black rounded-lg shadow hover:scale-105 transition"
+          >
+            <FaPlus />
+            إضافة عقد
+          </button>
         )}
-      </div>
-    </div>
+      />
+
+      {/* 🧾 نافذة تأكيد الحذف */}
+      <GlobalConfirmDeleteModal
+        isOpen={!!contractToDelete}
+        itemName={contractToDelete?.number}
+        onClose={() => setContractToDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
+
+      <ContractModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialData={selectedContract}
+        categories={categories}
+        reloadContracts={reloadContracts}
+      />
+    </>
   );
 }

@@ -24,7 +24,7 @@ const DashboardSearch = ({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white dark:bg-almadar-gray-dark p-6 rounded-lg shadow-lg">
+    <div className="w-full max-w-2xl mx-auto bg-white dark:bg-almadar-mint-dark p-6 rounded-lg shadow-lg">
       {loading && <AuthSpinner />}
       {error && <p className="text-red-500">{error}</p>}
 
@@ -41,18 +41,18 @@ const DashboardSearch = ({
           className="w-full mt-4 bg-white dark:bg-almadar-gray-dark rounded-lg shadow-lg"
         >
           <table className="w-full border-collapse overflow-hidden rounded-lg shadow-lg">
-            <thead className="bg-gradient-to-r from-almadar-green-light to-almadar-green">
+            <thead className="bg-gradient-to-r from-almadar-blue-light to-almadar-blue">
               <tr className="text-md text-center text-white">
-                <th className="px-4 py-3 border-b border-almadar-green">
+                <th className="px-4 py-3 border-b border-almadar-blue">
                   📌 رقم الموكل
                 </th>
-                <th className="px-4 py-3 border-b border-almadar-green">
+                <th className="px-4 py-3 border-b border-almadar-blue">
                   👤 الاسم
                 </th>
-                <th className="px-4 py-3 border-b border-almadar-green">
+                <th className="px-4 py-3 border-b border-almadar-blue">
                   📞 رقم الجوال
                 </th>
-                <th className="px-4 py-3 border-b border-almadar-green">
+                <th className="px-4 py-3 border-b border-almadar-blue">
                   ⚡ الحالة
                 </th>
               </tr>
@@ -64,7 +64,7 @@ const DashboardSearch = ({
                   onClick={() => handleClientClick(client)}
                   className={`cursor-pointer text-center transition-all ${
                     selectedClient?.id === client.id
-                      ? 'bg-almadar-green-light/20 dark:bg-almadar-green-dark/50'
+                      ? 'bg-almadar-blue-light/20 dark:bg-almadar-blue-dark/50'
                       : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
@@ -81,7 +81,7 @@ const DashboardSearch = ({
                     <span
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         client.status === 'active'
-                          ? 'bg-almadar-green text-white'
+                          ? 'bg-almadar-blue text-white'
                           : 'bg-red-500 text-white'
                       }`}
                     >
@@ -112,8 +112,8 @@ const DashboardSearch = ({
                 onClick={() => setActiveTab(tab)}
                 className={`px-6 py-3 rounded-full transition-all duration-300 ${
                   activeTab === tab
-                    ? 'bg-gradient-to-r from-almadar-green-light to-almadar-green text-white font-bold shadow-lg'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-almadar-green/30 dark:hover:bg-almadar-green/50 hover:scale-105'
+                    ? 'bg-gradient-to-r from-almadar-blue-light to-almadar-blue text-white font-bold shadow-lg'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-almadar-blue/30 dark:hover:bg-almadar-blue/50 hover:scale-105'
                 }`}
               >
                 {label}

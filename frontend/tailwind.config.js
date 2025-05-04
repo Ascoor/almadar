@@ -17,110 +17,84 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        lalezar: ['Lalezar', 'sans-serif'],
+      
         amiri: ['Amiri', 'serif'],
         tharwat: ['Tharwat', 'sans-serif'],
         tajawal: ['Tajawal', 'sans-serif'],
         cairo: ['Cairo', 'sans-serif'],
       },
 
-      // الهوية الرسمية للمدار
       colors: {
-        'almadar-green': {
-          light: '#B7E4A0',
-          DEFAULT: '#5DBB2F',
-          dark: '#3A7D19',
-          darker: '#27520F',
+        'almadar-blue': {
+          light: '#389df1',
+          DEFAULT: '#3b77b7',
+          dark: '#1f2c54',
         },
-        'almadar-gray': {
-          light: '#A0AEC0',
-          DEFAULT: '#718096',
-          dark: '#4A5568',
-          darker: '#2D3748',
+        'almadar-sky': {
+          light: '#E0F2FE', 
+          DEFAULT: '#0EA5E9', 
+          dark: '#0369A1',
         },
-        'almadar-yellow': {
-          light: '#FFF9C4',
-          DEFAULT: '#FFEB3B',
-          dark: '#FBC02D',
-          darker: '#F57F17',
+        'almadar-mint': {
+          light: '#CCFBF1',
+          DEFAULT: '#14B8A6',
+          dark: '#0F766E',
         },
-
-        'almadar-white': '#FFFFFF',
-
-        // خلفيات النظام
-        lightBg: '#F8F9FA',
-        darkBg: '#1C1C1C',
-
-        // هوية إضافية
-        'icon-color': {
-          fb: '#1877F2',
-          link: '#0A66C2',
-          insta: '#E1306C',
-          twitter: '#1DA1F2',
-          tube: '#FF0000',
+        'almadar-sidebar': {
+          light: '#F0F4F8',
+          DEFAULT: '#22A9CD',
+          dark: '#0F5E8A',
+          accent: '#D6FFCA',
+          danger: '#EF4444',
+        },
+        'almadar-sand': {
+          light: '#FEF9C3',
+          DEFAULT: '#FACC15',
+          dark: '#CA8A04',
+        },
+        'almadar-graphite': {
+          light: '#E5E7EB',
+          DEFAULT: '#6B7280',
+          dark: '#111827',
+        },
+        'almadar-white': {
+          light: '#ffffff',
+          DEFAULT: '#F9FAFB',
         },
       },
+
       backgroundImage: {
-        'gradient-green-button': 'linear-gradient(to right, #A2E57B, #7AC943, #5CA832)',
-        'gradient-gray-button': 'linear-gradient(to right, #666666, #333333, #1F1F1F)',
-        'gradient-day': 'linear-gradient(to top, #A2E57B, #7AC943)',
-        'gradient-night': 'linear-gradient(135deg, #1F1F1F, #333333)',
+        'gradient-header': 'linear-gradient(to right, #FACC15, #0EA5E9)',
+        'gradient-header-dark': 'linear-gradient(to right, #1E3A8A, #0EA5E9)',
+        'gradient-sidebar': 'linear-gradient(to bottom, #FEF9C3, #D0EBFF)',
+        'gradient-sidebar-dark': 'linear-gradient(to bottom, #1E3A8A, #111827)',
+      },
+      textColor: {
+        primary: '#1E3A8A', 
+        secondary: '#0EA5E9', 
+        accent: '#FACC15',
+        light: '#ffffff',
+        dark: '#0F172A',
+      },
+      borderColor: {
+        primary: '#FACC15',
+        secondary: '#D0EBFF',
+        dark: '#111827',
+      },
 
-        'gradient-red-button': 'linear-gradient(to right, #ec4899, #db2777, #be185d)',
-        'gradient-yellow-button': 'linear-gradient(to right, #fbbf24, #f59e0b, #d97706)',
-        'gradient-blue-button': 'linear-gradient(to right, #60a5fa, #3b82f6, #2563eb)',
-
-        'gradient-orange-dark': 'linear-gradient(to bottom, #ffa726, #fb7921)',
-        'gradient-blue-dark': 'linear-gradient(to bottom, #1b2b5a, #031023)',
-        'gradient-orange-light': 'linear-gradient(to bottom, #ffcc80, #ffb74d)',
-        'gradient-blue-light': 'linear-gradient(to bottom, #bbdefb, #64b5f6)',
-      },
-      border: {
-        light: '#e2e8f0',
-        dark: '#1a202c',
-      },
-      text: {
-        light: '#1a1a1a',
-        dark: '#f7faff',
-      },
-      borderWidth: {
-        DEFAULT: '1px',
-        thin: '0.5px',
-        thick: '2px',
-        extrathick: '4px',
-      },
-      borderRadius: {
-        card: '10px',
-        header: '30px',
-        lg: '1rem',
-        xl: '1.5rem',
-        full: '9999px',
-      },
       boxShadow: {
         top: '0 -4px 6px rgba(0, 0, 0, 0.1)',
         base: '0 1px 3px rgba(0, 0, 0, 0.1)',
         hover: '0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)',
         focus: '0 0 0 4px rgba(60, 60, 220, 0.4)',
       },
+
       scale: {
         98: '0.98',
         102: '1.02',
       },
-      slideInUp: {
-        '0%': { opacity: 0, transform: 'translateY(20px)' },
-        '100%': { opacity: 1, transform: 'translateY(0)' },
-      },
-      wiggle: {
-        '0%, 100%': { transform: 'rotate(-3deg)' },
-        '50%': { transform: 'rotate(3deg)' },
-      },
-      fadeIn: {
-        from: { opacity: 0 },
-        to: { opacity: 1 },
-      },
-      slideIn: {
-        from: { transform: 'translateX(-100%)' },
-        to: { transform: 'translateX(0)' },
-      },
+
       keyframes: {
         'fade-in-out': {
           '0%': { opacity: '0', transform: 'translateY(-20px)' },
@@ -136,17 +110,6 @@ export default {
         fadeIn: 'fadeIn 0.5s ease-in-out',
         slideIn: 'slideIn 0.3s ease-out',
       },
-      zIndex: {
-        60: '60',
-        70: '70',
-        80: '80',
-      },
-    },
-    variants: {
-      extend: {
-        opacity: ['responsive', 'hover', 'focus', 'group-hover'],
-        transitionProperty: ['responsive', 'hover', 'focus'],
-      },
     },
   },
   plugins: [
@@ -155,109 +118,31 @@ export default {
     plugin(function ({ addBase }) {
       addBase({
         '@font-face': [
-
           {
-            fontFamily: 'Cairo',
+            fontFamily: 'Amiri',
             fontStyle: 'normal',
             fontWeight: '400',
             fontDisplay: 'swap',
-            src: `url(https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hOA-a1biLD-H.woff2) format('woff2')`,
-            unicodeRange:
-              'U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1',
+            src: `url('./assets/fonts/Amiri/Amiri-Regular.ttf') format('truetype')`,
           },
-
           {
-            fontFamily: 'Cairo',
-            fontStyle: 'normal',
-            fontWeight: '400',
+             fontFamily: 'Lalezar',
+            src: `url('./assets/fonts/Lalezar/Lalezar-Regular.ttf') format('truetype')`,
             fontDisplay: 'swap',
-            src: `url(https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hOA-a13iLD-H.woff2) format('woff2')`,
-            unicodeRange:
-              'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF',
-          },
-
-          {
-            fontFamily: 'Cairo',
+            fontWeight: 'normal',
             fontStyle: 'normal',
-            fontWeight: '400',
-            fontDisplay: 'swap',
-            src: `url(https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hOA-a1PiLA.woff2) format('woff2')`,
-            unicodeRange:
-              'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD',
           },
-
           {
             fontFamily: 'Tharwat',
             fontStyle: 'normal',
             fontWeight: '400',
             src: `url('./assets/fonts/TharwatOmaraa.ttf') format('truetype')`,
           },
-
-          {
-            fontFamily: 'Amiri',
-            fontStyle: 'normal',
-            fontWeight: '400',
-            src: `url('./assets/fonts/Amiri/Amiri-Regular.ttf') format('truetype')`,
-          },
-          {
-            fontFamily: 'Amiri',
-            fontStyle: 'normal',
-            fontWeight: '700',
-            src: `url('./assets/fonts/Amiri/Amiri-Bold.ttf') format('truetype')`,
-          },
-          {
-            fontFamily: 'Amiri',
-            fontStyle: 'italic',
-            fontWeight: '400',
-            src: `url('./assets/fonts/Amiri/Amiri-Italic.ttf') format('truetype')`,
-          },
-          {
-            fontFamily: 'Amiri',
-            fontStyle: 'italic',
-            fontWeight: '700',
-            src: `url('./assets/fonts/Amiri/Amiri-BoldItalic.ttf') format('truetype')`,
-          },
           {
             fontFamily: 'Tajawal',
             fontStyle: 'normal',
             fontWeight: '400',
             src: `url('./assets/fonts/Tajawal/Tajawal-Regular.ttf') format('truetype')`,
-          },
-          {
-            fontFamily: 'Tajawal',
-            fontStyle: 'normal',
-            fontWeight: '700',
-            src: `url('./assets/fonts/Tajawal/Tajawal-Bold.ttf') format('truetype')`,
-          },
-          {
-            fontFamily: 'Tajawal',
-            fontStyle: 'normal',
-            fontWeight: '300',
-            src: `url('./assets/fonts/Tajawal/Tajawal-Light.ttf') format('truetype')`,
-          },
-          {
-            fontFamily: 'Tajawal',
-            fontStyle: 'normal',
-            fontWeight: '500',
-            src: `url('./assets/fonts/Tajawal/Tajawal-Medium.ttf') format('truetype')`,
-          },
-          {
-            fontFamily: 'Tajawal',
-            fontStyle: 'normal',
-            fontWeight: '800',
-            src: `url('./assets/fonts/Tajawal/Tajawal-ExtraBold.ttf') format('truetype')`,
-          },
-          {
-            fontFamily: 'Tajawal',
-            fontStyle: 'normal',
-            fontWeight: '200',
-            src: `url('./assets/fonts/Tajawal/Tajawal-ExtraLight.ttf') format('truetype')`,
-          },
-          {
-            fontFamily: 'Tajawal',
-            fontStyle: 'normal',
-            fontWeight: '900',
-            src: `url('./assets/fonts/Tajawal/Tajawal-Black.ttf') format('truetype')`,
           },
         ],
       });
@@ -266,4 +151,4 @@ export default {
     aspectRatio,
     cssVariablesPlugin,
   ],
-}; 
+};

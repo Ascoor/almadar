@@ -16,10 +16,11 @@ class InvestigationActionSeeder extends Seeder
 
         $investigations = Investigation::all();
 
-        foreach ($investigations as $investigation) {
+        // لضمان إنشاء 50 عنصر
+        foreach (range(1, 50) as $i) { // إنشاء 50 عنصر
             foreach (range(1, rand(1, 3)) as $j) { // كل تحقيق بين 1-3 إجراءات
                 InvestigationAction::create([
-                    'investigation_id' => $investigation->id,
+                    'investigation_id' => $investigations->random()->id,
                     'action_date' => Carbon::now()->subDays(rand(1, 60))->format('Y-m-d'),
                     'action_type' => $actionTypes[array_rand($actionTypes)],
                     'officer_name' => $officers[array_rand($officers)],

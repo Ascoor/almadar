@@ -1,70 +1,113 @@
-import React from "react";
-import API_CONFIG from "../../config/config";
-export default function International({ contracts = [], onEditContract, onSelectContract }) {
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-center items-center border-b-2 border-almadar-green dark:border-almadar-yellow pb-2">
-        <h1 className="text-2xl text-center font-bold text-almadar-green dark:text-almadar-yellow">
-          التعاقدات الدولية
-        </h1>
-      </div>
+import React, { useState } from "react";
+import TableComponent from "../common/TableComponent";
+import { FaPlus, FaChevronDown, FaChevronRight } from "react-icons/fa";
+import ContractModal from "./ContractModal";
+import ContractDetails from "./ContractDetails";
+import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
+import { toast } from "react-toastify";
+import { deleteContract } from "../../services/api/contracts";
 
-      <div className="overflow-auto bg-white dark:bg-gray-800 p-5 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-        {contracts.length > 0 ? (
-          <table className="min-w-full text-sm text-center border border-gray-300 text-almadar-gray-darker dark:text-gray-100 dark:border-gray-700">
-            <thead className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-almadar-yellow-light">
-              <tr>
-                <th className="border p-2 dark:border-gray-600">المتعاقد معه</th>
-                <th className="border p-2 dark:border-gray-600">رقم العقد</th>
-                <th className="border p-2 dark:border-gray-600">القيمة</th>
-                <th className="border p-2 dark:border-gray-600">التصنيف</th>
-                <th className="border p-2 dark:border-gray-600">الحالة</th>
-                <th className="border p-2 dark:border-gray-600">عرض</th>
-                <th className="border p-2 dark:border-gray-600">خيارات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {contracts.map(contract => (
-                <tr
-                  key={contract.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition"
-                  onClick={() => onSelectContract(contract)}
-                >
-                  <td className="border p-2 dark:border-gray-600">{contract.contract_parties}</td>
-                  <td className="border p-2 dark:border-gray-600">{contract.number}</td>
-                  <td className="border p-2 dark:border-gray-600">{contract.value?.toLocaleString()}</td>
-                  <td className="border p-2 dark:border-gray-600">{contract.category?.name}</td>
-                  <td className="border p-2 dark:border-gray-600">{contract.status}</td>
-                  <td>
-                    {contract.attachment ? (
-                      <a href={`${API_CONFIG.baseURL}/storage/${contract.attachment}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                        عرض
-                      </a>
-                    ) : (
-                      <span className="text-gray-400">لا يوجد</span>
-                    )}
-                  </td>
-                  <td className="border p-2 dark:border-gray-600">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation(); 
-                        onEditContract(contract);
-                      }}
-                      className="text-almadar-green-dark dark:text-almadar-green-light hover:underline font-medium"
-                    >
-                      تعديل
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-            لا توجد تعاقدات دولية متاحة.
-          </div>
+export default function International({ contracts = [], reloadContracts, categories }) {
+  const [selectedContract, setSelectedContract] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [contractToDelete, setContractToDelete] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
+
+  const handleAdd = () => {
+    setSelectedContract(null);
+    setIsModalOpen(true);
+  };
+  const handleEdit = (contract) => {
+    setSelectedContract(contract); // لا حاجة للبحث مجددًا
+    setIsModalOpen(true);
+  };
+  
+  const confirmDelete = (contract) => {
+    setContractToDelete(contract);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!contractToDelete) return;
+    try {
+      await deleteContract(contractToDelete.id);
+      toast.success("✅ تم حذف العقد بنجاح");
+      reloadContracts();
+    } catch (error) {
+      console.error("Error deleting contract:", error);
+      toast.error("❌ فشل حذف العقد، حاول مرة أخرى");
+    } finally {
+      setContractToDelete(null);
+    }
+  };
+
+  const toggleExpand = (id) => {
+    setExpandedId(prev => (prev === id ? null : id));
+  };
+
+  return (
+    <>
+      <TableComponent
+        data={contracts}
+        headers={[
+          { key: "expand", text: "" },
+          { key: "number", text: "رقم العقد" },
+          { key: "category_name", text: "التصنيف" },
+          { key: "contract_parties", text: "المتعاقد معه" },
+          { key: "value", text: "القيمة" },
+          { key: "attachment", text: "المرفق" },
+          { key: "status", text: "الحالة" },
+        ]}
+        customRenderers={{
+          expand: (row) => (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleExpand(row.id);
+              }}
+              className="text-gray-700 dark:text-white"
+              title="عرض التفاصيل"
+            >
+              {expandedId === row.id ? <FaChevronDown /> : <FaChevronRight />}
+            </button>
+          ),
+          category_name: (row) => row?.category?.name || "—",
+        }}
+        onEdit={handleEdit}
+        onDelete={confirmDelete}
+        expandedRowRenderer={(row) =>
+          expandedId === row.id && (
+            <tr>
+              <td colSpan={8}>
+                <ContractDetails selected={row} onClose={() => setExpandedId(null)} />
+              </td>
+            </tr>
+          )
+        }
+        renderAddButton={() => (
+          <button
+            onClick={handleAdd}
+            className="flex items-center gap-2 px-4 py-2 bg-almadar-blue text-white dark:bg-almadar-blue-light dark:text-black rounded-lg shadow hover:scale-105 transition"
+          >
+            <FaPlus />
+            إضافة عقد
+          </button>
         )}
-      </div>
-    </div>
+      />
+
+      <GlobalConfirmDeleteModal
+        isOpen={!!contractToDelete}
+        itemName={contractToDelete?.number}
+        onClose={() => setContractToDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
+
+      <ContractModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialData={selectedContract}
+        categories={categories}
+        reloadContracts={reloadContracts}
+      />
+    </>
   );
 }

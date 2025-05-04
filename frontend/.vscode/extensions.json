@@ -1,12 +1,9 @@
 {
-  "recommendations": [
-    // "dbaeumer.vscode-eslint", // للتحقق من صحة كتابة كود JavaScript/TypeScript
-    "esbenp.prettier-vscode", // لتنسيق الكود تلقائياً
+  "recommendations": [ 
     "formulahendry.auto-close-tag", // لإغلاق العلامات تلقائياً في HTML و JSX
     "formulahendry.auto-rename-tag", // لإعادة تسمية العلامات تلقائياً
     "dsznajder.es7-react-js-snippets", // لتقديم شفرات جاهزة لـ React
- 
-    "coenraads.bracket-pair-colorizer",
+  
     
   ]
 }

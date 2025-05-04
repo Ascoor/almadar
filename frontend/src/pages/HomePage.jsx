@@ -1,7 +1,7 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import Login from '../components/auth/Login'; 
-import { LogoPatren, WelcomeImage } from '../assets/images';
+import Login from '../components/auth/Login';
+import { WelcomeLogo, Triangle } from '../assets/images';  // تأكد من استخدام الشعار الذي قمت بتحميله
 import { useAlert } from '../context/AlertContext';
 import AuthSpinner from '../components/common/Spinners/AuthSpinner';
 
@@ -13,86 +13,132 @@ const HomePage = () => {
   const isModalOpen = showLoginForm || isLoading;
 
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden flex flex-col items-center justify-center px-4">
-      
-      {/* الخلفية المتحركة */}
-      <motion.img
-        src={WelcomeImage}
-        alt="Background"
-        className="absolute w-full h-full object-cover"
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ duration: 30, repeat: Infinity, ease: 'easeInOut' }}
+    <div className='relative w-full h-screen overflow-hidden bg-cover bg-center'>
+      {/* الخلفية المتدرجة مع تأثيرات حركية */}
+      <motion.div
+        className="absolute inset-0 z-0 bg-gradient-to-br from-blue-900 via-black to-blue-700 opacity-80"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.7 }}
+        transition={{ duration: 4, repeat: Infinity, repeatType: "reverse" }}
       />
-      <div className="absolute inset-0 bg-black bg-opacity-40 z-0" />
+      
+      {/* دوائر وخطوط متحركة */}
+      <motion.div
+        className="absolute w-[300px] z-10 h-[300px] bg-green-800 rounded-full opacity-30 top-10 left-1/4"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1.5 }}
+        transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
+      />
+      
+      <motion.div
+        className="absolute w-[200px] z-10 h-[200px] bg-green-800 rounded-full opacity-40 top-1/3 right-1/4"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1.2 }}
+        transition={{ duration: 4, repeat: Infinity, repeatType: "reverse" }}
+      />
+      
+      {/* خطوط ديناميكية ملتوية (قنوات اتصال) */}
+      <motion.div
+        className="absolute top-2/4 left-3/4 z-10 w-[4px] h-[1000px] bg-green-700 opacity-30"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
+      />
+      
+      <motion.div
+        className="absolute top-1/4 right-3/4 w-[4px] h-[600px] z-10 bg-green-700 opacity-30"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+      />
+
+      {/* أشكال مثلثات متحركة */}
+      <motion.div
+        className="absolute top-1/3 left-1/4 w-[6px] h-[900px] bg-green-600 z-30 opacity-50"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1.2 }}
+        transition={{ duration: 4, repeat: Infinity, repeatType: "reverse" }}
+      />
 
       {/* محتوى الصفحة */}
-      {!isModalOpen && (
-        <div className="z-10 flex flex-col items-center justify-center gap-8">
-          
-          {/* شعار Logo وسط Fade-In */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1 }}
-            className="w-[clamp(140px,30vw,280px)] max-w-full drop-shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
-          >
-            <img
-              src={LogoPatren}
+      <div className="relative w-full h-screen bg-gradient-to-br from-white via-white to-gray-100">
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-gray-100 opacity-50 z-0 animate-pulse-slow" />
+
+        {/* تأثيرات الخطوط الهندسية المتحركة */}
+        <div className="absolute inset-0 z-10">
+          <div className="relative h-full w-full">
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-almadar-mint via-transparent to-almadar-blue opacity-50 animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* محتوى الصفحة */}
+        {!isModalOpen && (
+          <div className="z-20 flex w-86 flex-col items-center justify-center gap-4 h-full">
+            {/* الشعار مع التأثير الديناميكي */}
+            <motion.img
+              src={WelcomeLogo}
               alt="Logo"
-              className="w-full h-auto object-contain"
+              className="w-[clamp(140px,30vw,280px)] -m-6 -auto max-w-full drop-shadow-xl"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 }}
             />
-          </motion.div>
 
-          {/* حاوية العنوان والأزرار مع خلفية خضراء */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 1 }}
-            className=" rounded-2xl  flex flex-col items-center gap-4 shadow-lg  w-full max-w-md"
-          >
-   <h2 className="text-white text-xl sm:text-2xl font-bold text-center drop-shadow-[0_0_4px_rgba(0,255,0,1)]">
-  تطبيق إدارة الشؤون القانونية
-</h2>
-
-
-            {/* الأزرار */}
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.5, duration: 1 }}
-              onClick={() => setShowLoginForm(true)}
-              className="px-8 py-2.5 text-base sm:text-lg font-semibold bg-white text-green-600 rounded-2xl hover:scale-105 transition-all shadow-md"
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1, duration: 1 }}
+              className="rounded-2xl flex flex-col items-center gap-6 w-full max-w-md bg-white bg-opacity-80 p-4"
             >
-              تسجيل الدخول
-            </motion.button>
-          </motion.div>
+              <div className="relative flex flex-col items-center justify-center h-full text-center">
+                {/* تطبيق إدارة الشؤون القانونية مع تأثيرات متوهجة */}
+                <motion.h1
+                  className="text-4xl font-['tharwat'] font-bold leading-tight drop-shadow-lg animate__animated animate__fadeIn text-almadar-sidebar-danger"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 2 }}
+                >
+                  تطبيق إدارة الشؤون القانونية
+                </motion.h1>
 
-        </div>
-      )}
+                {/* زر تسجيل الدخول */}
+                <motion.button
+                  className="mt-8 px-6 py-3 z-10 bg-green-600 text-white text-lg font-bold rounded-full transition-all hover:bg-green-700"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowLoginForm(true)}
+                >
+                  <span className="z-10 relative">🚀 تسجيل الدخول</span>
+                </motion.button>
+              </div>
+            </motion.div>
+          </div>
+        )}
 
-      {/* تحميل */}
-      {isLoading && <AuthSpinner />}
+        {/* تحميل */}
+        {isLoading && <AuthSpinner />}
 
-      {/* مودال تسجيل الدخول */}
-      {showLoginForm && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <Login
-            onAuthStart={() => setIsLoading(true)}
-            handleFormClose={() => setShowLoginForm(false)}
-            onAuthComplete={(success, message) => {
-              setTimeout(() => {
-                setIsLoading(false);
-                if (success) {
-                  setShowLoginForm(false);
-                  triggerAlert('success', message);
-                } else {
-                  triggerAlert('error', message);
-                }
-              }, 2000);
-            }}
-          />
-        </div>
-      )}
+        {/* مودال تسجيل الدخول */}
+        {showLoginForm && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <Login
+              onAuthStart={() => setIsLoading(true)}
+              handleFormClose={() => setShowLoginForm(false)}
+              onAuthComplete={(success, message) => {
+                setTimeout(() => {
+                  setIsLoading(false);
+                  if (success) {
+                    setShowLoginForm(false);
+                    triggerAlert('success', message);
+                  } else {
+                    triggerAlert('error', message);
+                  }
+                }, 2000);
+              }}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

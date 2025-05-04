@@ -8,7 +8,7 @@ const LegCaesLegalAds = ({ selectedCase, activeSubTab }) => {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[600px] table-auto bg-white dark:bg-gradient-blue-dark rounded-lg shadow-lg overflow-hidden">
                 <thead>
-                  <tr className="bg-almadar-gray dark:bg-almadar-green text-white text-sm sm:text-base">
+                  <tr className="bg-almadar-gray dark:bg-almadar-blue text-white text-sm sm:text-base">
                     <th className="px-4 py-2">الإجراء</th>
                     <th className="px-4 py-2">المحامي</th>
                     <th className="px-4 py-2">تاريخ الانتهاء</th>

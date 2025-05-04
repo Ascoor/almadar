@@ -30,7 +30,7 @@ export const AlertProvider = ({ children }) => {
     <AlertContext.Provider value={{ triggerAlert }}>
       {children}
       {/* عرض جميع التنبيهات */}
-      <div className="fixed top-5 right-5 z-50 space-y-2">
+      <div className="fixed top-16 left-0 right-0 z-50 space-y-2 p-4">
         {alerts.map((alert) => (
           <GlobalAlert
             key={alert.id}

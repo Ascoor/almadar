@@ -39,7 +39,7 @@ const GlobalModal = ({ isOpen, onClose, title, children, size = "lg" }) => {
             >
               {/* Modal Panel */}
               <Dialog.Panel
-                className={`w-full ${sizeClasses[size]} transform overflow-hidden rounded-2xl bg-white dark:bgalmadar-gray-dark shadow-xl transition-all p-6 md:p-8`}
+                className={`w-full ${sizeClasses[size]} transform overflow-hidden rounded-2xl bg-white dark:bgalmadar-mint-dark shadow-xl transition-all p-6 md:p-8`}
               >
                 {/* Header with Close Button */}
                 <div className="flex justify-between items-center border-b pb-4 mb-6">
@@ -55,7 +55,7 @@ const GlobalModal = ({ isOpen, onClose, title, children, size = "lg" }) => {
                 </div>
 
                 {/* Modal Content */}
-                <div className="text-gray-700 dark:textalmadar-gray-light">{children}</div>
+                <div className="text-gray-700 dark:textalmadar-mint-light">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

@@ -23,7 +23,7 @@ const NotificationPanel = ({ notifications = [], removeNotification }) => {
         <animated.div
           style={style}
           key={item.id}
-          className="flex justify-between items-center bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 border-l-4 border-almadar-green dark:border-almadar-orange"
+          className="flex justify-between items-center bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 border-l-4 border-almadar-blue dark:border-almadar-orange"
         >
           <span className="text-gray-800 dark:text-gray-200">
             {item.message}

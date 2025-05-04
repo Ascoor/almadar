@@ -42,7 +42,7 @@ export default function DropdownNotifications() {
           ${
             dropdownOpen
               ? 'bg-blue-600 text-white'
-              : 'bg-almadar-green dark:bg-almadar-gray text-white dark:text-almadar-yellow hover:bg-almadar-orange dark:hover:bg-almadar-gray-light hover:text-white'
+              : 'bg-almadar-blue dark:bg-almadar-mintray text-white dark:text-almadar-yellow hover:bg-almadar-orange dark:hover:bg-almadar-mint-light hover:text-white'
           }`}
       >
         {dropdownOpen ? (
@@ -51,7 +51,7 @@ export default function DropdownNotifications() {
           <IoMdNotificationsOutline className="w-6 h-6" />
         )}
         {/* نقطة التنبيه */}
-        <div className="absolute top-2 right-2 w-3 h-3 bg-red-400 border-2 border-white dark:borderalmadar-gray-dark rounded-full animate-ping"></div>
+        <div className="absolute top-2 right-2 w-3 h-3 bg-red-400 border-2 border-white dark:borderalmadar-mint-dark rounded-full animate-ping"></div>
       </button>
 
       {/* قائمة الإشعارات */}
@@ -60,11 +60,11 @@ export default function DropdownNotifications() {
           ref={dropdown}
           className="absolute top-14 left-1/2 sm:left-auto sm:right-0 transform -translate-x-1/2 sm:translate-x-0
                     w-[90vw] sm:w-64 md:w-72 lg:w-80 xl:w-96
-                    bg-almadar-yellow-light dark:bg-almadar-green-darker border border-almadar-yellow dark:border-gray-700
+                    bg-almadar-yellow-light dark:bg-almadar-blue-darker border border-almadar-yellow dark:border-gray-700
                     py-2 rounded-2xl shadow-2xl mt-2 transition-all duration-300 ease-out 
                     origin-top-right scale-100 opacity-100"
         >
-          <div className="text-sm font-semibold text-almadar-green dark:text-almadar-yellow-darker uppercase px-5 py-2">
+          <div className="text-sm font-semibold text-almadar-blue dark:text-almadar-yellow-darker uppercase px-5 py-2">
             الإشعارات
           </div>
           <ul>
@@ -99,11 +99,11 @@ export default function DropdownNotifications() {
                 to="#0"
                 onClick={() => setDropdownOpen(false)}
               >
-                <span className="bg-green-100 dark:bg-green-600 text-green-600 dark:text-almadar-green p-2 rounded-full">
+                <span className="bg-green-100 dark:bg-green-600 text-green-600 dark:text-almadar-blue p-2 rounded-full">
                   🚀
                 </span>
                 <div>
-                  <p className="text-gray-800 dark:text-almadar-green font-medium">
+                  <p className="text-gray-800 dark:text-almadar-blue font-medium">
                     إطلاق ميزة جديدة
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">

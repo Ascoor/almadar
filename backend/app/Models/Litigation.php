@@ -2,14 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Litigation extends Model
 {
-    use HasFactory;
 
     protected $fillable = [
-        'case_number', 'opponent', 'direction', 'stage', 'status',
+        'case_number',
+        'court',
+        'scope',
+        'opponent',
+        'subject',
+        'filing_date',
+        'status',            // open | in_progress | closed
+        'notes',
     ];
+
+    public function actions()
+    {
+        return $this->hasMany(LitigationAction::class);
+    }
 }

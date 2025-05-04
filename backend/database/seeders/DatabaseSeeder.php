@@ -30,6 +30,9 @@ class DatabaseSeeder extends Seeder
             
     InvestigationSeeder::class,
     InvestigationActionSeeder::class,
+    LegalAdviceSeeder ::class,
+    LitigationSeeder::class,
+    LitigationActionsSeeder::class
         ]);
     }
 }
