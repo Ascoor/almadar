@@ -36,12 +36,11 @@ export default function InvestigationsPage() {
     setEditingItem(null);
     setIsModalOpen(true);
   };
-
-  const handleEdit = (id) => {
-    const item = investigations.find((inv) => inv.id === id);
-    setEditingItem(item);
+  const handleEdit = (row) => {
+    setEditingItem(row); // فتح المودال على التحقيق المحدد
     setIsModalOpen(true);
   };
+  
 
   const handleSave = async (formData) => {
     try {
@@ -108,7 +107,7 @@ export default function InvestigationsPage() {
                 <InvestigationActionsTable
                   investigationId={row.id}
                   actions={row.actions || []}
-                  onActionAdded={loadInvestigations}
+                  onReload={loadInvestigations}
                 />
               </td>
             </tr>
