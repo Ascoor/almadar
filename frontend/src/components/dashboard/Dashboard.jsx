@@ -16,7 +16,7 @@ const DashboardCard03 = lazy(() => import('./dashboard/DashboardCard03'));
 const DashboardCard04 = lazy(() => import('./dashboard/DashboardCard04'));
 const DashboardCard05 = lazy(() => import('./dashboard/DashboardCard05'));
 const DashboardCard06 = lazy(() => import('./dashboard/DashboardCard06'));
-const CalendarPage = lazy(() => import('../calendar/CalendarPage'));
+
 
 const Home = () => { 
   const [counts, setCounts] = useState({
@@ -90,11 +90,10 @@ const Home = () => {
             <DashboardCard06 isDarkMode={isDarkMode} />
           </div>
           {/* تقويم */}
-          <Suspense fallback={<HomeSpinner />}>
-            <div className="mt-10">
-              <CalendarPage />
-            </div>
-          </Suspense>
+ 
+ 
+     
+     
         </>
  
     </div>

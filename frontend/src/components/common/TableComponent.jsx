@@ -46,7 +46,7 @@ const AnimatedRow = ({
           </td>
         )}
         {headers.map((header) => (
-          <td key={`${rowIndex}-${header.key}`} className="p-2 text-center">
+          <td key={`${rowIndex}-${header.key}`} className="p-2 text-center text-gray-800 dark:text-white">
             {header.key === 'attachment' ? (
               row.attachment ? (
                 <a
@@ -146,7 +146,7 @@ const TableComponent = ({
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm text-center">
-          <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white">
+          <thead className="bg-almadar-sidebar/50 dark:bg-almadar-sidebar-dark/80 text-gray-700 dark:text-white">
             <tr>
               {onView && <th className="p-2">عرض</th>}
               {headers.map((header) => (
