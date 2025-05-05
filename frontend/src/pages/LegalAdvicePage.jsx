@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { FaPlus } from "react-icons/fa";
+import React, { useState, useEffect } from "react"; 
 import LegalAdviceModal from "../components/LegalAdvices/LegalAdviceModal";
 import { getLegalAdvices, deleteLegalAdvice } from "../services/api/legalAdvices"; // إضافة دالة الحذف
 import { ToastContainer, toast } from 'react-toastify';
@@ -7,6 +6,8 @@ import SectionHeader from "../components/common/SectionHeader";
 import { LegalAdviceIcon } from "../assets/icons";
 import TableComponent from "../components/common/TableComponent";
 import GlobalConfirmDeleteModal from "../components/common/GlobalConfirmDeleteModal"; // استيراد مكون التاكيد
+import AddButton from "../components/common/AddButton";
+import LegalAdviceDetails from "../components/LegalAdvices/LegalAdviceDetails";
 
 export default function LegalAdvicePage() {
   const [advices, setAdvices] = useState([]);
@@ -14,7 +15,7 @@ export default function LegalAdvicePage() {
   const [editingAdvice, setEditingAdvice] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // حالة لفتح نافذة التاكيد
   const [adviceToDelete, setAdviceToDelete] = useState(null); // العنصر الذي سيتم حذفه
-
+  const [selectedAdvice, setSelectedAdvice] = useState(null)
   // تحميل المشورات القانونية
   const loadLegalAdvices = async () => {
     try {
@@ -63,19 +64,14 @@ export default function LegalAdvicePage() {
       {/* Toast Notifications */}
       <ToastContainer />
 
-      {/* Action Buttons */}
-      <div className="flex justify-between gap-4 mt-6">
-        <button
-          onClick={handleAdd}
-          className="flex items-center gap-2 px-4 py-2 rounded-md bg-almadar-blue-light text-white dark:bg-almadar-yellow dark:text-black hover:scale-105 transition"
-        >
-          <FaPlus />
-          <span className="text-sm font-semibold">إضافة مشورة</span>
-        </button>
-      </div>
+ 
 
       {/* Legal Advices Table */}
       <TableComponent
+
+              renderAddButton={() => (
+                <AddButton label="مشورة أو رأى" onClick={handleAdd} />
+              )}
         data={advices}
         headers={[
           { key: 'type', text: 'نوع المشورة' },
@@ -103,6 +99,21 @@ export default function LegalAdvicePage() {
           setAdviceToDelete(advice); // حفظ العنصر الذي سيتم حذفه
           setIsDeleteModalOpen(true); // فتح نافذة التاكيد
         }}
+        onRowClick={(row) =>
+          setSelectedAdvice((prev) => (prev?.id === row.id ? null : row)) // Toggle
+        }
+        expandedRowRenderer={(row) =>
+          selectedAdvice?.id === row.id && (
+            <tr>
+              <td colSpan={7} className="bg-muted/40 px-4 pb-6">
+                <LegalAdviceDetails
+                  selected={selectedAdvice}
+                  onClose={() => setSelectedAdvice(null)}
+                />
+              </td>
+            </tr>
+          )
+        }
       />
 
       {/* Modal for Adding/Editing Legal Advice */}

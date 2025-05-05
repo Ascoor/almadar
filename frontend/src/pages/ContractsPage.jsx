@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Local from '../components/Contracts/Local';
 import International from '../components/Contracts/International';
-import { getContracts, getContractCategories } from '../services/api/contracts'; 
-import { ToastContainer, toast } from 'react-toastify';
+import { getContracts, getContractCategories } from '../services/api/contracts';
+import { toast } from 'react-toastify';
 import SectionHeader from '../components/common/SectionHeader';
 import { ContractSection } from '../assets/icons';
 
@@ -20,8 +20,7 @@ export default function Contracts() {
   const loadContracts = async () => {
     try {
       const res = await getContracts();
-      const contractsData = res?.data?.data || [];
-      setContracts(contractsData);  // تحديث البيانات عند تحميل العقود
+      setContracts(res?.data?.data || []);
     } catch (error) {
       console.error('Error loading contracts:', error);
       toast.error('فشل تحميل العقود');
@@ -41,36 +40,37 @@ export default function Contracts() {
   const internationalContracts = contracts.filter(c => c.scope === 'international');
 
   return (
-    <div className="w-full p-4 space-y-6 shadow-lg bg-yellow-100/50 dark:bg-almadar-blue-dark/40 rounded-lg">
+    <div className="p-4 md:p-6 lg:p-8 space-y-6">
       <SectionHeader icon={ContractSection} listName="وحدة التعاقدات" />
 
-      {/* تبويبات */}
-      <div className="flex justify-center gap-4">
+      {/* التبويبات */}
+      <div className="flex flex-wrap justify-center gap-4">
         <button
           onClick={() => setActiveTab('local')}
-          className={`px-6 py-2 rounded-full font-semibold ${
-            activeTab === 'local'
-              ? 'bg-almadar-blue text-white'
-              : 'bg-white text-almadar-blue border border-almadar-blue'
-          }`}
+          className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 border
+            ${
+              activeTab === 'local'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-background text-primary border-primary hover:bg-muted'
+            }`}
         >
           العقود المحلية
         </button>
         <button
           onClick={() => setActiveTab('international')}
-          className={`px-6 py-2 rounded-full font-semibold ${
-            activeTab === 'international'
-              ? 'bg-almadar-blue text-white'
-              : 'bg-white text-almadar-blue border border-almadar-blue'
-          }`}
+          className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 border
+            ${
+              activeTab === 'international'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-background text-primary border-primary hover:bg-muted'
+            }`}
         >
           العقود الدولية
         </button>
       </div>
 
       {/* الجداول */}
-      <div className="mt-8 min-h-[300px]">
- 
+      <div className="mt-6 min-h-[300px]">
         <AnimatePresence mode="wait">
           {activeTab === 'local' ? (
             <motion.div
@@ -79,7 +79,7 @@ export default function Contracts() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-lg"
+              className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
             >
               <Local reloadContracts={loadContracts} categories={categories} contracts={localContracts} />
             </motion.div>
@@ -90,7 +90,7 @@ export default function Contracts() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-lg"
+              className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
             >
               <International reloadContracts={loadContracts} categories={categories} contracts={internationalContracts} />
             </motion.div>

@@ -29,8 +29,7 @@ const AuthRoutes = () => {
   }, [location]);
 
   return (
-    <div className="max-w-screen-lg mx-auto p-4 min-h-screen relative overflow-hidden">
-      {}
+<>
       {loading && <GlobalSpinner />}
 
       <Suspense fallback={<GlobalSpinner />}>
@@ -52,7 +51,7 @@ const AuthRoutes = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
-    </div>
+      </>
   );
 };
 

@@ -4,6 +4,7 @@ import { FaFolder, FaFolderOpen, FaChevronDown, FaChevronLeft, FaFilePdf } from 
 import { ToastContainer, toast } from "react-toastify";
 import SectionHeader from "../components/common/SectionHeader";
 import { ArchiveSection } from "../assets/icons";
+import API_CONFIG from "../config/config";
 
 export default function ArchivePage() {
   const [archives, setArchives] = useState({});
@@ -89,7 +90,7 @@ export default function ArchivePage() {
                     <FaFilePdf className="text-red-500 text-2xl" />
                     <div className="flex-1">
                       <a
-                        href={`${import.meta.env.VITE_API_URL}/storage/${file.file_path}`}
+                        href={`${API_CONFIG.baseURL}/storage/${file.file_path}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline block"

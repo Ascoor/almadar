@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { MdEdit, MdVisibility } from 'react-icons/md';
 import { FaTrashAlt, FaSortUp, FaSortDown } from 'react-icons/fa';
-import { useSpring, animated } from '@react-spring/web';
+import { motion } from 'framer-motion';
 import API_CONFIG from '../../config/config';
 
 const AnimatedRow = ({
@@ -14,71 +14,53 @@ const AnimatedRow = ({
   customRenderers,
   onRowClick,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const springProps = useSpring({
-    scale: isHovered ? 1.01 : 1,
-    config: { duration: 200 },
-  });
-
-  const handleClick = () => {
-    if (onRowClick) onRowClick(row);
-  };
-
   return (
-    <>
-      <animated.tr
-        style={{
-          ...springProps,
-          transform: springProps.scale.to((s) => `scale(${s})`),
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={handleClick}
-        className={`cursor-pointer border-b dark:border-gray-700 transition-all duration-200 ${
-          isHovered ? 'bg-gray-100 dark:bg-gray-700' : ''
-        }`}
-      >
-        {onView && (
-          <td className="p-2 text-center">
-            <button onClick={() => onView(row)}>
-              <MdVisibility />
-            </button>
-          </td>
-        )}
-        {headers.map((header) => (
-          <td key={`${rowIndex}-${header.key}`} className="p-2 text-center">
-            {header.key === 'attachment' ? (
-              row.attachment ? (
-                <a
-                  href={`${API_CONFIG.baseURL}/storage/${row.attachment}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 dark:text-blue-400 underline"
-                >
-                  عرض
-                </a>
-              ) : (
-                <span className="text-gray-400">لا يوجد</span>
-              )
-            ) : customRenderers?.[header.key] ? (
-              customRenderers[header.key](row)
+    <motion.tr
+      whileHover={{ scale: 1.01 }}
+      transition={{ duration: 0.2 }}
+      onClick={() => onRowClick?.(row)}
+      className="cursor-pointer border-b border-muted transition-all hover:bg-muted dark:hover:bg-muted/20"
+    >
+      {onView && (
+        <td className="p-2 text-center">
+          <button onClick={() => onView(row)} className="text-primary">
+            <MdVisibility />
+          </button>
+        </td>
+      )}
+      {headers.map((header) => (
+        <td key={`${rowIndex}-${header.key}`} className="p-2 text-center text-sm text-foreground">
+          {header.key === 'attachment' ? (
+            row.attachment ? (
+              <a
+                href={`${API_CONFIG.baseURL}/storage/${row.attachment}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 underline"
+              >
+                عرض
+              </a>
             ) : (
-              row[header.key] ?? '—'
-            )}
-          </td>
-        ))}
-        <td className="p-2 text-center">
-          <button onClick={() => onEdit(row)} className="text-violet-600">
-            <MdEdit />
-          </button>
+              <span className="text-muted-foreground">لا يوجد</span>
+            )
+          ) : customRenderers?.[header.key] ? (
+            customRenderers[header.key](row)
+          ) : (
+            row[header.key] ?? '—'
+          )}
         </td>
-        <td className="p-2 text-center">
-          <button onClick={() => onDelete(row)} className="text-red-600">
-            <FaTrashAlt />
-          </button>
-        </td>
-      </animated.tr>
-    </>
+      ))}
+      <td className="p-2 text-center">
+        <button onClick={() => onEdit(row)} className="text-purple-600 hover:text-purple-700">
+          <MdEdit />
+        </button>
+      </td>
+      <td className="p-2 text-center">
+        <button onClick={() => onDelete(row)} className="text-red-600 hover:text-red-700">
+          <FaTrashAlt />
+        </button>
+      </td>
+    </motion.tr>
   );
 };
 
@@ -133,12 +115,12 @@ const TableComponent = ({
   };
 
   return (
-    <section className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-md">
-      <div className="flex flex-col md:flex-row justify-between mb-4">
+    <section className="bg-card text-card-foreground p-6 rounded-xl shadow-lg border border-border">
+      <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
         {renderAddButton && <div>{renderAddButton()}</div>}
         <input
           type="text"
-          className="mt-2 md:mt-0 border rounded px-3 py-2 dark:bg-gray-800 dark:text-white"
+          className="border border-input rounded px-3 py-2 bg-background text-foreground placeholder-muted-foreground w-full md:w-64"
           placeholder="ابحث..."
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -146,13 +128,13 @@ const TableComponent = ({
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm text-center">
-          <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white">
+          <thead className="bg-muted text-muted-foreground">
             <tr>
               {onView && <th className="p-2">عرض</th>}
               {headers.map((header) => (
                 <th
                   key={header.key}
-                  className="p-2 cursor-pointer"
+                  className="p-2 cursor-pointer select-none"
                   onClick={() => handleSort(header.key)}
                 >
                   {header.text}{' '}
@@ -188,4 +170,3 @@ const TableComponent = ({
 };
 
 export default TableComponent;
-  

@@ -8,7 +8,7 @@ export { default as TeamWorkImage } from '../images/team-work.png';
 export { default as LegalSpiner } from '../images/legal-spiner.png';
 export { default as SplashImage } from '../images/splash-image.png';
 
-export { default as LogoBlue } from '../images/logo-blue.png';
+export { default as LogoBlue } from '../images/logo-blue.png'; 
 export { default as WelcomeImage } from '../images/welcome-page.webp';
 export { default as WelcomeBackground } from '../images/welcome.webp';
 export { default as WelcomePatren } from '../images/logo512.png';

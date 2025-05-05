@@ -6,6 +6,7 @@ import ContractDetails from "./ContractDetails";
 import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
 import { toast } from "react-toastify";
 import { deleteContract } from "../../services/api/contracts";
+import AddButton from "../common/AddButton";
 
 export default function International({ contracts = [], reloadContracts, categories }) {
   const [selectedContract, setSelectedContract] = useState(null);
@@ -83,15 +84,9 @@ export default function International({ contracts = [], reloadContracts, categor
             </tr>
           )
         }
-        renderAddButton={() => (
-          <button
-            onClick={handleAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-almadar-blue text-white dark:bg-almadar-blue-light dark:text-black rounded-lg shadow hover:scale-105 transition"
-          >
-            <FaPlus />
-            إضافة عقد
-          </button>
-        )}
+              renderAddButton={() => (
+                <AddButton label="عقد" onClick={handleAdd} />
+              )}
       />
 
       <GlobalConfirmDeleteModal

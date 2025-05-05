@@ -11,6 +11,7 @@ import {
 import { FaChevronDown, FaChevronRight, FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { InvestigationSection } from "../assets/icons";
+import AddButton from "../components/common/AddButton";
 
 export default function InvestigationsPage() {
   const [investigations, setInvestigations] = useState([]);
@@ -113,15 +114,9 @@ export default function InvestigationsPage() {
             </tr>
           ) : null
         }
-        renderAddButton={() => (
-          <button
-            onClick={handleAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-almadar-blue text-white dark:bg-almadar-sky rounded-lg shadow hover:scale-105 transition"
-          >
-            <FaPlus />
-            إضافة تحقيق
-          </button>
-        )}
+              renderAddButton={() => (
+                <AddButton label="تحقيق" onClick={handleAdd} />
+              )}
         title="وحدة التحقيقات القانونية"
       />
 

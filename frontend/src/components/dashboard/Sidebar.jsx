@@ -1,138 +1,116 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { useSidebar } from '../../utils/SidebarContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import { LogoArt, LogoPatren } from '../../assets/images';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
-  FaHome, FaUsers, FaBars, FaHandshake, FaArchive,
-  FaBalanceScale, FaFeatherAlt, FaGavel, FaFileContract,
-  FaChevronDown, FaChevronRight
-} from 'react-icons/fa';
-import { IoMdClose } from 'react-icons/io';
+  Home, FileText, Users, FolderArchive, Scale,
+  Feather, Gavel, ChevronDown
+} from 'lucide-react';
+import { LogoArt, LogoPatren, WelcomeLogo } from '../../assets/images';
 
-const Sidebar = () => {
-  const { isSidebarOpen, setIsSidebarOpen, isMobile } = useSidebar();
-  const [openMenus, setOpenMenus] = useState({});
+const Sidebar = ({ isExpanded }) => {
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const [activeSection, setActiveSection] = useState(null);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const toggleMenu = (index) =>
-    setOpenMenus((prev) => ({ ...prev, [index]: !prev[index] }));
-
-  const sidebarVariants = {
-    open: { width: isMobile ? '100%' : '18rem' },
-    closed: { width: isMobile ? '0' : '4rem' },
-  };
-
-  const menuItems = [
-    { label: 'الرئيسية', to: '/', icon: <FaHome /> },
-    { label: 'قسم التعاقدات', to: '/contracts', icon: <FaFileContract /> },
+  const navItems = [
+    { id: 'home', label: 'الرئيسية', to: '/', icon: <Home size={18} /> },
+    { id: 'contracts', label: 'قسم التعاقدات', to: '/contracts', icon: <FileText size={18} /> },
     {
+      id: 'fatwa',
       label: 'قسم الرأي والفتوى',
-      icon: <FaBalanceScale />,
+      icon: <Scale size={18} />,
       children: [
-        { to: '/legal/investigations', label: 'وحدة التحقيقات', icon: <FaFeatherAlt /> },
-        { to: '/legal/legal-advices', label: 'المشورة القانونية', icon: <FaBalanceScale /> },
-        { to: '/legal/litigations', label: 'وحدة التقاضي', icon: <FaGavel /> },
+        { id: 'investigations', label: 'وحدة التحقيقات', to: '/legal/investigations', icon: <Feather size={16} /> },
+        { id: 'advices', label: 'المشورة القانونية', to: '/legal/legal-advices', icon: <Scale size={16} /> },
+        { id: 'litigation', label: 'وحدة التقاضي', to: '/legal/litigations', icon: <Gavel size={16} /> },
       ],
     },
-    { label: 'المستخدمين', to: '/users', icon: <FaUsers /> },
-    { label: 'الأرشيف', to: '/archive', icon: <FaArchive /> },
+    { id: 'users', label: 'المستخدمين', to: '/users', icon: <Users size={18} /> },
+    { id: 'archive', label: 'الأرشيف', to: '/archive', icon: <FolderArchive size={18} /> },
   ];
 
-  const getLinkClasses = (isActive) =>
-    `flex items-center w-full p-3 rounded-lg transition-all duration-300 ${
-      isActive
-        ? 'bg-almadar-sidebar-accent text-almadar-sidebar-dark font-bold'
-        : 'text-white  hover:bg-almadar-sidebar-dark hover:text-almadar-sand dark:hover:bg-almadar-sidebar-dark  dark:hover:text-almadar-sand dark:text-almadar-mint-light'
-    }`;
+  const toggleSection = (id) => {
+    setActiveSection((prev) => (prev === id ? null : id));
+  };
 
   return (
-    <motion.div
-      variants={sidebarVariants}
-      initial="closed"
-      animate={isSidebarOpen ? 'open' : 'closed'}
-      className={`fixed top-0 right-0 h-full z-30 flex flex-col bg-gradient-to-b from-almadar-sidebar via-almadar-sidebar to-almadar-sidebar-light
-      dark:from-almadar-blue-dark dark:via-almadar-blue-dark  dark:to-almadar-sidebar-dark ransition-all duration-500`}
+    <aside
+      dir="rtl"
+      className={`  border border-blue-200
+ 
+      dark:text-foreground dark:ring-2 dark:ring-mint-500 
+      dark:shadow-[0_0_10px_#66ffcc40] bg-card text-card-foreground border-r border-border h-screen fixed top-0 right-0 pt-16 transition-all duration-300  
+        ${isExpanded ? 'sidebar-expanded w-72' : 'sidebar-collapsed w-16'}`}
     >
-      {/* Logo */}
-      <div className="flex items-center justify-center h-20">
-        <img
-          src={isSidebarOpen ? LogoPatren : LogoArt}
-          alt="Logo"
-          className={isSidebarOpen ? 'w-21 h-16' : 'w-16 h-16'}
-        />
-      </div>
+<div className="flex justify-center items-center h-20">
+  <img
+    src={WelcomeLogo}
+    alt="Logo"
+    className={`transition-all duration-300 object-contain
+      ${isExpanded ? 'w-32 h-19 mt-24' : 'w-16 h-16 mt-12'}`}
+  />
+</div>
 
-      {/* Menu Items */}
-      <ul className="flex-1 mt-4 space-y-1 px-2 overflow-y-auto">
-        {menuItems.map((item, index) => (
-          <li key={index}>
+      {/* القائمة */}
+      <div className={`flex flex-col   p-4 space-y-2  ${isExpanded ? ' mt-16' : 'mt-4'}`}>
+        {navItems.map((item) => (
+          <div key={item.id} className="flex flex-col">
             {item.children ? (
               <>
                 <button
-                  onClick={() => toggleMenu(index)}
-                  className="w-full flex items-center p-3 text-white hover:bg-almadar-sidebar-dark hover:text-almadar-sand rounded-lg transition group"
+                  onClick={() => isExpanded && toggleSection(item.id)}
+                  className={`flex items-center gap-3 p-2 rounded-md hover:bg-navy-light transition-colors ${
+                    currentPath.includes(item.to) || activeSection === item.id ? 'bg-navy-light' : ''
+                  }`}
                 >
-                  <span className="text-xl">{item.icon}</span>
-                  {isSidebarOpen && (
+                  {item.icon}
+                  {isExpanded && (
                     <>
-                      <span className="flex-1 text-center text-sm font-medium">
-                        {item.label}
-                      </span>
-                      {openMenus[index] ? <FaChevronDown /> : <FaChevronRight />}
+                      <span className="flex-1 text-right">{item.label}</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === item.id ? 'rotate-180' : ''}`} />
                     </>
                   )}
                 </button>
-                <AnimatePresence>
-                  {openMenus[index] && (
-                    <motion.ul
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="ml-6"
-                    >
-                      {item.children.map((child, i) => (
-                        <li key={i}>
-                          <NavLink
-                            to={child.to}
-                            className={({ isActive }) => getLinkClasses(isActive)}
-                            onClick={() => setIsSidebarOpen(false)}
-                          >
-                            <span className="text-lg">{child.icon}</span>
-                            {isSidebarOpen && (
-                              <span className="flex-1 text-center text-sm">{child.label}</span>
-                            )}
-                          </NavLink>
-                        </li>
-                      ))}
-                    </motion.ul>
-                  )}
-                </AnimatePresence>
+
+                {isExpanded && activeSection === item.id && (
+                  <div className="mt-1 mr-4 border-r border-gray-600 pr-4 space-y-1">
+                    {item.children.map((child) => (
+                      <NavLink
+                        key={child.id}
+                        to={child.to}
+                        className={({ isActive }) =>
+                          `block p-2 text-sm rounded transition-colors ${
+                            isActive
+                              ? 'bg-navy-light text-white'
+                              : 'text-gray-300 hover:text-white hover:bg-navy-light'
+                          }`
+                        }
+                      >
+                        <div className="flex items-center gap-2">
+                          {child.icon}
+                          <span>{child.label}</span>
+                        </div>
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
               </>
             ) : (
               <NavLink
                 to={item.to}
-                onClick={() => setIsSidebarOpen(false)}
-                className={({ isActive }) => getLinkClasses(isActive)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 p-2 rounded-md hover:bg-navy-light transition-colors ${
+                    isActive ? 'bg-navy-light' : ''
+                  }`
+                }
               >
-                <span className="text-xl">{item.icon}</span>
-                {isSidebarOpen && (
-                  <span className="flex-1 text-center text-sm">{item.label}</span>
-                )}
+                {item.icon}
+                {isExpanded && <span className="flex-1 text-right">{item.label}</span>}
               </NavLink>
             )}
-          </li>
+          </div>
         ))}
-      </ul>
-
-      {/* Toggle Button */}
-      <button
-        onClick={toggleSidebar}
-        className="absolute bottom-6 right-4 p-2 hidden md:block bg-almadar-sidebar-dark text-white rounded-full hover:bg-almadar-sidebar transition transform hover:scale-105"
-      >
-        {isSidebarOpen ? <IoMdClose className="text-2xl" /> : <FaBars className="text-2xl" />}
-      </button>
-    </motion.div>
+      </div>
+    </aside>
   );
 };
 

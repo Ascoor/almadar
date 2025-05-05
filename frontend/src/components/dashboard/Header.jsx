@@ -2,46 +2,34 @@ import React from 'react';
 import Notifications from '../common/DropdownNotifications';
 import UserMenu from '../common/DropdownProfile';
 import ThemeToggle from '../common/ThemeToggle';
-import HeaderToggle from '../common/HeaderToggle';
-import { useSidebar } from '../../utils/SidebarContext';
-import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import { Bell, Menu } from "lucide-react";
 
-const Header = () => {
-  const { isSidebarOpen } = useSidebar();
-  const headerVariants = {
-    hidden: { y: '-100%', opacity: 0 },
-    visible: {
-      y: '0%',
-      opacity: 1,
-      transition: { type: 'spring', stiffness: 200, damping: 20 },
-    },
-  };
-
+const Header = ({ toggleSidebar }) => {
   return (
-    <motion.header
-      variants={headerVariants}
-      initial="hidden"
-      animate="visible"
-      className={`fixed top-0 right-0 left-0 z-20 
-        bg-gradient-to-r from-almadar-sidebar-light via-almadar-sidebar to-almadar-sidebar 
-        dark:bg-gradient-to-l dark:from-almadar-blue-dark dark:via-almadar-blue-dark dark:to-almadar-sidebar-dark
-        border-b-4 border-almadar-sidebar-danger dark:border-almadar-mint-light
-        shadow-md transition-all duration-300 ${isSidebarOpen ? 'md:mr-72' : 'md:mr-16'}
-      `}
+    <nav
+      dir="rtl"
+      className="bg-background text-foreground   border border-blue-200
+     
+      dark:text-foreground dark:ring-2 dark:ring-mint-500 
+      dark:shadow-[0_0_30px_#66ffcc40] border-border shadow-sm py-3 px-6 flex justify-between items-center sticky top-0 z-10"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-        {/* زر فتح وقفل السايدبار */}
-        <HeaderToggle />
-        
-        {/* أدوات التحكم الجانبية */}
-        <div className="flex items-center space-x-6 space-x-reverse">
-          <Notifications align="right" />
-          <ThemeToggle />
-          <hr className="w-px h-6 bg-almadar-green dark:bg-white/50 border-none" />
-          <UserMenu align="left" />
-        </div>
+      {/* الشعار والعنوان */}
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+          <Menu className="h-5 w-5" />
+        </Button>
+        <h1 className="text-xl font-bold">نظام إدارة الشؤون القانونية</h1>
       </div>
-    </motion.header>
+
+      {/* أدوات التحكم */}
+      <div className="flex items-center gap-3">
+        <Notifications align="right" />
+        <ThemeToggle />
+        <hr className="w-px h-6 bg-border border-none" />
+        <UserMenu align="left" />
+      </div>
+    </nav>
   );
 };
 

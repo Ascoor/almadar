@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import TableComponent from "../common/TableComponent";
-import { FaPlus } from "react-icons/fa";
+import AddButton from "@/components/common/AddButton";
 import ContractModal from "./ContractModal";
 import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
 import { deleteContract } from "../../services/api/contracts";
@@ -58,13 +58,7 @@ export default function Local({ contracts = [], reloadContracts, categories }) {
         onEdit={handleEdit}
         onDelete={confirmDelete} // 🆕
         renderAddButton={() => (
-          <button
-            onClick={handleAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-almadar-blue text-white dark:bg-almadar-sky dark:text-black rounded-lg shadow hover:scale-105 transition"
-          >
-            <FaPlus />
-            إضافة عقد
-          </button>
+          <AddButton label="عقد" onClick={handleAdd} />
         )}
       />
 

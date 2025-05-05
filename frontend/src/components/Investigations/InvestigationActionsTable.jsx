@@ -3,6 +3,7 @@ import { FaEdit, FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import InvestigationActionModal from "./InvestigationActionModal";
 import { updateInvestigationAction, createInvestigationAction } from "@/services/api/investigations";
+import AddButton from "../common/AddButton";
 
 export default function InvestigationActionsTable({ actions = [], investigationId, onReload }) {
   const [showModal, setShowModal] = useState(false);
@@ -41,13 +42,9 @@ export default function InvestigationActionsTable({ actions = [], investigationI
          إجراءات التحقيق
         </h2>
       <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={handleAdd}
-          className="flex items-center gap-2 bg-almadar-blue text-white dark:bg-almadar-yellow dark:text-black px-4 py-2 rounded hover:scale-105 transition"
-        >
-          <FaPlus className="dark:text-almadar-mint-light" />
-          <span className="text-sm font-medium dark:text-almadar-mint-light">إضافة إجراء</span>
-        </button>
+ 
+                 <AddButton label="إجراء" onClick={handleAdd} /> 
+ 
       </div>
 
       {/* جدول الإجراءات */}
