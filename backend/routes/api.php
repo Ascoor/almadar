@@ -17,6 +17,7 @@ use App\Http\Controllers\InvestigationActionController;
 use App\Http\Controllers\LegalAdviceController;
 use App\Http\Controllers\LegislationController;
 use App\Http\Controllers\LitigationController;
+use App\Http\Controllers\LitigationActionController;
 
 /*
 |--------------------------------------------------------------------------

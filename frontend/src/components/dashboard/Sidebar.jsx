@@ -33,9 +33,9 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
       dir="rtl"
       className={`
         
-         bg-gradient-to-b from-white via-green-300 to-blue-300/20
-       dark:bg-luxury-green-gradient dark:text-white/70
-        fixed top-0 right-0 h-full z-30 mt-16
+         bg-gradient-to-t from-navy/80 via-primary/250 to-accent/10
+       dark:bg-gradient-to-b dark:from-accent/50 dark:via-navy-dark dark:to-navy/20 dark:text-navy 
+        fixed top-2 right-0 h-full z-30 mt-16
         text-card-foreground border-r border-border
         dark:ring-2 dark:ring-mint-500 dark:shadow-[0_0_10px_#66ffcc40]
         transform transition-transform duration-300
@@ -47,7 +47,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
  
 
       {/* Navigation */}
-      <nav className={`px-2 ${isOpen ? 'space-y-2 mt-4' : 'space-y-1 mt-4'}`}>
+      <nav className={`px-2 ${isOpen ? 'space-y-4 mt-4' : 'space-y-2 mt-4'}`}>
         {navItems.map(item => (
           <div key={item.id}>
             {!item.children ? (
@@ -55,10 +55,10 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 to={item.to}
                 onClick={onLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 p-2 rounded-md transition-colors
+                  `flex items-center text-center gap-3 p-2 rounded-md transition-colors
                     ${isActive 
-                      ? 'bg-navy-light text-white' 
-                      : 'hover:bg-navy-light hover:text-white'}` 
+                      ? 'bg-navy-light text-white dark:bg-accent dark-text-green-400' 
+                      : 'hover:bg-yellow-100 hover:text-navy dark:hover:bg-navy-light dark:text-yellow-100'}` 
                 }
               >
                 {item.icon}
@@ -72,7 +72,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                     flex items-center gap-3 p-2 w-full rounded-md transition-colors
                     ${activeSection === item.id 
                       ? 'bg-navy-light text-white' 
-                      : 'hover:bg-navy-light hover:text-white'}` 
+                      : 'hover:bg-yellow-100 hover:text-navy'}` 
                   }
                 >
                   {item.icon}

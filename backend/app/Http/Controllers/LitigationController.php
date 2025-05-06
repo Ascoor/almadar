@@ -37,14 +37,26 @@ class LitigationController extends Controller
         ]);
     }
 
-    public function destroy(Litigation $litigation)
-    {
+public function destroy(Litigation $litigation)
+{
+    try {
+        // Delete all related actions first
+        $litigation->actions()->delete();
+
+        // Then delete the litigation itself
         $litigation->delete();
 
         return response()->json([
-            'message' => 'تم حذف القضية بنجاح.',
+            'message' => 'تم حذف الدعوى القضائية وجميع الإجراءات التابعة لها بنجاح.'
         ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'حدث خطأ أثناء الحذف.',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
 
     private function validateLitigation(Request $request)
     {

@@ -5,15 +5,14 @@ import {
   updateLitigationAction,
 } from "@/services/api/litigations";
 
-export default function LitigationActionModal({
+const LitigationActionModal = ({
   isOpen,
   onClose,
   initialData = null,
   litigationId,
   onSuccess,
-}) {
+}) => {
   const [loading, setLoading] = useState(false);
-
   const [form, setForm] = useState({
     action_date: "",
     action_type: "",
@@ -63,9 +62,8 @@ export default function LitigationActionModal({
         await createLitigationAction(litigationId, form);
         toast.success("تم إضافة الإجراء بنجاح.");
       }
-
       onClose();
-      onSuccess?.(); // إعادة تحميل البيانات من الأب
+      onSuccess?.();
     } catch (err) {
       console.error(err);
       toast.error("فشل العملية، حاول مرة أخرى.");
@@ -92,108 +90,85 @@ export default function LitigationActionModal({
         </h2>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">تاريخ الإجراء</label>
-            <input
-              type="date"
-              name="action_date"
-              value={form.action_date}
-              onChange={handleChange}
-              required
-              className="input-field"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">نوع الإجراء</label>
-            <input
-              type="text"
-              name="action_type"
-              value={form.action_type}
-              onChange={handleChange}
-              required
-              className="input-field"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">الطلبات</label>
-            <input
-              type="text"
-              name="requirements"
-              value={form.requirements}
-              onChange={handleChange}
-              className="input-field"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">النتيجة</label>
-            <input
-              type="text"
-              name="results"
-              value={form.results}
-              onChange={handleChange}
-              className="input-field"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">المحامي</label>
-            <input
-              type="text"
-              name="lawyer_name"
-              value={form.lawyer_name}
-              onChange={handleChange}
-              required
-              className="input-field"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">مكان الإجراء</label>
-            <input
-              type="text"
-              name="location"
-              value={form.location}
-              onChange={handleChange}
-              required
-              className="input-field"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">ملاحظات</label>
-            <textarea
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-              rows={3}
-              className="input-field"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">الحالة</label>
-            <select
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              required
-              className="input-field"
-            >
-              <option value="pending">معلق</option>
-              <option value="in_review">قيد المراجعة</option>
-              <option value="done">منجز</option>
-            </select>
-          </div>
+          {/* Form inputs */}
+          <input
+            type="date"
+            name="action_date"
+            value={form.action_date}
+            onChange={handleChange}
+            required
+            className="input"
+          />
+          <input
+            type="text"
+            name="action_type"
+            value={form.action_type}
+            onChange={handleChange}
+            required
+            className="input"
+          />
+          <input
+            type="text"
+            name="requirements"
+            value={form.requirements}
+            onChange={handleChange}
+            className="input"
+          />
+          <input
+            type="text"
+            name="results"
+            value={form.results}
+            onChange={handleChange}
+            className="input"
+          />
+          <input
+            type="text"
+            name="lawyer_name"
+            value={form.lawyer_name}
+            onChange={handleChange}
+            required
+            className="input"
+          />
+          <input
+            type="text"
+            name="location"
+            value={form.location}
+            onChange={handleChange}
+            required
+            className="input"
+          />
+          <textarea
+            name="notes"
+            value={form.notes}
+            onChange={handleChange}
+            rows={3}
+            className="input"
+          />
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            required
+            className="input"
+          >
+            <option value="pending">معلق</option>
+            <option value="in_review">قيد المراجعة</option>
+            <option value="done">منجز</option>
+          </select>
 
-          {/* الأزرار */}
+          {/* Action buttons */}
           <div className="md:col-span-2 flex justify-end gap-4 mt-6">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white rounded hover:bg-gray-400 dark:hover:bg-gray-600"
+              className="btn bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-400 dark:hover:bg-gray-600"
             >
               إلغاء
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-almadar-blue hover:bg-emerald-700 dark:bg-almadar-yellow text-white dark:text-black font-bold rounded"
+              className="btn bg-almadar-blue hover:bg-emerald-700 dark:bg-almadar-yellow text-white dark:text-black font-bold"
             >
               {initialData ? "تحديث" : "إضافة"}
             </button>
@@ -202,4 +177,6 @@ export default function LitigationActionModal({
       </div>
     </div>
   );
-}
+};
+
+export default LitigationActionModal;

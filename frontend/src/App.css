@@ -1,10 +1,3 @@
- 
-.dark {
-  --background:  0 0% 100%;
-  --foreground: 0 0% 100%;
-  --border: 220 13% 20%;
-}
-
 #root {
   max-width: 1280px;
   margin: 0 auto;

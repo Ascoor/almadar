@@ -76,6 +76,7 @@ export default function InvestigationActionModal({ isOpen, onClose, onSubmit, in
                 value={form.action_date}
                 onChange={handleChange}
                 required
+                placeholder="اختر تاريخ الإجراء"
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>

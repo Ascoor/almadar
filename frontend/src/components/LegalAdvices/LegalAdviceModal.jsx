@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { createLegalAdvice, updateLegalAdvice } from "../../services/api/legalAdvices";
-
 import API_CONFIG from "../../config/config";
-export default function LegalAdviceModal({ isOpen, onClose, initialData = null, reload }) {
+
+const LegalAdviceModal = ({ isOpen, onClose, initialData = null, reload }) => {
   const [form, setForm] = useState({
     type: "",
     topic: "",
@@ -107,7 +107,7 @@ export default function LegalAdviceModal({ isOpen, onClose, initialData = null, 
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* بيانات أساسية */}
+          {/* Basic Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">نوع المشورة</label>
@@ -141,14 +141,14 @@ export default function LegalAdviceModal({ isOpen, onClose, initialData = null, 
             </div>
           </div>
 
-          {/* نص المشورة */}
+          {/* Advice Text */}
           <div>
             <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">نص المشورة</label>
             <textarea name="text" value={form.text} onChange={handleChange} rows="4"
               className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
           </div>
 
-          {/* مرفق PDF */}
+          {/* PDF Attachment */}
           <div>
             <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">مرفق PDF</label>
             <input type="file" name="attachment" accept="application/pdf" onChange={handleChange}
@@ -156,16 +156,15 @@ export default function LegalAdviceModal({ isOpen, onClose, initialData = null, 
             {form.attachment ? (
               <div className="mt-1 text-green-600 text-sm">{form.attachment.name}</div>
             ) : form.oldAttachment ? (
-              <a             href={`${API_CONFIG.baseURL}/storage/${form.oldAttachment}`}
-         
-              target="_blank" rel="noopener noreferrer"
+              <a href={`${API_CONFIG.baseURL}/storage/${form.oldAttachment}`}
+                target="_blank" rel="noopener noreferrer"
                 className="mt-1 text-blue-500 text-sm underline block">
                 عرض المرفق الحالي
               </a>
             ) : null}
           </div>
 
-          {/* أزرار */}
+          {/* Buttons */}
           <div className="flex justify-end gap-4 mt-6">
             <button type="button" onClick={onClose}
               className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 text-gray-900 dark:text-white">
@@ -180,4 +179,6 @@ export default function LegalAdviceModal({ isOpen, onClose, initialData = null, 
       </div>
     </div>
   );
-}
+};
+
+export default LegalAdviceModal;

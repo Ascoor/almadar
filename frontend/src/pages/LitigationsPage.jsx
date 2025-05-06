@@ -1,64 +1,76 @@
-import React, { useState,useEffect } from "react";
-
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { getLitigations } from "../services/api/litigations";
 import AgainstCompanyLitigations from "../components/Litigations/against/AgainstCompanyLitigations";
 import FromCompanyLitigations from "../components/Litigations/from/FromCompanyLitigations";
-
+import { toast,ToastContainer } from "react-toastify";
+import {CaseIcon } from '../assets/icons';
+import SectionHeader from "../components/common/SectionHeader";
 export default function LitigationsPage() {
-
   const [activeTab, setActiveTab] = useState("against");
-  
   const [litigations, setLitigations] = useState([]);
+
   useEffect(() => {
     loadLitigations();
-  
   }, []);
 
   const loadLitigations = async () => {
     try {
       const res = await getLitigations();
-      const litigationsData = res?.data?.data || []; // ✅ تصحيح
+      const litigationsData = Array.isArray(res?.data?.data) ? res.data.data : [];
       setLitigations(litigationsData);
     } catch (error) {
       console.error(error);
-      toast.error('فشل تحميل العقود');
+      toast.error("فشل تحميل الدعاوى");
     }
   };
-  
-  const fromCompanys = litigations.filter(c => c.scope === 'from');
-  const againstCompanys = litigations.filter(c => c.scope === 'against');
-  return (
-    <div className="p-6 sm:p-8 lg:p-10 bg-white dark:bg-gray-900 min-h-screen transition-all">
-      <h1 className="text-3xl font-bold text-center mb-10 text-almadar-blue dark:text-almadar-yellow">
-        إدارة الدعاوى القضائية
-      </h1>
 
-      <div className="flex justify-center gap-4 mb-6">
-        <button
+  const fromCompanys = litigations.filter((c) => c.scope === "from");
+  const againstCompanys = litigations.filter((c) => c.scope === "against");
+
+  return (
+ <div className="p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-900 min-h-screen transition-colors">
+      {/* Header Section */}
+      <SectionHeader 
+        listName={"وحدة  التقاضي"} 
+        icon={CaseIcon} 
+      />
+
+      {/* Toast Notifications */}
+      <ToastContainer />
+
+ 
+      <div className="flex flex-wrap justify-center gap-4 mb-6">
+        <Button
+          variant={activeTab === "against" ? "default" : "outline"}
           onClick={() => setActiveTab("against")}
-          className={`px-6 py-2 rounded-full font-semibold transition-all
-            ${activeTab === "against"
-              ? "bg-almadar-blue text-white"
-              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"}
-          `}
+          className="rounded-full px-6"
         >
           دعاوى ضد الشركة
-        </button>
-        <button
+        </Button>
+        <Button
+          variant={activeTab === "from" ? "default" : "outline"}
           onClick={() => setActiveTab("from")}
-          className={`px-6 py-2 rounded-full font-semibold transition-all
-            ${activeTab === "from"
-              ? "bg-almadar-blue text-white"
-              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"}
-          `}
+          className="rounded-full px-6"
         >
           دعاوى من الشركة
-        </button>
+        </Button>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow p-6">
-        {activeTab === "against" ? <AgainstCompanyLitigations  litigations={againstCompanys}  /> : <FromCompanyLitigations   litigations={fromCompanys}/>}
-      </div>
+      <Card className="p-6 rounded-xl shadow border">
+        {activeTab === "against" ? (
+          <AgainstCompanyLitigations
+            litigations={againstCompanys}
+            reloadLitigations={loadLitigations}
+          />
+        ) : (
+          <FromCompanyLitigations
+            litigations={fromCompanys}
+            reloadLitigations={loadLitigations}
+          />
+        )}
+      </Card>
     </div>
   );
 }

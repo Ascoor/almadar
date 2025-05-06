@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { createContract, updateContract } from "../../services/api/contracts"; // استدعاء APIs هنا!
-
+import { createContract, updateContract } from "../../services/api/contracts";
 import API_CONFIG from "../../config/config";
-export default function ContractModal({ isOpen, onClose, initialData = null, categories = [], reloadContracts }) {
 
+const ContractsModal = ({ isOpen, onClose, initialData = null, categories = [], reloadContracts }) => {
   const [form, setForm] = useState({
     contract_category_id: "",
     scope: "local",
@@ -21,29 +20,28 @@ export default function ContractModal({ isOpen, onClose, initialData = null, cat
   });
 
   const [loading, setLoading] = useState(false);
-useEffect(() => {
-  if (!isOpen) return; // إذا المودال مغلق، لا تعمل شيء
 
-  if (initialData) {
-    setForm({
-      id: initialData.id,
-      contract_category_id: initialData.contract_category_id || "",
-      scope: initialData.scope || "local",
-      number: initialData.number || "",
-      contract_parties: initialData.contract_parties || "",
-      value: initialData.value || "",
-      start_date: initialData.start_date || "",
-      end_date: initialData.end_date || "",
-      notes: initialData.notes || "",
-      status: initialData.status || "active",
-      summary: initialData.summary || "",
-      attachment: null,
-      oldAttachment: initialData.attachment,
-    });
-  } else {
-    resetForm();
-  }
-}, [isOpen]); 
+  useEffect(() => {
+    if (isOpen && initialData) {
+      setForm({
+        id: initialData.id,
+        contract_category_id: initialData.contract_category_id || "",
+        scope: initialData.scope || "local",
+        number: initialData.number || "",
+        contract_parties: initialData.contract_parties || "",
+        value: initialData.value || "",
+        start_date: initialData.start_date || "",
+        end_date: initialData.end_date || "",
+        notes: initialData.notes || "",
+        status: initialData.status || "active",
+        summary: initialData.summary || "",
+        attachment: null,
+        oldAttachment: initialData.attachment,
+      });
+    } else {
+      resetForm();
+    }
+  }, [isOpen, initialData]);
 
   const resetForm = () => {
     setForm({
@@ -75,18 +73,18 @@ useEffect(() => {
       setForm(prev => ({ ...prev, [name]: value }));
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // تحقق من الحقول الإلزامية فقط
+
     if (!form.contract_category_id || !form.scope || !form.number || !form.contract_parties || !form.status) {
       toast.error("الرجاء ملء جميع الحقول الإلزامية.");
       return;
     }
-  
+
     try {
       setLoading(true);
-  
+
       const payload = new FormData();
       payload.append("contract_category_id", form.contract_category_id);
       payload.append("scope", form.scope);
@@ -98,23 +96,20 @@ useEffect(() => {
       payload.append("notes", form.notes || "");
       payload.append("status", form.status);
       payload.append("summary", form.summary || "");
-  
-      // ✅ فقط إذا رفع المستخدم ملف جديد، نضيفه
+
       if (form.attachment instanceof File) {
         payload.append("attachment", form.attachment);
       }
-  
+
       if (form.id) {
-        // تعديل
         payload.append("_method", "PUT");
         await updateContract(form.id, payload);
         toast.success("تم تعديل العقد بنجاح 🎉");
       } else {
-        // إضافة جديدة
         await createContract(payload);
         toast.success("تم إضافة العقد بنجاح 🎉");
       }
-  
+
       if (reloadContracts) reloadContracts();
       onClose();
       resetForm();
@@ -125,9 +120,7 @@ useEffect(() => {
       setLoading(false);
     }
   };
-  
 
-  
   if (!isOpen) return null;
 
   return (
@@ -146,78 +139,68 @@ useEffect(() => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* جميع الحقول كما كتبتها انت صحيح */}
-          {/* التصنيف */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              التصنيف
-            </label>
-            <select
-              name="contract_category_id"
-              value={form.contract_category_id}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            >
-              <option value="">اختر تصنيف</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* نوع العقد */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              نوع العقد
-            </label>
-            <select
-              name="scope"
-              value={form.scope}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            >
-              <option value="local">محلي</option>
-              <option value="international">دولي</option>
-            </select>
-          </div>
-
-          {/* رقم العقد */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              رقم العقد
-            </label>
-            <input
-              type="text"
-              name="number"
-              value={form.number}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
-
-          {/* قيمة العقد */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              قيمة العقد
-            </label>
-            <input
-              type="number"
-              name="value"
-              value={form.value}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
-
-          {/* تواريخ البداية والنهاية */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Form fields */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                تاريخ البداية
-              </label>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">فئة العقد</label>
+              <select
+                name="contract_category_id"
+                value={form.contract_category_id}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              >
+                <option value="">اختر فئة العقد</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">النطاق</label>
+              <select
+                name="scope"
+                value={form.scope}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              >
+                <option value="local">محلي</option>
+                <option value="international">دولي</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">رقم العقد</label>
+              <input
+                type="text"
+                name="number"
+                value={form.number}
+                onChange={handleChange}
+                required
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">الأطراف المتعاقدة</label>
+              <input
+                type="text"
+                name="contract_parties"
+                value={form.contract_parties}
+                onChange={handleChange}
+                required
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">قيمة العقد</label>
+              <input
+                type="text"
+                name="value"
+                value={form.value}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">تاريخ البدء</label>
               <input
                 type="date"
                 name="start_date"
@@ -226,11 +209,8 @@ useEffect(() => {
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
-
             <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                تاريخ النهاية
-              </label>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">تاريخ الانتهاء</label>
               <input
                 type="date"
                 name="end_date"
@@ -239,96 +219,51 @@ useEffect(() => {
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
+            <div className="col-span-2">
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">ملاحظات</label>
+              <textarea
+                name="notes"
+                value={form.notes}
+                onChange={handleChange}
+                rows="3"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">ملخص العقد</label>
+              <textarea
+                name="summary"
+                value={form.summary}
+                onChange={handleChange}
+                rows="3"
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              />
+            </div>
+            <div>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">المرفق PDF</label>
+              <input
+                type="file"
+                name="attachment"
+                accept="application/pdf"
+                onChange={handleChange}
+                className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              />
+              {form.attachment ? (
+                <div className="mt-1 text-green-600 text-sm">{form.attachment.name}</div>
+              ) : form.oldAttachment ? (
+                <a
+                  href={`${API_CONFIG.baseURL}/storage/${form.oldAttachment}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 text-blue-500 text-sm underline block"
+                >
+                  عرض المرفق الحالي
+                </a>
+              ) : null}
+            </div>
           </div>
 
-          {/* حالة العقد */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              الحالة
-            </label>
-            <select
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            >
-              <option value="active">ساري</option>
-              <option value="expired">منتهي</option>
-              <option value="terminated">مفسوخ</option>
-              <option value="pending">قيد الانتظار</option>
-              <option value="cancelled">ملغي</option>
-            </select>
-          </div>
-
-          {/* الملاحظات */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              الأطراف المتعاقد معها
-            </label>
-            <textarea
-              name="contract_parties"
-              value={form.contract_parties}
-              onChange={handleChange}
-              rows="2"
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            ></textarea>
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              الملاحظات
-            </label>
-            <textarea
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-              rows="2"
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            ></textarea>
-          </div>
-
-          {/* ملخص العقد */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              ملخص العقد
-            </label>
-            <textarea
-              name="summary"
-              value={form.summary}
-              onChange={handleChange}
-              rows="3"
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            ></textarea>
-          </div>
-
-          {/* مرفق العقد */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              مرفق العقد (PDF فقط)
-            </label>
-            <input
-              type="file"
-              name="attachment"
-              accept="application/pdf"
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-            {form.attachment ? (
-              <div className="mt-2 text-green-600 text-sm">{form.attachment.name}</div>
-            ) : form.oldAttachment ? (
-              <a
-              href={`${API_CONFIG.baseURL}/storage/${form.oldAttachment}`}
-         
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 text-blue-500 text-sm block underline"
-              >
-                عرض المرفق الحالي
-              </a>
-            ) : null}
-          </div>
-
-          {/* أزرار الحفظ والإلغاء */}
+          {/* Buttons */}
           <div className="flex justify-end gap-4 mt-6">
             <button
               type="button"
@@ -343,11 +278,13 @@ useEffect(() => {
               disabled={loading}
               className="px-6 py-2 rounded-lg bg-almadar-blue hover:bg-emerald-700 dark:bg-almadar-yellow text-white dark:text-black font-bold"
             >
-              حفظ
+              {loading ? "جاري الحفظ..." : "حفظ"}
             </button>
           </div>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default ContractsModal;

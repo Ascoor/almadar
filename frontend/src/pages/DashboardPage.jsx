@@ -47,13 +47,13 @@ export default function AuthWrapper() {
           />
 
           <div className="flex-1 flex flex-col">
-          {/* Main Content */}
             <Header     isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
+          {/* Main Content */}
             <main
-      className={`pt-16 transition-all duration-300 ${
+      className={`pt-16  transition-all duration-300 ${
         sidebarOpen ? 'content-expanded' : 'content-collapsed'
       } 
-      dark:bg-gradient-to-r dark:from-[#006f3f] dark:via-[#1d7b51] dark:to-[#33cc80] 
+      dark:bg-gradient-to-r  dark:from-navy-dark dark:via-navy/30 dark:to-accent-dark
       bg-gradient-to-r from-[#a0f2e5] to-[#ffffff]`}
     >
       <AuthRoutes />

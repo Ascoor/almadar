@@ -2,42 +2,44 @@ import React from 'react';
 import Notifications from '../common/DropdownNotifications';
 import UserMenu from '../common/DropdownProfile';
 import ThemeToggle from '../common/ThemeToggle';
-import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-
-import { WelcomeLogo,WelcomeLogoWhite } from '../../assets/images';
+import { Button } from '@/components/ui/button';
+import { Menu } from 'lucide-react';
+import { WelcomeLogo, WelcomeLogoWhite } from '../../assets/images';
 import { useThemeProvider } from '../../utils/ThemeContext';
-export default function Header({ onToggleSidebar, isOpen  }) {
-  
+
+export default function Header({ onToggleSidebar }) {
   const { currentTheme } = useThemeProvider();
+  const isDark = currentTheme === 'dark';
+
   return (
     <nav
       dir="rtl"
-      className="
-        fixed inset-x-0 top-0 z-50
-        flex items-center justify-between
-        px-4 sm:px-6 lg:px-8 py-3
-         bg-gradient-to-l from-white via-green-300 to-blue-300/20
-       dark:bg-luxury-green-gradient dark:text-white/70
-        border-b border-border
-        dark:ring-2 dark:ring-mint-500 dark:shadow-[0_0_30px_#66ffcc40]
-        "
-    >     {/* Logo */}
-        <div className="flex items-center gap-4">
-     <img      src={currentTheme === 'dark' ? WelcomeLogoWhite : WelcomeLogo} // Change logo based on the theme
-     alt="Logo"
-        className={`
-          object-contain transition-all duration-300  w-12 h-12'}
-        `}
-        onClick={onToggleSidebar}
-      />
- 
+      className={`
+        py-3 px-6 flex justify-between items-center sticky top-0 z-10
+     
+   sm:px-6 lg:px-8  
+          bg-gradient-to-r from-navy-light/60 via-navy/40 to-accent/10
+        text-gray-900 dark:text-white
+        border-b border-gray-200
+          dark:bg-gradient-to-r dark:from-navy-dark dark:via-navy/30 dark:to-accent-dark
+        shadow-md dark:shadow-[0_0_30px_#14b8a640]
+        transition-all
+      `}
+    >
+      {/* Logo & Menu Toggle */}
+      <div className="flex items-center gap-4">
+        <img
+          src={isDark ? WelcomeLogoWhite : WelcomeLogo}
+          alt="Logo"
+          className="w-12 h-12 object-contain cursor-pointer transition"
+          
+        />
         <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
           <Menu className="h-5 w-5" />
         </Button>
- 
       </div>
 
+      {/* Controls */}
       <div className="flex items-center gap-3">
         <Notifications align="right" />
         <ThemeToggle />
