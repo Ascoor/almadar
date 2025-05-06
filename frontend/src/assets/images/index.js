@@ -7,9 +7,12 @@ export { default as LogoWhite } from '../images/logo-white.png';
 export { default as TeamWorkImage } from '../images/team-work.png';
 export { default as LegalSpiner } from '../images/legal-spiner.png';
 export { default as SplashImage } from '../images/splash-image.png';
+export { default as LandingCover } from '../images/cover-landing.png';
 
 export { default as LogoBlue } from '../images/logo-blue.png'; 
+export { default as WelcomeGradient } from '../images/welcome-patrens.png';
 export { default as WelcomeImage } from '../images/welcome-page.webp';
+export { default as WelcomeLogoWhite } from '../images/welcome-logo-white.png';
 export { default as WelcomeBackground } from '../images/welcome.webp';
 export { default as WelcomePatren } from '../images/logo512.png';
 export { default as WelcomeLogo } from '../images/welcome-logo.png';

@@ -1,71 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 220 60% 31%; /* Navy blue */
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 44 65% 53%; /* Gold */
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+ 
+  @layer base {
+    :root {
+      /* ألوان الوضع الفاتح */
+      --background: #e1ffe6; /* خلفية بيضاء */
+      --foreground: #000000; /* نص أسود */
+      
+      --primary: #1D4ED8; /* اللون الأزرق الأساسي */
+      --primary-foreground: #ffffff; /* نص أبيض على الأزرق */
+  
+      --secondary: #6B7280; /* اللون الرمادي الثانوي */
+      --secondary-foreground: #ffffff; /* نص أبيض على الرمادي */
+      
+      --muted: #9CA3AF; /* اللون المخفف */
+      --muted-foreground: #ffffff; /* نص أبيض على المخفف */
+      
+      --accent: #F59E0B; /* اللون الذهبي */
+      --accent-foreground: #ffffff; /* نص أبيض على الذهبي */
+  
+      --border: #D1D5DB; /* لون الحدود */
+      --input: #F3F4F6; /* لون المدخلات */
+      --ring: #9CA3AF; /* لون حلقة التحديد */
+      
+      --radius: 0.5rem; /* نصف القطر */
+    }
+  
+    .dark {
+      /* ألوان الوضع الداكن */
+      --background: #1dae74; /* خلفية داكنة */
+      --foreground: #ffffff; /* نص أبيض فاتح */
+      
+      --primary: #3B82F6; /* اللون الأزرق الأساسي الداكن */
+      --primary-foreground: #ffffff; /* نص أبيض على الأزرق الداكن */
+  
+      --secondary: #3074d3; /* اللون الرمادي الداكن */
+      --secondary-foreground: #ffffff; /* نص أبيض على الرمادي الداكن */
+  
+      --muted: #6B7280; /* اللون المخفف الداكن */
+      --muted-foreground: #ffffff; /* نص أبيض على المخفف الداكن */
+      
+      --accent: #F59E0B; /* اللون الذهبي الداكن */
+      --accent-foreground: #ffffff; /* نص أبيض على الذهبي الداكن */
+  
+      --border: #374151; /* لون الحدود الداكن */
+      --input: #4B5563; /* لون المدخلات الداكن */
+      --ring: #2563EB; /* لون حلقة التحديد الداكن */
+    }
   }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
-
+  
 @layer base {
   * {
     @apply border-border;

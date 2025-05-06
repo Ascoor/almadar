@@ -44,37 +44,21 @@ class ContractsSeeder extends Seeder
             'شركة العالم المتطور'
         ];
 
-        // إنشاء 25 عقد محلي
-        for ($i = 1; $i <= 25; $i++) {
+        // إنشاء 50 عقد (محلي ودولي) مع نفس الهيكل
+        for ($i = 1; $i <= 50; $i++) {
+            $scope = $i <= 25 ? 'local' : 'international'; // تحديد ما إذا كان العقد محلي أو دولي
             Contract::create([
                 'contract_category_id' => $categories->random()->id,
-                'scope' => 'local',
-                'number' => 'LOC-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'scope' => $scope,
+                'number' => strtoupper($scope[0]) . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'contract_parties' => $this->generateContractParties($companies),
-                'value' => random_int(50000, 500000),
+                'value' => $scope === 'local' ? random_int(50000, 500000) : random_int(100000, 1000000),
                 'start_date' => now()->subMonths(rand(1, 12)),
                 'end_date' => now()->addMonths(rand(6, 24)),
-                'notes' => 'عقد محلي تجريبي رقم ' . $i,
+                'notes' => ($scope === 'local' ? 'عقد محلي' : 'عقد دولي') . ' تجريبي رقم ' . $i,
                 'attachment' => null,
                 'status' => 'active',
-                'summary' => 'ملخص عقد محلي رقم ' . $i . '. تم إنشاؤه لأغراض اختبار النظام.',
-            ]);
-        }
-
-        // إنشاء 25 عقد دولي
-        for ($i = 26; $i <= 50; $i++) {
-            Contract::create([
-                'contract_category_id' => $categories->random()->id,
-                'scope' => 'international',
-                'number' => 'INT-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'contract_parties' => $this->generateContractParties($companies),
-                'value' => random_int(100000, 1000000),
-                'start_date' => now()->subMonths(rand(1, 12)),
-                'end_date' => now()->addMonths(rand(6, 24)),
-                'notes' => 'عقد دولي تجريبي رقم ' . $i,
-                'attachment' => null,
-                'status' => 'active',
-                'summary' => 'ملخص عقد دولي رقم ' . $i . '. تم إنشاؤه لأغراض اختبار النظام.',
+                'summary' => ($scope === 'local' ? 'ملخص عقد محلي' : 'ملخص عقد دولي') . ' رقم ' . $i . '. تم إنشاؤه لأغراض اختبار النظام.',
             ]);
         }
     }

@@ -6,6 +6,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --luxury-green-start: hsl(160, 80%, 20%);
+    --luxury-green-mid: hsl(160, 80%, 40%);
+    --luxury-green-end: hsl(160, 80%, 60%);
+  }
+}
 @layer components {
   .centered-container {
     @apply flex flex-col items-center justify-center;

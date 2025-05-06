@@ -3,34 +3,47 @@ import Notifications from '../common/DropdownNotifications';
 import UserMenu from '../common/DropdownProfile';
 import ThemeToggle from '../common/ThemeToggle';
 import { Button } from "@/components/ui/button";
-import { Bell, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 
-const Header = ({ toggleSidebar }) => {
+import { WelcomeLogo,WelcomeLogoWhite } from '../../assets/images';
+import { useThemeProvider } from '../../utils/ThemeContext';
+export default function Header({ onToggleSidebar, isOpen  }) {
+  
+  const { currentTheme } = useThemeProvider();
   return (
     <nav
       dir="rtl"
-      className="bg-background text-foreground   border border-blue-200
-     
-      dark:text-foreground dark:ring-2 dark:ring-mint-500 
-      dark:shadow-[0_0_30px_#66ffcc40] border-border shadow-sm py-3 px-6 flex justify-between items-center sticky top-0 z-10"
-    >
-      {/* الشعار والعنوان */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+      className="
+        fixed inset-x-0 top-0 z-50
+        flex items-center justify-between
+        px-4 sm:px-6 lg:px-8 py-3
+         bg-gradient-to-l from-white via-green-300 to-blue-300/20
+       dark:bg-luxury-green-gradient dark:text-white/70
+        border-b border-border
+        dark:ring-2 dark:ring-mint-500 dark:shadow-[0_0_30px_#66ffcc40]
+        "
+    >     {/* Logo */}
+        <div className="flex items-center gap-4">
+     <img      src={currentTheme === 'dark' ? WelcomeLogoWhite : WelcomeLogo} // Change logo based on the theme
+     alt="Logo"
+        className={`
+          object-contain transition-all duration-300  w-12 h-12'}
+        `}
+        onClick={onToggleSidebar}
+      />
+ 
+        <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
           <Menu className="h-5 w-5" />
         </Button>
-        <h1 className="text-xl font-bold">نظام إدارة الشؤون القانونية</h1>
+ 
       </div>
 
-      {/* أدوات التحكم */}
       <div className="flex items-center gap-3">
         <Notifications align="right" />
         <ThemeToggle />
-        <hr className="w-px h-6 bg-border border-none" />
+        <div className="hidden sm:block w-px h-6 bg-border" />
         <UserMenu align="left" />
       </div>
     </nav>
   );
-};
-
-export default Header;
+}

@@ -1,11 +1,6 @@
-:root {
-  --background: 0 0% 100%;
-  --foreground: 222 47% 11%;
-  --border: 220 13% 91%;
-}
-
+ 
 .dark {
-  --background: 222 47% 11%;
+  --background:  0 0% 100%;
   --foreground: 0 0% 100%;
   --border: 220 13% 20%;
 }
