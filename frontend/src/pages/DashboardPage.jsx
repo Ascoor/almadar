@@ -15,7 +15,7 @@ export default function AuthWrapper() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  // Close sidebar on mobile whenever the route changes
+  // إغلاق الـ sidebar عند تغيير المسار على الشاشات الصغيرة
   useEffect(() => {
     if (window.innerWidth < 640) {
       setSidebarOpen(false);
@@ -38,7 +38,7 @@ export default function AuthWrapper() {
         <Toaster />
         <Sonner />
 
-        <div className="min-h-screen flex  ">
+        <div className="min-h-screen flex relative">
           {/* Sidebar */}
           <Sidebar
             isOpen={sidebarOpen}
@@ -46,17 +46,26 @@ export default function AuthWrapper() {
             onLinkClick={handleLinkClick}
           />
 
-          <div className="flex-1 flex flex-col">
-            <Header     isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
+          {/* Overlay على الجوال */}
+          {sidebarOpen && (
+            <div
+              className="fixed inset-0 bg-black/50 z-20 sm:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
           {/* Main Content */}
+          <div className="flex-1 flex flex-col">
+            <Header isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
             <main
-      className={`pt-16  transition-all duration-300 ${
-        sidebarOpen ? 'content-expanded' : 'content-collapsed'
-      } 
-      dark:bg-gradient-to-r  dark:from-navy-dark dark:via-navy/30 dark:to-accent-dark
-      bg-gradient-to-r from-[#a0f2e5] to-[#ffffff]`}
-    >
-      <AuthRoutes />
+              className={`
+                pt-16 transition-all duration-300 
+                ${sidebarOpen ? 'sm:mr-72' : 'sm:mr-16'}
+                dark:bg-gradient-to-r dark:from-navy-dark dark:via-destructive/  dark:to-popover-dark/40
+                bg-gradient-to-r from-[#a0f2e5] to-[#ffffff]
+              `}
+            >
+              <AuthRoutes />
             </main>
           </div>
         </div>

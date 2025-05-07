@@ -13,19 +13,19 @@ export default function Header({ onToggleSidebar }) {
 
   return (
     <nav
-      dir="rtl"
-      className={`
-        py-3 px-6 flex justify-between items-center sticky top-0 z-10
-     
-   sm:px-6 lg:px-8  
-          bg-gradient-to-r from-navy-light/60 via-navy/40 to-accent/10
-        text-gray-900 dark:text-white
-        border-b border-gray-200
-          dark:bg-gradient-to-r dark:from-navy-dark dark:via-navy/30 dark:to-accent-dark
-        shadow-md dark:shadow-[0_0_30px_#14b8a640]
-        transition-all
-      `}
-    >
+    dir="rtl"
+    className={`
+      py-3 px-6 flex justify-between items-center sticky top-0 z-10
+      sm:px-6 lg:px-8
+    bg-gradient-to-r from-navy-light/60 via-navy/40 to-accent/10
+      text-gray-900 dark:text-white
+      border-b border-gray-200
+      dark:bg-navy-dark
+      shadow-md dark:shadow-[0_0_10px_#14b8a640]
+      transition-all
+    `}
+  >
+  
       {/* Logo & Menu Toggle */}
       <div className="flex items-center gap-4">
         <img
