@@ -7,8 +7,8 @@ import {
 } from '../../services/api/GeneralReqApi';
 import { ExpenseIcon } from '../../assets/icons';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import SectionHeader from '../common/SectionHeader';
-import { useAlert } from '../../context/AlertContext';
+import SectionHeader from '../common/SectionHeader'; 
+import { toast } from 'sonner';
 
 import GlobalConfirmDeleteModal from '../common/GlobalConfirmDeleteModal';
 const ExpenseCategorys = () => {
@@ -19,8 +19,7 @@ const ExpenseCategorys = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingExpenseCategory, setEditingExpenseCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
-  const { triggerAlert } = useAlert();
+  const [itemsPerPage] = useState(5); 
 
   useEffect(() => {
     fetchExpenseCategorys();
@@ -35,7 +34,7 @@ const ExpenseCategorys = () => {
       const response = await getExpensesCategories();
       setExpenseCategorys(response.data[0] || []);
     } catch (error) {
-      triggerAlert('error', 'حدث خطأ في حفظ نوع المصروف');
+      toast('error', 'حدث خطأ في حفظ نوع المصروف');
     }
   };
 
@@ -53,17 +52,17 @@ const ExpenseCategorys = () => {
     try {
       if (editingExpenseCategory) {
         await updateExpenseCategory(editingExpenseCategory.id, data);
-        triggerAlert('success', 'تم تحديث نوع المصروف بنجاح!');
+        toast('success', 'تم تحديث نوع المصروف بنجاح!');
       } else {
         await createExpenseCategory(data);
-        triggerAlert('success', 'تم إضافة نوع المصروف بنجاح!');
+        toast('success', 'تم إضافة نوع المصروف بنجاح!');
         setShowModal(false);
         fetchExpenseCategorys();
       }
       setShowModal(false);
       fetchExpenseCategorys();
     } catch (error) {
-      triggerAlert('error', 'حدث خطأ في حفظ نوع المصروف');
+      toast('error', 'حدث خطأ في حفظ نوع المصروف');
     }
   };
   const handleDeleteExpenseCategory = (expenseCategory) => {
@@ -77,9 +76,9 @@ const ExpenseCategorys = () => {
       fetchExpenseCategorys();
       setExpenseCategoryToDelete(null);
       setConfirmDelete(false);
-      triggerAlert('success', 'تم حذف نوع المصروف بنجاح!');
+      toast('success', 'تم حذف نوع المصروف بنجاح!');
     } catch (error) {
-      triggerAlert('error', 'حدث خطأ في حذف نوع المصروف');
+      toast('error', 'حدث خطأ في حذف نوع المصروف');
     }
   };
 

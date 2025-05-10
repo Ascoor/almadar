@@ -9,7 +9,8 @@ class InvestigationController extends Controller
 {
     public function index()
     {
-        $investigations = Investigation::with('actions')->latest()->paginate(10);
+$investigations = Investigation::with('actions')->latest()->paginate(10);
+
         return response()->json($investigations);
     }
 

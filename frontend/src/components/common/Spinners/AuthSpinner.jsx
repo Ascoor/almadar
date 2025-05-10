@@ -1,36 +1,52 @@
 import React, { useEffect, useState } from 'react';
-import { LogoText } from '../../../assets/images';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LogoPatren } from '../../../assets/images';
 
-const AuthSpinner = () => {
+const AuthSpinner = ({ onFinish }) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const toggleInterval = setInterval(() => {
       setVisible((prev) => !prev);
     }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+
+    const timeout = setTimeout(() => {
+      onFinish?.(); // إشعار الانتهاء للمكون الأب
+    }, 2000); // مدة التحميل الإجباريه
+
+    return () => {
+      clearInterval(toggleInterval);
+      clearTimeout(timeout);
+    };
+  }, [onFinish]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#0A1E37] to-[#102540] z-50 text-white">
-      <div className="flex flex-col items-center justify-center gap-8 w-full h-full text-center z-10">
-        
-        {/* سبينر دائري أنيق */}
-        <div className="w-36 h-36 border-[10px] border-gray-700 border-t-emerald-400 rounded-full animate-spin relative flex items-center justify-center shadow-lg shadow-emerald-600/20">
-          <img
-            src={LogoText}
-            alt="Logo Animation"
-            className={`absolute w-20 h-auto transition-opacity duration-1000 ease-in-out ${
-              visible ? 'opacity-100' : 'opacity-0'
-            } animate-pulse`}
-          />
-        </div>
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/80 backdrop-blur-sm z-50 text-white">
+      <AnimatePresence>
+        <motion.div
+          key="spinner"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col items-center justify-center gap-8"
+        >
+  <div className="w-32 h-32 border-[10px] border-gray-600 border-t-emerald-400 rounded-full animate-spin relative shadow-inner shadow-emerald-500/20">
+  <img
+    src={LogoPatren}
+    alt="Logo Animation"
+    className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 transition-opacity duration-1000 ease-in-out ${
+      visible ? 'opacity-100' : 'opacity-0'
+    } animate-pulse`}
+  />
+</div>
 
-        {/* نص واضح وجذاب */}
-        <p className="text-emerald-300 text-xl font-bold tracking-widest drop-shadow-[0_1px_4px_rgba(0,255,180,0.4)] animate-bounce">
-          جاري التحميل...
-        </p>
-      </div>
+
+          <p className="text-emerald-300 text-lg md:text-xl font-bold tracking-widest drop-shadow-md animate-bounce">
+            جاري التحميل، الرجاء الانتظار...
+          </p>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };

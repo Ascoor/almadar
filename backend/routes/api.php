@@ -56,6 +56,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ✅ Litigations
     Route::apiResource('litigations', LitigationController::class);
+Route::prefix('litigations/{litigation}/actions')->group(function () {
+    Route::get('/', [LitigationActionController::class, 'index']);
+    Route::post('/', [LitigationActionController::class, 'store']);
+    Route::get('{action}', [LitigationActionController::class, 'show']);
+    Route::put('{action}', [LitigationActionController::class, 'update']);
+    Route::delete('{action}', [LitigationActionController::class, 'destroy']);
+});
 
     // ✅ Roles APIs
     Route::apiResource('roles', RoleController::class);
@@ -71,29 +78,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/{userId}/give-permission', [UserRolePermissionController::class, 'givePermission']);
     Route::post('/users/{userId}/revoke-permission', [UserRolePermissionController::class, 'revokePermission']);
     Route::get('/users/{userId}/permissions', [UserRolePermissionController::class, 'permissions']);
+// routes/api.php
+Route::prefix('investigations')->group(function () {
 
-    Route::prefix('investigations/{investigation}')->controller(InvestigationActionController::class)->group(function () {
-        Route::get('actions', 'index')->name('investigations.actions.index');           // ✅ عرض جميع الإجراءات
-        Route::post('actions', 'store')->name('investigations.actions.store');          // ✅ إضافة إجراء
-        Route::get('actions/{action}', 'show')->name('investigations.actions.show');    // ✅ عرض إجراء محدد
-        Route::put('actions/{action}', 'update')->name('investigations.actions.update');// ✅ تعديل إجراء
-        Route::delete('actions/{action}', 'destroy')->name('investigations.actions.destroy'); // ✅ حذف إجراء
-    });
- 
+    // ✅ CRUD للتحقيقات
+    Route::get('/', [InvestigationController::class, 'index']); // كل التحقيقات
+    Route::post('/', [InvestigationController::class, 'store']); // إنشاء
+    Route::get('{investigation}', [InvestigationController::class, 'show']); // عرض مفصل
+    Route::put('{investigation}', [InvestigationController::class, 'update']); // تعديل
+    Route::delete('{investigation}', [InvestigationController::class, 'destroy']); // حذف
 
-    Route::prefix('litigations')->group(function () {
-        // ✅ المسارات الرئيسية
-        Route::get('/', [LitigationController::class, 'index']);               // جلب كل القضايا
-        Route::post('/', [LitigationController::class, 'store']);              // إنشاء قضية جديدة
-        Route::put('{litigation}', [LitigationController::class, 'update']);   // تعديل قضية
-        Route::delete('{litigation}', [LitigationController::class, 'destroy']); // حذف قضية
-    
-        // ✅ الإجراءات المرتبطة بقضية
-        Route::prefix('{litigation}/actions')->group(function () {
-            Route::get('/', [LitigationActionController::class, 'index']);     // عرض الإجراءات
-            Route::post('/', [LitigationActionController::class, 'store']);    // إضافة إجراء
-            Route::put('{action}', [LitigationActionController::class, 'update']); // تعديل إجراء
-            Route::delete('{action}', [LitigationActionController::class, 'destroy']); // حذف إجراء
-        });
+    // ✅ الإجراءات الخاصة بكل تحقيق
+    Route::prefix('{investigation}/actions')->group(function () {
+        Route::get('/', [InvestigationActionController::class, 'index']); // قائمة الإجراءات
+        Route::post('/', [InvestigationActionController::class, 'store']); // إضافة
+        Route::get('{action}', [InvestigationActionController::class, 'show']); // إجراء واحد
+        Route::put('{action}', [InvestigationActionController::class, 'update']); // تعديل
+        Route::delete('{action}', [InvestigationActionController::class, 'destroy']); // حذف
     });
+});
+
 });

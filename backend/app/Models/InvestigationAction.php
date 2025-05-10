@@ -16,12 +16,12 @@ class InvestigationAction extends Model
         'officer_name',
         'requirements',
         'results',
-        'status',
+        'status', // pending | in_review | done
     ];
 
-    // علاقة الإجراء إلى التحقيق
+    // ✅ علاقة: كل إجراء يتبع تحقيق واحد
     public function investigation()
     {
-        return $this->belongsTo(Investigation::class);
+        return $this->belongsTo(Investigation::class, 'investigation_id');
     }
 }

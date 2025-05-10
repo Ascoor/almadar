@@ -1,32 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import Local from '../components/Contracts/Local';
 import International from '../components/Contracts/International';
 import { getContracts, getContractCategories } from '../services/api/contracts';
-import { toast } from 'react-toastify';
+ 
 import SectionHeader from '../components/common/SectionHeader';
 import { ContractSection } from '../assets/icons';
+import AuthSpinner from '../components/common/Spinners/AuthSpinner';
 
 export default function Contracts() {
-  const [activeTab, setActiveTab] = useState('local');
-  const [contracts, setContracts] = useState([]);
+  const [activeTab, setActiveTab] = useState('local'); 
   const [categories, setCategories] = useState([]);
-
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['contracts'],
+    queryFn: getContracts,
+  });
   useEffect(() => {
-    loadContracts();
     loadCategories();
   }, []);
-
-  const loadContracts = async () => {
-    try {
-      const res = await getContracts();
-      setContracts(res?.data?.data || []);
-    } catch (error) {
-      console.error('Error loading contracts:', error);
-      toast.error('فشل تحميل العقود');
-    }
-  };
-
+  
   const loadCategories = async () => {
     try {
       const res = await getContractCategories();
@@ -35,9 +28,15 @@ export default function Contracts() {
       console.error(error);
     }
   };
-
+  
+  const contracts = data?.data?.data || [];
+  
   const localContracts = contracts.filter(c => c.scope === 'local');
   const internationalContracts = contracts.filter(c => c.scope === 'international');
+  
+  if (isLoading) return <AuthSpinner/>;
+  if (isError) return <p>حدث خطأ أثناء جلب البيانات</p>; 
+
 
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-6">
@@ -81,7 +80,7 @@ export default function Contracts() {
               transition={{ duration: 0.4 }}
               className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
             >
-              <Local reloadContracts={loadContracts} categories={categories} contracts={localContracts} />
+ <Local reloadContracts={refetch} categories={categories} contracts={localContracts} />
             </motion.div>
           ) : (
             <motion.div
@@ -92,8 +91,8 @@ export default function Contracts() {
               transition={{ duration: 0.4 }}
               className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
             >
-              <International reloadContracts={loadContracts} categories={categories} contracts={internationalContracts} />
-            </motion.div>
+          <International reloadContracts={refetch} categories={categories} contracts={internationalContracts} />
+          </motion.div>
           )}
         </AnimatePresence>
       </div>

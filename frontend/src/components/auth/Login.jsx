@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { useState } from 'react'; 
 import { FaEnvelope, FaLock } from 'react-icons/fa';
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import useAuth from '../../components/auth/AuthUser';
-
+import { motion } from 'framer-motion'; 
+ import { toast } from 'sonner';
+import {Input} from '../../components/ui/input';
 const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
@@ -14,11 +15,15 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
     handleFormClose();
     onAuthStart();
     const success = await login(email, password);
-    if (success) {
-      onAuthComplete(true, 'تم تسجيل الدخول بنجاح!');
-    } else {
-      onAuthComplete(false, 'فشل تسجيل الدخول. تحقق من البيانات.');
-    }
+    onAuthComplete(success);
+  
+
+
+    toast(success ? 'تم تسجيل الدخول بنجاح ✅' : 'فشل تسجيل الدخول ❌', {
+      description: success
+    ? 'تم تسجيل الدخول بنجاح إلى النظام.'
+    : 'الرجاء التأكد من صحة البريد وكلمة المرور.',
+});
   };
 
   const handleCancel = () => {
@@ -28,59 +33,65 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black  bg-opacity-60">
-      <ToastContainer position="top-center" autoClose={3000} />
-      <div className="w-full max-w-md bg-green-900/20 text-white rounded-2xl p-8 shadow-2xl border border-gray-800 scale-100 transition-all">
-        <h2 className="text-3xl font-extrabold text-center text-emerald-400 mb-6 tracking-wide drop-shadow">
+    <motion.div
+      className="w-full max-w-md mx-4 rounded-3xl  font-['Tajawal'] overflow-hidden shadow-2xl backdrop-blur-2xl border border-white/10 bg-white/10"
+      initial={{ y: 60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: 40, opacity: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <div className="p-10"> 
+        <h2 className="text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-300 to-emerald-500 drop-shadow-xl mb-8">
           تسجيل الدخول
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* البريد */}
           <div className="relative">
-            <FaEnvelope className="absolute top-3 left-4 text-emerald-500" />
-            <input
+            <FaEnvelope className="absolute top-3 left-4 text-emerald-400" />
+            <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="البريد الإلكتروني"
               required
-              className="w-full py-3 pl-12 pr-4  bg-white border border-gray-700 text-black placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full py-3 pl-12 pr-4 rounded-lg bg-white/80 text-black placeholder-gray-700 border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-300"
             />
           </div>
 
           {/* كلمة المرور */}
           <div className="relative">
-            <FaLock className="absolute top-3 left-4 text-emerald-500" />
-            <input
+            <FaLock className="absolute top-3 left-4 text-emerald-400" />
+            <Input
+             autoComplete="current-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="كلمة المرور"
               required
-              className="w-full py-3 pl-12 pr-4 bg-white border border-gray-700 text-black placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full py-3 pl-12 pr-4 rounded-lg bg-white/80 text-black placeholder-gray-700 border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-300"
             />
           </div>
 
           {/* زر الدخول */}
           <Button
             type="submit"
-            className="w-full py-3 font-bold text-white bg-gradient-to-l from-emerald-400 via-emerald-500 to-green-600 rounded-lg shadow-md hover:from-emerald-600 hover:via-emerald-500 hover:to-emerald-500 hover:scale-105 transition-transform"
+            className="w-full py-3 font-bold text-white bg-gradient-to-l from-emerald-600 via-green-600 to-emerald-700 rounded-lg shadow-md hover:scale-105 transition-all"
           >
-            🚀 تسجيل الدخول
+            🚀   دخول
           </Button>
 
           {/* زر الإلغاء */}
           <button
             type="button"
             onClick={handleCancel}
-            className="w-full py-3 font-semibold text-white bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-all hover:scale-105"
+            className="w-full py-3 font-semibold text-white bg-gray-600/80 border border-gray-500 rounded-lg hover:bg-gray-500 transition-all hover:scale-105"
           >
             إلغاء
           </button>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAlert } from '../../context/AlertContext';
+import { toast } from 'sonner';
+
 import {
   getServiceTypes,
   createServiceType,
@@ -15,7 +16,7 @@ const ServiceTypes = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [editingServiceType, setEditingServiceType] = useState(null);
-  const { triggerAlert } = useAlert();
+ 
   const itemsPerPage = 10;
 
   const fetchServiceTypes = useCallback(async () => {
@@ -24,9 +25,9 @@ const ServiceTypes = () => {
       setServiceTypes(response.data || []);
     } catch (error) {
       console.error('Error fetching service types:', error);
-      triggerAlert('error', 'Failed to fetch service types. Please try again.');
+      toast('error', 'Failed to fetch service types. Please try again.');
     }
-  }, [triggerAlert]);
+  }, [toast]);
 
   useEffect(() => {
     fetchServiceTypes();
@@ -36,16 +37,16 @@ const ServiceTypes = () => {
     try {
       if (editingServiceType) {
         await updateServiceType(editingServiceType.id, formData);
-        triggerAlert('success', 'Service type updated successfully.');
+        toast('success', 'Service type updated successfully.');
       } else {
         await createServiceType(formData);
-        triggerAlert('success', 'Service type added successfully.');
+        toast('success', 'Service type added successfully.');
       }
       fetchServiceTypes();
       setShowModal(false);
     } catch (error) {
       console.error('Error saving service type:', error);
-      triggerAlert('error', 'Failed to save service type. Please try again.');
+      toast('error', 'Failed to save service type. Please try again.');
     }
   };
 
@@ -54,10 +55,10 @@ const ServiceTypes = () => {
       try {
         await deleteServiceType(serviceTypeId);
         fetchServiceTypes();
-        triggerAlert('success', 'Service type deleted successfully.');
+        toast('success', 'Service type deleted successfully.');
       } catch (error) {
         console.error('Error deleting service type:', error);
-        triggerAlert(
+        toast(
           'error',
           'Failed to delete service type. Please try again.',
         );

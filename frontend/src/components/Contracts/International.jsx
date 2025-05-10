@@ -4,7 +4,8 @@ import { FaPlus, FaChevronDown, FaChevronRight } from "react-icons/fa";
 import ContractModal from "./ContractModal";
 import ContractDetails from "./ContractDetails";
 import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
-import { toast } from "react-toastify";
+ import { toast } from 'sonner';
+
 import { deleteContract } from "../../services/api/contracts";
 import AddButton from "../common/AddButton";
 

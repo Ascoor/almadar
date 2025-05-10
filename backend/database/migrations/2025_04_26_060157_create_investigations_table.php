@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('decision')->nullable(); // ✅ إضافة هذا السطر          // موضوع التحقيق
             $table->string('case_number')->nullable();   // رقم الدعوى أو التحقيق
             $table->enum('status', ['open', 'in_progress', 'closed'])->default('open'); // حالة التحقيق
-            $table->text('notes')->nullable();           // ملاحظات إضافية
+            $table->text('notes')->nullable();   
+                    // ملاحظات إضافية
             $table->timestamps();
         });
         

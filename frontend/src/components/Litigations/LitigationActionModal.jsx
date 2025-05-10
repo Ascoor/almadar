@@ -1,182 +1,121 @@
-import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import {
-  createLitigationAction,
-  updateLitigationAction,
-} from "@/services/api/litigations";
+// LitigationModal.jsx
 
-const LitigationActionModal = ({
+import React from "react";
+import { Modal } from "@/components/ui/modal";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { toast } from "react-toastify";
+import { FormattedMessage, useIntl } from "react-intl"; // استخدام السمة للتحكم في موضوعات النهار والليل
+
+const schema = yup.object().shape({
+  case_number: yup.string().required("يرجى إدخال رقم الدعوى"),
+  court: yup.string().required("يرجى إدخال اسم المحكمة"),
+  opponent: yup.string().required("يرجى إدخال اسم الخصم"),
+  subject: yup.string().required("يرجى إدخال الموضوع"),
+});
+
+export default function LitigationModal({
   isOpen,
   onClose,
-  initialData = null,
-  litigationId,
-  onSuccess,
-}) => {
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    action_date: "",
-    action_type: "",
-    requirements: "",
-    results: "",
-    lawyer_name: "",
-    location: "",
-    notes: "",
-    status: "pending",
+  initialData,
+  reloadLitigations,
+  theme,
+}) {
+  const intl = useIntl();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: initialData || {},
   });
 
-  useEffect(() => {
-    if (initialData) {
-      setForm(initialData);
-    } else {
-      resetForm();
-    }
-  }, [initialData]);
-
-  const resetForm = () => {
-    setForm({
-      action_date: "",
-      action_type: "",
-      requirements: "",
-      results: "",
-      lawyer_name: "",
-      location: "",
-      notes: "",
-      status: "pending",
-    });
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
+  const onSubmit = async (data) => {
     try {
-      if (initialData && initialData.id) {
-        await updateLitigationAction(litigationId, initialData.id, form);
-        toast.success("تم تحديث الإجراء بنجاح.");
-      } else {
-        await createLitigationAction(litigationId, form);
-        toast.success("تم إضافة الإجراء بنجاح.");
-      }
+      // Add your API call here to save litigation data
+      toast.success(intl.formatMessage({ id: "litigation.save_success" }));
       onClose();
-      onSuccess?.();
-    } catch (err) {
-      console.error(err);
-      toast.error("فشل العملية، حاول مرة أخرى.");
-    } finally {
-      setLoading(false);
+      reloadLitigations();
+    } catch (error) {
+      console.error(error);
+      toast.error(intl.formatMessage({ id: "litigation.save_error" }));
     }
   };
-
-  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh] relative">
-        {loading && (
-          <div className="absolute inset-0 bg-white/60 dark:bg-gray-800/60 flex items-center justify-center z-50">
-            <p className="text-almadar-blue dark:text-almadar-yellow font-semibold animate-pulse">
-              جاري المعالجة...
-            </p>
-          </div>
-        )}
+    <Modal isOpen={isOpen} onClose={onClose} title={intl.formatMessage({ id: "litigation.modal_title" })} theme={theme}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label htmlFor="case_number" className="block text-sm font-medium text-gray-700">
+            {intl.formatMessage({ id: "litigation.case_number" })}
+          </label>
+          <input
+            type="text"
+            id="case_number"
+            name="case_number"
+            ref={register}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+          {errors.case_number && (
+            <p className="mt-1 text-red-500 text-sm">{errors.case_number.message}</p>
+          )}
+        </div>
 
-        <h2 className="text-2xl font-bold mb-6 text-almadar-blue dark:text-almadar-yellow">
-          {initialData ? "تعديل إجراء قضائي" : "إضافة إجراء قضائي"}
-        </h2>
+        <div>
+          <label htmlFor="court" className="block text-sm font-medium text-gray-700">
+            {intl.formatMessage({ id: "litigation.court" })}
+          </label>
+          <input
+            type="text"
+            id="court"
+            name="court"
+            ref={register}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+          {errors.court && <p className="mt-1 text-red-500 text-sm">{errors.court.message}</p>}
+        </div>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Form inputs */}
-          <input
-            type="date"
-            name="action_date"
-            value={form.action_date}
-            onChange={handleChange}
-            required
-            className="input"
-          />
+        <div>
+          <label htmlFor="opponent" className="block text-sm font-medium text-gray-700">
+            {intl.formatMessage({ id: "litigation.opponent" })}
+          </label>
           <input
             type="text"
-            name="action_type"
-            value={form.action_type}
-            onChange={handleChange}
-            required
-            className="input"
+            id="opponent"
+            name="opponent"
+            ref={register}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
-          <input
-            type="text"
-            name="requirements"
-            value={form.requirements}
-            onChange={handleChange}
-            className="input"
-          />
-          <input
-            type="text"
-            name="results"
-            value={form.results}
-            onChange={handleChange}
-            className="input"
-          />
-          <input
-            type="text"
-            name="lawyer_name"
-            value={form.lawyer_name}
-            onChange={handleChange}
-            required
-            className="input"
-          />
-          <input
-            type="text"
-            name="location"
-            value={form.location}
-            onChange={handleChange}
-            required
-            className="input"
-          />
-          <textarea
-            name="notes"
-            value={form.notes}
-            onChange={handleChange}
-            rows={3}
-            className="input"
-          />
-          <select
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-            required
-            className="input"
-          >
-            <option value="pending">معلق</option>
-            <option value="in_review">قيد المراجعة</option>
-            <option value="done">منجز</option>
-          </select>
+          {errors.opponent && (
+            <p className="mt-1 text-red-500 text-sm">{errors.opponent.message}</p>
+          )}
+        </div>
 
-          {/* Action buttons */}
-          <div className="md:col-span-2 flex justify-end gap-4 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-400 dark:hover:bg-gray-600"
-            >
-              إلغاء
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn bg-almadar-blue hover:bg-emerald-700 dark:bg-almadar-yellow text-white dark:text-black font-bold"
-            >
-              {initialData ? "تحديث" : "إضافة"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div>
+          <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+            {intl.formatMessage({ id: "litigation.subject" })}
+          </label>
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            ref={register}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+          {errors.subject && (
+            <p className="mt-1 text-red-500 text-sm">{errors.subject.message}</p>
+          )}
+        </div>
+
+        <div className="flex justify-end mt-6">
+          <Button type="button" onClick={() => onClose()} className="mr-2">
+            <FormattedMessage id="litigation.cancel_button" />
+          </Button>
+          <Button type="submit" className="bg-blue-500 text-white">
+            <FormattedMessage id="litigation.save_button" />
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
-};
-
-export default LitigationActionModal;
+}

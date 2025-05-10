@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAlert } from '../../context/AlertContext';
+import { toast } from 'sonner';
+
 import {
   getLegcaseTypes,
   getLegcaseSubTypes,
@@ -22,7 +23,7 @@ const LegcaseTypes = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [isSubType, setIsSubType] = useState(false);
-  const { triggerAlert } = useAlert();
+ 
   const itemsPerPage = 10;
   const fetchLegcaseTypes = useCallback(async () => {
     try {
@@ -30,9 +31,9 @@ const LegcaseTypes = () => {
       setLegcaseTypes(response.data || []);
     } catch (error) {
       console.error('حدث خطأ أثناء جلب أنواع القضايا:', error);
-      triggerAlert('error', 'فشل في جلب أنواع القضايا.');
+      toast('error', 'فشل في جلب أنواع القضايا.');
     }
-  }, [triggerAlert]);
+  }, [toast]);
 
   const fetchLegcaseSubTypes = useCallback(async () => {
     try {
@@ -40,9 +41,9 @@ const LegcaseTypes = () => {
       setLegcaseSubTypes(response.data || []);
     } catch (error) {
       console.error('حدث خطأ أثناء جلب الأنواع الفرعية للقضايا:', error);
-      triggerAlert('error', 'فشل في جلب الأنواع الفرعية للقضايا.');
+      toast('error', 'فشل في جلب الأنواع الفرعية للقضايا.');
     }
-  }, [triggerAlert]);
+  }, [toast]);
 
   useEffect(() => {
     fetchLegcaseTypes();
@@ -57,21 +58,21 @@ const LegcaseTypes = () => {
         } else {
           await updateLegcaseType(editingItem.id, formData);
         }
-        triggerAlert('success', 'تم التحديث بنجاح.');
+        toast('success', 'تم التحديث بنجاح.');
       } else {
         if (isSubType) {
           await createLegcaseSubType(formData);
         } else {
           await createLegcaseType(formData);
         }
-        triggerAlert('success', 'تم الإنشاء بنجاح.');
+        toast('success', 'تم الإنشاء بنجاح.');
       }
       fetchLegcaseTypes();
       fetchLegcaseSubTypes();
       setShowModal(false);
     } catch (error) {
       console.error('حدث خطأ أثناء حفظ العنصر:', error);
-      triggerAlert('error', 'فشل في الحفظ. حاول مرة أخرى.');
+      toast('error', 'فشل في الحفظ. حاول مرة أخرى.');
     }
   };
 
@@ -85,10 +86,10 @@ const LegcaseTypes = () => {
         }
         fetchLegcaseTypes();
         fetchLegcaseSubTypes();
-        triggerAlert('success', 'تم الحذف بنجاح.');
+        toast('success', 'تم الحذف بنجاح.');
       } catch (error) {
         console.error('حدث خطأ أثناء الحذف:', error);
-        triggerAlert('error', 'فشل في الحذف.');
+        toast('error', 'فشل في الحذف.');
       }
     }
   };

@@ -56,18 +56,18 @@ public function destroy(Litigation $litigation)
         ], 500);
     }
 }
+private function validateLitigation(Request $request)
+{
+    return $request->validate([
+        'scope' => 'required|in:from,against',
+        'case_number' => 'required|string|unique:litigations,case_number,' . ($request->id ?? 'null'),
+        'opponent' => 'required|string|max:255',
+        'court' => 'required|string|max:255',
+        'filing_date' => 'required|date',
+        'subject' => 'required|string|max:255',
+        'status' => 'required|in:open,in_progress,closed',
+        'notes' => 'nullable|string|max:1000',
+    ]);
+}
 
-
-    private function validateLitigation(Request $request)
-    {
-        return $request->validate([
-            'type' => 'required|in:from_company,against_company',
-            'case_number' => 'required|string|unique:litigations,case_number,' . $request->id,
-            'subject' => 'required|string|max:255',
-            'court_name' => 'required|string|max:255',
-            'filing_date' => 'required|date',
-            'status' => 'required|in:open,closed,pending,in_court',
-            'notes' => 'nullable|string',
-        ]);
-    }
 }

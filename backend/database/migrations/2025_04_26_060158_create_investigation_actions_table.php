@@ -13,6 +13,7 @@ return new class extends Migration
 {
     Schema::create('investigation_actions', function (Blueprint $table) {
         $table->id();
+        
         $table->foreignId('investigation_id')->constrained('investigations')->onDelete('cascade');
         $table->date('action_date');              
         $table->string('action_type');           

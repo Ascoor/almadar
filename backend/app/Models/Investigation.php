@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,16 +11,16 @@ class Investigation extends Model
     protected $fillable = [
         'employee_name',
         'source',
-        'decision',  
+        'decision',     // تأكد أن هذا العمود موجود في migration
         'subject',
         'case_number',
-        'status',
+        'status',       // open | in_progress | closed
         'notes',
     ];
 
-    // علاقة تحقيق إلى إجراءات
+    // ✅ علاقة: تحقيق يحتوي على عدة إجراءات
     public function actions()
     {
-        return $this->hasMany(InvestigationAction::class);
+        return $this->hasMany(InvestigationAction::class, 'investigation_id');
     }
 }

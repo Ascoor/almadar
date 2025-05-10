@@ -4,42 +4,32 @@ import UserMenu from '../common/DropdownProfile';
 import ThemeToggle from '../common/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import { WelcomeLogo, WelcomeLogoWhite } from '../../assets/images';
-import { useThemeProvider } from '../../utils/ThemeContext';
 
-export default function Header({ onToggleSidebar }) {
-  const { currentTheme } = useThemeProvider();
-  const isDark = currentTheme === 'dark';
-
+export default function Header({ isOpen, onToggleSidebar }) {
+  
   return (
     <nav
-    dir="rtl"
-    className={`
-      py-3 px-6 flex justify-between items-center sticky top-0 z-10
-      sm:px-6 lg:px-8
-    bg-gradient-to-r from-navy-light/60 via-navy/40 to-accent/10
-      text-gray-900 dark:text-white
-      border-b border-gray-200
-      dark:bg-navy-dark
-      shadow-md dark:shadow-[0_0_10px_#14b8a640]
-      transition-all
-    `}
-  >
-  
-      {/* Logo & Menu Toggle */}
-      <div className="flex items-center gap-4">
-        <img
-          src={isDark ? WelcomeLogoWhite : WelcomeLogo}
-          alt="Logo"
-          className="w-12 h-12 object-contain cursor-pointer transition"
-          
-        />
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-          <Menu className="h-5 w-5" />
-        </Button>
-      </div>
+      dir="rtl"
+      className={`
+        fixed top-0 left-0 right-0
+        transition-all duration-300
+        ${isOpen ? 'sm:mr-64' : 'sm:mr-16'}
+        py-3 px-6 flex justify-between items-center
+        
+        bg-gradient-to-l from-gold/40 via-royal/80 to-navy-light/80 
+             dark:bg-gradient-to-bl dark:from-royal-dark/70 dark:via-royal/40 dark:to-reded/40
+        text-gray-900 dark:text-white
+        border-b border-gray-200 dark:border-navy-dark
+        shadow-md dark:shadow-[0_0_10px_#14b8a640]
+        z-20
+      `}
+    >
+      {/* زر الفتح/الإغلاق */}
+      <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
+        <Menu className="h-5 w-5" />
+      </Button>
 
-      {/* Controls */}
+      {/* أدوات التحكم */}
       <div className="flex items-center gap-3">
         <Notifications align="right" />
         <ThemeToggle />

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { getArchiveFiles } from "../services/api/archives";
 import { FaFolder, FaFolderOpen, FaChevronDown, FaChevronLeft, FaFilePdf } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
+ import { toast } from 'sonner';
+
 import SectionHeader from "../components/common/SectionHeader";
 import { ArchiveSection } from "../assets/icons";
 import API_CONFIG from "../config/config";
-
+ 
 export default function ArchivePage() {
   const [archives, setArchives] = useState({});
   const [loading, setLoading] = useState(true);
@@ -55,7 +56,7 @@ export default function ArchivePage() {
   return (
     <div className="p-6 space-y-8">
       <SectionHeader icon={ArchiveSection} listName="الأرشيف" showBackButton={false} />
-      <ToastContainer />
+ 
  
 
       {Object.keys(archives).length === 0 ? (

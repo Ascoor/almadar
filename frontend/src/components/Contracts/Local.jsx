@@ -4,7 +4,8 @@ import AddButton from "@/components/common/AddButton";
 import ContractModal from "./ContractModal";
 import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
 import { deleteContract } from "../../services/api/contracts";
-import { toast } from "react-toastify";
+
+ import { toast } from 'sonner';
 
 export default function Local({ contracts = [], reloadContracts, categories }) {
   const [selectedContract, setSelectedContract] = useState(null);

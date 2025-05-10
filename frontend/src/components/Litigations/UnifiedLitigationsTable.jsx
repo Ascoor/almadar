@@ -6,7 +6,6 @@ import LitigationActionsTable from "./LitigationActionsTable";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import LitigationModal from "./LitigationModal";
 import { deleteLitigation } from "@/services/api/litigations";
-import { useTheme } from "next-themes"; // استيراد استخدام السمة للتحكم في موضوعات النهار والليل
 import { toast } from 'sonner';
 
 export default function FromCompanyLitigations({ litigations = [], reloadLitigations }) {
@@ -15,7 +14,6 @@ export default function FromCompanyLitigations({ litigations = [], reloadLitigat
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [toDelete, setToDelete] = useState(null);
-  const { theme, setTheme } = useTheme(); // استخدام السمة للتحكم في موضوعات النهار والليل
 
   const toggleExpand = (row) => {
     setExpandedId((prev) => (prev === row.id ? null : row.id));
@@ -85,7 +83,6 @@ export default function FromCompanyLitigations({ litigations = [], reloadLitigat
         onClose={() => setIsModalOpen(false)}
         initialData={selectedLitigation}
         reloadLitigations={reloadLitigations} // تأكد من أن هذا هو اسم الدالة الفعلية
-        theme={theme} // تمرير سمة النهار/الليل للنموذج
       />
 
       <GlobalConfirmDeleteModal
@@ -93,7 +90,6 @@ export default function FromCompanyLitigations({ litigations = [], reloadLitigat
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
         itemName={toDelete?.case_number || "الدعوى"}
-        theme={theme} // تمرير سمة النهار/الليل للنموذج
       />
     </>
   );
