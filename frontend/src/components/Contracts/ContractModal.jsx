@@ -113,16 +113,16 @@ export default function ContractModal({ isOpen, onClose, initialData = null, cat
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh] relative transform-gpu">
+      <div className="bg-white dark:bg-royal-dark  rounded-lg shadow-lg w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh] relative transform-gpu">
         {loading && (
           <div className="absolute inset-0 bg-white/70 dark:bg-gray-800/70 flex items-center justify-center z-50">
-            <div className="text-lg font-bold text-blue-400 dark:text-yellow-400 animate-pulse">
+            <div className="text-lg font-bold text-blue-400 dark:text-gold animate-pulse">
               جاري الحفظ...
             </div>
           </div>
         )}
 
-        <h2 className="text-2xl font-bold mb-6 bg-green-100 p-4 text-center text-blue-400 dark:text-yellow-400">
+        <h2 className="text-2xl font-bold mb-6 rounded-full bg-green dark:bg-navy-dark p-4 text-center text-navy-light/90  dark:text-gold-light">
           {initialData ? "تعديل العقد" : "إضافة عقد جديد"}
         </h2>
 
@@ -318,7 +318,7 @@ export default function ContractModal({ isOpen, onClose, initialData = null, cat
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-emerald-700 dark:bg-yellow-400 text-white dark:text-black font-bold"
+              className="px-6 py-2 rounded-lg bg-royal hover:bg-royal-dark dark:bg-yellow-400 text-white dark:text-black font-bold"
             >
               حفظ
             </button>

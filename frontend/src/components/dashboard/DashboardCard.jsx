@@ -1,18 +1,24 @@
-import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-const DashboardCard = ({ title, count, icon, color }) => {
+const DashboardCard = ({ title, count, icon, color = 'from-emerald-400 to-green-500', accent = 'text-emerald-600' }) => {
   return (
-    <Card className="border shadow-md hover:shadow-lg transition-shadow">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-lg font-medium">{title}</CardTitle>
-        <div className={`p-2 rounded-full ${color}`}>
+    <Card className="group relative overflow-hidden shadow-lg shadow-navy-light dark:shadow-reded-dark/60 hover:shadow-xl transition-all duration-300 border-0 rounded-3xl bg-gradient-to-br from-white via-slate-50 to-white dark:from-[#0d1b31] dark:to-[#0f172a]">
+      {/* خلفية خلف الأيقونة على شكل دوامة */}
+      <div className={`absolute right-[-30px] top-[-30px] w-36 h-36 rounded-full blur-3xl opacity-20 bg-gradient-to-tr ${color}`} />
+
+      <CardHeader className="flex flex-row items-center justify-between pb-0">
+        <CardTitle className="text-lg md:text-xl font-semibold text-foreground">{title}</CardTitle>
+        <div className={`p-3 rounded-xl bg-gradient-to-br ${color} text-white shadow-inner`}>
           {icon}
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{count}</div>
-        <CardDescription className="text-xs mt-1">إجمالي</CardDescription>
+
+      <CardContent className="pt-3">
+        <div className={cn("text-3xl font-extrabold", accent)}>{count}</div>
+        <CardDescription className="text-sm text-muted-foreground mt-1">
+          إجمالي البيانات
+        </CardDescription>
       </CardContent>
     </Card>
   );

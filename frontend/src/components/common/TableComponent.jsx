@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { MdEdit, MdVisibility } from 'react-icons/md';
-import { FaTrashAlt, FaSortUp, FaSortDown } from 'react-icons/fa';
+ 
+import { Edit, Eye } from 'lucide-react';
+import { Trash, ArrowUp, ArrowDown } from 'lucide-react'; 
 import { motion } from 'framer-motion';
 import API_CONFIG from '../../config/config';
 
@@ -24,7 +25,7 @@ const AnimatedRow = ({
       {onView && (
         <td className="p-2 text-center">
           <button onClick={() => onView(row)} className="text-primary">
-            <MdVisibility />
+            <Eye />
           </button>
         </td>
       )}
@@ -52,12 +53,12 @@ const AnimatedRow = ({
       ))}
       <td className="p-2 text-center">
         <button onClick={() => onEdit(row)} className="text-purple-600 hover:text-purple-700">
-          <MdEdit />
+          <Edit />
         </button>
       </td>
       <td className="p-2 text-center">
         <button onClick={() => onDelete(row)} className="text-red-600 hover:text-red-700">
-          <FaTrashAlt />
+          <Trash />
         </button>
       </td>
     </motion.tr>
@@ -139,7 +140,7 @@ const TableComponent = ({
                 >
                   {header.text}{' '}
                   {sortKey === header.key &&
-                    (sortDirection === 'asc' ? <FaSortUp /> : <FaSortDown />)}
+                    (sortDirection === 'asc' ? <ArrowUp /> : <ArrowDown />)}
                 </th>
               ))}
               <th className="p-2">تعديل</th>

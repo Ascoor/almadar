@@ -61,7 +61,7 @@ function UserMenu({ align = 'left' }) {
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="inline-flex items-center gap-2 focus:outline-none"
       >
-        <span className="hidden md:inline font-bold text-royal dark:text-gold-light">
+        <span className="hidden md:inline font-bold text-gold-light dark:text-gold-light">
           {user?.name}
         </span>
         <img

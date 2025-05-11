@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   Home, FileText, Users, FolderArchive, Scale,
-  Feather, Gavel, ChevronDown
+  Feather, Gavel, ChevronRight,SquareDashedKanban
 } from 'lucide-react';
-import { LogoArt, WelcomeLogo, WelcomeLogoWhite } from '../../assets/images';
-import { useThemeProvider } from '../../utils/ThemeContext';
+import { LogoArt, LogoPatren } from '../../assets/images'; // استخدام الشعارين
 
 export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   const [activeSection, setActiveSection] = useState(null);
-  const { currentTheme } = useThemeProvider();
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 640);
 
   useEffect(() => {
@@ -19,10 +17,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   }, []);
 
   const logoSrc = () => {
-    if (!isOpen && isLargeScreen) {
-      return LogoArt; // شعار ثابت عند الإغلاق الكبير
-    }
-    return currentTheme === 'dark' ? WelcomeLogoWhite : WelcomeLogo;
+    return isOpen ? LogoPatren : LogoArt; // استخدام LogoPatren عندما يكون isOpen === true و LogoArt عندما يكون isOpen === false
   };
 
   const navItems = [
@@ -37,6 +32,14 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
         { id: 'adv', label: 'المشورة القانونية', to: '/legal/legal-advices', icon: <Scale size={16} /> },
         { id: 'lit', label: 'التقاضي', to: '/legal/litigations', icon: <Gavel size={16} /> },
       ]
+    }, 
+        {
+      id: 'managment',
+      label: 'إدارة التطبيق',
+      icon: <Scale size={18} />,
+      children: [
+        { id: 'inv', label: 'القوائم', to: '/managment-lists', icon: <SquareDashedKanban size={16} /> },
+             ]
     },
     { id: 'users', label: 'المستخدمين', to: '/users', icon: <Users size={18} /> },
     { id: 'archive', label: 'الأرشيف', to: '/archive', icon: <FolderArchive size={18} /> },
@@ -54,13 +57,11 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
     <aside
       dir="rtl"
       className={`
-        fixed right-0 top-0 h-full z-30  
-        bg-gradient-to-b from-gold/40 via-royal-dark to-navy-dark/90
-        dark:bg-gradient-to-br dark:from-royal-dark/70 dark:via-royal/40 dark:to-reded/40
-        text-green-100/95  border-l border-border
-        dark:ring-2 dark:ring-mint-500 dark:shadow-[0_0_10px_#66ffcc40]
+        fixed right-0 top-0 h-full z-30 bg-white dark:bg-black
+          bg-gradient-to-b from-gold/70 via-navy/70 to-navy/90
+        dark:bg-gradient-to-t dark:from-navy-dark/70 dark:via-navy-dark/40 dark:to-reded-dark/40
+        text-green-100/95 border-l border-border
         transition-all duration-300 ease-in-out
-
         ${isLargeScreen 
           ? isOpen 
             ? 'translate-x-0 w-64' 
@@ -89,8 +90,9 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 className={({ isActive }) =>
                   `flex items-center gap-3 p-2 rounded-md transition-colors
                   ${isActive
-                    ? 'bg-navy-light text-white dark:bg-accent'
-                    : 'hover:bg-yellow-100 hover:text-navy dark:hover:bg-navy-light dark:text-yellow-100'}`
+                    ? 'bg-navy-light text-white'
+                    : 'hover:bg-yellow-100 hover:text-navy'
+                  }`
                 }
               >
                 {item.icon}
@@ -103,15 +105,17 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                   className={`flex items-center gap-3 p-2 w-full rounded-md transition-colors
                     ${activeSection === item.id
                       ? 'bg-navy-light text-white'
-                      : 'hover:bg-yellow-100 hover:text-navy'}`}
+                      : 'hover:bg-yellow-100 hover:text-navy'
+                    }`
+                  }
                 >
                   {item.icon}
                   {isOpen && (
                     <>
                       <span className="flex-1 text-right">{item.label}</span>
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform ${activeSection === item.id ? 'rotate-180' : ''}`}
-                      />
+              <ChevronRight
+  className={`w-4 h-4 transition-transform duration-300 ${activeSection === item.id ? 'rotate-90' : 'rotate-0'}`}
+/>
                     </>
                   )}
                 </button>
@@ -126,7 +130,9 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                           `flex items-center gap-2 p-2 rounded-md text-sm transition-colors
                           ${isActive
                             ? 'bg-navy-light text-white'
-                            : 'hover:bg-navy-light hover:text-white'}`}
+                            : 'hover:bg-navy-light hover:text-white'
+                          }`
+                        }
                       >
                         {child.icon}
                         <span>{child.label}</span>

@@ -1,4 +1,4 @@
-import React from 'react'; 
+ 
 import ThemeProvider from './utils/ThemeContext';
 import AuthWrapper from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
@@ -20,6 +20,8 @@ const App = () => {
           closeButton
           toastOptions={{
             style: {
+              padding: '10px',
+              
               borderRadius: '10px',
               background: '#1f2937',
               color: '#fff',

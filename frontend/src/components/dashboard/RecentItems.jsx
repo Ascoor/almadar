@@ -47,7 +47,7 @@ const RecentItems = () => {
   ];
 
   return (
-    <Card className="border shadow-md">
+    <Card className="border shadow-lg shadow-navy dark:shadow-reded-dark/50">
       <CardHeader>
         <CardTitle className="text-xl">آخر الملفات</CardTitle>
       </CardHeader>

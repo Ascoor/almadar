@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { IoMdNotifications, IoMdNotificationsOutline } from 'react-icons/io';
+import { Link } from 'react-router-dom'; 
+import { Bell } from 'lucide-react';
 
 export default function DropdownNotifications() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -44,9 +44,9 @@ export default function DropdownNotifications() {
         : 'bg-background text-foreground hover:bg-accent hover:text-accent-foreground'}`}
   >
     {dropdownOpen ? (
-      <IoMdNotifications className="w-6 h-6 animate-bounce" />
+      <Bell className="w-6 h-6 animate-bounce" />
     ) : (
-      <IoMdNotificationsOutline className="w-6 h-6" />
+      <Bell className="w-6 h-6" />
     )}
     <div className="absolute top-2 right-2 w-3 h-3 bg-red-500 border-2 border-white dark:border-background rounded-full animate-ping" />
   </button>

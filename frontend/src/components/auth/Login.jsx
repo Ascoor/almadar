@@ -1,5 +1,7 @@
 import { useState } from 'react'; 
 import { FaEnvelope, FaLock } from 'react-icons/fa';
+
+import { Mail, LockKeyhole } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useAuth from '../../components/auth/AuthUser';
 import { motion } from 'framer-motion'; 
@@ -48,7 +50,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* البريد */}
           <div className="relative">
-            <FaEnvelope className="absolute top-3 left-4 text-emerald-400" />
+            <Mail className="absolute top-3 left-4 text-emerald-600" />
             <Input
               type="email"
               value={email}
@@ -61,7 +63,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
 
           {/* كلمة المرور */}
           <div className="relative">
-            <FaLock className="absolute top-3 left-4 text-emerald-400" />
+            <LockKeyhole className="absolute top-3 left-4 text-emerald-600" />
             <Input
              autoComplete="current-password"
               type="password"
