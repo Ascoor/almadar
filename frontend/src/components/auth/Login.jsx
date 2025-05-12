@@ -7,7 +7,7 @@ import useAuth from '../../components/auth/AuthUser';
 import { motion } from 'framer-motion'; 
  import { toast } from 'sonner';
 import {Input} from '../../components/ui/input';
-const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
+const Login = ({ onAuthStart, handleFormClose }) => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,7 +17,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
     handleFormClose();
     onAuthStart();
     const success = await login(email, password);
-    onAuthComplete(success);
+ 
   
 
 

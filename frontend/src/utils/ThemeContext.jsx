@@ -7,29 +7,22 @@ const ThemeContext = createContext({
 
 export default function ThemeProvider({ children }) {
   const persistedTheme = localStorage.getItem('theme');
-  const [theme, setTheme] = useState(persistedTheme || 'light');
+  const [theme, setTheme] = useState(persistedTheme || 'light'); // Default to 'light' theme
 
   const changeCurrentTheme = (newTheme) => {
     setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+    localStorage.setItem('theme', newTheme); // Persist theme change to localStorage
   };
 
   useEffect(() => {
-    document.documentElement.classList.add('[&_*]:!transition-none');
     if (theme === 'light') {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.style.colorScheme = 'light';
+      document.documentElement.classList.remove('dark');  // Remove dark class for light theme
+      document.documentElement.style.colorScheme = 'light';  // Set color scheme to light
     } else {
-      document.documentElement.classList.add('dark');
-      document.documentElement.style.colorScheme = 'dark';
+      document.documentElement.classList.add('dark');  // Add dark class for dark theme
+      document.documentElement.style.colorScheme = 'dark';  // Set color scheme to dark
     }
-
-    const transitionTimeout = setTimeout(() => {
-      document.documentElement.classList.remove('[&_*]:!transition-none');
-    }, 1);
-
-    return () => clearTimeout(transitionTimeout);
-  }, [theme]);
+  }, [theme]); // Trigger effect when theme changes
 
   return (
     <ThemeContext.Provider value={{ currentTheme: theme, changeCurrentTheme }}>

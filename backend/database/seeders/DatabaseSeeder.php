@@ -20,19 +20,18 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        
+
 
         $this->call([
             RolesAndPermissionsSeeder::class,
             UsersTableSeeder::class,
-            ContractCategoriesSeeder::class, // الأول الأنواع
-            ContractsSeeder::class,     // بعدين العقود
-            
-    InvestigationSeeder::class,
-    InvestigationActionSeeder::class,
-    LegalAdviceSeeder ::class,
-    LitigationSeeder::class,
-    LitigationActionsSeeder::class
+            ContractCategoriesSeeder::class,
+            ContractsSeeder::class,
+            InvestigationSeeder::class,
+            InvestigationActionSeeder::class,
+            LegalAdviceSeeder::class,
+            LitigationSeeder::class,
+            LitigationActionsSeeder::class
         ]);
     }
 }

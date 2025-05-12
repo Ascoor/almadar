@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import LegalCaseProcedures from '../../LegalCases/LegalCaseTools/LegalCaseProcedures';
 import LegalCaseSessions from '../../LegalCases/LegalCaseTools/LegalCaseSessions';
 import LegalCaseAds from '../../LegalCases/LegalCaseTools/LegalCaseAds';

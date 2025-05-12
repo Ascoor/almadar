@@ -10,7 +10,7 @@ class LitigationActionController extends Controller
 {
     public function index(Litigation $litigation)
     {
-        $actions = $litigation->actions()->latest()->get();
+        $actions = $litigation->actions()->with('actionType')->latest()->paginate(10);
         return response()->json($actions);
     }
 
@@ -53,9 +53,13 @@ class LitigationActionController extends Controller
 
     private function validateAction(Request $request)
     {
-        return $request->validate([
+    return $request->validate([
             'action_date' => 'required|date',
-            'action_description' => 'required|string|max:1000',
+            'action_type_id' => 'required|exists:litigation_action_types,id', // Validate against litigation_action_types table
+            'requirements' => 'nullable|string',
+            'lawyer_name' => 'required|string|max:1000',
+            'location' => 'required|string|max:1000',
+            'notes' => 'nullable|string',
             'result' => 'nullable|string',
             'status' => 'required|in:pending,completed,cancelled',
         ]);

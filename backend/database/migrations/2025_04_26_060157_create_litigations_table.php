@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -8,45 +7,56 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // إنشاء جدول "litigations"
         Schema::create('litigations', function (Blueprint $table) {
             $table->id();
 
-            $table->enum('scope', ['from', 'against']); // فقط دولي أو محلي
-            $table->string('case_number');        // الخصوم
-            $table->string('opponent');        // الخصوم
-            $table->string('court');            // المحكمة
-            $table->date('filing_date');        // تاريخ الدعوى
-            $table->string('subject');     // نوع الدعوى
+            $table->enum('scope', ['from', 'against']);  // نوع الدعوى (دولي أو محلي)
+            $table->string('case_number');                // رقم القضية
+            $table->string('opponent');                   // الخصم
+            $table->string('court');                      // المحكمة
+            $table->date('filing_date');                  // تاريخ تقديم الدعوى
+            $table->string('subject');                    // نوع الدعوى
             $table->enum('status', ['open', 'in_progress', 'closed'])->default('open'); // حالة الدعوى
-            
-            $table->string('notes');     // نوع الدعوى
+            $table->string('notes')->nullable();          // ملاحظات
             $table->timestamps();
         }); 
-  
-        Schema::create('litigation_actions', function (Blueprint $table) {
+
+        // إنشاء جدول "litigation_action_types"
+        Schema::create('litigation_action_types', function (Blueprint $table) {
             $table->id();
-        
-            $table->foreignId('litigation_id')->constrained()->onDelete('cascade');
-        
-            $table->string('action_type');                     // نوع الإجراء
-            $table->date('action_date');                       // تاريخ الإجراء
-            $table->string('requirements')->nullable();        // الطلبات
-            $table->string('results')->nullable();             // النتيجة
-            $table->string('lawyer_name');                     // القائم بالإجراء
-            $table->string('location');                        // مكان الإجراء
-            $table->longText('notes')->nullable();             // ملاحظات المتابعة
-            $table->enum('status', ['pending', 'in_review', 'done'])->default('pending'); // حالة الإجراء
-        
+            $table->string('action_name');  // اسم نوع الإجراء
             $table->timestamps();
         });
-        
-        
-        
+
+        // إنشاء جدول "litigation_actions"
+        Schema::create('litigation_actions', function (Blueprint $table) {
+            $table->id();
+
+            // الربط مع جدول "litigations"
+            $table->foreignId('litigation_id')->constrained()->onDelete('cascade');
+
+            // الربط مع جدول "litigation_action_types"
+            $table->foreignId('action_type_id')
+                  ->constrained('litigation_action_types')
+                  ->onDelete('cascade');  // إذا تم حذف نوع الإجراء، يتم حذف الإجراءات المرتبطة به.
+
+            $table->date('action_date');  // تاريخ الإجراء
+            $table->string('requirements')->nullable();  // الطلبات
+            $table->string('results')->nullable();  // النتيجة
+            $table->string('lawyer_name');  // اسم المحامي القائم بالإجراء
+            $table->string('location');  // مكان الإجراء
+            $table->longText('notes')->nullable();  // ملاحظات المتابعة
+            $table->enum('status', ['pending', 'in_review', 'done'])->default('pending');  // حالة الإجراء
+            $table->timestamps();
+        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('litigations');
+        // حذف الجداول في حالة التراجع عن الميجريشن
         Schema::dropIfExists('litigation_actions');
+        Schema::dropIfExists('litigation_action_types');
+        Schema::dropIfExists('litigations');
     }
 };

@@ -10,8 +10,9 @@ class LitigationController extends Controller
 {
     public function index()
     {
-        $litigations = Litigation::with('actions')->latest()->paginate(15);
-        return response()->json($litigations);
+
+    $litigations = Litigation::with('actions.actionType')->latest()->paginate(15);
+    return response()->json($litigations);
     }
 
     public function store(Request $request)

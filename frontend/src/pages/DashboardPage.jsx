@@ -45,7 +45,7 @@
             {/* Overlay على الجوال */}
             {sidebarOpen && (
               <div
-                className="fixed inset-0 bg-black/50 z-20 sm:hidden"
+                className="fixed inset-0 bg-black/50 z-10 sm:hidden"
                 onClick={() => setSidebarOpen(false)}
               />
             )}

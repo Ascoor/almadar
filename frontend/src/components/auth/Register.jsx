@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 
 const Register = ({ toggleLoginForm, handleFormClose }) => {
   const [name, setName] = useState('');

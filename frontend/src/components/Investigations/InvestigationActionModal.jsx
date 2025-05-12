@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
+import { toast } from "sonner";
 
-export default function InvestigationActionModal({ isOpen, onClose, onSubmit, initialData }) {
+export default function InvestigationActionModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialData,
+  actionTypes = [],
+}) {
   const [form, setForm] = useState({
     action_date: "",
-    action_type: "",
+    action_type_id: "",
     officer_name: "",
     requirements: "",
     results: "",
@@ -23,7 +30,7 @@ export default function InvestigationActionModal({ isOpen, onClose, onSubmit, in
   const resetForm = () => {
     setForm({
       action_date: "",
-      action_type: "",
+      action_type_id: "",
       officer_name: "",
       requirements: "",
       results: "",
@@ -53,23 +60,25 @@ export default function InvestigationActionModal({ isOpen, onClose, onSubmit, in
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh] relative">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh] relative transform-gpu">
         {loading && (
           <div className="absolute inset-0 bg-white/70 dark:bg-gray-800/70 flex items-center justify-center z-50">
-            <div className="text-lg font-bold text-almadar-blue dark:text-almadar-yellow animate-pulse">
+            <div className="text-lg font-bold text-royal dark:text-almadar-yellow animate-pulse">
               جاري الحفظ...
             </div>
           </div>
         )}
 
-        <h2 className="text-2xl font-bold mb-6 text-almadar-blue dark:text-almadar-yellow">
+        <h2 className="text-2xl font-bold mb-6 rounded-full bg-green dark:bg-navy-dark p-4 text-center text-navy-light/90 dark:text-gold-light">
           {initialData ? "تعديل إجراء" : "إضافة إجراء"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 text-right">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">تاريخ الإجراء</label>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+                تاريخ الإجراء
+              </label>
               <input
                 type="date"
                 name="action_date"
@@ -81,19 +90,31 @@ export default function InvestigationActionModal({ isOpen, onClose, onSubmit, in
               />
             </div>
             <div>
-              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">نوع الإجراء</label>
-              <input
-                type="text"
-                name="action_type"
-                value={form.action_type}
+               <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+                نوع الإجراء
+              </label>
+              <select
+                name="action_type_id"
+                value={form.action_type_id || ""}
                 onChange={handleChange}
                 required
-                placeholder="مثال: جلسة استماع"
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-              />
+              >
+                <option value="" disabled>
+                  اختر نوع الإجراء
+                </option>
+                {actionTypes?.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.action_name}
+                  </option>
+                ))}
+              </select>
             </div>
+
             <div>
-              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">اسم القائم بالإجراء</label>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+                اسم القائم بالإجراء
+              </label>
               <input
                 type="text"
                 name="officer_name"
@@ -104,8 +125,11 @@ export default function InvestigationActionModal({ isOpen, onClose, onSubmit, in
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
+
             <div>
-              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">المطلوب</label>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+                المطلوب
+              </label>
               <input
                 type="text"
                 name="requirements"
@@ -115,8 +139,11 @@ export default function InvestigationActionModal({ isOpen, onClose, onSubmit, in
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
+
             <div>
-              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">النتيجة</label>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+                النتيجة
+              </label>
               <input
                 type="text"
                 name="results"
@@ -126,8 +153,11 @@ export default function InvestigationActionModal({ isOpen, onClose, onSubmit, in
                 className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
+
             <div>
-              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">الحالة</label>
+              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+                الحالة
+              </label>
               <select
                 name="status"
                 value={form.status}
@@ -143,24 +173,25 @@ export default function InvestigationActionModal({ isOpen, onClose, onSubmit, in
             </div>
           </div>
 
-          <div className="flex justify-end gap-4 mt-6">
+           <div className="md:col-span-2 flex justify-end gap-4 mt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition"
             >
               إلغاء
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 rounded-lg bg-almadar-blue hover:bg-emerald-700 dark:bg-almadar-yellow text-white dark:text-black font-bold"
+              className={`px-6 py-2 rounded-lg ${initialData ? "bg-primary" : "bg-success"} text-${initialData ? "primary-foreground" : "success-foreground"} hover:opacity-90 font-bold transition`}
             >
-              {loading ? "جاري الحفظ..." : "حفظ"}
+              {loading ? "جاري الحفظ..." : initialData ? "تحديث" : "إضافة"}
             </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          
+          </div> 
+        </form> 
+          </div> 
+      </div> 
   );
 }

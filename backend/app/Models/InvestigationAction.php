@@ -12,7 +12,7 @@ class InvestigationAction extends Model
     protected $fillable = [
         'investigation_id',
         'action_date',
-        'action_type',
+       'action_type_id',
         'officer_name',
         'requirements',
         'results',
@@ -23,5 +23,10 @@ class InvestigationAction extends Model
     public function investigation()
     {
         return $this->belongsTo(Investigation::class, 'investigation_id');
+    }
+    // ✅ علاقة: كل إجراء يتبع نوع الإجراء واحد
+    public function actionType()
+    {
+        return $this->belongsTo(InvestigationActionType::class);
     }
 }

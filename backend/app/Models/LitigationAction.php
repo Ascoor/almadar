@@ -12,7 +12,7 @@ class LitigationAction extends Model
 
     protected $fillable = [
         'litigation_id',
-        'action_type',
+  'action_type_id',
         'action_date',
         'requirements',
         'results',
@@ -25,5 +25,9 @@ class LitigationAction extends Model
     public function litigation()
     {
         return $this->belongsTo(Litigation::class);
+    }
+    public function actionType()
+    {
+        return $this->belongsTo(LitigationActionType::class);
     }
 }

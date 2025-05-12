@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   Home, FileText, Users, FolderArchive, Scale,
-  Feather, Gavel, ChevronRight,SquareDashedKanban
-} from 'lucide-react';
+  Feather, Gavel, ChevronRight,SquareDashedKanban,LayoutDashboard 
+,Settings ,UserCog } from 'lucide-react';
 import { LogoArt, LogoPatren } from '../../assets/images'; // استخدام الشعارين
 
 export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
@@ -19,32 +19,39 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   const logoSrc = () => {
     return isOpen ? LogoPatren : LogoArt; // استخدام LogoPatren عندما يكون isOpen === true و LogoArt عندما يكون isOpen === false
   };
-
+  
   const navItems = [
     { id: 'home', label: 'الرئيسية', to: '/', icon: <Home size={18} /> },
     { id: 'contracts', label: 'التعاقدات', to: '/contracts', icon: <FileText size={18} /> },
     {
       id: 'fatwa',
       label: 'الرأي والفتوى',
-      icon: <Scale size={18} />,
+      icon: <Gavel size={18} />,
       children: [
         { id: 'inv', label: 'التحقيقات', to: '/legal/investigations', icon: <Feather size={16} /> },
         { id: 'adv', label: 'المشورة القانونية', to: '/legal/legal-advices', icon: <Scale size={16} /> },
         { id: 'lit', label: 'التقاضي', to: '/legal/litigations', icon: <Gavel size={16} /> },
-      ]
-    }, 
-        {
-      id: 'managment',
-      label: 'إدارة التطبيق',
-      icon: <Scale size={18} />,
-      children: [
-        { id: 'inv', label: 'القوائم', to: '/managment-lists', icon: <SquareDashedKanban size={16} /> },
-             ]
+      ],
     },
-    { id: 'users', label: 'المستخدمين', to: '/users', icon: <Users size={18} /> },
+    {
+      id: 'management',
+      label: 'إدارة التطبيق',
+      icon: <LayoutDashboard size={18} />,
+      children: [
+        { id: 'lists', label: 'القوائم', to: '/managment-lists', icon: <SquareDashedKanban size={16} /> },
+        { id: 'settings', label: 'الإعدادات', to: '/managment-settings', icon: <Settings size={16} /> },
+      ],
+    },
+    {
+      id: 'users-mgmt',
+      label: 'إدارة المستخدمين',
+      icon: <UserCog size={18} />,
+      children: [
+        { id: 'users', label: 'المستخدمين', to: '/users', icon: <Users size={16} /> },
+      ],
+    },
     { id: 'archive', label: 'الأرشيف', to: '/archive', icon: <FolderArchive size={18} /> },
   ];
-
   const toggleSection = (id) => {
     setActiveSection(prev => (prev === id ? null : id));
   };
@@ -57,7 +64,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
     <aside
       dir="rtl"
       className={`
-        fixed right-0 top-0 h-full z-30 bg-white dark:bg-black
+        fixed right-0 top-0 h-full  bg-white dark:bg-black
           bg-gradient-to-b from-gold/70 via-navy/70 to-navy/90
         dark:bg-gradient-to-t dark:from-navy-dark/70 dark:via-navy-dark/40 dark:to-reded-dark/40
         text-green-100/95 border-l border-border

@@ -17,3 +17,23 @@ export const updateLegalAdvice = (id, formData) => {
 };
 
 export const deleteLegalAdvice = (id) => api.delete(`/api/legal-advices/${id}`);
+
+// ✅ Get all advice types
+export const getAdviceTypes = () => {
+  return api.get('/api/advice-types');
+};
+
+// ✅ Create a new advice type
+export const createAdviceType = (data) => {
+  return api.post('/api/advice-types', data);
+};
+
+// ✅ Update an advice type
+export const updateAdviceType = (id, data) => {
+  return api.put(`/api/advice-types/${id}`, data);
+};
+
+// ✅ Delete an advice type
+export const deleteAdviceType = (id) => {
+  return api.delete(`/api/advice-types/${id}`);
+};

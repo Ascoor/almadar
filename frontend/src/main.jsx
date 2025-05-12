@@ -4,6 +4,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { SpinnerProvider } from './context/SpinnerContext'; // ✅ استيراد مزود الـ Spinner
 import App from './App';
 import { Suspense } from 'react';
+
+import ThemeProvider from './utils/ThemeContext';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -18,11 +20,12 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
  
-      <SpinnerProvider> {/* ✅ SpinnerProvider يلتف حول كل شيء */}
+  <ThemeProvider>  {/* Make sure ThemeProvider wraps the app */}
+        
         <Suspense fallback={<div>Loading...</div>}>
           <RouterProvider router={router} />
         </Suspense>
-      </SpinnerProvider>
+      </ThemeProvider>
  
   </React.StrictMode>
 );

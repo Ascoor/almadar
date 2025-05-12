@@ -7,9 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
+      
+        Schema::create('advice_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('type_name');  // اسم نوع التشريع (تمت الصياغة / قيد الصياغة)
+            $table->timestamps();
+        });
         Schema::create('legal_advices', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
+  
+            // العلاقة مع جدول التحقيقات
+            $table->foreignId('advice_type_id')->constrained('advice_types')->onDelete('cascade');
+            
             $table->string('topic');
             $table->text('text');
             $table->string('requester');

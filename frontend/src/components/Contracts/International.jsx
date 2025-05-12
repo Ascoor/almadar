@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import TableComponent from "../common/TableComponent";
 import { FaPlus, FaChevronDown, FaChevronRight } from "react-icons/fa";
 import ContractModal from "./ContractModal";

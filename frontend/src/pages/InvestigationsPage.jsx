@@ -10,11 +10,11 @@ import { toast } from "sonner";
 
 import TableComponent from "../components/common/TableComponent";
 import SectionHeader from "../components/common/SectionHeader";
-import InvestigationModal from "../components/Investigations/InvestigationModal";
-import LitigationActionsTable from "../components/Investigations/InvestigationActionsTable";
+import InvestigationModal from "../components/Investigations/InvestigationModal"; 
 import AddButton from "../components/common/AddButton";
 import GlobalConfirmDeleteModal from "../components/common/GlobalConfirmDeleteModal";
 import { InvestigationSection } from "../assets/icons";
+import InvestigationActionsTable from "../components/Investigations/InvestigationActionsTable";
   
 export default function InvestigationsPage() {
   const [investigations, setInvestigations] = useState([]);
@@ -25,12 +25,14 @@ export default function InvestigationsPage() {
 
   const loadInvestigations = async () => {
     try {
-      const res = await getInvestigations();
-      setInvestigations(res.data?.data || []);
-    } catch {
-      toast.error("فشل تحميل التحقيقات");
-    }
+          const res = await getInvestigations();
+        const investigationsData = Array.isArray(res?.data?.data) ? res.data.data : [];
+        setInvestigations(investigationsData);
+      } catch (error) {
+        toast.error("فشل تحميل التحقيقات");
+        console.error(error);
   };
+}
 
   useEffect(() => {
     loadInvestigations();
@@ -80,8 +82,7 @@ const handleEdit = (row) => {
     { key: "subject", text: "الموضوع" },
     { key: "case_number", text: "رقم القضية" },
     { key: "status", text: "الحالة" },
-    
-  { key: "delete", text: "حذف" }, // ✅ أضف هذا
+     
   ];
 const customRenderers = {
   expand: (row) => (
@@ -158,10 +159,10 @@ const handleConfirmDelete = async () => {
           expandedId === row.id ? (
             <tr>
               <td colSpan={headers.length + 2} className="bg-gray-50 dark:bg-gray-800 p-4">
-                <LitigationActionsTable
+                <InvestigationActionsTable
              investigationId={row.id} 
                   actions={row.actions || []}
-                  reload={loadInvestigations}
+                  onReload={loadInvestigations}
                 />
               </td>
             </tr>

@@ -3,20 +3,22 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserRolePermissionController;
 use App\Http\Controllers\ArchiveController;
-
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ContractCategoryController;
 use App\Http\Controllers\InvestigationController;
 use App\Http\Controllers\InvestigationActionController;
-use App\Http\Controllers\LegalAdviceController;
-use App\Http\Controllers\LegislationController;
+use App\Http\Controllers\LegalAdviceController; 
+use App\Http\Controllers\AdviceTypeController; 
 use App\Http\Controllers\LitigationController;
 use App\Http\Controllers\LitigationActionController;
+use App\Http\Controllers\InvestigationActionTypeController;
+use App\Http\Controllers\LitigationActionTypeController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -42,16 +44,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('contracts', ContractController::class);
     Route::apiResource('contract-categories', ContractCategoryController::class);
     Route::apiResource('archives', ArchiveController::class);
+    Route::apiResource('users', UserController::class);
 
     // ✅ Investigations
-    Route::apiResource('investigations', InvestigationController::class);
-
-    // ✅ Legislations
-    Route::apiResource('legislations', LegislationController::class);
-
+    Route::apiResource('investigations', InvestigationController::class); 
     // ✅ Legal Advices
     Route::apiResource('legal-advices', LegalAdviceController::class);
+    Route::apiResource('advice-types', AdviceTypeController::class);
 
+Route::apiResource('investigation-action-types', InvestigationActionTypeController::class);
+Route::apiResource('litigation-action-types', LitigationActionTypeController::class); 
     // ✅ Litigations
     Route::apiResource('litigations', LitigationController::class);
     Route::prefix('litigations/{litigation}/actions')->group(function () {

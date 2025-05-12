@@ -38,3 +38,23 @@ export const updateLitigationAction = (litigationId, actionId, data) =>
 
 export const deleteLitigationAction = (litigationId, actionId) =>
   api.delete(`/api/litigations/${litigationId}/actions/${actionId}`);
+ 
+
+// ====================
+// 🟩 أنواع الإجراءات المرتبطة بالقضايا (LitigationActionTypes)
+// ====================
+
+export const getLitigationActionTypes = () => 
+  api.get('/api/litigation-action-types');
+
+export const getLitigationActionTypeById = (id) =>
+  api.get(`/api/litigation-action-types/${id}`);
+
+export const createLitigationActionType = (data) =>
+  api.post('/api/litigation-action-types', data);
+
+export const updateLitigationActionType = (id, data) =>
+  api.put(`/api/litigation-action-types/${id}`, data);
+
+export const deleteLitigationActionType = (id) =>
+  api.delete(`/api/litigation-action-types/${id}`);

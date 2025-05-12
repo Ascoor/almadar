@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Login from '../components/auth/Login';
 import { WelcomeLogoWhite, LoginBg } from '../assets/images'; 
@@ -9,24 +9,7 @@ import { toast } from 'sonner';
 const HomePage = () => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleLogin = async () => {
-    try {
-      setIsLoading(true); // بدء عرض التحميل
-      // عملية تسجيل الدخول هنا
-      setTimeout(() => {
-        setIsLoading(false); // إيقاف عرض التحميل
-        // عرض رسالة التوستر بنجاح
-        toast('success', 'تم تسجيل الدخول بنجاح ✅');
-        setShowLoginForm(false);
-      }, 1500);
-    } catch (error) {
-      setIsLoading(false); // إيقاف عرض التحميل بفشل
-      // عرض رسالة التوستر بفشل
-      toast('error', 'فشل تسجيل الدخول ❌');
-    }
-  };
-
+ 
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <img

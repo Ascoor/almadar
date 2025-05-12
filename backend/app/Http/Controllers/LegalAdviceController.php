@@ -12,7 +12,9 @@ class LegalAdviceController extends Controller
 {
     public function index()
     {
-        return response()->json(LegalAdvice::latest()->get());
+        //get with advice_type
+        $legalAdvices = LegalAdvice::with('adviceType')->get();
+        return response()->json($legalAdvices);
     }
 
     public function store(Request $request)
@@ -83,7 +85,8 @@ class LegalAdviceController extends Controller
         }
 
         return $request->validate([
-            'type' => 'required|string|max:255',
+ 'advice_type_id' => 'sometimes|exists:advice_types,id', // Validate against investigation_action_types table
+        
             'topic' => 'required|string|max:255',
             'text' => 'required|string',
             'requester' => 'required|string|max:255',

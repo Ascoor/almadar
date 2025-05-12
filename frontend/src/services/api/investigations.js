@@ -1,4 +1,4 @@
-import api from './axiosConfig'; 
+import api from './axiosConfig';
 
 // ====================
 // 🟦 التحقيقات الرئيسية
@@ -38,3 +38,23 @@ export const updateInvestigationAction = (investigationId, actionId, data) =>
 
 export const deleteInvestigationAction = (investigationId, actionId) =>
   api.delete(`/api/investigations/${investigationId}/actions/${actionId}`);
+
+
+// ====================
+// API Calls for InvestigationActionType
+// ====================
+
+export const getInvestigationActionTypes = () =>
+  api.get('/api/investigation-action-types');
+
+export const getInvestigationActionTypeById = (id) =>
+  api.get(`/api/investigation-action-types/${id}`);
+
+export const createInvestigationActionType = (data) =>
+  api.post('/api/investigation-action-types', data);
+
+export const updateInvestigationActionType = (id, data) =>
+  api.put(`/api/investigation-action-types/${id}`, data);
+
+export const deleteInvestigationActionType = (id) =>
+  api.delete(`/api/investigation-action-types/${id}`);

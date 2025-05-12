@@ -1,11 +1,11 @@
-import  {useEffect , useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Pencil, Trash2, PlusCircle } from "lucide-react";
 
 import InvestigationActionModal from "./InvestigationActionModal";
 import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
 import {
-  getInvestigationActions,
+  getInvestigationActionTypes,
   updateInvestigationAction,
   createInvestigationAction,
   deleteInvestigationAction,
@@ -15,21 +15,23 @@ import AddButton from "../common/AddButton";
 export default function InvestigationActionsTable({ actions = [], investigationId, onReload }) {
   const [showModal, setShowModal] = useState(false);
   const [editingAction, setEditingAction] = useState(null);
-  const [actionToDelete, setActionToDelete] = useState(null);
-const [localActions, setLocalActions] = useState([]);
+  const [actionToDelete, setActionToDelete] = useState(null); 
+  const [actionTypes, setActionTypes] = useState([]);
 
-useEffect(() => {
-  const fetchActions = async () => {
-    if (!investigationId) return;
+  useEffect(() => {
+    loadInvestigationActionsTypes();
+  }, []); // Load action types only once when component mounts
+
+  const loadInvestigationActionsTypes = async () => {
     try {
-      const res = await getInvestigationActions(investigationId);
-      setLocalActions(res.data);
-    } catch {
-      toast.error("فشل تحميل إجراءات التحقيق");
+      const res = await getInvestigationActionTypes(); // API call
+      const investigationActionsTypesData = Array.isArray(res?.data) ? res.data : [];
+      setActionTypes(investigationActionsTypesData);  // Set action types in state
+    } catch (error) {
+      toast.error("فشل تحميل انواع الاجراءات");
+      console.error(error);
     }
   };
-  fetchActions();
-}, [investigationId, showModal]); // reload on modal open
 
   const handleEdit = (action) => {
     setEditingAction(action);
@@ -40,44 +42,34 @@ useEffect(() => {
     setEditingAction(null);
     setShowModal(true);
   };
-  const reloadLocalActions = async () => {
-  try {
-    const res = await getInvestigationActions(investigationId);
-    setLocalActions(res.data);
-  } catch {
-    toast.error("فشل تحديث الإجراءات");
-  }
-};
 
-const handleSave = async (data) => {
-  try {
-    if (editingAction) {
-      await updateInvestigationAction(investigationId, editingAction.id, data);
-      toast.success("تم تعديل الإجراء بنجاح");
-    } else {
-      await createInvestigationAction(investigationId, data);
-      toast.success("تمت إضافة الإجراء بنجاح");
+  const handleSave = async (data) => {
+    try {
+      if (editingAction) {
+        await updateInvestigationAction(investigationId, editingAction.id, data);
+        toast.success("تم تعديل الإجراء بنجاح");
+      } else {
+        await createInvestigationAction(investigationId, data);
+        toast.success("تمت إضافة الإجراء بنجاح");
+      }
+      setShowModal(false);
+      await reloadLocalActions(); // ⬅️ هنا
+      onReload?.(); // إن أردت إعادة تحميل التحقيقات من الأعلى
+    } catch {
+      toast.error("فشل في حفظ الإجراء");
     }
-    setShowModal(false);
-    await reloadLocalActions(); // ⬅️ هنا
-    onReload?.(); // إن أردت إعادة تحميل التحقيقات من الأعلى
-  } catch {
-    toast.error("فشل في حفظ الإجراء");
-  }
-};
+  };
 
-const handleConfirmDelete = async () => {
-  try {
-    await deleteInvestigationAction(investigationId, actionToDelete.id);
-    toast.success("تم حذف الإجراء بنجاح");
-    setActionToDelete(null);
-    await reloadLocalActions(); // ⬅️ هنا
-    onReload?.();
-  } catch {
-    toast.error("فشل في حذف الإجراء");
-  }
-};
-
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteInvestigationAction(investigationId, actionToDelete.id);
+      toast.success("تم حذف الإجراء بنجاح");
+      setActionToDelete(null); // Close the modal after deletion
+      onReload?.(); // Optionally refresh actions
+    } catch {
+      toast.error("فشل في حذف الإجراء");
+    }
+  };
 
   return (
     <div className="p-4 mb-6 mt-6 md:p-6 bg-gray-300/50 dark:bg-gray-700/50 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition">
@@ -88,12 +80,13 @@ const handleConfirmDelete = async () => {
         <AddButton label="إجراء" onClick={handleAdd} icon={<PlusCircle className="w-4 h-4" />} />
       </div>
 
-  {localActions.length > 0 ? (
-        <div className="overflow-x-auto">
+      {actions.length > 0 ? (
+ 
+<div className="overflow-x-auto">
           <table className="w-full text-sm text-center border-collapse text-gray-800 dark:text-gray-200">
-            <thead className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-200 font-semibold">
+            <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-yellow-200 font-semibold">
               <tr>
-                <th className="px-2 py-3">تعديل</th>
+             <th className="px-2 py-3">تعديل</th>
                 <th className="px-2 py-3">حذف</th>
                 <th className="px-2 py-3">التاريخ</th>
                 <th className="px-2 py-3">نوع الإجراء</th>
@@ -104,10 +97,10 @@ const handleConfirmDelete = async () => {
               </tr>
             </thead>
             <tbody>
-              {localActions.map((action) => (
+              {actions.map((action) => (
                 <tr
                   key={action.id}
-                  className="border-t border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-almadar-mint-light/20"
+                    className="border-t border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 >
                   <td className="px-2 py-2">
                     <button
@@ -120,7 +113,7 @@ const handleConfirmDelete = async () => {
                   </td>
                   <td className="px-2 py-2">
                     <button
-                      onClick={() => setActionToDelete(action)}
+                      onClick={() => setActionToDelete(action)} // Set action to delete
                       className="text-red-600 hover:text-red-800"
                       title="حذف"
                     >
@@ -128,7 +121,7 @@ const handleConfirmDelete = async () => {
                     </button>
                   </td>
                   <td className="px-2 py-2">{action.action_date}</td>
-                  <td className="px-2 py-2">{action.action_type}</td>
+                  <td className="px-2 py-2">{action.action_type?.action_name || "غير محدد"}</td>
                   <td className="px-2 py-2">{action.officer_name}</td>
                   <td className="px-2 py-2">{action.requirements || "—"}</td>
                   <td className="px-2 py-2">{action.results || "—"}</td>
@@ -148,20 +141,23 @@ const handleConfirmDelete = async () => {
         <p className="text-gray-500 dark:text-gray-400 mt-6 text-sm">لا توجد إجراءات مسجلة.</p>
       )}
 
+      {/* Modal for editing/adding action */}
       {showModal && (
         <InvestigationActionModal
           isOpen={showModal}
+          actionTypes={actionTypes}
           onClose={() => setShowModal(false)}
           initialData={editingAction}
           onSubmit={handleSave}
         />
       )}
 
+      {/* Global confirmation modal for delete */}
       <GlobalConfirmDeleteModal
-        isOpen={!!actionToDelete}
-        onClose={() => setActionToDelete(null)}
-        onConfirm={handleConfirmDelete}
-        itemName={actionToDelete?.action_type || "الإجراء"}
+        isOpen={!!actionToDelete}  // Show if actionToDelete is set
+        onClose={() => setActionToDelete(null)}  // Reset onClose
+        onConfirm={handleConfirmDelete}  // Call handleConfirmDelete when confirmed
+        itemName={actionToDelete?.action_type?.action_name || "الإجراء"}  // Pass the action name for the modal
       />
     </div>
   );

@@ -11,7 +11,7 @@ class LegalAdvice extends Model
     protected $table = 'legal_advices';
 
     protected $fillable = [
-        'type',
+        'advice_type_id',
         'topic',
         'text',
         'requester',
@@ -21,4 +21,11 @@ class LegalAdvice extends Model
         'attachment',
         'notes',
     ];
+
+    // العلاقة مع AdviceType (Many-to-One)
+    public function adviceType()
+    {
+        return $this->belongsTo(AdviceType::class, 'advice_type_id');
+    }
+
 }

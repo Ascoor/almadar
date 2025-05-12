@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { getPowerOfAttorneysByClient } from '../../../services/api/clients';
 import AddEditAttorneysModal from '../../Attorneys/AddEditAttorneysModal';
 import { getAttorneyTypes, deletePowerAttorney } from '../../../services/api/powerAttorneys';

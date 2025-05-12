@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense } from 'react';
+import  { useEffect, Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useSpinner } from '../../context/SpinnerContext';
 import GlobalSpinner from '../common/Spinners/GlobalSpinner';
@@ -14,7 +14,7 @@ const LegalAdvices = lazy(() => import('../../pages/LegalAdvicePage.jsx'));
 const Litigations = lazy(() => import('../../pages/LitigationsPage.jsx'));
 const UsersList = lazy(() => import('../Users/index.jsx'));
 const ArchivePage = lazy(() => import('../../pages/ArchivePage.jsx'));
-const AppManagment = lazy(() => import('../../pages/AppManagment.jsx'));
+const ManagementSettings = lazy(() => import('../../pages/ManagementSettings.jsx'));
 
 const NotFound = () => (
   <h1 className="text-center text-red-500">404 - Page Not Found</h1>
@@ -49,7 +49,7 @@ const AuthRoutes = () => {
   <Route path="/legal/legal-advices" element={<LegalAdvices />} />
   <Route path="/legal/litigations" element={<Litigations />} />
 
-  <Route path="/managment-lists" element={<AppManagment />} />
+  <Route path="/managment-lists" element={<ManagementSettings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

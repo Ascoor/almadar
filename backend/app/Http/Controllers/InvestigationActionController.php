@@ -24,7 +24,8 @@ class InvestigationActionController extends Controller
     {
         $validated = $request->validate([
             'action_date' => 'required|date',
-            'action_type' => 'required|string|max:255',
+            'action_type_id' => 'required|exists:investigation_action_types,id', // Validate against investigation_action_types table
+
             'officer_name' => 'required|string|max:255',
             'requirements' => 'nullable|string',
             'results' => 'nullable|string',
@@ -62,21 +63,13 @@ class InvestigationActionController extends Controller
 
         $validated = $request->validate([
             'action_date' => 'sometimes|date',
-            'action_type' => 'sometimes|string|max:255',
+            'action_type_id' => 'sometimes|exists:investigation_action_types,id', // Validate against investigation_action_types table
             'officer_name' => 'sometimes|string|max:255',
             'requirements' => 'nullable|string',
             'results' => 'nullable|string',
             'status' => 'sometimes|in:pending,in_review,done',
         ]);
-
-        $action->update($validated);
-
-        return response()->json([
-            'message' => 'تم تحديث الإجراء بنجاح.',
-            'data' => $action,
-        ]);
     }
-
     /**
      * حذف إجراء محدد.
      */

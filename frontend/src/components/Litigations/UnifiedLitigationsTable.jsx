@@ -1,96 +1,133 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { getLitigations, createLitigation, updateLitigation, deleteLitigation } from "../../services/api/litigations";
+import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import TableComponent from "@/components/common/TableComponent";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import LitigationActionsTable from "./LitigationActionsTable";
+import SectionHeader from "@/components/common/SectionHeader";
+import LitigationModal from "@/components/Litigations/LitigationModal"; 
+import AddButton from "@/components/common/AddButton";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
-import LitigationModal from "./LitigationModal";
-import { deleteLitigation } from "@/services/api/litigations";
-import { toast } from 'sonner';
+import { LegCaseSection } from "@/assets/icons";
+import LitigationActionsTable from "@/components/Litigations/LitigationActionsTable"; 
 
-export default function FromCompanyLitigations({ litigations = [], reloadLitigations }) {
-  const [expandedId, setExpandedId] = useState(null);
-  const [selectedLitigation, setSelectedLitigation] = useState(null);
+export default function UnifiedLitigationsTable({
+  litigations, 
+  scope,
+  reloadLitigations, 
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [toDelete, setToDelete] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
 
-  const toggleExpand = (row) => {
-    setExpandedId((prev) => (prev === row.id ? null : row.id));
+  const toggleRowExpand = (id) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
+
+  const handleEdit = (row) => {
+    setEditingItem(row);
+    setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedLitigation(null);
+    setEditingItem(null);
     setIsModalOpen(true);
-  };
-
-  const handleEdit = (litigation) => {
-    setSelectedLitigation(litigation);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = (litigation) => {
-    setToDelete(litigation);
-    setIsDeleteModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+
     try {
-      await deleteLitigation(toDelete.id);
+      await deleteLitigation(deleteTarget.id);
       toast.success("تم حذف الدعوى بنجاح");
-      setIsDeleteModalOpen(false);
-      reloadLitigations();
-    } catch (err) {
-      console.error(err);
-      toast.error("فشل في حذف الدعوى");
+      await reloadLitigations();
+    } catch {
+      toast.error("فشل حذف الدعوى");
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
-  const renderExpanded = (row) =>
+  const headers = [
+    { key: "expand", text: "" },
+    { key: "case_number", text: "رقم الدعوى" },
+    { key: "court", text: "المحكمة" },
+    { key: "opponent", text: "الخصم" },
+    { key: "subject", text: "الموضوع" },
+    { key: "status", text: "الحالة" },
+  ];
+
+  const customRenderers = {
+    expand: (row) => (
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleRowExpand(row.id);
+        }}
+        className="text-gray-700 dark:text-white"
+        title="عرض الإجراءات"
+      >
+        {expandedId === row.id ? (
+          <ChevronDown className="w-4 h-4" />
+        ) : (
+          <ChevronRight className="w-4 h-4" />
+        )}
+      </button>
+    ),
+    status: (row) => (
+      <span className="text-red-600 dark:text-yellow-300 font-semibold">{row.status}</span>
+    ),
+    delete: (row) => (
+      <button
+        onClick={() => setDeleteTarget(row)}
+        className="text-red-600 hover:text-red-800"
+        title="حذف الدعوى"
+      >
+        <Trash2 className="w-4 h-4" />
+      </button>
+    ),
+  };
+
+  const expandedRowRenderer = (row) =>
     expandedId === row.id ? (
       <tr>
-        <td colSpan={6}>
-          <LitigationActionsTable actions={row.actions || []} />
+        <td colSpan={headers.length + 2} className="bg-gray-50 dark:bg-gray-800 p-4">
+          <LitigationActionsTable
+            litigationId={row.id}
+            actions={row.actions || []}
+            onReload={() => reloadLitigations()} 
+          />
         </td>
       </tr>
     ) : null;
 
   return (
-    <>
+    <div className="p-6 bg-white dark:bg-gray-900 min-h-screen">
+     
       <TableComponent
         data={litigations}
+        headers={headers}
+        customRenderers={customRenderers}
         onEdit={handleEdit}
-        onDelete={handleDelete}
-        onRowClick={toggleExpand}
-        expandedRowRenderer={renderExpanded}
-        headers={[
-          { key: "case_number", text: "رقم الدعوى" },
-          { key: "court", text: "المحكمة" },
-          { key: "opponent", text: "الخصم" },
-          { key: "subject", text: "الموضوع" },
-          { key: "status", text: "الحالة" },
-        ]}
-        renderAddButton={() => (
-          <Button onClick={handleAdd}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            إضافة دعوى
-          </Button>
-        )}
+        onDelete={(row) => setDeleteTarget(row)}
+        expandedRowRenderer={expandedRowRenderer}
+        renderAddButton={() => <AddButton label="إضافة دعوى" onClick={handleAdd} />}
+        title="وحدة الدعاوى"
       />
 
       <LitigationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        initialData={selectedLitigation}
-        reloadLitigations={reloadLitigations} // تأكد من أن هذا هو اسم الدالة الفعلية
+        initialData={editingItem}
+        onSubmit={handleAdd} // Handle Add or Update
       />
 
       <GlobalConfirmDeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        isOpen={!!deleteTarget}
+        itemName={deleteTarget?.case_number || "الدعوى"}
+        onClose={() => setDeleteTarget(null)}
         onConfirm={handleConfirmDelete}
-        itemName={toDelete?.case_number || "الدعوى"}
       />
-    </>
+    </div>
   );
 }
