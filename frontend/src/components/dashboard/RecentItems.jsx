@@ -47,14 +47,14 @@ const RecentItems = () => {
   ];
 
   return (
-    <Card className="border shadow-lg shadow-navy dark:shadow-reded-dark/50">
-      <CardHeader>
-        <CardTitle className="text-xl">آخر الملفات</CardTitle>
+    <Card className="border shadow-lg dark:shadow-reded-dark/50 transition-all duration-200">
+      <CardHeader className="bg-gray-200 dark:bg-gray-800">
+        <CardTitle className="text-xl text-navy dark:text-white">آخر الملفات</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full text-right">
-            <thead className="bg-muted text-muted-foreground text-sm">
+            <thead className="bg-muted text-muted-foreground text-sm dark:bg-gray-700">
               <tr>
                 <th className="p-3 rounded-tr-lg">الموضوع</th>
                 <th className="p-3">النوع</th>
@@ -62,17 +62,17 @@ const RecentItems = () => {
                 <th className="p-3 rounded-tl-lg">التاريخ</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y dark:divide-gray-600">
               {recentItems.map((item) => (
-                <tr key={item.id} className="hover:bg-muted/50">
+                <tr key={item.id} className="hover:bg-muted/50 dark:hover:bg-gray-600">
                   <td className="p-3">{item.title}</td>
-                  <td className="p-3 text-sm text-gray-600">{item.type}</td>
+                  <td className="p-3 text-sm text-gray-600 dark:text-gray-300">{item.type}</td>
                   <td className="p-3">
                     <Badge variant="outline" className={item.statusColor}>
                       {item.status}
                     </Badge>
                   </td>
-                  <td className="p-3 text-sm text-gray-600">{item.date}</td>
+                  <td className="p-3 text-sm text-gray-600 dark:text-gray-300">{item.date}</td>
                 </tr>
               ))}
             </tbody>

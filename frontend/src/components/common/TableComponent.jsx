@@ -1,5 +1,4 @@
-import  { useState, useEffect, useMemo } from 'react';
- 
+import React, { useState, useEffect, useMemo } from 'react';
 import { Edit, Eye } from 'lucide-react';
 import { Trash, ArrowUp, ArrowDown } from 'lucide-react'; 
 import { motion } from 'framer-motion';

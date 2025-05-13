@@ -1,39 +1,48 @@
-
 import React from 'react';
 import { FileText, Gavel, MessageSquare } from "lucide-react";
-import DashboardCard from './DashboardCard';
+import DashCard from '../common/DashCard';
+import { ServiceIcon, ContractSection, MainLegalCases } from '../../assets/icons'; 
 
 const DashboardStats = () => {
   const stats = [
     {
-      title: 'العقود',
+      title: 'التعاقدات',
       count: 46,
-      icon: <FileText className="h-5 w-5 text-blue-600" />,
-      color: 'bg-blue-100',
+      imageSrc: ContractSection,
+      subcategories: [
+        { title: 'دولي', count: 25 },
+        { title: 'محلي', count: 21 },
+      ],
     },
     {
-      title: 'الاستشارات',
+      title: 'الرأي والفتوى',
       count: 32,
-      icon: <MessageSquare className="h-5 w-5 text-green-600" />,
-      color: 'bg-green-100',
+      imageSrc: ServiceIcon,
+      subcategories: [
+        { title: 'تحقيقات', count: 15 }, 
+        { title: 'مشورة', count: 17 },
+      ],
     },
     {
       title: 'القضايا',
       count: 18,
-      icon: <Gavel className="h-5 w-5 text-red-600" />,
-      color: 'bg-red-100',
+      imageSrc: MainLegalCases,
+      subcategories: [
+        { title: 'من الشركة', count: 10 },
+        { title: 'ضد الشركة', count: 8 },
+      ],
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
       {stats.map((stat) => (
-        <DashboardCard
+        <DashCard
           key={stat.title}
           title={stat.title}
           count={stat.count}
-          icon={stat.icon}
-          color={stat.color}
+          imageSrc={stat.imageSrc}
+          subcategories={stat.subcategories}
         />
       ))}
     </div>

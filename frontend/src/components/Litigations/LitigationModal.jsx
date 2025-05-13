@@ -1,24 +1,33 @@
-import  { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
+import ModalCard from "../common/ModalCard";
 import { createLitigation, updateLitigation } from "../../services/api/litigations";
 
-const LitigationModal = ({ isOpen, onClose, initialData = null, reloadLitigations }) => {
-  const [form, setForm] = useState({
-    id: null,
-    case_number: "",
-    court: "",
-    opponent: "",
-    scope: "from",
-    subject: "",
-    filing_date: "",
-    status: "open",
-    notes: "",
-  });
+const EMPTY_FORM = {
+  id: null,
+  case_number: "",
+  court: "",
+  opponent: "",
+  scope: "from",
+  subject: "",
+  filing_date: "",
+  status: "open",
+  notes: "",
+};
 
+export default function LitigationModal({
+  isOpen,
+  onClose,
+  initialData = null,
+  reloadLitigations
+}) {
+  const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
 
+  // Initialize or reset form when modal opens/closes
   useEffect(() => {
-    if (isOpen && initialData) {
+    if (!isOpen) return;
+    if (initialData) {
       setForm({
         id: initialData.id,
         case_number: initialData.case_number || "",
@@ -26,172 +35,147 @@ const LitigationModal = ({ isOpen, onClose, initialData = null, reloadLitigation
         opponent: initialData.opponent || "",
         scope: initialData.scope || "from",
         subject: initialData.subject || "",
-        filing_date: initialData.filing_date ? initialData.filing_date.slice(0, 10) : "",
+        filing_date: initialData.filing_date?.slice(0, 10) || "",
         status: initialData.status || "open",
         notes: initialData.notes || "",
       });
     } else {
-      resetForm();
+      setForm(EMPTY_FORM);
     }
   }, [isOpen, initialData]);
 
-  const resetForm = () => {
-    setForm({
-      id: null,
-      case_number: "",
-      court: "",
-      opponent: "",
-      scope: "from",
-      subject: "",
-      filing_date: "",
-      status: "open",
-      notes: "",
-    });
-  };
+ 
+  useEffect(() => {
+    if (!isOpen) return;
+    if (initialData) {
+      // تنسيق تاريخ ISO للـ <input type="date">
+      const date = initialData.filing_date
+        ? initialData.filing_date.slice(0, 10)
+        : "";
+      setForm({
+        ...initialData,
+        filing_date: date,
+      });
+    } else {
+      // نموذج فارغ عند الإضافة
+      setForm((f) => ({ ...f, id: null, case_number: "", court: "", opponent: "", scope: "from", subject: "", filing_date: "", status: "open", notes: "" }));
+    }
+  }, [isOpen, initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((f) => ({ ...f, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     setLoading(true);
-
     try {
       const payload = { ...form };
-
       if (form.id) {
+        // تعديل
         await updateLitigation(form.id, payload);
         toast.success("✅ تم تعديل الدعوى بنجاح");
       } else {
+        // إضافة جديدة
         await createLitigation(payload);
-        toast.success("✅ تم إضافة الدعوى بنجاح");
+        toast.success("✅ تمت إضافة الدعوى بنجاح");
       }
-
+      // إعادة تحميل الجدول
       reloadLitigations?.();
+      // إغلاق المودال
       onClose();
-      resetForm();
-    } catch (error) {
-      const errors = error?.response?.data?.errors;
-      if (errors) {
-        Object.values(errors).forEach((msgs) => {
-          msgs.forEach((msg) => toast.error(`❌ ${msg}`));
-        });
+    } catch (err) {
+      const errs = err?.response?.data?.errors;
+      if (errs) {
+        Object.values(errs)
+          .flat()
+          .forEach((msg) => toast.error(`❌ ${msg}`));
       } else {
         toast.error("❌ فشل الحفظ. تحقق من البيانات.");
       }
-      console.error(error);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
-      <div className="bg-card text-card-foreground rounded-xl shadow-xl w-full max-w-3xl p-6 relative">
-        {loading && (
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-xl">
-            <p className="text-lg font-semibold text-primary animate-pulse">
-              جاري الحفظ...
-            </p>
+    <ModalCard
+      isOpen={isOpen}
+      title={initialData ? "تعديل دعوى" : "إضافة دعوى"}
+      loading={loading}
+      onClose={onClose}
+      onSubmit={handleSave}
+      submitLabel={initialData ? "تحديث" : "إضافة"}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[
+          {
+            label: "صفة الشركة",
+            name: "scope",
+            type: "select",
+            options: [
+              { value: "from", label: "من الشركة" },
+              { value: "against", label: "ضد الشركة" },
+            ]
+          },
+          { label: "رقم الدعوى", name: "case_number" },
+          { label: "المحكمة", name: "court" },
+          { label: "الخصم", name: "opponent" },
+          { label: "الموضوع", name: "subject" },
+          { label: "تاريخ رفع الدعوى", name: "filing_date", type: "date" },
+          {
+            label: "الحالة",
+            name: "status",
+            type: "select",
+            options: [
+              { value: "open", label: "مفتوحة" },
+              { value: "in_progress", label: "قيد التنفيذ" },
+              { value: "closed", label: "مغلقة" },
+            ]
+          }
+        ].map(({ label, name, type = "text", options }) => (
+          <div key={name}>
+            <label className="block mb-1 text-sm text-muted-foreground">{label}</label>
+            {type === "select" ? (
+              <select
+                name={name}
+                value={form[name]}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
+              >
+                {options.map(opt => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type={type}
+                name={name}
+                value={form[name]}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
+              />
+            )}
           </div>
-        )}
-
-        <h2 className="text-2xl font-bold mb-6 text-primary">
-          {initialData ? "تعديل دعوى" : "إضافة دعوى"}
-        </h2>
-
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            {
-              label: "صفة الشركة",
-              name: "scope",
-              type: "select",
-              options: [
-                { value: "from", label: "من الشركة" },
-                { value: "against", label: "ضد الشركة" },
-              ],
-            },
-            { label: "رقم الدعوى", name: "case_number" },
-            { label: "المحكمة", name: "court" },
-            { label: "الخصم", name: "opponent" },
-            { label: "الموضوع", name: "subject" },
-            { label: "تاريخ رفع الدعوى", name: "filing_date", type: "date" },
-            {
-              label: "الحالة",
-              name: "status",
-              type: "select",
-              options: [
-                { value: "open", label: "مفتوحة" },
-                { value: "in_progress", label: "قيد التنفيذ" },
-                { value: "closed", label: "مغلقة" },
-              ],
-            },
-          ].map(({ label, name, type = "text", options }) => (
-            <div key={name}>
-              <label className="block text-sm mb-1 text-muted-foreground">{label}</label>
-              {type === "select" ? (
-                <select
-                  name={name}
-                  value={form[name]}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
-                >
-                  {options.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type={type}
-                  name={name}
-                  value={form[name]}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
-                />
-              )}
-            </div>
-          ))}
-
-          <div className="md:col-span-2">
-            <label className="block text-sm mb-1 text-muted-foreground">ملاحظات</label>
-            <textarea
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-              rows={3}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
-            />
-          </div>
-
-          <div className="md:col-span-2 flex justify-end gap-4 mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition"
-            >
-              إلغاء
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`px-6 py-2 rounded-lg ${
-                initialData ? "bg-primary" : "bg-success"
-              } text-${initialData ? "primary-foreground" : "success-foreground"} hover:opacity-90 font-bold transition`}
-            >
-              {initialData ? "تحديث" : "إضافة"}
-            </button>
-          </div>
-        </form>
+        ))}
       </div>
-    </div>
-  );
-};
 
-export default LitigationModal;
+      {/* Notes (spans two columns) */}
+      <div className="md:col-span-2 mt-4">
+        <label className="block mb-1 text-sm text-muted-foreground">ملاحظات</label>
+        <textarea
+          name="notes"
+          value={form.notes}
+          onChange={handleChange}
+          rows={3}
+          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
+        />
+      </div>
+    </ModalCard>
+  );
+}

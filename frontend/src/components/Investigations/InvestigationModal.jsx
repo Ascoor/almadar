@@ -56,13 +56,13 @@ export default function InvestigationModal({ isOpen, onClose, onSubmit, initialD
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh] relative">
         {loading && (
           <div className="absolute inset-0 bg-white/70 dark:bg-gray-800/70 flex items-center justify-center z-50">
-            <div className="text-lg font-bold text-almadar-blue dark:text-almadar-yellow animate-pulse">
+            <div className="text-lg font-bold  text-navy-light dark:text-gold animate-pulse">
               جاري الحفظ...
             </div>
           </div>
         )}
 
-        <h2 className="text-2xl font-bold mb-6 text-almadar-blue dark:text-almadar-yellow">
+        <h2 className="text-2xl font-bold mb-6 text-royal-light dark:text-gold">
           {initialData ? "تعديل تحقيق" : "إضافة تحقيق"}
         </h2>
 
@@ -146,14 +146,14 @@ export default function InvestigationModal({ isOpen, onClose, onSubmit, initialD
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 :hover:bg-gra dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               إلغاء
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 rounded-lg bg-almadar-blue hover:bg-emerald-700 dark:bg-almadar-yellow text-white dark:text-black font-bold"
+              className="px-6 py-2 rounded-lg bg-royal-light hover:bg-royal dark:hover:bg-gold-dark dark:bg-gold text-white dark:text-black font-bold"
             >
               {loading ? "جاري الحفظ..." : "حفظ"}
             </button>

@@ -89,13 +89,13 @@ Route::apiResource('litigation-action-types', LitigationActionTypeController::cl
         Route::put('{investigation}', [InvestigationController::class, 'update']); // تعديل
         Route::delete('{investigation}', [InvestigationController::class, 'destroy']); // حذف
 
-        // ✅ الإجراءات الخاصة بكل تحقيق
-        Route::prefix('{investigation}/actions')->group(function () {
-            Route::get('/', [InvestigationActionController::class, 'index']); // قائمة الإجراءات
-            Route::post('/', [InvestigationActionController::class, 'store']); // إضافة
-            Route::get('{action}', [InvestigationActionController::class, 'show']); // إجراء واحد
-            Route::put('{action}', [InvestigationActionController::class, 'update']); // تعديل
-            Route::delete('{action}', [InvestigationActionController::class, 'destroy']); // حذف
-        });
+            // ✅ الإجراءات الخاصة بكل تحقيق
+            Route::prefix('{investigation}/actions')->group(function () {
+                Route::get('/', [InvestigationActionController::class, 'index']); // قائمة الإجراءات
+                Route::post('/', [InvestigationActionController::class, 'store']); // إضافة
+                Route::get('{action}', [InvestigationActionController::class, 'show']); // إجراء واحد
+                Route::put('{action}', [InvestigationActionController::class, 'update']); // تعديل
+                Route::delete('{action}', [InvestigationActionController::class, 'destroy']); // حذف
+            });
     });
 });

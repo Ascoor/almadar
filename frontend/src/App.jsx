@@ -1,3 +1,4 @@
+import React from 'react';
 import AuthWrapper from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
 import useAuth from './components/auth/AuthUser';

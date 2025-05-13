@@ -4,8 +4,8 @@ import RecentItems from './RecentItems';
 
 const Dashboard = () => {
   return (
-    <div dir="rtl" className="p-6 mt-6 bg-green-100/40 dark:bg-royal-dark">
-      <h2 className="text-2xl font-bold mb-6">لوحة التحكم</h2>
+    <div dir="rtl" className="mt-6 bg-green-100/40 dark:bg-royal-dark">
+      <h2 className="text-2xl text-center font-bold mb-6 text-gray-800 dark:text-violet-300">لوحة التحكم</h2>
       <DashboardStats />
       <RecentItems />
     </div>

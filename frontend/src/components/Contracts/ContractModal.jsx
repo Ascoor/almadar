@@ -1,202 +1,262 @@
-import  { useState, useEffect } from "react";
+// components/ContractModal.jsx
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
+import ModalCard from "../common/ModalCard";
+import { createContract, updateContract } from "../../services/api/contracts";
 
-export default function InvestigationActionModal({
+const EMPTY_FORM = {
+  id: null,
+  contract_category_id: "",
+  scope: "local",
+  number: "",
+  value: "",
+  contract_parties: "",
+  start_date: "",
+  end_date: "",
+  notes: "",
+  status: "active",
+  summary: "",
+  attachment: null,
+  oldAttachment: null,
+};
+
+export default function ContractModal({
   isOpen,
   onClose,
-  onSubmit,
-  initialData,
-  actionTypes = [],
+  initialData = null,
+  categories = [],
+  reloadContracts,
 }) {
-  const [form, setForm] = useState({
-    action_date: "",
-    action_type_id: "",
-    officer_name: "",
-    requirements: "",
-    results: "",
-    status: "",
-  });
-
+  const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
 
+  // initialize form when opening
   useEffect(() => {
+    if (!isOpen) return;
     if (initialData) {
-      setForm(initialData);
+      setForm({
+        ...EMPTY_FORM,
+        ...initialData,
+        oldAttachment: initialData.attachment,
+        start_date: initialData.start_date?.slice(0, 10) || "",
+        end_date: initialData.end_date?.slice(0, 10) || "",
+      });
     } else {
-      resetForm();
+      setForm(EMPTY_FORM);
     }
-  }, [initialData]);
-
-  const resetForm = () => {
-    setForm({
-      action_date: "",
-      action_type_id: "",
-      officer_name: "",
-      requirements: "",
-      results: "",
-      status: "",
-    });
-  };
+  }, [isOpen, initialData]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await onSubmit(form);
-      onClose();
-    } catch (error) {
-      console.error("Error saving action:", error);
-    } finally {
-      setLoading(false);
+    const { name, value, files } = e.target;
+    if (name === "attachment") {
+      const file = files[0];
+      if (file && file.type !== "application/pdf") {
+        toast.error("الملف يجب أن يكون بصيغة PDF فقط.");
+        return;
+      }
+      setForm((f) => ({ ...f, attachment: file }));
+    } else {
+      setForm((f) => ({ ...f, [name]: value }));
     }
-  };
+  }; 
+   const handleSave = async () => {
+    // validation
+ 
+     setLoading(true);
+     try {
+       const payload = new FormData();
+       Object.entries(form).forEach(([key, val]) => {
+         if (key === "attachment" && val instanceof File) {
+           payload.append("attachment", val);
+         } else if (key !== "attachment" && key !== "oldAttachment" && val != null) {
+           payload.append(key, val);
+         }
+       });
+       if (form.id) {
+         payload.append("_method", "PUT");
+         await updateContract(form.id, payload);
+         toast.success("✅ تم تعديل العقد بنجاح");
+       } else {
+         await createContract(payload);
+         toast.success("✅ تم إضافة العقد بنجاح");
+       }
 
-  if (!isOpen) return null;
-
+       reloadContracts?.();
+       onClose();
+       setForm(EMPTY_FORM);
+     } catch (err) {
+       console.error(err);
+       toast.error("❌ حدث خطأ أثناء حفظ العقد.");
+     } finally {
+       setLoading(false);
+     }
+   };
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-royal-dark rounded-lg shadow-lg w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh] relative transform-gpu">
-        {loading && (
-          <div className="absolute inset-0 bg-white/70 dark:bg-gray-800/70 flex items-center justify-center z-50">
-            <div className="text-lg font-bold text-blue-400 dark:text-gold animate-pulse">
-              جاري الحفظ...
-            </div>
-          </div>
-        )}
+    <ModalCard
+      isOpen={isOpen}
+      title={initialData ? "تعديل العقد" : "إضافة عقد جديد"}
+      loading={loading}
+      onClose={onClose}
+      onSubmit={handleSave}
+      submitLabel={initialData ? "تحديث" : "إضافة"}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
+        {/* Category */}
+        <div>
+          <label className="block mb-1 text-sm">التصنيف</label>
+          <select
+            name="contract_category_id"
+            value={form.contract_category_id}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border rounded-lg"
+          >
+            <option value="">اختر تصنيف</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+        </div>
 
-        <h2 className="text-2xl font-bold mb-6 rounded-full bg-green dark:bg-navy-dark p-4 text-center text-navy-light/90 dark:text-gold-light">
-          {initialData ? "تعديل إجراء" : "إضافة إجراء"}
-        </h2>
+        {/* Scope */}
+        <div>
+          <label className="block mb-1 text-sm">نوع العقد</label>
+          <select
+            name="scope"
+            value={form.scope}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border rounded-lg"
+          >
+            <option value="local">محلي</option>
+            <option value="international">دولي</option>
+          </select>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 text-right">
-          {/* تاريخ الإجراء */}
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              تاريخ الإجراء
-            </label>
-            <input
-              type="date"
-              name="action_date"
-              value={form.action_date}
-              onChange={handleChange}
-              required
-              placeholder="اختر تاريخ الإجراء"
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
+        {/* Number */}
+        <div>
+          <label className="block mb-1 text-sm">رقم العقد</label>
+          <input
+            name="number"
+            value={form.number}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
 
-          {/* نوع الإجراء */}
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              نوع الإجراء
-            </label>
-            <select
-              name="action_type_id"
-              value={form.action_type_id || ""}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+        {/* Value */}
+        <div>
+          <label className="block mb-1 text-sm">قيمة العقد</label>
+          <input
+            type="number"
+            name="value"
+            value={form.value}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        {/* Parties */}
+        <div className="md:col-span-2">
+          <label className="block mb-1 text-sm">الأطراف المتعاقد معها</label>
+          <textarea
+            name="contract_parties"
+            value={form.contract_parties}
+            onChange={handleChange}
+            rows={2}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        {/* Dates */}
+        <div>
+          <label className="block mb-1 text-sm">تاريخ البداية</label>
+          <input
+            type="date"
+            name="start_date"
+            value={form.start_date}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-sm">تاريخ النهاية</label>
+          <input
+            type="date"
+            name="end_date"
+            value={form.end_date}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        {/* Status */}
+        <div className="md:col-span-2">
+          <label className="block mb-1 text-sm">الحالة</label>
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border rounded-lg"
+          >
+            <option value="active">ساري</option>
+            <option value="expired">منتهي</option>
+            <option value="terminated">مفسوخ</option>
+            <option value="pending">قيد الانتظار</option>
+            <option value="cancelled">ملغي</option>
+          </select>
+        </div>
+
+        {/* Notes */}
+        <div className="md:col-span-2">
+          <label className="block mb-1 text-sm">ملاحظات</label>
+          <textarea
+            name="notes"
+            value={form.notes}
+            onChange={handleChange}
+            rows={2}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        {/* Summary */}
+        <div className="md:col-span-2">
+          <label className="block mb-1 text-sm">ملخص العقد</label>
+          <textarea
+            name="summary"
+            value={form.summary}
+            onChange={handleChange}
+            rows={3}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        {/* Attachment */}
+        <div className="md:col-span-2">
+          <label className="block mb-1 text-sm">مرفق العقد (PDF فقط)</label>
+          <input
+            type="file"
+            name="attachment"
+            accept="application/pdf"
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+          {form.attachment ? (
+            <p className="mt-1 text-sm text-green-600">{form.attachment.name}</p>
+          ) : form.oldAttachment ? (
+            <a
+              href={`/storage/${form.oldAttachment}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 block text-sm text-blue-600 underline"
             >
-              <option value="" disabled>
-                اختر نوع الإجراء
-              </option>
-              {actionTypes?.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.action_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* اسم القائم بالإجراء */}
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              اسم القائم بالإجراء
-            </label>
-            <input
-              type="text"
-              name="officer_name"
-              value={form.officer_name}
-              onChange={handleChange}
-              required
-              placeholder="مثال: د. فاطمة"
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
-
-          {/* المطلوب */}
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              المطلوب
-            </label>
-            <input
-              type="text"
-              name="requirements"
-              value={form.requirements}
-              onChange={handleChange}
-              placeholder="مثال: تقديم إفادة"
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
-
-          {/* النتيجة */}
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              النتيجة
-            </label>
-            <input
-              type="text"
-              name="results"
-              value={form.results}
-              onChange={handleChange}
-              placeholder="مثال: تم الاستماع للموظف"
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
-
-          {/* الحالة */}
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              الحالة
-            </label>
-            <select
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            >
-              <option value="">اختر الحالة</option>
-              <option value="pending">معلق</option>
-              <option value="in_review">قيد المراجعة</option>
-              <option value="done">منجز</option>
-            </select>
-          </div>
-
-          <div className="flex justify-end gap-4 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={loading}
-              className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 text-gray-900 dark:text-white"
-            >
-              إلغاء
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2 rounded-lg bg-royal hover:bg-royal-dark dark:bg-yellow-400 text-white dark:text-black font-bold"
-            >
-              حفظ
-            </button>
-          </div>
-        </form>
+              عرض المرفق الحالي
+            </a>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </ModalCard>
   );
 }

@@ -54,25 +54,33 @@ class InvestigationActionController extends Controller
 
     /**
      * تحديث إجراء محدد.
-     */
-    public function update(Request $request, Investigation $investigation, InvestigationAction $action)
-    {
-        if ($action->investigation_id !== $investigation->id) {
-            return response()->json(['message' => 'الإجراء لا يتبع هذا التحقيق.'], 403);
-        }
-
-        $validated = $request->validate([
-            'action_date' => 'sometimes|date',
-            'action_type_id' => 'sometimes|exists:investigation_action_types,id', // Validate against investigation_action_types table
-            'officer_name' => 'sometimes|string|max:255',
-            'requirements' => 'nullable|string',
-            'results' => 'nullable|string',
-            'status' => 'sometimes|in:pending,in_review,done',
-        ]);
+     */public function update(Request $request, Investigation $investigation, InvestigationAction $action)
+{
+    // التحقق من أن الإجراء ينتمي إلى التحقيق الحالي
+    if ($action->investigation_id !== $investigation->id) {
+        return response()->json(['message' => 'الإجراء لا يتبع هذا التحقيق.'], 403);
     }
-    /**
-     * حذف إجراء محدد.
-     */
+
+    // التحقق من صحة البيانات المدخلة
+    $validated = $request->validate([
+        'action_date' => 'sometimes|date',
+        'action_type_id' => 'sometimes|exists:investigation_action_types,id', // تحقق من وجود id في الجدول المحدد
+        'officer_name' => 'sometimes|string|max:255',
+        'requirements' => 'nullable|string',
+        'results' => 'nullable|string',
+        'status' => 'sometimes|in:pending,in_review,done',
+    ]);
+
+    // تحديث الإجراء باستخدام البيانات المدخلة
+    $action->update($validated);
+
+    // إرجاع الاستجابة بنجاح مع الإجراء المحدث
+    return response()->json([
+        'message' => 'تم تحديث الإجراء بنجاح.',
+        'data' => $action,
+    ]);
+}
+ 
     public function destroy(Investigation $investigation, InvestigationAction $action)
     {
         if ($action->investigation_id !== $investigation->id) {

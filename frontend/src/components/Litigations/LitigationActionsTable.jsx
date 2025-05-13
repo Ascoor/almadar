@@ -8,7 +8,7 @@ import { deleteLitigationAction, updateLitigationAction, createLitigationAction 
 export default function LitigationActionsTable({
   actions,
   litigationId,
-  onReload, 
+  reloadLitigations, 
 }) {
   const [showModal, setShowModal] = useState(false);
   const [editingAction, setEditingAction] = useState(null);
@@ -17,7 +17,7 @@ export default function LitigationActionsTable({
   const [litigationActionTypes, setLitigationActionTypes] = useState([]);
   const [actionToDelete, setActionToDelete] = useState(null);
 useEffect(() => {
-    onReload();
+    reloadLitigations();
     loadLitigationActionTypes();
   }, []);
   // Function to load litigation action types
@@ -54,7 +54,7 @@ useEffect(() => {
         toast.success("تمت إضافة الإجراء بنجاح");
       }
       setShowModal(false);
-      onReload(); // Refresh the actions after the save
+      reloadLitigations(); // Refresh the actions after the save
     } catch (error) {
       toast.error("فشل في حفظ الإجراء");
     }
@@ -65,7 +65,7 @@ useEffect(() => {
       await deleteLitigationAction(litigationId, actionToDelete.id);
       toast.success("تم حذف الإجراء بنجاح");
       setActionToDelete(null); // Close the modal after deletion
-      onReload(); // Optionally refresh actions
+      reloadLitigations(); // Optionally refresh actions
     } catch (error) {
       toast.error("فشل في حذف الإجراء");
     }
@@ -74,16 +74,67 @@ useEffect(() => {
   return (
     <div className="mt-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-4 md:p-6 transition">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg md:text-xl font-bold text-almadar-blue dark:text-almadar-yellow">
+        <h3 className="text-lg md:text-xl font-bold text-royal dark:text-gold">
           الإجراءات القضائية المرتبطة
         </h3>
-        <button
-          onClick={onAdd}
-          className="flex items-center gap-2 text-sm md:text-base text-white bg-almadar-blue dark:bg-almadar-yellow dark:text-black px-4 py-2 rounded-lg hover:scale-105 transition"
-        >
-          <FaPlusCircle />
-          <span>إضافة إجراء</span>
-        </button>
+      <button
+  onClick={onAdd}
+  className="
+    flex items-center justify-center gap-2
+
+    /* Padding متغير حسب الشاشة */
+    px-4 py-2
+    sm:px-5 sm:py-2.5
+    md:px-6 md:py-3
+
+    /* حجم الخط متغير */
+    text-sm
+    sm:text-base
+    md:text-lg
+    font-semibold
+
+    /* دوائر حواف */
+    rounded-2xl
+
+    /* ألوان النص */
+    text-white dark:text-gray-900
+
+    /* تدرّج الألوان ليلاً ونهارًا */
+    bg-gradient-to-r
+      from-royal-light/90 to-royal/80
+    dark:bg-gradient-to-r
+      dark:from-gold/90 dark:to-gold-light/80
+
+    /* ظلّ أولي */
+    shadow-lg
+    will-change-transform
+
+    /* انتقالات */
+    transition
+      transform duration-300 ease-out,
+      shadow 300ms ease-out,
+      filter 300ms ease-out
+
+    /* تأثيرات Hover */
+    hover:shadow-2xl
+    hover:-translate-y-1 hover:scale-105 hover:rotate-1
+    hover:brightness-105
+
+    /* تأثيرات Click */
+    active:translate-y-0.5 active:scale-100 active:shadow-md
+
+    /* إطار تركيز */
+    focus:outline-none focus:ring-4
+    focus:ring-royal/50 dark:focus:ring-gold/50
+
+    /* حالة التعطيل */
+    disabled:opacity-50 disabled:cursor-not-allowed
+  "
+>
+  <FaPlusCircle className="w-5 h-5 flex-shrink-0" />
+  <span className="whitespace-nowrap">إضافة إجراء</span>
+</button>
+ 
       </div>
 
       {actions.length === 0 ? (
@@ -97,7 +148,7 @@ useEffect(() => {
                 <th className="px-2 py-3">حذف</th>
                 <th className="px-2 py-3">تاريخ الإجراء</th>
                 <th className="px-2 py-3">نوع الإجراء</th>
-                <th className="px-2 py-3">المحامي / المستشار</th>
+                <th className="px-2 py-3">المحامي  </th>
                 <th className="px-2 py-3">المتطلبات</th>
                 <th className="px-2 py-3">النتيجة</th>
                 <th className="px-2 py-3">الحالة</th>
@@ -150,6 +201,7 @@ useEffect(() => {
       {showModal && (
 <LitigationActionModal
   isOpen={showModal}
+  reloadLitigations={reloadLitigations}
   actionTypes={litigationActionTypes}
   onClose={() => setShowModal(false)}
   initialData={editingAction}

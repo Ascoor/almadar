@@ -1,6 +1,5 @@
 import React from "react";
 import VariableListCard from"@/components/Settings/VariableListCard"
-import { Trash2 } from "lucide-react";
  
 
 const VariablesDashboard = () => {

@@ -1,219 +1,183 @@
-import  { useState, useEffect } from "react";
-import { toast } from "sonner"; 
-import { createLitigation, updateLitigation } from "../../services/api/litigations"; 
+// components/LegalAdvices/LegalAdviceModal.jsx
+import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
+import ModalCard from "../common/ModalCard";
+import { createLegalAdvice, updateLegalAdvice } from "../../services/api/legalAdvices";
+import API_CONFIG from "../../config/config";
 
-const LitigationModal = ({ isOpen, onClose, initialData = null, litigationActionTypes, reloadLitigations }) => {
-  const [form, setForm] = useState({
-    id: null,
-    case_number: "",
-    court: "",
-    opponent: "",
-    scope: "from",
-    subject: "",
-    filing_date: "",
-    status: "open",
-    notes: "",
-    action_type_id: "",  // New field for litigation action type
-  });
+const EMPTY_FORM = {
+  id: null,
+  advice_type_id: "",
+  topic: "",
+  text: "",
+  requester: "",
+  issuer: "",
+  advice_date: "",
+  advice_number: "",
+  attachment: null,
+  oldAttachment: null,
+};
 
+export default function LegalAdviceModal({
+  isOpen,
+  onClose,
+  adviceTypes = [],
+  initialData = null,
+  reload
+}) {
+  const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
 
-  // When the modal opens or initialData is passed, we populate the form with existing data.
+  // عند فتح المودال نملأ النموذج أو نفرغه
   useEffect(() => {
-    if (isOpen && initialData) {
+    if (!isOpen) return;
+    if (initialData) {
       setForm({
-        ...initialData,
-        action_type_id: initialData.action_type_id || "", // Populate action_type_id if editing
-        filing_date: initialData.filing_date ? initialData.filing_date.slice(0, 10) : "", // Adjusting date format
+        id: initialData.id,
+        advice_type_id: initialData.advice_type_id || "",
+        topic: initialData.topic || "",
+        text: initialData.text || "",
+        requester: initialData.requester || "",
+        issuer: initialData.issuer || "",
+        advice_date: initialData.advice_date?.slice(0, 10) || "",
+        advice_number: initialData.advice_number || "",
+        attachment: null,
+        oldAttachment: initialData.attachment || null,
       });
     } else {
-      resetForm(); // Reset the form for new litigations
+      setForm(EMPTY_FORM);
     }
   }, [isOpen, initialData]);
 
-  const resetForm = () => {
-    setForm({
-      id: null,
-      case_number: "",
-      court: "",
-      opponent: "",
-      scope: "from",
-      subject: "",
-      filing_date: "",
-      status: "open",
-      notes: "",
-      action_type_id: "", // Reset action type
-    });
-  };
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, files } = e.target;
+    if (name === "attachment") {
+      const file = files[0];
+      if (file && file.type !== "application/pdf") {
+        toast.error("الملف يجب أن يكون بصيغة PDF فقط.");
+        return;
+      }
+      setForm(prev => ({ ...prev, attachment: file }));
+    } else {
+      setForm(prev => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     setLoading(true);
-
     try {
-      const payload = { ...form };
+      const payload = new FormData();
+      Object.entries(form).forEach(([k, v]) => {
+        if (v != null && k !== "oldAttachment") {
+          payload.append(k, v);
+        }
+      });
+      if (form.id) payload.append("_method", "PUT");
+
       if (form.id) {
-        // If there's an ID, it's an update
-        await updateLitigation(form.id, payload);
-        toast.success("✅ تم تعديل الدعوى بنجاح");
+        await updateLegalAdvice(form.id, payload);
+        toast.success("✅ تم تعديل المشورة بنجاح");
       } else {
-        // Otherwise, it's a new entry
-        await createLitigation(payload);
-        toast.success("✅ تم إضافة الدعوى بنجاح");
+        await createLegalAdvice(payload);
+        toast.success("✅ تم إضافة المشورة بنجاح");
       }
 
-      reloadLitigations?.();  // Reload litigations after successful operation
-      onClose(); // Close the modal
-      resetForm();  // Reset the form for future entries
-    } catch (error) {
-      const errors = error?.response?.data?.errors;
-      if (errors) {
-        Object.values(errors).forEach((msgs) => {
-          msgs.forEach((msg) => toast.error(`❌ ${msg}`));
-        });
-      } else {
-        toast.error("❌ فشل الحفظ. تحقق من البيانات.");
-      }
-      console.error(error);
+      reload?.();
+      onClose();
+    } catch (err) {
+      toast.error("❌ حدث خطأ أثناء الحفظ.");
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isOpen) return null; // If modal is not open, return null
-
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
-      <div className="bg-card text-card-foreground rounded-xl shadow-xl w-full max-w-3xl p-6 relative">
-        {loading && (
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-xl">
-            <p className="text-lg font-semibold text-primary animate-pulse">
-              جاري الحفظ...
-            </p>
-          </div>
-        )}
-
-        <h2 className="text-2xl font-bold mb-6 text-primary">
-          {initialData ? "تعديل دعوى" : "إضافة دعوى"}
-        </h2>
-
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[ // Form fields for litigation
-            {
-              label: "صفة الشركة",
-              name: "scope",
-              type: "select",
-              options: [
-                { value: "from", label: "من الشركة" },
-                { value: "against", label: "ضد الشركة" },
-              ],
-            },
-            { label: "رقم الدعوى", name: "case_number" },
-            { label: "المحكمة", name: "court" },
-            { label: "الخصم", name: "opponent" },
-            { label: "الموضوع", name: "subject" },
-            { label: "تاريخ رفع الدعوى", name: "filing_date", type: "date" },
-            {
-              label: "الحالة",
-              name: "status",
-              type: "select",
-              options: [
-                { value: "open", label: "مفتوحة" },
-                { value: "in_progress", label: "قيد التنفيذ" },
-                { value: "closed", label: "مغلقة" },
-              ],
-            },
-          ].map(({ label, name, type = "text", options }) => (
-            <div key={name}>
-              <label className="block text-sm mb-1 text-muted-foreground">{label}</label>
-              {type === "select" ? (
-                <select
-                  name={name}
-                  value={form[name]}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
-                >
-                  {options.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type={type}
-                  name={name}
-                  value={form[name]}
-                  onChange={handleChange}
-                  required={["action_type_id", "topic", "advice_number"].includes(name)}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
-                />
-              )}
-            </div>
-          ))}
-
-          {/* Dropdown for Action Type */}
+    <ModalCard
+      isOpen={isOpen}
+      title={initialData ? "تعديل رأي/مشورة" : "إضافة رأي/مشورة جديد"}
+      loading={loading}
+      onClose={onClose}
+      onSubmit={handleSave}
+      submitLabel={initialData ? "تحديث" : "إضافة"}
+    >
+      <form className="space-y-6 text-right">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* نوع المشورة */}
           <div>
-            <label htmlFor="action_type_id" className="block text-sm mb-1 text-muted-foreground">
-              نوع الإجراء
-            </label>
+            <label className="block mb-1 text-sm">نوع المشورة</label>
             <select
-              name="action_type_id"
-              value={form.action_type_id}
+              name="advice_type_id"
+              value={form.advice_type_id}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
             >
-              <option value="" disabled>اختر نوع الإجراء</option>
-              {litigationActionTypes.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.action_name}
-                </option>
+              <option value="">-- اختر نوع المشورة --</option>
+              {adviceTypes.map(t => (
+                <option key={t.id} value={t.id}>{t.type_name}</option>
               ))}
             </select>
-            {errors.action_type_id && (
-              <p className="mt-1 text-red-500 text-sm">{errors.action_type_id.message}</p>
-            )}
           </div>
 
-          {/* Notes field */}
-          <div className="md:col-span-2">
-            <label className="block text-sm mb-1 text-muted-foreground">ملاحظات</label>
-            <textarea
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-              rows={3}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
-            />
-          </div>
+          {/* حقول نموذجية */}
+          {[
+            { label: "الموضوع", name: "topic", type: "text" },
+            { label: "الجهة الطالبة", name: "requester", type: "text" },
+            { label: "الجهة المصدرة", name: "issuer", type: "text" },
+            { label: "تاريخ المشورة", name: "advice_date", type: "date" },
+            { label: "رقم المشورة", name: "advice_number", type: "text" }
+          ].map(({ label, name, type }) => (
+            <div key={name}>
+              <label className="block mb-1 text-sm">{label}</label>
+              <input
+                type={type}
+                name={name}
+                value={form[name]}
+                onChange={handleChange}
+                required={["topic", "advice_number"].includes(name)}
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
+              />
+            </div>
+          ))}
+        </div>
 
-          {/* Action buttons */}
-          <div className="md:col-span-2 flex justify-end gap-4 mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition"
+        {/* نص المشورة */}
+        <div>
+          <label className="block mb-1 text-sm">نص المشورة</label>
+          <textarea
+            name="text"
+            value={form.text}
+            onChange={handleChange}
+            rows={4}
+            className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
+          />
+        </div>
+
+        {/* مرفق PDF */}
+        <div>
+          <label className="block mb-1 text-sm">مرفق PDF</label>
+          <input
+            type="file"
+            name="attachment"
+            accept="application/pdf"
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
+          />
+          {form.attachment ? (
+            <p className="mt-1 text-green-600">{form.attachment.name}</p>
+          ) : form.oldAttachment ? (
+            <a
+              href={`${API_CONFIG.baseURL}/storage/${form.oldAttachment}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 text-blue-600 underline block"
             >
-              إلغاء
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`px-6 py-2 rounded-lg ${initialData ? "bg-primary" : "bg-success"} text-${initialData ? "primary-foreground" : "success-foreground"} hover:opacity-90 font-bold transition`}
-            >
-              {loading ? "جاري الحفظ..." : initialData ? "تحديث" : "إضافة"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+              عرض المرفق الحالي
+            </a>
+          ) : null}
+        </div>
+      </form>
+    </ModalCard>
   );
-};
-
-export default LitigationModal;
+}

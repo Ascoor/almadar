@@ -32,7 +32,6 @@ export const getInvestigationActionById = (investigationId, actionId) =>
 
 export const createInvestigationAction = (investigationId, data) =>
   api.post(`/api/investigations/${investigationId}/actions`, data);
-
 export const updateInvestigationAction = (investigationId, actionId, data) =>
   api.put(`/api/investigations/${investigationId}/actions/${actionId}`, data);
 
