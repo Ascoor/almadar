@@ -31,26 +31,34 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+public function login(Request $request)
+{
+    $request->validate([
+        'email'    => 'required|string|email',
+        'password' => 'required|string',
+    ]);
 
-        $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Bad credentials'], 401);
-        }
-
-        $token = $user->createToken('api_token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ]);
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Bad credentials'], 401);
     }
+
+    // إنشاء التوكن
+    $token = $user->createToken('api_token')->plainTextToken;
+
+    // جلب الأدوار والصلاحيات
+    $roles       = $user->getRoleNames();            // يعيد Collection من أسماء الأدوار
+    $permissions = $user->getAllPermissions()        // يعيد Collection من Permission models
+                        ->pluck('name');             // نأخذ فقط الأسماء
+
+    return response()->json([
+        'user'        => $user,
+        'token'       => $token,
+        'roles'       => $roles,
+        'permissions' => $permissions,
+    ]);
+}
 
     public function logout(Request $request)
     {

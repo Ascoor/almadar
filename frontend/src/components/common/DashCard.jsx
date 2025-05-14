@@ -8,7 +8,7 @@ const DashCard = ({ title, count, subcategories, imageSrc }) => {
       <div className="flex flex-col w-full">
         <div className="flex flex-col mb-2">
           <h2 className="text-md font-bold dark:text-cyan-200 text-navy">{title}</h2>
-          <p className="text-base font-sm dark:text-gray-100 text-gray-600">إجمالي {count}</p>
+          <p className="text-base font-md text-center mr-6 p-2 font-semibold dark:text-gray-100 text-gray-600">إجمالي {count}</p>
         </div>
 
         <div className="flex flex-col space-y-2 w-full">

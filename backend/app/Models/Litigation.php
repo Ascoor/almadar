@@ -11,6 +11,7 @@ class Litigation extends Model
 
     protected $fillable = [
         'case_number',
+        'case_year',
         'court',
         'scope',        // 'from' or 'against'
         'opponent',
@@ -18,6 +19,7 @@ class Litigation extends Model
         'filing_date',
         'status',       // 'open', 'in_progress', 'closed'
         'notes',
+        'results',
     ];
 
     protected $casts = [

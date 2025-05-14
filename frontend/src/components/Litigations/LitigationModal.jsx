@@ -6,6 +6,7 @@ import { createLitigation, updateLitigation } from "../../services/api/litigatio
 const EMPTY_FORM = {
   id: null,
   case_number: "",
+  case_year: "",
   court: "",
   opponent: "",
   scope: "from",
@@ -31,6 +32,7 @@ export default function LitigationModal({
       setForm({
         id: initialData.id,
         case_number: initialData.case_number || "",
+        case_year: initialData.case_year || "",
         court: initialData.court || "",
         opponent: initialData.opponent || "",
         scope: initialData.scope || "from",
@@ -58,7 +60,7 @@ export default function LitigationModal({
       });
     } else {
       // نموذج فارغ عند الإضافة
-      setForm((f) => ({ ...f, id: null, case_number: "", court: "", opponent: "", scope: "from", subject: "", filing_date: "", status: "open", notes: "" }));
+      setForm((f) => ({ ...f, id: null, case_number: "",case_year:"", court: "", opponent: "", scope: "from", subject: "", filing_date: "", status: "open", notes: "" }));
     }
   }, [isOpen, initialData]);
 
@@ -120,6 +122,7 @@ export default function LitigationModal({
             ]
           },
           { label: "رقم الدعوى", name: "case_number" },
+          { label: "سنة الدعوى", name: "case_year" },
           { label: "المحكمة", name: "court" },
           { label: "الخصم", name: "opponent" },
           { label: "الموضوع", name: "subject" },

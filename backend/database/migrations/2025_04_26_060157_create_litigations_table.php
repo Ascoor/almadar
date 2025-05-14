@@ -13,6 +13,7 @@ return new class extends Migration
 
             $table->enum('scope', ['from', 'against']);  // نوع الدعوى (دولي أو محلي)
             $table->string('case_number');                // رقم القضية
+$table->unsignedSmallInteger('case_year');
             $table->string('opponent');                   // الخصم
             $table->string('court');                      // المحكمة
             $table->date('filing_date');                  // تاريخ تقديم الدعوى

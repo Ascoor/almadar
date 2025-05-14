@@ -5,17 +5,15 @@ import {
   Feather, Gavel, ChevronRight, SquareDashedKanban,
   LayoutDashboard, Settings, UserCog
 } from 'lucide-react';
-// تأكد أنّ هذه الصور تصدر من هذا الملف:
 import { LogoArt, LogoPatren } from '../../assets/images';
-// تأكد من مسار AuthContext الصحيح:
-import { AuthContext } from '../../components/auth/AuthContext';
+import { AuthContext } from '@/components/auth/AuthContext';
 
 export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   const { hasPermission, hasRole } = useContext(AuthContext);
   const [activeSection, setActiveSection] = useState(null);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 640);
 
-  // 1. مراقبة حجم الشاشة
+  // تحديث حالة حجم الشاشة
   useEffect(() => {
     const handleResize = () => setIsLargeScreen(window.innerWidth >= 640);
     window.addEventListener('resize', handleResize);
@@ -24,7 +22,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
 
   const logoSrc = isOpen ? LogoPatren : LogoArt;
 
-  // 2. هيكلية القائمة مع دوال canView
+  // 1) هنا نعرف بنية القائمة مع canView لكل بند
   const navConfig = useMemo(() => [
     {
       id: 'home',
@@ -46,6 +44,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
       id: 'fatwa',
       label: 'الرأي والفتوى',
       icon: <Gavel size={18} />,
+      // البنود الفرعية
       children: [
         {
           id: 'investigations',
@@ -71,8 +70,8 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
             hasPermission('view litigation-from'),
         },
       ],
-      // نعرض الأصل فقط لو لديه أبناء مرخص لهم
-      canView: (kids) => kids.length > 0,
+      // يُعرض الأصل فقط لو أحد الأبناء متاح
+      canView: (filteredChildren) => filteredChildren.length > 0,
     },
     {
       id: 'management',
@@ -101,7 +100,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
           canView: () => hasRole('Admin'),
         },
       ],
-      canView: (kids) => kids.length > 0,
+      canView: (filteredChildren) => filteredChildren.length > 0,
     },
     {
       id: 'users',
@@ -116,7 +115,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
           canView: () => hasPermission('view users'),
         },
       ],
-      canView: (kids) => kids.length > 0,
+      canView: (filteredChildren) => filteredChildren.length > 0,
     },
     {
       id: 'archive',
@@ -127,23 +126,27 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
     },
   ], [hasPermission, hasRole]);
 
-  // 3. فلترة البنود حسب الصلاحيات
+  // 2) نفرز ونفلتر البنود حسب canView
   const permittedNav = useMemo(() => {
     return navConfig
       .map(item => {
         if (!item.children) {
           return item.canView() ? item : null;
         }
+        // فلترة الأبناء أولاً
         const kids = item.children.filter(ch => ch.canView());
-        return item.canView(kids) ? { ...item, children: kids } : null;
+        return item.canView(kids)
+          ? { ...item, children: kids }
+          : null;
       })
       .filter(Boolean);
   }, [navConfig]);
 
   const handleSectionClick = (id) => {
     if (!isLargeScreen && !isOpen) onToggle();
-    setActiveSection(prev => prev === id ? null : id);
+    setActiveSection(prev => (prev === id ? null : id));
   };
+
   const handleLinkClick = () => {
     if (!isLargeScreen && onLinkClick) setTimeout(onLinkClick, 50);
   };
@@ -155,10 +158,11 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
         fixed right-0 top-0 z-20 h-full
         bg-gradient-to-b from-gold/70 via-navy/70 to-navy/90
         dark:bg-gradient-to-t dark:from-navy-dark/70 dark:via-navy-dark/40 dark:to-reded-dark/40
-        border-l border-border transition-all duration-300
+        border-l border-border
+        transition-all duration-300
         ${isLargeScreen
-          ? isOpen ? 'w-64' : 'w-16'
-          : isOpen ? 'w-full mt-16' : 'translate-x-full'}
+          ? isOpen ? 'w-64 translate-x-0' : 'w-16 translate-x-0'
+          : isOpen ? 'w-full mt-16 translate-x-0' : 'translate-x-full'}
       `}
     >
       <div className="flex items-center justify-center p-4">
@@ -172,6 +176,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
       <nav className={`overflow-y-auto h-full px-2 ${isOpen ? 'space-y-4 mt-4' : 'space-y-2 mt-4'}`}>
         {permittedNav.map(item => (
           <div key={item.id}>
+            {/* بند بدون أبناء */}
             {!item.children ? (
               <NavLink
                 to={item.to}
@@ -186,6 +191,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
               </NavLink>
             ) : (
               <>
+                {/* بند أب */}
                 <button
                   onClick={() => handleSectionClick(item.id)}
                   className={`
@@ -204,6 +210,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                     </>
                   )}
                 </button>
+                {/* بنود فرعية */}
                 {isOpen && activeSection === item.id && (
                   <div className="mr-4 pl-4 border-r border-gray-600 space-y-1">
                     {item.children.map(ch => (
@@ -213,7 +220,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                         onClick={handleLinkClick}
                         className={({ isActive }) =>
                           `flex items-center gap-2 p-2 rounded-md text-sm transition-colors duration-200
-                           ${isActive ? 'bg-navy-light text-white' : 'hover:bg-yellow-100 hover:text-navy'}` 
+                           ${isActive ? 'bg-navy-light text-white' : 'hover:bg-yellow-100 hover:text-navy'}`
                         }
                       >
                         {ch.icon}

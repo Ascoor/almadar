@@ -15,6 +15,7 @@ const Litigations = lazy(() => import('../../pages/LitigationsPage.jsx'));
 const UsersList = lazy(() => import('../Users/index.jsx'));
 const ArchivePage = lazy(() => import('../../pages/ArchivePage.jsx'));
 const ManagementSettings = lazy(() => import('../../pages/ManagementSettings.jsx'));
+const RoleManagement = lazy(() => import('../Users/Sections/RoleManagement.jsx'));
 
 const NotFound = () => (
   <h1 className="text-center text-red-500">404 - Page Not Found</h1>
@@ -50,6 +51,7 @@ const AuthRoutes = () => {
   <Route path="/legal/litigations" element={<Litigations />} />
 
   <Route path="/managment-lists" element={<ManagementSettings />} />
+  <Route path="/role-management" element={<RoleManagement />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

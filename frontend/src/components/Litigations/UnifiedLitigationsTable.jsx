@@ -112,7 +112,7 @@
           onEdit={handleEdit}
           onDelete={(row) => setDeleteTarget(row)}
           expandedRowRenderer={expandedRowRenderer}
-          renderAddButton={() => <AddButton label="إضافة دعوى" onClick={handleAdd} />}
+          renderAddButton={() => <AddButton label=" دعوى" onClick={handleAdd} />}
           title="وحدة الدعاوى"
         />
 

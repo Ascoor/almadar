@@ -10,7 +10,7 @@ class RoleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view roles')->only(['index', 'show']);
+        $this->middleware('permission:view roles')->only(['index','show']);
         $this->middleware('permission:create roles')->only('store');
         $this->middleware('permission:edit roles')->only('update');
         $this->middleware('permission:delete roles')->only('destroy');
@@ -18,18 +18,14 @@ class RoleController extends Controller
 
     public function index()
     {
-        return response()->json(Role::all());
+        return Role::with('permissions')->get();
     }
 
-    public function store(Request $request)
+    public function store(Request $req)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|unique:roles,name',
-        ]);
-
-        $role = Role::create(['name' => $validated['name']]);
-
-        return response()->json(['message' => 'Role created successfully', 'role' => $role]);
+        $data = $req->validate(['name'=>'required|unique:roles,name']);
+        $role = Role::create($data);
+        return response()->json($role, 201);
     }
 
     public function show($id)

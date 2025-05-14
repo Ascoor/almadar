@@ -15,6 +15,7 @@ class LitigationSeeder extends Seeder
         foreach (range(1, 5) as $i) {
             Litigation::create([
                 'case_number' => 'FC-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'case_year' => rand(2010, 2023),
                 'court'       => 'محكمة الرياض الابتدائية',
                 'scope' => 'from',
                 'opponent'    => 'شركة الابتكار التقني ' . $i,
@@ -29,6 +30,7 @@ class LitigationSeeder extends Seeder
         foreach (range(6, 10) as $i) {
             Litigation::create([
                 'case_number' => 'AC-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                'case_year' => rand(2010, 2023),
                 'court'       => 'محكمة جدة التجارية',
                 'scope' => 'against ',
                 'opponent'    => 'مؤسسة الإنشاءات الذكية ' . $i,

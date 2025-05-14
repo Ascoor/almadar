@@ -54,7 +54,11 @@
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
         },
-     
+      greenic: {
+    DEFAULT: '#4CAF50',    // للخلفيات الرئيسية
+    light: '#81C784',      // للتسليط الضوء على العناصر الثانوية
+    dark: '#388E3C'        // للحدود أو التباين مع النص
+  },
  navy: {
     DEFAULT: '#0F3460',    // للخلفيات الرئيسية
     light: '#1A5DAD',      // للتسليط الضوء على العناصر الثانوية

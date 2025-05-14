@@ -1,14 +1,15 @@
-import  { useState, useRef, useEffect } from 'react';
+// src/components/UserMenu.jsx
+import { useState, useContext, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Transition from '../../utils/Transition';
-import useAuth from '../auth/AuthUser';
-import { toast } from 'sonner'; // أضف هذا في الأعلى
-import AuthSpinner from '../common/Spinners/AuthSpinner';
+import { AuthContext } from '@/components/auth/AuthContext';
+import { useSpinner } from'@/context/SpinnerContext';
+import { toast } from 'sonner';
 
 function UserMenu({ align = 'left' }) {
+  const { user, logout } = useContext(AuthContext);
+  const { showSpinner, hideSpinner } = useSpinner();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false); // ✅
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [userImage, setUserImage] = useState('/default-profile.png');
@@ -19,43 +20,38 @@ function UserMenu({ align = 'left' }) {
     if (user?.image) setUserImage(user.image);
   }, [user]);
 
-  const handleImageError = () => {
-    setUserImage('/default-profile.png');
-  };
-
+  // إغلاق القائمة عند النقر خارجها
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (
         !dropdown.current ||
         dropdown.current.contains(target) ||
         trigger.current.contains(target)
-      )
-        return;
+      ) return;
       setDropdownOpen(false);
     };
     document.addEventListener('click', clickHandler);
     return () => document.removeEventListener('click', clickHandler);
-  }, [dropdownOpen]);
+  }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setDropdownOpen(false);
-    setIsLoggingOut(true); // ✅ يبدأ تشغيل السبينر
+    showSpinner();  // أظهر overlay السبينر
+    try {
+      await logout();  // يمسح التوكن ويعيد user إلى null
+      toast.success('✅ تم تسجيل الخروج بنجاح', {
+        description: 'نراك قريبًا!',
+      });
+      navigate('/login');
+    } catch (err) {
+      toast.error('❌ حدث خطأ أثناء تسجيل الخروج');
+    } finally {
+      hideSpinner(); // أخفِ overlay السبينر
+    }
   };
 
   return (
     <div className="relative inline-flex">
-{isLoggingOut && (
-  <AuthSpinner
-    onFinish={() => {
-      sessionStorage.clear();
-      toast('✅ تم تسجيل الخروج بنجاح', {
-        description: 'نراك قريبًا!',
-      });
-      navigate('/');
-    }}
-  />
-)}
-
       <button
         ref={trigger}
         onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -66,7 +62,7 @@ function UserMenu({ align = 'left' }) {
         </span>
         <img
           src={userImage}
-          onError={handleImageError}
+          onError={() => setUserImage('/default-profile.png')}
           alt="المستخدم"
           className="w-8 h-8 rounded-full object-cover"
         />
@@ -77,7 +73,9 @@ function UserMenu({ align = 'left' }) {
 
       <Transition
         show={dropdownOpen}
-        className={`absolute z-50 top-11 ${align === 'right' ? 'right-0' : 'left-0'} min-w-44 bg-popover border border-border rounded-lg shadow-lg py-2`}
+        className={`absolute z-50 top-11 ${
+          align === 'right' ? 'right-0' : 'left-0'
+        } min-w-44 bg-popover border border-border rounded-lg shadow-lg py-2`}
         enter="transition ease-out duration-200"
         enterStart="opacity-0 -translate-y-2"
         enterEnd="opacity-100 translate-y-0"

@@ -5,36 +5,59 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
     public function run()
     {
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        // تفريغ كاش الصلاحيات
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $permissions = [
-            'view users', 'edit users', 'delete users',
-            'view roles', 'create roles', 'edit roles', 'delete roles',
-            'view permissions', 'create permissions', 'edit permissions', 'delete permissions',
-            'assign permission', 'revoke permission', 'assign role to user',
-            'view profile',
+        // تعريف الوحدات والصلاحيات المرتبطة بها
+        $modules = [
+            'legaladvices'             => ['view', 'create', 'edit', 'delete'],
+            'litigation-against'       => ['view', 'create', 'edit', 'delete'],
+            'litigation-from'          => ['view', 'create', 'edit', 'delete'],
+            'contracts-local'          => ['view', 'create', 'edit', 'delete'],
+            'contracts-international'  => ['view', 'create', 'edit', 'delete'],
+            'investigations'           => ['view', 'create', 'edit', 'delete'],
+            'users'                    => ['view', 'create', 'edit', 'delete'],
+            'roles'                    => ['view', 'create', 'edit', 'delete'],
+            'permissions'              => ['view', 'create', 'edit', 'delete'],
+            'profile'                  => ['view','edit'],
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+        // إنشاء أو تحديث كل صلاحية مع guard_name
+        foreach ($modules as $module => $actions) {
+            foreach ($actions as $action) {
+                Permission::firstOrCreate(
+                    ['name' => "$action $module", 'guard_name' => 'api']
+                );
+            }
         }
 
-        $admin = Role::firstOrCreate(['name' => 'Admin']);
+        // ربط الصلاحيات بالأدوار
+        $admin = Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'api']);
         $admin->syncPermissions(Permission::all());
 
-        $moderator = Role::firstOrCreate(['name' => 'Moderator']);
+        $moderator = Role::firstOrCreate(['name' => 'Moderator', 'guard_name' => 'api']);
         $moderator->syncPermissions([
-            'view users', 'edit users',
+            // إدارة الأقسام الرئيسية والفرعية للقراءة فقط
+            'view legaladvices',
+            'view litigation-against',
+            'view litigation-from',
+            'view contracts-local',
+            'view contracts-international',
+            'view investigations',
+            // إدارة المستخدمين والأدوار للعرض فقط
+            'view users',
             'view roles',
+            'view permissions',
             'view profile',
         ]);
 
-        $user = Role::firstOrCreate(['name' => 'User']);
+        $user = Role::firstOrCreate(['name' => 'User', 'guard_name' => 'api']);
         $user->syncPermissions([
             'view profile',
         ]);

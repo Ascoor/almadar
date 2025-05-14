@@ -1,101 +1,177 @@
-import { useEffect, useState } from 'react';
-import { FaUserEdit, FaTrash } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-import { deleteUser, getUsers } from '../../services/api/users';
+import React, { useState, useEffect, useCallback } from 'react';
+import TableComponent from '../common/TableComponent';
+import SectionHeader from '../common/SectionHeader';
+import UserModalForm from './userModalForm';
+import {useAuth} from '../auth/AuthContext';
+import GlobalConfirmDeleteModal from '../common/GlobalConfirmDeleteModal';
+import { UserManager } from '../../assets/images';
 
 const UsersList = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [Users, setUsers] = useState([]);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    fetchUsers(); // استدعاء الدالة المحسّنة
-  }, []);
+  const { http, user } = useAuth();
 
-  const fetchUsers = async () => {
+  // Fetch  users - memoized to avoid recreating the function unnecessarily
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setErrorMessage(''); // Clear any previous error
     try {
-      const data = await getUsers(); // استخدام دالة axios بدلاً من fetch
-      setUsers(data);
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const { data } = await http.get('/api/-users');
+      if (data && Array.isArray(data.Users)) {
+        setUsers(data.Users);
+      } else {
+        throw new Error('Invalid data format: expected an array');
+      }
     } catch (error) {
-      console.error('خطأ في جلب المستخدمين:', error);
+      console.error('Failed to fetch data:', error);
+      setUsers([]); // Clear the state if an error occurs
+      setErrorMessage(error.message || 'Failed to fetch users.');
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  // Custom rendering logic for the table
+  const customRenderers = {
+    image: row => (
+      row.image ? (
+        <img
+          src={row.image}
+          alt='Profile'
+          style={{ width: 50, height: 50, borderRadius: '50%' }}
+        />
+      ) : (
+        <span>لا توجد صورة</span>
+      )
+    ),
+    position: row => (
+      <div>
+        <div>{row.position}</div>
+        {row.position === 'موظف إدارى' && row._position && (
+          <div style={{ fontSize: 'smaller', color: 'gray' }}>
+            {row._position}
+          </div>
+        )}
+      </div>
+    ),
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('هل أنت متأكد أنك تريد حذف هذا المستخدم؟')) {
-      try {
-        await deleteUser(id); // استخدام الدالة الرسمية
-        setUsers((prev) => prev.filter((user) => user.id !== id));
-      } catch (error) {
-        console.error('فشل الحذف:', error);
-      }
+  const headers = [
+    { key: 'id', text: 'الرقم' },
+    { key: 'name', text: 'الاسم' },
+    { key: 'email', text: 'البريد الإلكتروني' },
+    { key: 'role', text: 'الدور' },
+    { key: 'position', text: 'الوظيفة', render: customRenderers.position },
+    { key: 'image', text: 'الصورة', render: customRenderers.image },
+  ];
+
+  const handleDelete = async userId => {
+    if (userId === user.id) {
+      setShowDeleteModal(false);
+      setErrorMessage('لا تستطيع حذف الحساب الخاص بك');
+      setTimeout(() => setErrorMessage(''), 3000);
+      return;
+    }
+
+    try {
+      await http.delete(`/api/-users/${userId}`);
+      setShowDeleteModal(false);
+      fetchUsers();
+      setSuccessMessage('تم الحذف بنجاح!');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      setErrorMessage('Error deleting user.');
     }
   };
 
-  if (loading) {
-    return <div className="text-center p-6">جاري التحميل...</div>;
-  }
+  const handleEditClick = userId => {
+    const userToEdit = Users.find(User => User.id === userId);
+    setSelectedUser(userToEdit);
+    setShowModal(true);
+  };
+
+  const promptDelete = userId => {
+    const userToDelete = Users.find(User => User.id === userId);
+    setSelectedUser(userToDelete);
+    setShowDeleteModal(true);
+  };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-x-auto">
-      <h2 className="text-2xl font-bold mb-4 text-right text-almadar-blue-dark dark:text-white">
-        قائمة ايلمستخدمين
-      </h2>
+    <>
+      <SectionHeader
+        imageSrc={UserManager}
+        sectionTitle='الأدوار و المستخدمين'
+      />
 
-      {users.length === 0 ? (
-        <div className="text-center text-gray-500">لا يوجد مستخدمين حتى الآن.</div>
-      ) : (
-        <table className="min-w-full text-sm text-right border-collapse">
-          <thead>
-            <tr className="bg-almadar-blue text-white">
-              <th className="p-3 border">#</th>
-              <th className="p-3 border">الاسم</th>
-              <th className="p-3 border">البريد الإلكتروني</th>
-              <th className="p-3 border">الدور</th>
-              <th className="p-3 border">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user, index) => (
-              <tr
-                key={user.id}
-                className="border-b hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <td className="p-3">{index + 1}</td>
-                <td className="p-3">{user.name}</td>
-                <td className="p-3">{user.email}</td>
-                <td className="p-3">
-                  {user.roles?.[0]?.name ? (
-                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">
-                      {user.roles[0].name}
-                    </span>
-                  ) : (
-                    '—'
-                  )}
-                </td>
-                <td className="p-3 space-x-2 space-x-reverse">
-                  <Link
-                    to={`/clients/edit/${user.id}`}
-                    className="inline-block text-blue-600 hover:text-blue-800"
-                    title="تعديل"
-                  >
-                    <FaUserEdit />
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    className="inline-block text-red-600 hover:text-red-800"
-                    title="حذف"
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Notification messages */}
+      {successMessage && (
+        <div className='mb-4 p-2 bg-green-400 font-bold text-center text-green-800 rounded'>
+          {successMessage}
+        </div>
       )}
-    </div>
+      {errorMessage && (
+        <div className='mb-4 p-2 bg-red-400 font-bold text-center text-gray-100 rounded'>
+          {errorMessage}
+        </div>
+      )}
+
+      {/* Main content */}
+      <div className='p-5 bg-gradient-to-r from-blue-200 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-xl'>
+        {showModal && (
+          <UserModalForm
+            isOpen={showModal}
+            selectedUser={selectedUser}
+            onClose={() => setShowModal(false)}
+            refreshUsers={fetchUsers}
+          />
+        )}
+
+        {showDeleteModal && (
+          <GlobalConfirmDeleteModal
+            onDelete={() => handleDelete(selectedUser.id)}
+            onCancel={() => setShowDeleteModal(false)}
+          />
+        )}
+
+        {/* Table rendering */}
+        <div className='overflow-auto'>
+          {loading ? (
+               <div className="flex items-center justify-center overflow-auto">
+      
+       <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
+         <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
+         <circle class="pl__ring pl__ring--b" cx="120" cy="120" r="35" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 220" stroke-dashoffset="-110" stroke-linecap="round"></circle>
+         <circle class="pl__ring pl__ring--c" cx="85" cy="120" r="70" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+         <circle class="pl__ring pl__ring--d" cx="155" cy="120" r="70" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+       </svg>     
+       </div>
+          ) : (
+            <TableComponent
+              customRenderers={customRenderers}
+              data={Users}
+              onEdit={handleEditClick}
+              onDelete={promptDelete}
+              headers={headers}
+              sectionName='Users'
+            />
+          )}
+        </div>
+      </div>
+    </>
   );
 };
 

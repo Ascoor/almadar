@@ -6,6 +6,7 @@ export { default as LegCaseDetailsIcon } from './legalmain.png';
 export { default as ClientAddIcon } from './clientadd.png';
 export { default as AdIcon } from './adv-icon.png';
 
+export { default as RoleIcon } from './adv-icon.png';
 export { default as ProcedurePlaceIcon } from './procedure-place.png';
 export { default as ProcedureIcon } from './procedure-icon.png';
 export { default as LegCaseSection } from './section/leg-case-section.png';

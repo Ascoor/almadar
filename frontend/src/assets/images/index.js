@@ -9,6 +9,7 @@ export { default as LegalSpiner } from './legal-spiner.png';
 export { default as SplashImage } from './splash-image.png';
 export { default as LandingCover } from './cover-landing.png';
 export { default as LoginBg } from './login-bg.jpg';
+export { default as UserManager } from './law-3.png';
 
 export { default as LogoBlue } from './logo-blue.png'; 
 export { default as WelcomeGradient } from './welcome-patrens.png';

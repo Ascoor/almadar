@@ -62,11 +62,13 @@ private function validateLitigation(Request $request)
     return $request->validate([
         'scope' => 'required|in:from,against',
         'case_number' => 'required|string|unique:litigations,case_number,' . ($request->id ?? 'null'),
+        'case_year' =>'required|string',
         'opponent' => 'required|string|max:255',
         'court' => 'required|string|max:255',
         'filing_date' => 'required|date',
         'subject' => 'required|string|max:255',
         'status' => 'required|in:open,in_progress,closed',
+        'results' => 'nullable|string|max:1000',
         'notes' => 'nullable|string|max:1000',
     ]);
 }
