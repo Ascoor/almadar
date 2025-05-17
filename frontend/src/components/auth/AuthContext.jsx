@@ -1,8 +1,9 @@
-import React, { createContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useState, useMemo, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import API_CONFIG from '../../config/config';
 
+// إنشاء الـ Context مع القيم الافتراضية
 export const AuthContext = createContext({
   user: null,
   token: null,
@@ -12,13 +13,14 @@ export const AuthContext = createContext({
   logout: () => {},
   hasRole: () => false,
   hasPermission: () => false,
-  http: axios, // will be replaced
+  http: axios,
 });
 
+// الـ Provider الذي يغلف التطبيق ويوفر بيانات المصادقة
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
-  // Load from sessionStorage
+  // استرجاع البيانات من sessionStorage أو تعيين قيم افتراضية
   const [token, setToken] = useState(() => {
     const t = sessionStorage.getItem('token');
     return t ? JSON.parse(t) : null;
@@ -36,7 +38,7 @@ export function AuthProvider({ children }) {
     return p ? JSON.parse(p) : [];
   });
 
-  // Axios instance memoized so interceptors are applied once
+  // إعداد axios مع الـ token مدمج ورابط الـ API
   const http = useMemo(() => {
     const instance = axios.create({
       baseURL: API_CONFIG.baseURL,
@@ -45,38 +47,46 @@ export function AuthProvider({ children }) {
         Authorization: token ? `Bearer ${token}` : '',
       },
     });
+
     instance.interceptors.request.use((config) => {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     });
+
     return instance;
   }, [token]);
 
-  // Helper to persist auth state
+  // حفظ بيانات المصادقة وتخزينها بالجلسة وتحديث الـ state
   const saveAuth = ({ user: u, token: t, roles: rl, permissions: pr }) => {
     sessionStorage.setItem('token', JSON.stringify(t));
     sessionStorage.setItem('user', JSON.stringify(u));
     sessionStorage.setItem('roles', JSON.stringify(rl));
     sessionStorage.setItem('permissions', JSON.stringify(pr));
+
     setToken(t);
     setUser(u);
     setRoles(rl);
     setPermissions(pr);
-    navigate('/');
+
+    navigate('/'); // توجه للرئيسية بعد تسجيل الدخول
   };
 
-  // Login function
+  // دالة تسجيل الدخول
   const login = async (email, password) => {
     try {
+      // طلب CSRF Cookie إن كنت تستخدم Laravel Sanctum أو نظام مشابه
       await axios.get(`${API_CONFIG.baseURL}/sanctum/csrf-cookie`, { withCredentials: true });
+
       const resp = await axios.post(
         `${API_CONFIG.baseURL}/api/login`,
         { email, password },
         { withCredentials: true, headers: { 'Content-Type': 'application/json' } }
       );
+
       const { user: u, token: t, roles: rl = [], permissions: pr = [] } = resp.data;
+
       if (u && t) {
         saveAuth({ user: u, token: t, roles: rl, permissions: pr });
         return true;
@@ -87,11 +97,14 @@ export function AuthProvider({ children }) {
     return false;
   };
 
-  // Logout function
+  // دالة تسجيل الخروج
   const logout = async () => {
     try {
       await http.post('/api/logout');
-    } catch {}
+    } catch (error) {
+      console.warn('Logout failed:', error);
+    }
+
     sessionStorage.clear();
     setToken(null);
     setUser(null);
@@ -100,8 +113,10 @@ export function AuthProvider({ children }) {
     navigate('/login');
   };
 
-  // Role & permission checks
+  // فحص وجود دور
   const hasRole = (roleName) => roles.includes(roleName);
+
+  // فحص وجود صلاحية
   const hasPermission = (permName) => permissions.includes(permName);
 
   return (
@@ -122,3 +137,8 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+// Hook لتسهيل استخدام AuthContext في المكونات
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

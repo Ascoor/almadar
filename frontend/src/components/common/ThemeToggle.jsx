@@ -1,5 +1,5 @@
 import { useThemeProvider } from '../../utils/ThemeContext';
-import { FaSun, FaMoon } from 'react-icons/fa';
+import { SunMedium , MoonStar  } from 'lucide-react';
 
 export default function ThemeToggle({ size = 'md' }) {
   const { currentTheme, changeCurrentTheme } = useThemeProvider();
@@ -10,9 +10,9 @@ export default function ThemeToggle({ size = 'md' }) {
       className="flex items-center justify-center w-12 h-12 rounded-full shadow-md bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition"
     >
       {currentTheme === 'light' ? (
-        <FaSun className="w-6 h-6" />
+        <SunMedium  className="w-6 h-6" />
       ) : (
-        <FaMoon className="w-6 h-6" />
+        <MoonStar  className="w-6 h-6" />
       )}
     </button>
   );

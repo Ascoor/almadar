@@ -7,18 +7,17 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserRolePermissionController;
-use App\Http\Controllers\ArchiveController;
-use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ArchiveController; 
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ContractCategoryController;
 use App\Http\Controllers\InvestigationController;
 use App\Http\Controllers\InvestigationActionController;
-use App\Http\Controllers\LegalAdviceController; 
-use App\Http\Controllers\AdviceTypeController; 
+use App\Http\Controllers\LegalAdviceController;
+use App\Http\Controllers\AdviceTypeController;
 use App\Http\Controllers\LitigationController;
 use App\Http\Controllers\LitigationActionController;
 use App\Http\Controllers\InvestigationActionTypeController;
-use App\Http\Controllers\LitigationActionTypeController; 
+use App\Http\Controllers\LitigationActionTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,30 +31,26 @@ Route::options('/{any}', function () {
     return response()->json([], 204);
 })->where('any', '.*');
 
-// Permissions routes (محمي بالـ Login)
+// Protected routes (requires authentication)
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // ✅ Employees
-    Route::apiResource('employees', EmployeeController::class);
-
-    // ✅ Contracts (Local + International)
+    // Contracts
     Route::apiResource('contracts', ContractController::class);
     Route::apiResource('contract-categories', ContractCategoryController::class);
     Route::apiResource('archives', ArchiveController::class);
     Route::apiResource('users', UserController::class);
 
-    // ✅ Investigations
-    Route::apiResource('investigations', InvestigationController::class); 
-    // ✅ Legal Advices
+    // Investigations
+    Route::apiResource('investigations', InvestigationController::class);
+    
+    // Legal Advices
     Route::apiResource('legal-advices', LegalAdviceController::class);
     Route::apiResource('advice-types', AdviceTypeController::class);
-
-Route::apiResource('investigation-action-types', InvestigationActionTypeController::class);
-Route::apiResource('litigation-action-types', LitigationActionTypeController::class); 
-    // ✅ Litigations
     Route::apiResource('litigations', LitigationController::class);
+
+    // Actions for Litigations
     Route::prefix('litigations/{litigation}/actions')->group(function () {
         Route::get('/', [LitigationActionController::class, 'index']);
         Route::post('/', [LitigationActionController::class, 'store']);
@@ -64,38 +59,44 @@ Route::apiResource('litigation-action-types', LitigationActionTypeController::cl
         Route::delete('{action}', [LitigationActionController::class, 'destroy']);
     });
 
-    // ✅ Roles APIs
+    // Roles APIs
     Route::apiResource('roles', RoleController::class);
     Route::post('/roles/{roleId}/permissions', [RoleController::class, 'assignPermission']);
     Route::delete('/roles/{roleId}/permissions', [RoleController::class, 'revokePermission']);
 
-    // ✅ Permissions APIs
+    // Permissions APIs
     Route::apiResource('permissions', PermissionController::class);
 
-    // ✅ User Role & Permission Management APIs
-    Route::post('/users/{userId}/assign-role', [UserRolePermissionController::class, 'assignRole']);
-    Route::post('/users/{userId}/remove-role', [UserRolePermissionController::class, 'removeRole']);
-    Route::post('/users/{userId}/give-permission', [UserRolePermissionController::class, 'givePermission']);
-    Route::post('/users/{userId}/revoke-permission', [UserRolePermissionController::class, 'revokePermission']);
-    Route::get('/users/{userId}/permissions', [UserRolePermissionController::class, 'permissions']);
+    // User Role & Permission Management APIs
+    Route::prefix('users/{userId}')->group(function () {
+        Route::post('/assign-role', [UserRolePermissionController::class, 'assignRole']);
+        Route::post('/remove-role', [UserRolePermissionController::class, 'removeRole']);
+        Route::post('/give-permission', [UserRolePermissionController::class, 'givePermission']);
+        Route::post('/revoke-permission', [UserRolePermissionController::class, 'revokePermission']);
+        Route::get('/permissions', [UserRolePermissionController::class, 'permissions']);
+    });
+    Route::post('/user/permission/change', [UserRolePermissionController::class, 'changeUserPermission
+    
+    
+    
+    
+    ']);
 
-    // routes/api.php
+    // Investigations actions
     Route::prefix('investigations')->group(function () {
+        Route::get('/', [InvestigationController::class, 'index']);
+        Route::post('/', [InvestigationController::class, 'store']);
+        Route::get('{investigation}', [InvestigationController::class, 'show']);
+        Route::put('{investigation}', [InvestigationController::class, 'update']);
+        Route::delete('{investigation}', [InvestigationController::class, 'destroy']);
 
-        // ✅ CRUD للتحقيقات
-        Route::get('/', [InvestigationController::class, 'index']); // كل التحقيقات
-        Route::post('/', [InvestigationController::class, 'store']); // إنشاء
-        Route::get('{investigation}', [InvestigationController::class, 'show']); // عرض مفصل
-        Route::put('{investigation}', [InvestigationController::class, 'update']); // تعديل
-        Route::delete('{investigation}', [InvestigationController::class, 'destroy']); // حذف
-
-            // ✅ الإجراءات الخاصة بكل تحقيق
-            Route::prefix('{investigation}/actions')->group(function () {
-                Route::get('/', [InvestigationActionController::class, 'index']); // قائمة الإجراءات
-                Route::post('/', [InvestigationActionController::class, 'store']); // إضافة
-                Route::get('{action}', [InvestigationActionController::class, 'show']); // إجراء واحد
-                Route::put('{action}', [InvestigationActionController::class, 'update']); // تعديل
-                Route::delete('{action}', [InvestigationActionController::class, 'destroy']); // حذف
-            });
+        Route::prefix('{investigation}/actions')->group(function () {
+            Route::get('/', [InvestigationActionController::class, 'index']);
+            Route::post('/', [InvestigationActionController::class, 'store']);
+            Route::get('{action}', [InvestigationActionController::class, 'show']);
+            Route::put('{action}', [InvestigationActionController::class, 'update']);
+            Route::delete('{action}', [InvestigationActionController::class, 'destroy']);
+        });
+   
     });
 });

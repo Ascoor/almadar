@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import fakeData from '../../Data';
-import { FaBullhorn, FaClock, FaTasks } from 'react-icons/fa';
+import { CalendarClock, Clock10, ListChecks  } from 'lucide-react';
 
 const cardStyle = `
   bg-gradient-to-br from-almadar-blue-light/20 to-almadar-blue/10 
@@ -70,7 +70,7 @@ const ProceduresTable = () => {
 };
 
 const AnnouncementsTable = () => (
-  <CardWrapper title="مواعيد الإعلانات" icon={<FaBullhorn />}>
+  <CardWrapper title="مواعيد الإعلانات" icon={<CalendarClock />}>
     <table className={tableStyle}>
       <thead>
         <tr className={theadStyle}>
@@ -91,7 +91,7 @@ const AnnouncementsTable = () => (
 );
 
 const SessionsTable = () => (
-  <CardWrapper title="الجلسات القادمة" icon={<FaClock />}>
+  <CardWrapper title="الجلسات القادمة" icon={<Clock10 />}>
     <table className={tableStyle}>
       <thead>
         <tr className={theadStyle}>
@@ -118,7 +118,7 @@ const TasksTable = () => {
   useEffect(() => setTasks(fakeData.tasks), []);
 
   return (
-    <CardWrapper title="المهام اليومية" icon={<FaTasks />}>
+    <CardWrapper title="المهام اليومية" icon={<ListChecks  />}>
       <table className={tableStyle}>
         <thead>
           <tr className={theadStyle}>

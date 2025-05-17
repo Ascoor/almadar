@@ -5,55 +5,48 @@ import SectionHeader from '../../common/SectionHeader';
 import LogoImageSpinner from '../../common/Spinners/GlobalSpinner';
 import { RoleIcon } from '../../../assets/icons'; 
 import debounce from 'lodash/debounce';
-import UserInfoCard from './UserCard';
+import UserInfoCard from './UserCard'; 
 
 // استيراد دوال API
-import { getUsers, getPermissions, getUserPermissions, saveUserPermissions } from '@/services/api/users';
+import { getUsers,getPermissions, getUserPermissions, saveUserPermissions } from '@/services/api/users';
 
 const RoleManagement = () => {
   const [selectedUser, setSelectedUser] = useState(null);
-  const [employeeUsers, setEmployeeUsers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [permissions, setPermissions] = useState({});
+  const [errorMessage , setErrorMessage ] = useState({});
+
   const [userPermissions, setUserPermissions] = useState({});
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: '', type: '' });
 
-  // دالة لجلب البيانات (المستخدمين + صلاحيات عامة) + debounce
-  const fetchData = useCallback(
-    debounce(async () => {
-      setLoading(true);
-      try {
-        const [usersData, permsData] = await Promise.all([
-          getUsers(),          // ترجع مصفوفة من المستخدمين
-          getPermissions(),    // ترجع مصفوفة كل الصلاحيات مع section
-        ]);
-
-        // بنية الصلاحيات حسب section
-        const grouped = permsData.reduce((acc, perm) => {
-          acc[perm.section] = acc[perm.section] || [];
-          acc[perm.section].push({ ...perm, enabled: false });
-          return acc;
-        }, {});
-
-        setEmployeeUsers(usersData);
-        setPermissions(grouped);
-        setUserPermissions(grouped);
-      } catch (err) {
-        console.error('fetchData error:', err);
-      } finally {
-        setLoading(false);
+  // دالة جلب المستخدمين مع تحكم في حالة التحميل والخطأ
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setErrorMessage('');
+    try {
+      const data = await getUsers(); // استدعاء API من ملف الخدمات
+      if (!Array.isArray(data)) {
+        throw new Error('خطأ في استجابة المستخدمين');
       }
-    }, 300),
-    []
-  );
+      setUsers(data);
+    } catch (error) {
+      setErrorMessage(error.message || 'فشل في تحميل المستخدمين');
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  // جلب البيانات عند تحميل المكون
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchUsers();
+  }, [fetchUsers]);
+
 
   const handleSelectUser = async e => {
     const userId = +e.target.value;
-    const user = employeeUsers.find(u => u.id === userId) || null;
+    const user = users.find(u => u.id === userId) || null;
     setSelectedUser(user);
 
     if (!user) return;
@@ -136,7 +129,7 @@ const RoleManagement = () => {
             className='w-full md:w-1/2 p-3 bg-white text-gray-900 rounded shadow'
           >
             <option value=''>-- اختر مستخدم --</option>
-            {employeeUsers.map(u => (
+            {users.map(u => (
               <option key={u.id} value={u.id}>{u.name}</option>
             ))}
           </select>

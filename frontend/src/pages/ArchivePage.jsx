@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getArchiveFiles } from "../services/api/archives";
-import { FaFolder, FaFolderOpen, FaChevronDown, FaChevronLeft, FaFilePdf } from "react-icons/fa";
+import { FolderKanban , FolderOpenDot , ChevronsDown, ChevronsLeft , FileText  } from "lucide-react";
  import { toast } from 'sonner';
 
 import SectionHeader from "../components/common/SectionHeader";
@@ -71,11 +71,11 @@ export default function ArchivePage() {
               onClick={() => toggleFolder(modelType)}
               className="flex items-center gap-2 text-xl font-semibold text-almadar-blue dark:text-almadar-yellow cursor-pointer"
             >
-              {openFolders[modelType] ? <FaFolderOpen /> : <FaFolder />}
+              {openFolders[modelType] ? <FolderOpenDot  /> : <FolderKanban  />}
               {openFolders[modelType] ? (
-                <FaChevronDown className="ml-2" />
+                <ChevronsDown className="ml-2" />
               ) : (
-                <FaChevronLeft className="ml-2" />
+                <ChevronsLeft  className="ml-2" />
               )}
               <span>{getModelTypeLabel(modelType)}</span>
             </div>
@@ -88,7 +88,7 @@ export default function ArchivePage() {
                     key={file.id}
                     className="p-4 border rounded-lg bg-white dark:bg-gray-800 hover:shadow-lg transition flex items-center gap-4"
                   >
-                    <FaFilePdf className="text-red-500 text-2xl" />
+                    <FileText  className="text-red-500 text-2xl" />
                     <div className="flex-1">
                       <a
                         href={`${API_CONFIG.baseURL}/storage/${file.file_path}`}

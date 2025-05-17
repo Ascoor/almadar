@@ -35,6 +35,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Super Admin',
             'email' => 'admin@example.com',
             'password' => Hash::make('Ask@123456'),
+    'image' => 'users_images/admin.png',
         ]);
         $admin->assignRole($adminRole);
 
@@ -43,15 +44,18 @@ class UsersTableSeeder extends Seeder
             'name' => 'Site Moderator',
             'email' => 'user2@example.com',
             'password' => Hash::make('Ask@123456'),
-        ]);
-        $moderator->assignRole($moderatorRole);
+    'image' => 'users_images/moderator.png',
+    ]);
+    $moderator->assignRole($moderatorRole);
 
-        // إنشاء مستخدم عادي
-        $user = User::create([
-            'name' => 'Normal User',
-            'email' => 'user3@example.com',
-            'password' => Hash::make('Ask@123456'),
-        ]);
-        $user->assignRole($userRole);
+    // إنشاء مستخدم عادي بصورة افتراضية
+    $user = User::factory()->create([
+        'name' => 'Normal User',
+        'email' => 'user3@example.com',
+        'password' => Hash::make('Ask@123456'),
+        'image' => 'users_images/user.png',
+    ]);
+    $user->assignRole($userRole);
     }
+    
 }

@@ -32,28 +32,28 @@ const AnimatedRow = ({
         </td>
       )}
 
-      {headers.map((header) => (
-        <td key={`${rowIndex}-${header.key}`} className="p-2 text-center text-sm">
-          {header.key === 'attachment' ? (
-            row.attachment ? (
-              <a
-                href={`${API_CONFIG.baseURL}/storage/${row.attachment}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline text-blue-600"
-              >
-                عرض
-              </a>
-            ) : (
-              <span className="text-muted-foreground">لا يوجد</span>
-            )
-          ) : customRenderers?.[header.key] ? (
-            customRenderers[header.key](row)
-          ) : (
-            row[header.key] ?? '—'
-          )}
-        </td>
-      ))}
+ {headers.map((header) => (
+  <td key={`${rowIndex}-${header.key}`} className="p-2 text-center text-sm">
+    {header.key === 'attachment' ? (
+      row.attachment ? (
+        <a
+          href={`${api}/${row.attachment}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline text-blue-600"
+        >
+          عرض
+        </a>
+      ) : (
+        <span className="text-muted-foreground">لا يوجد</span>
+      )
+    ) : customRenderers?.[header.key] ? (
+      customRenderers[header.key](row)
+    ) : (
+      row[header.key] ?? '—'
+    )}
+  </td>
+))}
 
       {onEdit && hasPermission(onEdit.permission) && (
         <td className="p-2 text-center">

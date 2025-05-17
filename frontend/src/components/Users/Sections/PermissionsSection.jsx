@@ -1,54 +1,47 @@
-// PermissionRow Component
-import { BsToggleOff, BsToggleOn } from 'react-icons/bs';
+import React from 'react';
+import { ToggleLeft, ToggleRight } from 'lucide-react';
 
-const translatePermission = name => {
+// ترجمة أسماء الأفعال إلى العربية
+const translatePermission = (name) => {
   switch (name) {
-    case 'show':
-      return 'عرض';
-    case 'add':
-      return 'إضافة';
+    case 'view': return 'عرض';
+    case 'create': return 'إضافة';
     case 'update':
-      return 'تحديث';
-    case 'delete':
-      return 'حذف';
-    default:
-      return name;
+    case 'edit': return 'تعديل';
+    case 'delete': return 'حذف';
+    default: return name;
   }
 };
 
-const translateSection = section => {
-  switch (section) {
-    case 'Orders':
-      return 'الطلبات';
-    case 'Customers':
-      return 'العملاء';
-    case 'Users':
-      return 'المستخدمين';
-    case 'MultiEmployees':
-      return 'الموظفين';
-    case 'Designs':
-      return 'التصميمات';
-    case 'Designers':
-      return 'مصممين الجرافيك';
-    case 'SocialReps':
-      return 'مندوبي التسويق';
-    case 'SaleReps':
-      return 'مندوبي المبيعات';
-    case 'Offers':
-      return 'العروض';
-    case 'Products':
-      return 'المنتجات';
-    case 'Categories':
-      return 'التصنيفات';
-    case 'Invoices':
-      return 'الفواتير';
-    case 'Payments':
-      return 'المدفوعات';
-    case 'Reports':
-      return 'التقارير';
-    default:
-      return section;
-  }
+// ترجمة أسماء الأقسام إلى العربية
+const translateSection = (section) => {
+  const map = {
+    legaladvices: 'الرأي والمشورة',
+    'litigation-against': 'قضايا ضد الشركة',
+    'litigation-from': 'قضايا من الشركة',
+    'contracts-local': 'العقود المحلية',
+    'contracts-international': 'العقود الدولية',
+    investigations: 'التحقيقات',
+    users: 'المستخدمين',
+    roles: 'الأدوار',
+    permissions: 'الصلاحيات',
+    profile: 'الملف الشخصي',
+  };
+  return map[section] || section;
+};
+
+// تجميع الصلاحيات كاملة حسب القسم مع تعيين حالة التمكين (enabled) حسب صلاحيات المستخدم
+const groupPermissionsBySection = (allPermissions = [], userPermissions = []) => {
+  const userPermissionNames = new Set(userPermissions.map(p => p.name));
+  return allPermissions.reduce((acc, perm) => {
+    const parts = perm.name.toLowerCase().split(' ');
+    const action = parts[0];
+    const section = parts.slice(1).join(' ');
+    if (!acc[section]) acc[section] = [];
+    const enabled = userPermissionNames.has(perm.name);
+    acc[section].push({ ...perm, action, enabled });
+    return acc;
+  }, {});
 };
 
 const PermissionRow = ({ action, enabled, onChange }) => (
@@ -61,34 +54,52 @@ const PermissionRow = ({ action, enabled, onChange }) => (
       className='focus:outline-none cursor-pointer text-2xl'
     >
       {enabled ? (
-        <BsToggleOn className='text-green-500' />
+        <ToggleLeft className='text-green-500' />
       ) : (
-        <BsToggleOff className='text-red-500' />
+        <ToggleLeft className='text-red-500' />
       )}
     </button>
   </div>
 );
 
-const PermissionsSection = ({
-  section,
-  permissions,
-  handlePermissionChange,
-}) => (
-  <div className='permissions-section mb-5 p-5 bg-white dark:bg-gray-800 rounded-lg shadow-lg'>
-    <h3 className='text-lg font-extrabold text-center text-green-800 dark:text-white mb-4'>
-      {translateSection(section)}
-    </h3>
-    <div className='flex flex-wrap'>
-      {permissions.map(permission => (
-        <PermissionRow
-          key={`${section}-${permission.name}`}
-          action={translatePermission(permission.name)}
-          enabled={permission.enabled}
-          onChange={() => handlePermissionChange(section, permission.name)}
-        />
-      ))}
+const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionChange, loading }) => {
+  const grouped = groupPermissionsBySection(allPermissions, userPermissions);
+  const sections = Object.entries(grouped);
+
+  return (
+    <div className="permissions-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {sections.map(([section, perms]) => {
+        // صلاحية العرض تتحكم في تمكين باقي الصلاحيات في القسم
+        const viewPermission = perms.find(p => p.action === 'view');
+        const isViewEnabled = viewPermission?.enabled ?? false;
+
+        return (
+          <div key={section} className="p-4 bg-white dark:bg-gray-800 rounded shadow flex flex-col">
+            <h3 className="text-lg font-bold mb-3 text-center text-green-800 dark:text-white">
+              {translateSection(section)}
+            </h3>
+
+            {['view', 'create', 'edit', 'delete'].map((actionType) => {
+              const permission = perms.find(p => p.action === actionType);
+              if (!permission) return null;
+
+              const disabled = (!isViewEnabled && actionType !== 'view') || loading;
+
+              return (
+                <PermissionRow
+                  key={permission.id}
+                  action={permission.action}
+                  enabled={permission.enabled}
+                  disabled={disabled}
+                  onChange={() => handlePermissionChange(permission.id, !permission.enabled)}
+                />
+              );
+            })}
+          </div>
+        );
+      })}
     </div>
-  </div>
-);
+  );
+};
 
 export default PermissionsSection;

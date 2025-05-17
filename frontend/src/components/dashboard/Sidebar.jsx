@@ -4,10 +4,8 @@ import {
   Home, FileText, Users, FolderArchive, Scale,
   Feather, Gavel, ChevronRight, SquareDashedKanban,
   LayoutDashboard, Settings, UserCog
-} from 'lucide-react';
-// تأكد أنّ هذه الصور تصدر من هذا الملف:
-import { LogoArt, LogoPatren } from '../../assets/images';
-// تأكد من مسار AuthContext الصحيح:
+} from 'lucide-react'; 
+import { LogoArt, LogoPatren } from '../../assets/images'; 
 import { AuthContext } from '../../components/auth/AuthContext';
 
 export default function Sidebar({ isOpen, onToggle, onLinkClick }) {

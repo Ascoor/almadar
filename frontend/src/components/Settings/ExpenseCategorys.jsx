@@ -6,7 +6,7 @@ import {
   deleteExpenseCategory,
 } from '../../services/api/GeneralReqApi';
 import { ExpenseIcon } from '../../assets/icons';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { Pencil , Trash2 } from 'lucide-react';
 import SectionHeader from '../common/SectionHeader'; 
 import { toast } from 'sonner';
 
@@ -185,7 +185,7 @@ const ExpenseCategorys = () => {
                       onClick={() => handleShowModal(expenseCategory)}
                       className="text-blue-500 hover:text-blue-700"
                     >
-                      <FaEdit />
+                      <Pencil  />
                     </button>
                     <button
                       onClick={() =>
@@ -193,7 +193,7 @@ const ExpenseCategorys = () => {
                       }
                       className="text-red-500 hover:text-red-700"
                     >
-                      <FaTrash />
+                      <Trash2 />
                     </button>
                   </div>
                 </td>

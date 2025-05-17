@@ -11,10 +11,10 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run()
     {
-        // تفريغ كاش الصلاحيات
+        // 1. تفريغ كاش الصلاحيات لتجنب تعارضات
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // تعريف الوحدات والصلاحيات المرتبطة بها
+        // 2. تعريف الوحدات (الأقسام) مع الإجراءات (الصلاحيات) الخاصة بها
         $modules = [
             'legaladvices'             => ['view', 'create', 'edit', 'delete'],
             'litigation-against'       => ['view', 'create', 'edit', 'delete'],
@@ -25,41 +25,58 @@ class RolesAndPermissionsSeeder extends Seeder
             'users'                    => ['view', 'create', 'edit', 'delete'],
             'roles'                    => ['view', 'create', 'edit', 'delete'],
             'permissions'              => ['view', 'create', 'edit', 'delete'],
-            'profile'                  => ['view','edit'],
+            'profile'                  => ['view', 'edit'],
         ];
 
-        // إنشاء أو تحديث كل صلاحية مع guard_name
+        // 3. إنشاء الصلاحيات لكل وحدة مع اسم الحارس (guard_name)
         foreach ($modules as $module => $actions) {
             foreach ($actions as $action) {
-                Permission::firstOrCreate(
-                    ['name' => "$action $module", 'guard_name' => 'api']
-                );
+                Permission::firstOrCreate([
+                    'name' => "{$action} {$module}",
+                    'guard_name' => 'api', // تأكد أن الحارس هنا يتطابق مع الحارس المستخدم في التطبيق (api أو web)
+                ]);
             }
         }
 
-        // ربط الصلاحيات بالأدوار
-        $admin = Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'api']);
-        $admin->syncPermissions(Permission::all());
+        // 4. إنشاء الأدوار وربطها بالصلاحيات بطريقة واضحة ومنظمة
+        // دور المدير العام (Admin) يحصل على جميع الصلاحيات
+        $adminRole = Role::firstOrCreate([
+            'name' => 'Admin',
+            'guard_name' => 'api',
+        ]);
+        $adminRole->syncPermissions(Permission::all());
 
-        $moderator = Role::firstOrCreate(['name' => 'Moderator', 'guard_name' => 'api']);
-        $moderator->syncPermissions([
-            // إدارة الأقسام الرئيسية والفرعية للقراءة فقط
-            'view legaladvices',
-            'view litigation-against',
-            'view litigation-from',
-            'view contracts-local',
-            'view contracts-international',
-            'view investigations',
-            // إدارة المستخدمين والأدوار للعرض فقط
-            'view users',
-            'view roles',
-            'view permissions',
-            'view profile',
+        // دور المشرف (Moderator) مع صلاحيات قراءة وتعديل محدودة
+        $moderatorRole = Role::firstOrCreate([
+            'name' => 'Moderator',
+            'guard_name' => 'api',
         ]);
 
-        $user = Role::firstOrCreate(['name' => 'User', 'guard_name' => 'api']);
-        $user->syncPermissions([
+        // تحديد فقط صلاحيات العرض والتعديل التي يحتاجها المشرف
+        $moderatorPermissions = [];
+
+        // مثلاً: المشرف يمكنه فقط عرض معظم الأقسام وتعديل ملفه الشخصي
+        foreach ($modules as $module => $actions) {
+            if ($module === 'profile') {
+                $moderatorPermissions[] = 'view profile';
+                $moderatorPermissions[] = 'edit profile';
+            } else {
+                $moderatorPermissions[] = "view {$module}";
+            }
+        }
+
+        $moderatorRole->syncPermissions($moderatorPermissions);
+
+        // دور المستخدم العادي (User) مع صلاحيات محدودة جداً
+        $userRole = Role::firstOrCreate([
+            'name' => 'User',
+            'guard_name' => 'api',
+        ]);
+
+        // المستخدم العادي يمكنه فقط عرض وتعديل ملفه الشخصي
+        $userRole->syncPermissions([
             'view profile',
+            'edit profile',
         ]);
     }
 }

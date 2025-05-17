@@ -1,25 +1,30 @@
-// src/services/api/users.js
-import api from './axiosConfig'; // تأكد أن المسار لملف axiosConfig صحيح
+import api from './axiosConfig';
 
-// —————— Users ——————
-
-/**
- * جلب جميع المستخدمين
- * GET /api/users
- */
 export const getUsers = async () => {
   try {
     const response = await api.get('/api/users');
-    return response.data; // تأكد من شكل البيانات المرسل من السيرفر
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+export const assignRole = async (userId) => {
+  try {
+    const response = await api.get(`/api/users/${userId}/assign-role`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+export const removeRole = async (userId) => {
+  try {
+    const response = await api.get(`/api/users/${userId}/remove-role`);
+    return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-/**
- * إنشاء مستخدم جديد
- * POST /api/users
- */
 export const createUser = async (userData) => {
   try {
     const response = await api.post('/api/users', userData);
@@ -29,10 +34,6 @@ export const createUser = async (userData) => {
   }
 };
 
-/**
- * تعديل مستخدم موجود
- * PUT /api/users/:id
- */
 export const updateUser = async (userId, userData) => {
   try {
     const response = await api.put(`/api/users/${userId}`, userData);
@@ -42,10 +43,6 @@ export const updateUser = async (userId, userData) => {
   }
 };
 
-/**
- * حذف مستخدم
- * DELETE /api/users/:id
- */
 export const deleteUser = async (userId) => {
   try {
     const response = await api.delete(`/api/users/${userId}`);
@@ -55,10 +52,6 @@ export const deleteUser = async (userId) => {
   }
 };
 
-/**
- * جلب بروفايل المستخدم الحالي
- * GET /api/user-profile (أو أي مسار يستخدَم في الbackend)
- */
 export const userProfile = async () => {
   try {
     const response = await api.get('/api/user-profile');
@@ -68,12 +61,6 @@ export const userProfile = async () => {
   }
 };
 
-// —————— Roles & Permissions ——————
-
-/**
- * جلب كل الصلاحيات من السيرفر
- * GET /api/permissions
- */
 export const getPermissions = async () => {
   try {
     const response = await api.get('/api/permissions');
@@ -83,28 +70,18 @@ export const getPermissions = async () => {
   }
 };
 
-/**
- * جلب صلاحيات مستخدم معيّن
- * GET /api/permissions/:userId
- */
 export const getUserPermissions = async (userId) => {
   try {
-    const response = await api.get(`/api/permissions/${userId}`);
+    const response = await api.get(`/api/users/${userId}/permissions`);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-/**
- * حفظ صلاحيات مستخدم
- * POST /api/permissions/:userId
- * @param {number} userId
- * @param {Array<{permission_id: number, enabled: boolean}>} payload
- */
 export const saveUserPermissions = async (userId, payload) => {
   try {
-    const response = await api.post(`/api/permissions/${userId}`, {
+    const response = await api.post(`/api/users/${userId}`, {
       permissions: payload,
     });
     return response.data;
@@ -113,13 +90,42 @@ export const saveUserPermissions = async (userId, payload) => {
   }
 };
 
-/**
- * جلب الأدوار (إذا تحتاجها في الواجهة)
- * GET /api/roles
- */
+export const updateUserPermissions = async (userId, payload) => {
+  try {
+    const response = await api.put(`/api/users/${userId}`, {
+      permissions: payload,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+  
 export const getRoles = async () => {
   try {
     const response = await api.get('/api/roles');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const givePermission = async (userId, permissionId) => {
+  try {
+    const response = await api.post(`/api/users/${userId}/give-permission`, {
+      permission: permissionId,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const revokePermission = async (userId, permissionId) => {
+  try {
+    const response = await api.post(`/api/users/${userId}/revoke-permission`, {
+      permission: permissionId,
+    });
     return response.data;
   } catch (error) {
     throw error;

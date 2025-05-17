@@ -1,11 +1,5 @@
-
-import {
-Mail,
-  Phone,
-  Calendar
-} from 'lucide-react';
-import { format } from 'date-fns';
-import api from '@/services/api/axioxApi';
+import { Mail,Phone } from 'lucide-react';  
+import API_CONFIG from '../../config/config';
 
 const UserInfoCard = ({ user }) => (
   <div className='neon-shadow mt-5 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg grid grid-cols-1 lg:grid-cols-2 gap-6 items-center text-center lg:text-left transition-transform duration-300 hover:scale-105'>
@@ -20,18 +14,12 @@ const UserInfoCard = ({ user }) => (
 
       {/* User Role */}
       <p className='text-md lg:text-lg xl:text-xl text-green-700 dark:text-green-400 font-semibold'>
-        {user.role.name}
+        {user.role?.name}
       </p>
 
       {/* User Details */}
       <ul className='text-xs text-right lg:text-base xl:text-lg text-gray-800 dark:text-gray-200 space-y-4'>
-        <li className='flex  text-gray-700 dark:text-gray-300  items-center justify-center lg:justify-center'>
-          <Calendar className='ml-2 text-blue-500' />
-          <span>
-            تاريخ التعيين: {format(new Date(user.created_at), 'yyyy-MM-dd')}
-          </span>
-        </li>
-
+      
         <li className='flex  items-center justify-center lg:justify-center'>
           <Phone className='ml-2 text-yellow-500' />
           <span>رقم الهاتف: {user.phone}</span>
@@ -45,7 +33,7 @@ const UserInfoCard = ({ user }) => (
     <div className='order-1 avatar left-0 w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden shadow-lg mx-auto lg:mx-0 transition-transform duration-300 hover:scale-110'>
       {user.image ? (
         <img
-          src={`${api}${user.image}`}
+          src={`${API_CONFIG.baseURL}/${user.image}`}
           className='object-cover w-full h-full'
           alt='Avatar'
         />

@@ -12,7 +12,7 @@ const Contracts = lazy(() => import('../../pages/ContractsPage.jsx'));
 const Investigations = lazy(() => import('../../pages/InvestigationsPage.jsx'));
 const LegalAdvices = lazy(() => import('../../pages/LegalAdvicePage.jsx'));
 const Litigations = lazy(() => import('../../pages/LitigationsPage.jsx'));
-const UsersList = lazy(() => import('../Users/index.jsx'));
+const UserManagementPage = lazy(() => import('../../pages/UserManagementPage.jsx'));
 const ArchivePage = lazy(() => import('../../pages/ArchivePage.jsx'));
 const ManagementSettings = lazy(() => import('../../pages/ManagementSettings.jsx'));
 const RoleManagement = lazy(() => import('../Users/Sections/RoleManagement.jsx'));
@@ -37,7 +37,7 @@ const AuthRoutes = () => {
       <Suspense fallback={<GlobalSpinner />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/users" element={<UsersList />} />
+          <Route path="/users" element={<UserManagementPage />} />
          
           <Route path="/profile/:userId" element={<ProfileUser />} />  
          

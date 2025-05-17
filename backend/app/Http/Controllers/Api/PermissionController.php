@@ -8,13 +8,6 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('permission:view permissions')->only(['index', 'show']);
-        $this->middleware('permission:create permissions')->only('store');
-        $this->middleware('permission:edit permissions')->only('update');
-        $this->middleware('permission:delete permissions')->only('destroy');
-    }
 
     public function index()
     {
@@ -27,18 +20,21 @@ class PermissionController extends Controller
             'name' => 'required|string|unique:permissions,name',
         ]);
 
-        $permission = Permission::create(['name' => $validated['name']]);
+        $permission = Permission::create([
+            'name' => $validated['name'],
+            'guard_name' => 'api',  // تأكد من تعيين guard مناسب
+        ]);
 
         return response()->json(['message' => 'Permission created successfully', 'permission' => $permission]);
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         $permission = Permission::findOrFail($id);
         return response()->json($permission);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $permission = Permission::findOrFail($id);
 
@@ -51,22 +47,11 @@ class PermissionController extends Controller
         return response()->json(['message' => 'Permission updated successfully', 'permission' => $permission]);
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $permission = Permission::findOrFail($id);
         $permission->delete();
 
         return response()->json(['message' => 'Permission deleted successfully']);
     }
-    // عرض جميع صلاحيات مستخدم معين
-public function permissions($userId)
-{
-    $user = \App\Models\User::findOrFail($userId);
-    $permissions = $user->getAllPermissions();
-
-    return response()->json([
-        'permissions' => $permissions,
-    ]);
-}
-
 }

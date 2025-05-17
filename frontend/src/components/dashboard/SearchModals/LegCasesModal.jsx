@@ -3,14 +3,9 @@ import LegalCaseProcedures from '../../LegalCases/LegalCaseTools/LegalCaseProced
 import LegalCaseSessions from '../../LegalCases/LegalCaseTools/LegalCaseSessions';
 import LegalCaseAds from '../../LegalCases/LegalCaseTools/LegalCaseAds';
 import {
-  FaFileAlt,
-  FaBalanceScale,
-  FaMapMarkerAlt,
-  FaPhone,
-  FaUserTie,
-  FaUser,
-  FaInfoCircle,
-} from 'react-icons/fa';
+  FileDigit ,
+ 
+} from 'lucide-react';
 
 const LegCasesModal = ({ selectedClient, activeTab }) => {
   const [selectedCase, setSelectedCase] = useState(null);
@@ -117,7 +112,7 @@ const LegCasesModal = ({ selectedClient, activeTab }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex items-center space-x-3 border-b pb-2">
-              <FaFileAlt className="text-blue-500 dark:text-blue-400" />
+              <FileDigit  className="text-blue-500 dark:text-blue-400" />
               <p className="text-gray-700 dark:textalmadar-gray-light font-semibold w-1/3">
                 رقم الملف:
               </p>

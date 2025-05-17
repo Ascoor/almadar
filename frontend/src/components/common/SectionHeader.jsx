@@ -1,4 +1,4 @@
-import { FaArrowLeft } from 'react-icons/fa';
+import { ArrowLeft } from 'lucide-react';
 
 const SectionHeader = ({ listName, icon, showBackButton }) => {
   return (
@@ -33,7 +33,7 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
         dark:hover:bg-accent dark:hover:text-white
         rounded-full shadow transition-all"
     >
-      <FaArrowLeft />
+      <ArrowLeft />
       <span className="text-sm sm:text-base">رجوع</span>
     </button>
   )}

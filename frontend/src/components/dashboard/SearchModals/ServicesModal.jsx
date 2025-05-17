@@ -1,20 +1,20 @@
 import  { useState, useEffect } from 'react';
 import ServiceProcedures from '../../LegalServices/Procedures';
 import {
-  FaAccessibleIcon,
-  FaFileAlt,
-  FaInfoCircle,
-  FaMapMarkerAlt,
-} from 'react-icons/fa';
+  BadgeInfo ,
+  FileUser ,
+  CircleHelp ,
+  Bookmark ,
+} from 'lucide-react';
 
 const iconMapping = {
-  fileNumber: <FaAccessibleIcon className="text-blue-500 dark:text-blue-400" />,
-  servicePlace: <FaFileAlt className="text-green-500 dark:text-green-400" />,
+  fileNumber: <BadgeInfo  className="text-blue-500 dark:text-blue-400" />,
+  servicePlace: <FileUser  className="text-green-500 dark:text-green-400" />,
   serviceDetails: (
-    <FaInfoCircle className="text-green-500 dark:text-green-400" />
+    <CircleHelp  className="text-green-500 dark:text-green-400" />
   ),
   serviceStatus: (
-    <FaMapMarkerAlt className="text-green-500 dark:text-green-400" />
+    <Bookmark  className="text-green-500 dark:text-green-400" />
   ),
 };
 
