@@ -68,20 +68,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('permissions', PermissionController::class);
 
     // User Role & Permission Management APIs
-    Route::prefix('users/{userId}')->group(function () {
-        Route::post('/assign-role', [UserRolePermissionController::class, 'assignRole']);
-        Route::post('/remove-role', [UserRolePermissionController::class, 'removeRole']);
-        Route::post('/give-permission', [UserRolePermissionController::class, 'givePermission']);
-        Route::post('/revoke-permission', [UserRolePermissionController::class, 'revokePermission']);
-        Route::get('/permissions', [UserRolePermissionController::class, 'permissions']);
-    });
-    Route::post('/user/permission/change', [UserRolePermissionController::class, 'changeUserPermission
-    
-    
-    
-    
-    ']);
-
+Route::prefix('users/{userId}')->group(function () {
+    Route::post('/assign-role', [UserRolePermissionController::class, 'assignRole']);
+    Route::post('/remove-role', [UserRolePermissionController::class, 'removeRole']);  
+    Route::get('/permissions', [UserRolePermissionController::class, 'permissions']);
+    Route::post('/permission/change', [UserRolePermissionController::class, 'changeUserPermission']); // ✅ صح
+});
+ 
     // Investigations actions
     Route::prefix('investigations')->group(function () {
         Route::get('/', [InvestigationController::class, 'index']);

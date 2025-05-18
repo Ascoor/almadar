@@ -17,7 +17,7 @@ export default function Header({ isOpen, onToggleSidebar }) {
         py-3 px-6 flex justify-between items-center
         bg-white dark:bg-black
         bg-gradient-to-l from-gold/70 via-navy/80 to-navy-light/80 
-             dark:bg-gradient-to-r dark:from-navy-dark/70 dark:via-navy-dark/40 dark:to-reded-dark/40
+             dark:bg-gradient-to-l dark:from-navy-dark/30 dark:via-navy-dark/40 dark:to-reded-dark/60
         text-gray-900 dark:text-white
         border-b border-gray-200 dark:border-navy-dark
         shadow-md dark:shadow-[0_0_10px_#14b8a640]

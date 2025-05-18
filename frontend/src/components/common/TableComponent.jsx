@@ -1,9 +1,7 @@
-// src/components/common/TableComponent.jsx
 import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { Edit, Eye, Trash, ArrowUp, ArrowDown } from 'lucide-react'; 
 import { motion } from 'framer-motion';
-import API_CONFIG from '../../config/config';
-import { AuthContext } from '@/components/auth//AuthContext';
+import { AuthContext } from '@/components/auth/AuthContext';
 
 const AnimatedRow = ({
   row,
@@ -14,8 +12,11 @@ const AnimatedRow = ({
   onDelete,
   onView,
   onRowClick,
+  moduleName, // اسم الوحدة مثل "contracts"
 }) => {
   const { hasPermission } = useContext(AuthContext);
+
+  const can = (action) => hasPermission(`${action} ${moduleName}`);
 
   return (
     <motion.tr
@@ -24,7 +25,7 @@ const AnimatedRow = ({
       onClick={() => onRowClick?.(row)}
       className="cursor-pointer border-b border-muted hover:bg-muted/50 transition"
     >
-      {onView && hasPermission(onView.permission) && (
+      {onView && can('view') && (
         <td className="p-2 text-center">
           <button onClick={e => { e.stopPropagation(); onView.handler(row); }} className="text-primary">
             <Eye />
@@ -32,30 +33,15 @@ const AnimatedRow = ({
         </td>
       )}
 
- {headers.map((header) => (
-  <td key={`${rowIndex}-${header.key}`} className="p-2 text-center text-sm">
-    {header.key === 'attachment' ? (
-      row.attachment ? (
-        <a
-          href={`${api}/${row.attachment}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline text-blue-600"
-        >
-          عرض
-        </a>
-      ) : (
-        <span className="text-muted-foreground">لا يوجد</span>
-      )
-    ) : customRenderers?.[header.key] ? (
-      customRenderers[header.key](row)
-    ) : (
-      row[header.key] ?? '—'
-    )}
-  </td>
-))}
+      {headers.map((header) => (
+        <td key={`${rowIndex}-${header.key}`} className="p-2 text-center text-sm">
+          {customRenderers?.[header.key]
+            ? customRenderers[header.key](row)
+            : row[header.key] ?? '—'}
+        </td>
+      ))}
 
-      {onEdit && hasPermission(onEdit.permission) && (
+      {onEdit && can('edit') && (
         <td className="p-2 text-center">
           <button onClick={e => { e.stopPropagation(); onEdit.handler(row); }} className="text-purple-600 hover:text-purple-800">
             <Edit />
@@ -63,7 +49,7 @@ const AnimatedRow = ({
         </td>
       )}
 
-      {onDelete && hasPermission(onDelete.permission) && (
+      {onDelete && can('delete') && (
         <td className="p-2 text-center">
           <button onClick={e => { e.stopPropagation(); onDelete.handler(row); }} className="text-red-600 hover:text-red-800">
             <Trash />
@@ -78,11 +64,12 @@ export default function TableComponent({
   data,
   headers,
   customRenderers,
-  onView,        // { permission: 'view X', handler: fn }
-  onEdit,        // { permission: 'edit X', handler: fn }
-  onDelete,      // { permission: 'delete X', handler: fn }
-  renderAddButton, // fn or null
+  onView,        // { action: 'view', handler: fn }
+  onEdit,        // { action: 'edit', handler: fn }
+  onDelete,      // { action: 'delete', handler: fn }
+  renderAddButton, // { action: 'create', render: fn }
   onRowClick,
+  moduleName, // 💡 Required: "contracts", "investigations", ...
 }) {
   const { hasPermission } = useContext(AuthContext);
 
@@ -91,7 +78,8 @@ export default function TableComponent({
   const [sortKey, setSortKey] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
 
-  // فلترة
+  const can = (action) => hasPermission(`${action} ${moduleName}`);
+
   useEffect(() => {
     const keywords = searchQuery.trim().toLowerCase().split(/\s+/);
     setFilteredData(
@@ -108,7 +96,6 @@ export default function TableComponent({
     );
   }, [searchQuery, data, headers]);
 
-  // ترتيب
   const sortedData = useMemo(() => {
     if (!sortKey) return filteredData;
     return [...filteredData].sort((a, b) => {
@@ -132,7 +119,7 @@ export default function TableComponent({
   return (
     <section className="bg-card p-6 rounded-xl shadow-lg border border-border">
       <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
-        {renderAddButton && hasPermission(renderAddButton.permission) && (
+        {renderAddButton?.render && can('create') && (
           <div>{renderAddButton.render()}</div>
         )}
         <input
@@ -147,7 +134,7 @@ export default function TableComponent({
         <table className="w-full text-center text-sm border-collapse">
           <thead className="bg-muted text-muted-foreground">
             <tr>
-              {onView && hasPermission(onView.permission) && <th className="p-2">عرض</th>}
+              {onView && can('view') && <th className="p-2">عرض</th>}
               {headers.map(h => (
                 <th
                   key={h.key}
@@ -159,8 +146,8 @@ export default function TableComponent({
                     (sortDirection === 'asc' ? <ArrowUp size={14}/> : <ArrowDown size={14}/>)}
                 </th>
               ))}
-              {onEdit && hasPermission(onEdit.permission) && <th className="p-2">تعديل</th>}
-              {onDelete && hasPermission(onDelete.permission) && <th className="p-2">حذف</th>}
+              {onEdit && can('edit') && <th className="p-2">تعديل</th>}
+              {onDelete && can('delete') && <th className="p-2">حذف</th>}
             </tr>
           </thead>
           <tbody>
@@ -175,6 +162,7 @@ export default function TableComponent({
                 onEdit={onEdit}
                 onDelete={onDelete}
                 onRowClick={onRowClick}
+                moduleName={moduleName}
               />
             ))}
           </tbody>

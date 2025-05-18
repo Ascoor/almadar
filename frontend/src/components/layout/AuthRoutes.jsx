@@ -3,7 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useSpinner } from '../../context/SpinnerContext';
 import GlobalSpinner from '../common/Spinners/GlobalSpinner';
 import { lazy } from 'react';  
- 
+ import Forbidden from '@/pages/Forbidden';
 
 const Home = lazy(() => import('../dashboard/Dashboard'));
  
@@ -14,9 +14,7 @@ const LegalAdvices = lazy(() => import('../../pages/LegalAdvicePage.jsx'));
 const Litigations = lazy(() => import('../../pages/LitigationsPage.jsx'));
 const UserManagementPage = lazy(() => import('../../pages/UserManagementPage.jsx'));
 const ArchivePage = lazy(() => import('../../pages/ArchivePage.jsx'));
-const ManagementSettings = lazy(() => import('../../pages/ManagementSettings.jsx'));
-const RoleManagement = lazy(() => import('../Users/Sections/RoleManagement.jsx'));
-
+const ManagementSettings = lazy(() => import('../../pages/ManagementSettings.jsx')); 
 const NotFound = () => (
   <h1 className="text-center text-red-500">404 - Page Not Found</h1>
 );
@@ -50,8 +48,8 @@ const AuthRoutes = () => {
   <Route path="/legal/legal-advices" element={<LegalAdvices />} />
   <Route path="/legal/litigations" element={<Litigations />} />
 
-  <Route path="/managment-lists" element={<ManagementSettings />} />
-  <Route path="/role-management" element={<RoleManagement />} />
+  <Route path="/managment-lists" element={<ManagementSettings />} /> 
+<Route path="/forbidden" element={<Forbidden />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Broadcast;
 */
 
 
-Broadcast::channel('permissions.user.{userId}', function ($user, $userId) {
-    // فقط يمتلك المشترك نفس الـ userId
+// routes/channels.php
+
+Broadcast::channel('user.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
 });
+

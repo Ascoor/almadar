@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Log;
 
 class ContractController extends Controller
 {
+        public function __construct()
+    {
+        $this->middleware('permission:view contracts')->only(['index','show']);
+        $this->middleware('permission:create contracts')->only('store');
+        $this->middleware('permission:edit contracts')->only('update');
+        $this->middleware('permission:delete contracts')->only('destroy');
+    }
     public function index()
     {
         $contracts = Contract::with('category')->latest()->paginate(15);

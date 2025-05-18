@@ -4,24 +4,21 @@ import SectionHeader from '@/components/common/SectionHeader';
 import TableComponent from '@/components/common/TableComponent';
 import UserModalForm from '@/components/Users/UserModalForm';
 import UserInfoCard from '@/components/Users/UserInfoCard';
+import { RoleIcon } from '@/assets/icons'; 
 import PermissionsSection from '@/components/Users/Sections/PermissionsSection';
 import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteModal';
 import API_CONFIG from '../config/config';
 import { Edit2, Trash2 } from 'lucide-react';
 import {
-  getUsers,
-  getUserPermissions,
+  getUsers, 
   getPermissions,
   createUser,
   updateUser,
   deleteUser,
-  givePermission,
-  revokePermission,
-  assignRole,
-  removeRole,
+changeUserPermission,
   getRoles,
 } from '@/services/api/users';
-import { Toaster, toast } from 'sonner';
+import {  toast } from 'sonner';
 
 export default function UsersManagementPage() {
   const [users, setUsers] = useState([]);
@@ -32,11 +29,10 @@ export default function UsersManagementPage() {
   const [showDelete, setShowDelete] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // — fetch data —
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getUsers(); // توقع أن يعيد users مع علاقة role و permissions
+      const data = await getUsers();
       setUsers(data);
     } catch {
       toast.error('فشل تحميل المستخدمين');
@@ -66,8 +62,25 @@ export default function UsersManagementPage() {
     fetchRoles();
     fetchPerms();
   }, [fetchUsers, fetchRoles, fetchPerms]);
+const handlePermChange = async (permName, shouldEnable) => {
+  setLoading(true);
+  try {
+    await changeUserPermission(selectedUser.id, permName, shouldEnable ? 'add' : 'remove');
+    toast.success('تم تحديث الصلاحية');
 
-  // — create / update user —
+    const updatedUsers = await getUsers(); // بديل مباشر لـ fetchUsers()
+    setUsers(updatedUsers); // تحديث users في الواجهة
+
+    const updated = updatedUsers.find(u => u.id === selectedUser.id);
+    if (updated) setSelectedUser(updated); // ✅ تحديث المستخدم الحالي نفسه
+
+  } catch {
+    toast.error('فشل في تحديث الصلاحية');
+  } finally {
+    setLoading(false);
+  }
+};
+
   const handleCreate = async formData => {
     setLoading(true);
     try {
@@ -96,7 +109,6 @@ export default function UsersManagementPage() {
     }
   };
 
-  // — delete user —
   const handleDelete = async () => {
     setLoading(true);
     try {
@@ -111,51 +123,29 @@ export default function UsersManagementPage() {
       setLoading(false);
     }
   };
+ 
 
-  // — permission change —
-  const handlePermChange = async (permId, enabled) => {
-    setLoading(true);
-    try {
-      const perm = allPerms.find(p => p.id === permId);
-      if (enabled) {
-        await givePermission(selectedUser.id, perm.name);
-        toast.success('تم إضافة الصلاحية');
-        setSelectedUser(u => ({
-          ...u,
-          permissions: [...u.permissions, perm],
-        }));
-      } else {
-        await revokePermission(selectedUser.id, perm.name);
-        toast.success('تم إزالة الصلاحية');
-        setSelectedUser(u => ({
-          ...u,
-          permissions: u.permissions.filter(p => p.id !== permId),
-        }));
-      }
-    } catch {
-      toast.error('فشل في تحديث الصلاحية');
-    } finally {
-      fetchUsers()
-      setLoading(false);
-    }
-  };
-
-  // — table renderers —
   const customRenderers = {
-    role: user => user.role?.name || 'غير محدد',
-    image: user => (
-      user.image
-        ? <img
+    role: (user) => (
+      <div className="flex justify-center">{user.role?.name || 'غير محدد'}</div>
+    ),
+    image: (user) => (
+      <div className="flex justify-center">
+        {user.image ? (
+          <img
             src={`${API_CONFIG.baseURL}/${user.image}`}
             alt={user.name}
             className="w-10 h-10 rounded-full object-cover"
           />
-        : <span className="text-gray-500">لا توجد صورة</span>
+        ) : (
+          <span className="text-gray-500">لا توجد صورة</span>
+        )}
+      </div>
     ),
-    actions: user => (
-      <div className="flex gap-2">
+    actions: (user) => (
+      <div className="flex justify-center gap-2">
         <button
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
             setSelectedUser(user);
             setModalMode('edit');
@@ -165,7 +155,7 @@ export default function UsersManagementPage() {
           <Edit2 className="w-4 h-4" />
         </button>
         <button
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
             setSelectedUser(user);
             setShowDelete(true);
@@ -180,9 +170,8 @@ export default function UsersManagementPage() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <Toaster position="top-center" richColors />
+      <SectionHeader icon={RoleIcon} listName="إدارة المستخدمين والصلاحيات" />
       <div className="flex justify-between items-center">
-        <SectionHeader sectionTitle="إدارة المستخدمين والصلاحيات" />
         <button
           onClick={() => { setSelectedUser(null); setModalMode('add'); }}
           className="flex items-center gap-2 bg-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 rounded-lg shadow hover:opacity-90 transition"
@@ -191,7 +180,7 @@ export default function UsersManagementPage() {
         </button>
       </div>
 
-      <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow min-w-full">
         <TableComponent
           data={users}
           headers={[
@@ -207,7 +196,6 @@ export default function UsersManagementPage() {
         />
       </div>
 
-      {/* Add / Edit Modal */}
       {(modalMode === 'add' || modalMode === 'edit') && (
         <UserModalForm
           isOpen={true}
@@ -218,7 +206,6 @@ export default function UsersManagementPage() {
         />
       )}
 
-      {/* User Info + Permissions */}
       {selectedUser && !modalMode && (
         <div className="mt-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow space-y-4">
           <UserInfoCard user={selectedUser} />
@@ -234,7 +221,6 @@ export default function UsersManagementPage() {
         </div>
       )}
 
-      {/* Confirm Delete Modal */}
       {showDelete && (
         <GlobalConfirmDeleteModal
           onDelete={handleDelete}

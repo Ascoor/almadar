@@ -57,8 +57,7 @@
   className={`
     flex-1 pt-16 px-4 sm:px-6 md:px-8 transition-all duration-300
     ${sidebarOpen ? 'sm:mr-[280px]' : 'sm:mr-[80px]'}
-    bg-gradient-to-tr from-[#a0f2e5] via-[#f5fefd] to-[#ffffff] 
-    dark:bg-gradient-to-tr dark:from-[#0e1c3b] dark:via-[#030f1f] dark:to-[#0e1c3b]
+  
   `}
 >
 

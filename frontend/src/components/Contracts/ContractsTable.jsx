@@ -46,6 +46,7 @@ export default function ContractsTable({
   return (
     <>
       <TableComponent
+      moduleName='contracts'
         data={filtered}
         headers={[
           { key: "number", text: "رقم العقد" },
@@ -58,9 +59,13 @@ export default function ContractsTable({
         customRenderers={{
           category_name: (row) => row.category?.name || "—",
         }}
-        onEdit={openEdit}
-        onDelete={confirmDelete}
-        renderAddButton={() => <AddButton label="عقد" onClick={openAdd} />}
+
+  onEdit={{ action: 'edit', handler: openEdit }}
+  onDelete={{ action: 'delete', handler: confirmDelete }}
+        renderAddButton={{
+    action: 'create',
+    render: () => <AddButton label="عقد" onClick={openAdd} />
+  }}
       />
 
       <GlobalConfirmDeleteModal

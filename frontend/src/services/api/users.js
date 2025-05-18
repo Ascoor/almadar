@@ -1,5 +1,6 @@
 import api from './axiosConfig';
 
+// Get all users
 export const getUsers = async () => {
   try {
     const response = await api.get('/api/users');
@@ -8,23 +9,8 @@ export const getUsers = async () => {
     throw error;
   }
 };
-export const assignRole = async (userId) => {
-  try {
-    const response = await api.get(`/api/users/${userId}/assign-role`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-export const removeRole = async (userId) => {
-  try {
-    const response = await api.get(`/api/users/${userId}/remove-role`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
 
+// Create a new user
 export const createUser = async (userData) => {
   try {
     const response = await api.post('/api/users', userData);
@@ -34,6 +20,7 @@ export const createUser = async (userData) => {
   }
 };
 
+// Update an existing user
 export const updateUser = async (userId, userData) => {
   try {
     const response = await api.put(`/api/users/${userId}`, userData);
@@ -43,6 +30,7 @@ export const updateUser = async (userId, userData) => {
   }
 };
 
+// Delete a user
 export const deleteUser = async (userId) => {
   try {
     const response = await api.delete(`/api/users/${userId}`);
@@ -52,15 +40,7 @@ export const deleteUser = async (userId) => {
   }
 };
 
-export const userProfile = async () => {
-  try {
-    const response = await api.get('/api/user-profile');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
+// Get permissions for all users
 export const getPermissions = async () => {
   try {
     const response = await api.get('/api/permissions');
@@ -70,6 +50,7 @@ export const getPermissions = async () => {
   }
 };
 
+// Get permissions for a specific user
 export const getUserPermissions = async (userId) => {
   try {
     const response = await api.get(`/api/users/${userId}/permissions`);
@@ -79,28 +60,7 @@ export const getUserPermissions = async (userId) => {
   }
 };
 
-export const saveUserPermissions = async (userId, payload) => {
-  try {
-    const response = await api.post(`/api/users/${userId}`, {
-      permissions: payload,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const updateUserPermissions = async (userId, payload) => {
-  try {
-    const response = await api.put(`/api/users/${userId}`, {
-      permissions: payload,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-  
+// Get all roles
 export const getRoles = async () => {
   try {
     const response = await api.get('/api/roles');
@@ -110,6 +70,7 @@ export const getRoles = async () => {
   }
 };
 
+// Give permission to a user
 export const givePermission = async (userId, permissionId) => {
   try {
     const response = await api.post(`/api/users/${userId}/give-permission`, {
@@ -121,10 +82,23 @@ export const givePermission = async (userId, permissionId) => {
   }
 };
 
+// Revoke permission from a user
 export const revokePermission = async (userId, permissionId) => {
   try {
     const response = await api.post(`/api/users/${userId}/revoke-permission`, {
       permission: permissionId,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+// Smart permission manager
+export const changeUserPermission = async (userId, permission, action) => {
+  try {
+    const response = await api.post(`/api/users/${userId}/permission/change`, {
+      permission,
+      action, // 'add' or 'remove'
     });
     return response.data;
   } catch (error) {

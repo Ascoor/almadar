@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace Database\Seeders;
 
@@ -6,56 +6,60 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UsersTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        // تأكد أن الأدوار موجودة مع guard_name الصحيح
+        // التأكد من وجود دور Admin
         $adminRole = Role::firstOrCreate([
             'name' => 'Admin',
-            'guard_name' => 'api',   // مهم جداً
+            'guard_name' => 'api',  // تأكد أن الحارس يتطابق مع ما تستخدمه في تطبيقك
         ]);
 
+        // التأكد من وجود دور Moderator (اختياري)
         $moderatorRole = Role::firstOrCreate([
             'name' => 'Moderator',
-            'guard_name' => 'api',   // مهم جداً
+            'guard_name' => 'api',
         ]);
 
+        // التأكد من وجود دور User
         $userRole = Role::firstOrCreate([
             'name' => 'User',
-            'guard_name' => 'api',   // مهم جداً
+            'guard_name' => 'api',
         ]);
 
-        // إنشاء مستخدم أدمن
+        // إنشاء المستخدمين وتعيين الأدوار لهم
+        // إنشاء مستخدم Admin
         $admin = User::create([
             'name' => 'Super Admin',
             'email' => 'admin@example.com',
             'password' => Hash::make('Ask@123456'),
-    'image' => 'users_images/admin.png',
+            'image' => 'users_images/admin.png',
         ]);
+        // تعيين صلاحيات Admin (جميع الصلاحيات)
         $admin->assignRole($adminRole);
+        $admin->syncPermissions(Permission::all()); // منح جميع الصلاحيات لـ Admin
 
-        // إنشاء مشرف
+        // إنشاء مستخدم Moderator
         $moderator = User::create([
             'name' => 'Site Moderator',
-            'email' => 'user2@example.com',
+            'email' => 'moderator@example.com',
             'password' => Hash::make('Ask@123456'),
-    'image' => 'users_images/moderator.png',
-    ]);
-    $moderator->assignRole($moderatorRole);
+            'image' => 'users_images/moderator.png',
+        ]);
+        // تعيين صلاحيات Moderator (صلاحيات محدودة)
+        $moderator->assignRole($moderatorRole);
 
-    // إنشاء مستخدم عادي بصورة افتراضية
-    $user = User::factory()->create([
-        'name' => 'Normal User',
-        'email' => 'user3@example.com',
-        'password' => Hash::make('Ask@123456'),
-        'image' => 'users_images/user.png',
-    ]);
-    $user->assignRole($userRole);
+        // إنشاء مستخدم عادي
+        $user = User::create([
+            'name' => 'Normal User',
+            'email' => 'user@example.com',
+            'password' => Hash::make('Ask@123456'),
+            'image' => 'users_images/user.png',
+        ]);
+        // تعيين صلاحيات User (صلاحيات محدودة مثل عرض وتعديل الملف الشخصي)
+        $user->assignRole($userRole);
     }
-    
 }

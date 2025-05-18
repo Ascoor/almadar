@@ -17,10 +17,8 @@ class RolesAndPermissionsSeeder extends Seeder
         // 2. تعريف الوحدات (الأقسام) مع الإجراءات (الصلاحيات) الخاصة بها
         $modules = [
             'legaladvices'             => ['view', 'create', 'edit', 'delete'],
-            'litigation-against'       => ['view', 'create', 'edit', 'delete'],
-            'litigation-from'          => ['view', 'create', 'edit', 'delete'],
-            'contracts-local'          => ['view', 'create', 'edit', 'delete'],
-            'contracts-international'  => ['view', 'create', 'edit', 'delete'],
+            'litigations'       => ['view', 'create', 'edit', 'delete'], 
+            'contracts'               => ['view', 'create', 'edit', 'delete'],
             'investigations'           => ['view', 'create', 'edit', 'delete'],
             'users'                    => ['view', 'create', 'edit', 'delete'],
             'roles'                    => ['view', 'create', 'edit', 'delete'],

@@ -1,4 +1,3 @@
-// pages/Contracts.jsx
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,14 +6,22 @@ import { getContracts, getContractCategories } from '../services/api/contracts';
 import SectionHeader from '../components/common/SectionHeader';
 import { ContractSection } from '../assets/icons';
 import AuthSpinner from '../components/common/Spinners/AuthSpinner';
+import { useNavigate } from 'react-router-dom';
 
 export default function Contracts() {
   const [activeTab, setActiveTab] = useState('local');
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['contracts'],
     queryFn: getContracts,
+    onError: (error) => {
+      if (error.response?.status === 403) {
+        navigate('/forbidden');
+      }
+    },
+    retry: false, // حتى لا يعيد المحاولة تلقائيًا في حالة 403
   });
 
   useEffect(() => {
@@ -31,7 +38,7 @@ export default function Contracts() {
   const contracts = data?.data?.data || [];
 
   if (isLoading) return <AuthSpinner />;
-  if (isError) return <p>حدث خطأ أثناء جلب البيانات</p>;
+  if (isError) return null; // تم التوجيه إلى forbidden بالفعل
 
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-6">
@@ -42,14 +49,11 @@ export default function Contracts() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`
-              px-6 py-2 rounded-full text-sm font-bold transition
-              border
-              ${activeTab === tab
+            className={`px-6 py-2 rounded-full text-sm font-bold transition border ${
+              activeTab === tab
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-background text-primary border-primary hover:bg-muted'
-              }
-            `}
+            }`}
           >
             {tab === 'local' ? 'العقود المحلية' : 'العقود الدولية'}
           </button>

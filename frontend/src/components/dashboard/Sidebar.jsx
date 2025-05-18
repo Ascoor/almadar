@@ -37,8 +37,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
       to: '/contracts',
       icon: <FileText size={18} />,
       canView: () =>
-        hasPermission('view contracts-local') ||
-        hasPermission('view contracts-international'),
+        hasPermission('view contracts')
     },
     {
       id: 'fatwa',
@@ -65,8 +64,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
           to: '/legal/litigations',
           icon: <Gavel size={16} />,
           canView: () =>
-            hasPermission('view litigation-against') ||
-            hasPermission('view litigation-from'),
+            hasPermission('view litigations'),
         },
       ],
       // نعرض الأصل فقط لو لديه أبناء مرخص لهم
@@ -150,9 +148,9 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
     <aside
       dir="rtl"
       className={`
-        fixed right-0 top-0 z-20 h-full
+        fixed right-0 top-0 z-20 h-full bg-white dark:bg-black
         bg-gradient-to-b from-gold/70 via-navy/70 to-navy/90
-        dark:bg-gradient-to-t dark:from-navy-dark/70 dark:via-navy-dark/40 dark:to-reded-dark/40
+        dark:bg-gradient-to-b dark:from-navy-dark/40 dark:via-navy-dark/20 dark:to-reded-dark/60
         border-l border-border transition-all duration-300
         ${isLargeScreen
           ? isOpen ? 'w-64' : 'w-16'
