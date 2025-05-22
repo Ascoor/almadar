@@ -60,8 +60,8 @@ class LitigationActionController extends Controller
             'lawyer_name' => 'required|string|max:1000',
             'location' => 'required|string|max:1000',
             'notes' => 'nullable|string',
-            'result' => 'nullable|string',
-            'status' => 'required|in:pending,completed,cancelled',
+            'results' => 'nullable|string',
+            'status' => 'required|in:pending,done,in_review',
         ]);
     }
 }

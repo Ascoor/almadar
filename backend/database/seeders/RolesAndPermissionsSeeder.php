@@ -18,9 +18,16 @@ class RolesAndPermissionsSeeder extends Seeder
         $modules = [
             'legaladvices'             => ['view', 'create', 'edit', 'delete'],
             'litigations'       => ['view', 'create', 'edit', 'delete'], 
+            'litigation-from'       => ['view', 'create', 'edit', 'delete'], 
+            'litigation-from-actions'       => ['view', 'create', 'edit', 'delete'], 
+            'litigation-against'       => ['view', 'create', 'edit', 'delete'], 
+            'litigation-against-actions'       => ['view', 'create', 'edit', 'delete'], 
             'contracts'               => ['view', 'create', 'edit', 'delete'],
             'investigations'           => ['view', 'create', 'edit', 'delete'],
+            'investigation-actions'           => ['view', 'create', 'edit', 'delete'],
             'users'                    => ['view', 'create', 'edit', 'delete'],
+            'managment-lists'                    => ['view', 'create', 'edit', 'delete'],
+
             'roles'                    => ['view', 'create', 'edit', 'delete'],
             'permissions'              => ['view', 'create', 'edit', 'delete'],
             'profile'                  => ['view', 'edit'],

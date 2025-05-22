@@ -1,19 +1,25 @@
-  import   { useState, useEffect } from 'react'; 
+  import   { useState, useEffect ,useContext} from 'react'; 
  
   import { TooltipProvider } from "@/components/ui/tooltip";
   import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
   import { useLocation } from "react-router-dom";
-
+import {NotificationProvider} from '@/components/notifications/NotificationContext';
   import Header from '../components/dashboard/Header';
   import Sidebar from '../components/dashboard/Sidebar';
-  import AuthRoutes from '../components/layout/AuthRoutes';
-
+  import AuthRoutes from '../components/layout/AuthRoutes'; 
+import { AuthContext } from '@/components/auth/AuthContext';   
+import EchoListener from '../components/EchoListener';
   const queryClient = new QueryClient();
 
   export default function AuthWrapper() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const location = useLocation();
-
+  const { user } = useContext(AuthContext); 
+// Demo function to simulate logging in a user
+  const activateEcho = () => {
+    setUserId(1); // Simulate user ID 1
+    setIsEchoEnabled(true);
+  };
     // إغلاق الـ sidebar عند تغيير المسار على الشاشات الصغيرة
     useEffect(() => {
       if (window.innerWidth < 640) {
@@ -34,13 +40,17 @@
     return (
       <QueryClientProvider client={queryClient}>
         <TooltipProvider> 
+       
+      <NotificationProvider> 
+  <EchoListener /> {/* ← استخدم المكون هنا مباشرة */}
+ 
 <div className="min-h-screen flex flex-col sm:flex-row relative">
         {/* Sidebar */}
             <Sidebar
               isOpen={sidebarOpen}
               onToggle={toggleSidebar}
               onLinkClick={handleLinkClick}
-            />
+              />
 
             {/* Overlay على الجوال */}
             {sidebarOpen && (
@@ -58,14 +68,15 @@
     flex-1 pt-16 px-4 sm:px-6 md:px-8 transition-all duration-300
     ${sidebarOpen ? 'sm:mr-[280px]' : 'sm:mr-[80px]'}
   
-  `}
+    `}
 >
-
+ 
 
                 <AuthRoutes />
               </main>
             </div>
           </div>
+  </NotificationProvider>
         </TooltipProvider>
       </QueryClientProvider>
     );

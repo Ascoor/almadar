@@ -8,7 +8,11 @@ class InvestigationActionTypeController extends Controller
 {
     public function index()
     {
-        return response()->json(InvestigationActionType::all());
+      
+  return response()->json(
+        InvestigationActionType::orderBy('created_at', 'desc')->get()
+ 
+  );
     }
 
     public function store(Request $request)

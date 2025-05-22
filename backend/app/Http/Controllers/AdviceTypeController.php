@@ -12,7 +12,8 @@ class AdviceTypeController extends Controller
      */
     public function index()
     {
-        $types = AdviceType::all();
+        
+        $types = AdviceType::orderBy('created_at', 'desc')->get();
         return response()->json($types);
     }
 

@@ -1,41 +1,43 @@
-import  { useState, useEffect } from "react"; 
-import LegalAdviceModal from "../components/LegalAdvices/LegalAdviceModal";
-import { getLegalAdvices, deleteLegalAdvice } from "@/services/api/legalAdvices";
-import { getAdviceTypes } from "../services/api/adviceTypes.js"; // Add service to get types
+import { useState, useEffect, useContext } from "react";
 import { toast } from 'sonner';
-import SectionHeader from "../components/common/SectionHeader";
-import { LegalAdviceIcon } from "../assets/icons";
+import { getLegalAdvices, deleteLegalAdvice } from "@/services/api/legalAdvices";
+import { getAdviceTypes } from "../services/api/adviceTypes.js";
+import LegalAdviceModal from "../components/LegalAdvices/LegalAdviceModal";
+import GlobalConfirmDeleteModal from "../components/common/GlobalConfirmDeleteModal";
 import TableComponent from "../components/common/TableComponent";
-import GlobalConfirmDeleteModal from "../components/common/GlobalConfirmDeleteModal"; 
+import SectionHeader from "../components/common/SectionHeader";
 import AddButton from "../components/common/AddButton";
 import LegalAdviceDetails from "../components/LegalAdvices/LegalAdviceDetails";
+import { LegalAdviceIcon } from "../assets/icons";
+import { AuthContext } from "@/components/auth/AuthContext";
 
 export default function LegalAdvicePage() {
   const [advices, setAdvices] = useState([]);
-  const [adviceTypes, setAdviceTypes] = useState([]);  // Store AdviceTypes here
+  const [adviceTypes, setAdviceTypes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingAdvice, setEditingAdvice] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); 
-  const [adviceToDelete, setAdviceToDelete] = useState(null); 
+  const [editingAdvice, setEditingAdvice] = useState(null); 
   const [selectedAdvice, setSelectedAdvice] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
-  // Load Legal Advices
+  const { hasPermission } = useContext(AuthContext);
+  const moduleName = "legaladvices";
+  const can = (action) => hasPermission(`${action} ${moduleName}`);
+
   const loadLegalAdvices = async () => {
     try {
       const res = await getLegalAdvices();
       setAdvices(res?.data || []);
-    } catch (err) {
-      console.error("Failed to load legal advices:", err);
+    } catch {
+      toast.error("فشل تحميل المشورات");
     }
   };
 
-  // Load Legal Advice Types
   const loadAdviceTypes = async () => {
     try {
-      const res = await getAdviceTypes();  // Assuming you have an API service for this
+      const res = await getAdviceTypes();
       setAdviceTypes(res?.data || []);
-    } catch (err) {
-      console.error("Failed to load advice types:", err);
+    } catch {
+      toast.error("فشل تحميل أنواع المشورة");
     }
   };
 
@@ -49,25 +51,24 @@ export default function LegalAdvicePage() {
     setIsModalOpen(true);
   };
 
-  // Handle delete action
-  const handleDelete = async (advice) => {
+  const handleEdit = (row) => {
+    setEditingAdvice(row);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await deleteLegalAdvice(advice.id);
-      toast.success("تم الحذف بنجاح");
-      loadLegalAdvices(); 
-    } catch (err) {
-      toast.error("فشل في الحذف");
+      await deleteLegalAdvice(deleteTarget.id);
+      toast.success("تم حذف المشورة بنجاح");
+      await loadLegalAdvices();
+    } catch {
+      toast.error("فشل حذف المشورة");
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
-  const handleDeleteConfirmation = () => {
-    if (adviceToDelete) {
-      handleDelete(adviceToDelete);
-    }
-    setIsDeleteModalOpen(false); 
-  };
-
-  // Map advice_type_id to type_name
   const getAdviceTypeName = (typeId) => {
     const adviceType = adviceTypes.find(type => type.id === typeId);
     return adviceType ? adviceType.type_name : "غير معروف";
@@ -75,17 +76,13 @@ export default function LegalAdvicePage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-900 min-h-screen transition-colors">
-      {/* Header Section */}
-      <SectionHeader 
-        listName={"وحدة المشورة القانونية"} 
-        icon={LegalAdviceIcon} 
-      />
- 
-      {/* Legal Advices Table */}
+      <SectionHeader listName="وحدة المشورة القانونية" icon={LegalAdviceIcon} />
+
       <TableComponent
-        renderAddButton={() => (
-          <AddButton label="مشورة أو رأى" onClick={handleAdd} />
-        )}
+        moduleName={moduleName}
+        renderAddButton={can("create") ? { render: () => <AddButton label="مشورة أو رأي" onClick={handleAdd} /> } : null}
+        onEdit={can("edit") ? handleEdit : null}
+        onDelete={can("delete") ? (row) => setDeleteTarget(row) : null}
         data={advices}
         headers={[
           { key: 'type', text: 'نوع المشورة' },
@@ -95,43 +92,35 @@ export default function LegalAdvicePage() {
           { key: 'attachment', text: 'مرفق' },
         ]}
         customRenderers={{
-          type: (row) => getAdviceTypeName(row.advice_type_id),  // Render the type name based on advice_type_id
-          attachment: (row) => (
+          type: (row) => getAdviceTypeName(row.advice_type_id),
+          attachment: (row) =>
             row.attachment ? (
-              <a href={`${API_CONFIG.baseURL}/storage/${row.attachment}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              <a
+                href={`${API_CONFIG.baseURL}/storage/${row.attachment}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
                 عرض
               </a>
             ) : (
               <span className="text-gray-400">لا يوجد</span>
             )
-          ),
-        }}
-        onEdit={(advice) => {
-          setEditingAdvice(advice);
-          setIsModalOpen(true);
-        }}
-        onDelete={(advice) => {
-          setAdviceToDelete(advice); 
-          setIsDeleteModalOpen(true);
         }}
         onRowClick={(row) =>
-          setSelectedAdvice((prev) => (prev?.id === row.id ? null : row)) // Toggle
+          setSelectedAdvice((prev) => (prev?.id === row.id ? null : row))
         }
         expandedRowRenderer={(row) =>
           selectedAdvice?.id === row.id && (
             <tr>
               <td colSpan={7} className="bg-muted/40 px-4 pb-6">
-                <LegalAdviceDetails
-                  selected={selectedAdvice}
-                  onClose={() => setSelectedAdvice(null)}
-                />
+                <LegalAdviceDetails selected={selectedAdvice} onClose={() => setSelectedAdvice(null)} />
               </td>
             </tr>
           )
         }
       />
 
-      {/* Modal for Adding/Editing Legal Advice */}
       <LegalAdviceModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -140,12 +129,11 @@ export default function LegalAdvicePage() {
         reload={loadLegalAdvices}
       />
 
-      {/* Confirmation Modal for Deleting */}
       <GlobalConfirmDeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteConfirmation}
-        itemName={adviceToDelete ? adviceToDelete.topic : ''}
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleConfirmDelete}
+        itemName={deleteTarget?.topic || "المشورة"}
       />
     </div>
   );

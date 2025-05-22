@@ -8,7 +8,9 @@ class LitigationActionTypeController extends Controller
 {
     public function index()
     {
-        return response()->json(LitigationActionType::all());
+  return response()->json(
+        LitigationActionType::orderBy('created_at', 'desc')->get()
+    );
     }
 
     public function store(Request $request)

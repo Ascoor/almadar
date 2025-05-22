@@ -14,10 +14,16 @@ const translatePermission = (name) => {
 
 const translateSection = (section) => {
   const map = {
+    'litigation-from': 'دعاوى من الشركة',
+    'litigation-against': 'دعاوى ضد الشركة',
+    'litigation-against-actions': 'إجراءات دعاوى ضد الشركة',
+    'litigation-from-actions': 'إجراءات دعاوى من الشركة',
     legaladvices: 'الرأي والمشورة',
+    'managment-lists': 'قوائم البيانات',
     litigations: 'القضايا',
     contracts: 'العقود',
     investigations: 'التحقيقات',
+    'investigation-actions': 'إجراءات التحقيق',
     users: 'المستخدمين',
     roles: 'الأدوار',
     permissions: 'الصلاحيات',

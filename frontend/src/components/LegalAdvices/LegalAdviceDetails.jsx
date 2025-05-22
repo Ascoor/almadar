@@ -20,7 +20,7 @@ export default function LegalAdviceDetails({ selected, onClose }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-        <div><span className="font-semibold">نوع المشورة:</span> {selected.type}</div>
+        <div><span className="font-semibold">نوع المشورة:</span> {selected.advice_type?.type_name}</div>
         <div><span className="font-semibold">الموضوع:</span> {selected.topic}</div>
         <div><span className="font-semibold">الجهة الطالبة:</span> {selected.requester || '—'}</div>
         <div><span className="font-semibold">الجهة المصدرة:</span> {selected.issuer || '—'}</div>

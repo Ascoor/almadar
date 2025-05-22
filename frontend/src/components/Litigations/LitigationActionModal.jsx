@@ -1,132 +1,169 @@
-  import React, { useState, useEffect } from "react";
-  import { toast } from "sonner";
-  import ModalCard from "../common/ModalCard";
+import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
+import ModalCard from "../common/ModalCard";
 
-  // القيم الافتراضية للنموذج
-  const EMPTY_FORM = {
-    id: null,
-    case_number: "",
-    court: "",
-    opponent: "",
-    scope: "from",
-    results: "",
-    subject: "",
-    filing_date: "",
-    status: "open",
-    notes: "",
+const EMPTY_FORM = {
+  id: null,
+  action_date: "",
+  action_type_id: "",
+  lawyer_name: "",
+  requirements: "",
+  location: "",
+  notes: "",
+  results: "",
+  status: "pending",
+};
+
+export default function LitigationActionModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialData,
+  actionTypes = [],
+}) {
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    if (initialData) {
+      setForm({ ...EMPTY_FORM, ...initialData });
+    } else {
+      setForm(EMPTY_FORM);
+    }
+  }, [isOpen, initialData]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  export default function LitigationActionModal({
-    isOpen, onClose, onSubmit, initialData, actionTypes = [],
-  }) {
-    const [form, setForm] = useState(null);
-    const [loading, setLoading] = useState(false);
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      await onSubmit(form);
+      onClose();
+    } catch (err) {
+      toast.error("فشل في حفظ الإجراء");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // تعيين القيم الأولية عند فتح النموذج
-    useEffect(() => {
-      if (!isOpen) {
-        setForm(null);
-        return;
-      }
+  if (!isOpen) return null;
 
-      if (initialData) {
-        setForm({ ...EMPTY_FORM, ...initialData, results: initialData.results || "" });
-      } else {
-        setForm(EMPTY_FORM);
-      }
-    }, [isOpen, initialData]);
+  return (
+    <ModalCard
+      isOpen={isOpen}
+      title={form.id ? "تعديل إجراء" : "إضافة إجراء"}
+      onClose={onClose}
+      onSubmit={handleSave}
+      loading={loading}
+      submitLabel={form.id ? "تحديث" : "إضافة"}
+    >
+      <form className="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
+        <div>
+          <label className="block mb-1 text-sm">تاريخ الإجراء</label>
+          <input
+            type="date"
+            name="action_date"
+            value={form.action_date}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+            required
+          />
+        </div>
 
-    // لا تظهر أي شيء إذا لم يكن النموذج مفتوحًا أو لم يتم تهيئته
-    if (!isOpen || form === null) return null;
+        <div>
+          <label className="block mb-1 text-sm">نوع الإجراء</label>
+          <select
+            name="action_type_id"
+            value={form.action_type_id}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+            required
+          >
+            <option value="">اختر النوع</option>
+            {actionTypes.map((type) => (
+              <option key={type.id} value={type.id}>
+                {type.action_name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-    // التعامل مع تغييرات المدخلات
-    const handleChange = e => {
-      const { name, value } = e.target;
-      setForm(prevForm => ({ ...prevForm, [name]: value }));
-    };
+        <div>
+          <label className="block mb-1 text-sm">اسم القائم بالإجراء</label>
+          <input
+            type="text"
+            name="lawyer_name"
+            value={form.lawyer_name}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+            placeholder="مثال: د. فاطمة"
+            required
+          />
+        </div>
 
-    // حفظ البيانات
-    const handleSave = async () => {
-      setLoading(true);
-      console.log(form); // تحقق من محتويات النموذج
-      try {
-        await onSubmit(form); // إرسال البيانات
-        onClose(); // إغلاق النموذج
-      } catch (err) {
-        toast.error("فشل في حفظ الإجراء");
-      } finally {
-        setLoading(false);
-      }
-    };
+        <div>
+          <label className="block mb-1 text-sm">المطلوب</label>
+          <input
+            type="text"
+            name="requirements"
+            value={form.requirements}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
 
-    return (
-      <ModalCard
-        isOpen={isOpen}
-        title={initialData ? "تعديل إجراء" : "إضافة إجراء"}
-        loading={loading}
-        onClose={onClose}
-        onSubmit={handleSave}
-        submitLabel={initialData ? "تحديث" : "إضافة"}
-      >
-        <form className="space-y-6 text-right">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              label="تاريخ الإجراء"
-              type="date"
-              name="action_date"
-              value={form.action_date}
-              onChange={handleChange}
-              required
-            />
-            <SelectField
-              label="نوع الإجراء"
-              name="action_type_id"
-              value={form.action_type_id}
-              onChange={handleChange}
-              options={actionTypes}
-              required
-            />
-            <InputField
-              label="اسم القائم بالإجراء"
-              name="lawyer_name"
-              value={form.lawyer_name}
-              onChange={handleChange}
-              placeholder="مثال: د. فاطمة"
-              required
-            />
-            <InputField
-              label="المطلوب"
-              name="requirements"
-              value={form.requirements}
-              onChange={handleChange}
-            />
-            <InputField
-              label="جهة الإجراء"
-              name="location"
-              value={form.location}
-              onChange={handleChange}
-            />
-            <InputField
-              label="ملاحظات"
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-            />
-            <InputField
-              label="النتيجة"
-              name="results"
-              value={form.results}
-              onChange={handleChange}
-            />
-            <StatusField
-              label="الحالة"
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </form>
-      </ModalCard>
-    );
-  }
+        <div>
+          <label className="block mb-1 text-sm">جهة الإجراء</label>
+          <input
+            type="text"
+            name="location"
+            value={form.location}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm">النتيجة</label>
+          <input
+            type="text"
+            name="results"
+            value={form.results}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm">ملاحظات</label>
+          <textarea
+            name="notes"
+            value={form.notes}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+            rows={2}
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm">الحالة</label>
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+            required
+          >
+            <option value="pending">معلق</option>
+            <option value="in_review">قيد المراجعة</option>
+            <option value="done">منجز</option>
+          </select>
+        </div>
+      </form>
+    </ModalCard>
+  );
+}

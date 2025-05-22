@@ -1,27 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { toast } from "sonner";
 import {
   getInvestigations,
   createInvestigation,
   updateInvestigation,
   deleteInvestigation,
-} from "../services/api/investigations";
-import { ChevronDown, ChevronRight, Trash2 } from "lucide-react"; // ✅
- 
+} from "@/services/api/investigations";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { AuthContext } from "@/components/auth/AuthContext";
 
-import TableComponent from "../components/common/TableComponent";
-import SectionHeader from "../components/common/SectionHeader";
-import InvestigationModal from "../components/Investigations/InvestigationModal"; 
-import AddButton from "../components/common/AddButton";
-import GlobalConfirmDeleteModal from "../components/common/GlobalConfirmDeleteModal";
-import { InvestigationSection } from "../assets/icons";
-import InvestigationActionsTable from "../components/Investigations/InvestigationActionsTable"; 
+import TableComponent from "@/components/common/TableComponent";
+import SectionHeader from "@/components/common/SectionHeader";
+import InvestigationModal from "@/components/Investigations/InvestigationModal";
+import AddButton from "@/components/common/AddButton";
+import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
+import { InvestigationSection } from "@/assets/icons";
+import InvestigationActionsTable from "@/components/Investigations/InvestigationActionsTable";
+
 export default function InvestigationsPage() {
   const [investigations, setInvestigations] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [toDelete, setToDelete] = useState(null);
+
+  const { hasPermission } = useContext(AuthContext);
+  const moduleName = "investigations";
 
   const loadInvestigations = async () => {
     try {
@@ -47,19 +51,11 @@ export default function InvestigationsPage() {
         toast.success("تمت الإضافة بنجاح");
       }
       setIsModalOpen(false);
+      setEditingItem(null);
       await loadInvestigations();
     } catch {
       toast.error("فشل في الحفظ");
     }
-  };
-
-  const toggleRowExpand = (id) => {
-    setExpandedId((prev) => (prev === id ? null : id));
-  };
-
-  const handleAdd = () => {
-    setEditingItem(null);
-    setIsModalOpen(true);
   };
 
   const handleEdit = (row) => {
@@ -67,17 +63,21 @@ export default function InvestigationsPage() {
     setIsModalOpen(true);
   };
 
-  const handleConfirmDelete = async () => {
-    if (!deleteTarget) return;
+  const handleDelete = async () => {
+    if (!toDelete) return;
     try {
-      await deleteInvestigation(deleteTarget.id);
+      await deleteInvestigation(toDelete.id);
       toast.success("تم حذف التحقيق بنجاح");
       await loadInvestigations();
     } catch {
       toast.error("فشل حذف التحقيق");
     } finally {
-      setDeleteTarget(null);
+      setToDelete(null);
     }
+  };
+
+  const toggleRowExpand = (id) => {
+    setExpandedId((prev) => (prev === id ? null : id));
   };
 
   const headers = [
@@ -92,22 +92,13 @@ export default function InvestigationsPage() {
   const customRenderers = {
     expand: (row) => (
       <button onClick={(e) => { e.stopPropagation(); toggleRowExpand(row.id); }}>
-        {expandedId === row.id ? (
-          <ChevronDown className="w-4 h-4" />
-        ) : (
-          <ChevronRight className="w-4 h-4" />
-        )}
+        {expandedId === row.id ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
       </button>
     ),
     status: (row) => (
       <span className="font-semibold text-red-600 dark:text-yellow-300">
         {row.status}
       </span>
-    ),
-    delete: (row) => (
-      <button onClick={() => setDeleteTarget(row)} title="حذف التحقيق">
-        <Trash2 className="w-4 h-4 text-red-600 hover:text-red-800" />
-      </button>
     ),
   };
 
@@ -116,11 +107,16 @@ export default function InvestigationsPage() {
       <SectionHeader icon={InvestigationSection} listName="وحدة التحقيقات" />
 
       <TableComponent
+        title="وحدة التحقيقات القانونية"
         data={investigations}
         headers={headers}
         customRenderers={customRenderers}
+        moduleName={moduleName}
+        renderAddButton={{
+          render: () => <AddButton label="تحقيق" onClick={() => setIsModalOpen(true)} />
+        }}
         onEdit={handleEdit}
-        onDelete={(row) => setDeleteTarget(row)}
+        onDelete={(row) => setToDelete(row)}
         expandedRowRenderer={(row) =>
           expandedId === row.id && (
             <tr>
@@ -134,22 +130,23 @@ export default function InvestigationsPage() {
             </tr>
           )
         }
-        renderAddButton={() => <AddButton label="تحقيق" onClick={handleAdd} />}
-        title="وحدة التحقيقات القانونية"
       />
 
       <InvestigationModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingItem(null);
+        }}
         initialData={editingItem}
         onSubmit={handleSave}
       />
 
       <GlobalConfirmDeleteModal
-        isOpen={!!deleteTarget}
-        itemName={deleteTarget?.employee_name}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={handleConfirmDelete}
+        isOpen={!!toDelete}
+        onClose={() => setToDelete(null)}
+        onConfirm={handleDelete}
+        itemName={toDelete?.employee_name}
       />
     </div>
   );

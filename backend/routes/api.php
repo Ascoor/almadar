@@ -18,13 +18,15 @@ use App\Http\Controllers\LitigationController;
 use App\Http\Controllers\LitigationActionController;
 use App\Http\Controllers\InvestigationActionTypeController;
 use App\Http\Controllers\LitigationActionTypeController;
+ 
+
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-*/
-
+*/ 
+ 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::options('/{any}', function () {
@@ -45,6 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Investigations
     Route::apiResource('investigations', InvestigationController::class);
     
+Route::apiResource('investigation-action-types', InvestigationActionTypeController::class);
+Route::apiResource('litigation-action-types', LitigationActionTypeController::class); 
+ 
     // Legal Advices
     Route::apiResource('legal-advices', LegalAdviceController::class);
     Route::apiResource('advice-types', AdviceTypeController::class);

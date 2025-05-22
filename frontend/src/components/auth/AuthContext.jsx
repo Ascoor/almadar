@@ -3,10 +3,6 @@ import React, { createContext, useState, useMemo, useContext, useEffect } from '
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import API_CONFIG from '../../config/config';
-import Echo from 'laravel-echo';
-import { io } from 'socket.io-client';
-
-// إنشاء الـ Context مع القيم الافتراضية
 export const AuthContext = createContext({
   user: null,
   token: null,
@@ -17,6 +13,7 @@ export const AuthContext = createContext({
   hasRole: () => false,
   hasPermission: () => false,
   http: axios,
+
 });
 
 export function AuthProvider({ children }) {
@@ -39,7 +36,9 @@ export function AuthProvider({ children }) {
     return p ? JSON.parse(p) : [];
   });
 
-  // إعداد axios
+
+
+  // إدارة axios
   const http = useMemo(() => {
     const instance = axios.create({
       baseURL: API_CONFIG.baseURL,
@@ -106,40 +105,17 @@ export function AuthProvider({ children }) {
     setUser(null);
     setRoles([]);
     setPermissions([]);
+ 
+  navigate('/');
     navigate('/login');
   };
 
   const hasRole = (roleName) => roles.includes(roleName);
   const hasPermission = (permName) => permissions.includes(permName);
-
-  // تهيئة Reverb Echo
-  useEffect(() => {
-    if (!user?.id) return;
-
-    window.io = io;
-
-const echo = new Echo({
-  broadcaster: 'reverb',
-  key: import.meta.env.VITE_REVERB_APP_KEY,
-  host: `${import.meta.env.VITE_REVERB_HOST}:${import.meta.env.VITE_REVERB_PORT}`,
-  wsHost: import.meta.env.VITE_REVERB_HOST,
-  wsPort: import.meta.env.VITE_REVERB_PORT,
-  wssPort: import.meta.env.VITE_REVERB_PORT,
-  forceTLS: import.meta.env.VITE_REVERB_SCHEME === 'https',
-  enabledTransports: ['websocket'],
-});
-    const channel = echo.channel(`user.${user.id}`);
-
-    channel.listen('.permissions.updated', () => {
-      console.log('📢 تم تحديث صلاحيات المستخدم');
-      sessionStorage.removeItem('permissions');
-      window.location.reload();
-    });
-
-    return () => {
-      echo.leave(`user.${user.id}`);
-    };
-  }, [user]);
+ const updatePermissions = (newPermissions) => {
+  setPermissions(newPermissions);
+  sessionStorage.setItem('permissions', JSON.stringify(newPermissions));
+};
 
   return (
     <AuthContext.Provider
@@ -152,6 +128,7 @@ const echo = new Echo({
         logout,
         hasRole,
         hasPermission,
+        updatePermissions,
         http,
       }}
     >

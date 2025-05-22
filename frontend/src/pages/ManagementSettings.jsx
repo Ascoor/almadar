@@ -3,7 +3,7 @@ import { Plus, Trash, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteModal';
 import SectionHeader from '@/components/common/SectionHeader';
-
+import { useAuth } from '@/components/auth/AuthContext';
 import {
   getContractCategories,
   deleteContractCategory,
@@ -31,7 +31,7 @@ import {
   createAdviceType,
   updateAdviceType,
 } from '../services/api/legalAdvices';
-import { UserSectionIcon } from '../assets/icons';
+import { MainProcedures } from '../assets/icons';
 
 export default function ManagementSettings() {
   const [litigationTypes, setLitigationTypes] = useState([]);
@@ -44,7 +44,10 @@ export default function ManagementSettings() {
   const [modalType, setModalType] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [editItemId, setEditItemId] = useState(null);
+const { hasPermission } = useAuth();
+const moduleName = 'managment-lists';
 
+const can = (action) => hasPermission(`${action} ${moduleName}`);
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null, name: '', type: '' });
   const [pageState, setPageState] = useState({});
   const itemsPerPage = 5;
@@ -191,13 +194,21 @@ export default function ManagementSettings() {
       <div className="bg-card border mt-6 border-border rounded-xl shadow-md p-4 mb-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-primary">{title}</h3>
-          <button
-            onClick={() => { setShowModal(true); setModalType(type); setEditMode(false); setNewItem(''); }}
-            className="flex items-center gap-2 text-sm bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:scale-105 transition"
-          >
-            <Plus />
-            <span>إضافة</span>
-          </button>
+         {can('create') && (
+  <button
+    onClick={() => {
+      setShowModal(true);
+      setModalType(type);
+      setEditMode(false);
+      setNewItem('');
+    }}
+    className="flex items-center gap-2 text-sm bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:scale-105 transition"
+  >
+    <Plus />
+    <span>إضافة</span>
+  </button>
+)}
+
         </div>
 
         {pagedData.length === 0 ? (
@@ -207,57 +218,111 @@ export default function ManagementSettings() {
             <table className="min-w-full text-sm text-center table-auto text-foreground">
               <thead className="bg-muted text-muted-foreground font-semibold uppercase tracking-wide text-xs">
                 <tr>
-                  <th className="px-4 py-3 border-b border-border w-16">تعديل</th>
                   <th className="px-4 py-3 border-b border-border min-w-[200px]">الاسم</th>
-                  <th className="px-4 py-3 border-b border-border w-20">الإجراء</th>
+                {can('edit') && (
+      <th className="px-4 py-3 border-b border-border w-16">تعديل</th>
+    )}
+        {can('delete') && (
+      <th className="px-4 py-3 border-b border-border w-20">الإجراء</th>
+    )}
                 </tr>
               </thead>
-              <tbody>
-                {pagedData.map(item => (
-                  <tr
-                    key={`\`${type}-${item.id}\``}  // unique across tables
-                    className="border-t border-border hover:bg-accent transition-colors duration-150"
-                  >
-                    <td className="px-2 py-2">
-                      <button
-                        onClick={() => {
-                          setShowModal(true);
-                          setModalType(type);
-                          setEditMode(true);
-                          setEditItemId(item.id);
-                          setNewItem(getItemName(item, type));
-                        }}
-                        className="text-blue-600 hover:text-blue-800 transition"
-                        title="تعديل"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                    </td>
-                    <td className="px-3 py-2 break-words whitespace-pre-wrap text-sm font-medium">
-                      {getItemName(item, type)}
-                    </td>
-                    <td className="px-2 py-2">
-                      <button
-                        onClick={() => setConfirmDelete({ isOpen: true, id: item.id, name: getItemName(item, type), type })}
-                        className="text-reded hover:text-reded-dark transition"
-                        title="حذف"
-                      >
-                        <Trash className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+       <tbody>
+  {pagedData.map(item => (
+    <tr
+      key={`${type}-${item.id}`}
+      className="border-t border-border hover:bg-accent transition-colors duration-150"
+    >
+      <td className="px-3 py-2 break-words whitespace-pre-wrap text-sm font-medium">
+        {getItemName(item, type)}
+      </td>
+
+      {can('edit') && (
+        <td className="px-2 py-2">
+          <button
+            onClick={() => {
+              setShowModal(true);
+              setModalType(type);
+              setEditMode(true);
+              setEditItemId(item.id);
+              setNewItem(getItemName(item, type));
+            }}
+            className="text-blue-600 hover:text-blue-800 transition"
+            title="تعديل"
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+        </td>
+      )}
+
+      {can('delete') && (
+        <td className="px-2 py-2">
+          <button
+            onClick={() =>
+              setConfirmDelete({
+                isOpen: true,
+                id: item.id,
+                name: getItemName(item, type),
+                type,
+              })
+            }
+            className="text-reded hover:text-reded-dark transition"
+            title="حذف"
+          >
+            <Trash className="w-4 h-4" />
+          </button>
+        </td>
+      )}
+    </tr>
+  ))}
+</tbody>
+
             </table>
+            {/* Pagination controls */}
+{data.length > itemsPerPage && (
+  <div className="flex justify-center items-center gap-2 mt-4">
+    <button
+      className="px-3 py-1 text-sm rounded border border-border bg-background hover:bg-muted disabled:opacity-50"
+      disabled={currentPage === 1}
+      onClick={() =>
+        setPageState((prev) => ({
+          ...prev,
+          [type]: currentPage - 1,
+        }))
+      }
+    >
+      السابق
+    </button>
+
+    <span className="text-sm font-medium text-muted-foreground">
+      الصفحة {currentPage} من {Math.ceil(data.length / itemsPerPage)}
+    </span>
+
+    <button
+      className="px-3 py-1 text-sm rounded border border-border bg-background hover:bg-muted disabled:opacity-50"
+      disabled={currentPage === Math.ceil(data.length / itemsPerPage)}
+      onClick={() =>
+        setPageState((prev) => ({
+          ...prev,
+          [type]: currentPage + 1,
+        }))
+      }
+    >
+      التالي
+    </button>
+  </div>
+)}
+
           </div>
         )}
       </div>
+      
     );
   };
 
   return (
     <div className="bg-card border mt-6 border-border rounded-xl shadow-md p-4 mb-6">
-      <SectionHeader listName="المستخدمين" icon={UserSectionIcon} />
+      <SectionHeader listName="قوائم البيانات" icon={MainProcedures} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {renderTable('إجراءات التقاضي', litigationTypes, 'litigation')}
         {renderTable('إجراءات التحقيق', investigationTypes, 'investigation')}

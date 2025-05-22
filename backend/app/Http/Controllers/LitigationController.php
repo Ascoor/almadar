@@ -67,8 +67,7 @@ private function validateLitigation(Request $request)
         'court' => 'required|string|max:255',
         'filing_date' => 'required|date',
         'subject' => 'required|string|max:255',
-        'status' => 'required|in:open,in_progress,closed',
-        'results' => 'nullable|string|max:1000',
+        'status' => 'required|in:open,in_progress,closed', 
         'notes' => 'nullable|string|max:1000',
     ]);
 }

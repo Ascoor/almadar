@@ -13,18 +13,20 @@ return [
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
     */ 
-        'paths' => ['api/*', 'sanctum/csrf-cookie'],
-        'allowed_origins' => [
-            'http://localhost:3000',
-            'http://127.0.0.1:3000',
-            'http://127.0.0.1:7000',
-            'http://localhost:7000',
-            'https://www.avocat.live',
-        ],
-        'allowed_origins_patterns' => [],
-        'allowed_headers' => ['*'],
-        'allowed_methods' => ['*'],
-        'exposed_headers' => [],
-        'max_age' => 0,
-        'supports_credentials' => true,
-    ];
+    'paths' => [
+    'api/*',
+    'broadcasting/auth',
+    'sanctum/csrf-cookie',
+    '*',
+],
+'allowed_origins' => [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:7000',
+    'http://127.0.0.1:7000',
+    'https://www.avocat.live',
+],
+'allowed_headers' => ['*'],
+'allowed_methods' => ['*'],
+'supports_credentials' => true,
+];
