@@ -10,8 +10,7 @@ import {
   getLitigationActions,
   getLitigationActionTypes,
 } from "@/services/api/litigations";
-
-import { AuthContext } from "@/components/auth/AuthContext";
+import { AuthContext } from "@/components/auth/AuthContext"; 
 
 export default function LitigationActionsTable({ litigationId, scope, reloadLitigations }) {
   const [showModal, setShowModal] = useState(false);
@@ -22,14 +21,11 @@ export default function LitigationActionsTable({ litigationId, scope, reloadLiti
   const [loadingActions, setLoadingActions] = useState(false);
   const [loadingActionTypes, setLoadingActionTypes] = useState(false);
 
-  const { hasPermission } = useContext(AuthContext);
+  // Determine the module name based on the scope
   const moduleName = scope === "from" ? "litigation-from-actions" : "litigation-against-actions";
+  const { hasPermission } = useContext(AuthContext);
 
-  const can = (action) => {
-    const parts = moduleName.split("-");
-    const attempts = [moduleName, parts.slice(0, 2).join("-"), parts[0]];
-    return attempts.some((mod) => hasPermission(`${action} ${mod}`));
-  };
+  const can = (action) => hasPermission(`${action} ${moduleName}`);
 
   useEffect(() => {
     fetchLitigationActions();
@@ -92,20 +88,20 @@ export default function LitigationActionsTable({ litigationId, scope, reloadLiti
 
   if (!can("view")) {
     return (
-      <div className="p-4 mb-6 mt-6 bg-gray-200 dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-700 text-center text-red-600 dark:text-yellow-300 font-semibold">
+      <div className="p-4 mb-6 mt-6 bg-gray-200 dark:bg-navy rounded-xl border border-gray-300 dark:border-gray-700 text-center text-red-600 dark:text-yellow-300 font-semibold">
         ليس لديك صلاحية الاطلاع على الإجراءات
       </div>
     );
   }
 
   return (
-    <div className="mt-6 border rounded-xl p-4 bg-white dark:bg-gray-900">
+    <div className="mt-6 border rounded-xl p-4 bg-white dark:bg-royal-dark/90">
       <div className="flex justify-between mb-4">
         <h3 className="text-lg md:text-xl font-bold text-royal dark:text-gold">الإجراءات القضائية المرتبطة</h3>
         {can("create") && (
           <button
             onClick={() => { setEditingAction(null); setShowModal(true); }}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-white bg-gradient-to-r from-royal-light to-royal shadow hover:scale-105 transition"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-white dark:text-navy bg-gradient-to-r from-navy-light to-navy   dark:bg-gradient-to-r dark:from-gold-light dark:to-gold shadow  hover:scale-105 transition"
           >
             <BookmarkPlus className="w-5 h-5" />
             إضافة إجراء

@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\LegalAdvice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\AdminNotifier;
 
 class LegalAdviceController extends Controller
 {
     public function index()
     {
-        //get with advice_type
         $legalAdvices = LegalAdvice::with('adviceType')->get();
         return response()->json($legalAdvices);
     }
@@ -30,11 +29,19 @@ class LegalAdviceController extends Controller
             }
         }
 
+        $validated['created_by'] = auth()->id();
+
         $advice = LegalAdvice::create($validated);
+
+        AdminNotifier::notifyAll(
+            '📄 مشورة جديدة',
+            'تمت إضافة مشورة بعنوان: ' . $advice->topic,
+            '/legal-advices/' . $advice->id
+        );
 
         return response()->json([
             'message' => 'تم إنشاء المشورة بنجاح.',
-            'advice' => $advice,
+            'advice'  => $advice,
         ], 201);
     }
 
@@ -52,11 +59,19 @@ class LegalAdviceController extends Controller
             }
         }
 
+        $validated['updated_by'] = auth()->id();
+
         $legalAdvice->update($validated);
+
+        AdminNotifier::notifyAll(
+            '✏️ تعديل مشورة',
+            'تم تعديل مشورة بعنوان: ' . $legalAdvice->topic,
+            '/legal-advices/' . $legalAdvice->id
+        );
 
         return response()->json([
             'message' => 'تم تحديث المشورة بنجاح.',
-            'advice' => $legalAdvice,
+            'advice'  => $legalAdvice,
         ]);
     }
 
@@ -75,8 +90,6 @@ class LegalAdviceController extends Controller
         return response()->json($legalAdvice);
     }
 
-    // ----------------- Helpers ---------------- //
-
     private function validateAdvice(Request $request, $id = null)
     {
         $uniqueRule = 'unique:legal_advices,advice_number';
@@ -85,16 +98,15 @@ class LegalAdviceController extends Controller
         }
 
         return $request->validate([
- 'advice_type_id' => 'sometimes|exists:advice_types,id', // Validate against investigation_action_types table
-        
-            'topic' => 'required|string|max:255',
-            'text' => 'required|string',
-            'requester' => 'required|string|max:255',
-            'issuer' => 'required|string|max:255',
-            'advice_date' => 'required|date',
-            'advice_number' => ['required', 'string', $uniqueRule],
-            'notes' => 'nullable|string',
-            'attachment' => 'nullable|file|mimes:pdf|max:5120',
+            'advice_type_id'  => 'sometimes|exists:advice_types,id',
+            'topic'           => 'required|string|max:255',
+            'text'            => 'required|string',
+            'requester'       => 'required|string|max:255',
+            'issuer'          => 'required|string|max:255',
+            'advice_date'     => 'required|date',
+            'advice_number'   => ['required', 'string', $uniqueRule],
+            'notes'           => 'nullable|string',
+            'attachment'      => 'nullable|file|mimes:pdf|max:5120',
         ]);
     }
 
@@ -120,8 +132,8 @@ class LegalAdviceController extends Controller
     {
         Log::error('فشل رفع مرفق المشورة', [
             'error' => $e->getMessage(),
-            'line' => $e->getLine(),
-            'file' => $e->getFile(),
+            'line'  => $e->getLine(),
+            'file'  => $e->getFile(),
         ]);
     }
 
@@ -129,7 +141,7 @@ class LegalAdviceController extends Controller
     {
         return response()->json([
             'message' => 'حدث خطأ أثناء رفع المرفق.',
-            'errors' => ['attachment' => ['فشل رفع الملف.']],
+            'errors'  => ['attachment' => ['فشل رفع الملف.']],
         ], 422);
     }
 }

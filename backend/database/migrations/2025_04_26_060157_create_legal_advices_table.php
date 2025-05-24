@@ -27,6 +27,16 @@ return new class extends Migration {
             $table->string('advice_number')->unique();
             $table->string('attachment')->nullable(); // ملف PDF مرفق
             $table->text('notes')->nullable(); // ملاحظات إضافية
+                        $table->foreignId('created_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
+
+      
+            $table->foreignId('updated_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
             $table->timestamps();
         });
     }

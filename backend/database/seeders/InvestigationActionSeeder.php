@@ -38,15 +38,17 @@ class InvestigationActionSeeder extends Seeder
                 // اختيار نوع الإجراء عشوائيًا من جدول investigation_action_types
                 $actionType = InvestigationActionType::inRandomOrder()->first();
 
-                InvestigationAction::create([
-                    'investigation_id' => $investigations->random()->id,
-                    'action_date' => Carbon::now()->subDays(rand(1, 60))->format('Y-m-d'),
-                    'action_type_id' => $actionType->id,  // ربط الإجراء باستخدام id من جدول investigation_action_types
-                    'officer_name' => $officers[array_rand($officers)],
-                    'requirements' => 'تقديم مبررات كتابية',
-                    'results' => rand(0, 1) ? 'تم الاستماع إلى الموظف' : 'جارٍ دراسة الموضوع',
-                    'status' => ['pending', 'in_review', 'done'][rand(0, 2)],
-                ]);
+               InvestigationAction::create([
+    'investigation_id' => $investigations->random()->id,
+    'action_date' => Carbon::now()->subDays(rand(1, 60))->format('Y-m-d'),
+    'action_type_id' => $actionType->id,
+    'officer_name' => $officers[array_rand($officers)],
+    'requirements' => 'تقديم مبررات كتابية',
+    'results' => rand(0, 1) ? 'تم الاستماع إلى الموظف' : 'جارٍ دراسة الموضوع',
+    'status' => ['pending', 'in_review', 'done'][rand(0, 2)],
+    'created_by' => 1, // ✅ مضاف
+]);
+
             }
         }
     }

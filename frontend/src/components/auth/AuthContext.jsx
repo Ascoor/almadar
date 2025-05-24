@@ -70,28 +70,31 @@ export function AuthProvider({ children }) {
     setPermissions(pr);
     navigate('/');
   };
-
   const login = async (email, password) => {
-    try {
-      await axios.get(`${API_CONFIG.baseURL}/sanctum/csrf-cookie`, { withCredentials: true });
+  try {
+    await axios.get(`${API_CONFIG.baseURL}/sanctum/csrf-cookie`, { withCredentials: true });
 
-      const resp = await axios.post(
-        `${API_CONFIG.baseURL}/api/login`,
-        { email, password },
-        { withCredentials: true, headers: { 'Content-Type': 'application/json' } }
-      );
+    const resp = await axios.post(
+      `${API_CONFIG.baseURL}/api/login`,
+      { email, password },
+      { withCredentials: true, headers: { 'Content-Type': 'application/json' } }
+    );
 
-      const { user: u, token: t, roles: rl = [], permissions: pr = [] } = resp.data;
+    const { user: u, token: t, roles: rl = [], permissions: pr = [] } = resp.data;
 
-      if (u && t) {
-        saveAuth({ user: u, token: t, roles: rl, permissions: pr });
-        return true;
-      }
-    } catch (err) {
-      console.error('Login error:', err.response?.data || err.message);
+    if (u && t) {
+      saveAuth({ user: u, token: t, roles: rl, permissions: pr });
+      return { success: true };
     }
-    return false;
-  };
+  } catch (err) {
+    return {
+      success: false,
+      message: err.response?.data?.message || 'فشل الاتصال بالخادم',
+    };
+  }
+
+  return { success: false, message: 'بيانات الدخول غير صحيحة' };
+};
 
   const logout = async () => {
     try {

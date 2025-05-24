@@ -103,14 +103,14 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   return (
     <aside
       dir="rtl"
-      className={`fixed right-0 top-0 z-20 h-full bg-white dark:bg-black
-        bg-gradient-to-b from-gold/70 via-navy/70 to-navy/90
+      className={`fixed right-0 top-0 z-20 h-full bg-gold-light dark:bg-black
+        bg-gradient-to-b from-gold/60 via-reded/20 to-navy-light/90 
         dark:bg-gradient-to-b dark:from-navy-dark/40 dark:via-navy-dark/20 dark:to-reded-dark/60
         border-l border-border transition-all duration-300
-        ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-16' : 'translate-x-full')}
+        ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-16 ' : 'translate-x-full')}
       `}
     >
-      <div className="flex items-center justify-center p-4">
+      <div className="flex items-center justify-center p-2 mt-6">
         <img
           src={logoSrc}
           alt="Logo"

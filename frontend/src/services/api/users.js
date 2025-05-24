@@ -1,107 +1,92 @@
 import api from './axiosConfig';
 
-// Get all users
+/* ==== 🧩 إدارة المستخدمين ==== */
+
+// جلب جميع المستخدمين
 export const getUsers = async () => {
-  try {
-    const response = await api.get('/api/users');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const res = await api.get('/api/users');
+  return res.data;
 };
 
-// Create a new user
-export const createUser = async (userData) => {
-  try {
-    const response = await api.post('/api/users', userData);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+// إنشاء مستخدم جديد
+export const createUser = async (formData) => {
+  const res = await api.post('/api/users', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data;
 };
 
-// Update an existing user
-export const updateUser = async (userId, userData) => {
-  try {
-    const response = await api.put(`/api/users/${userId}`, userData);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+// تحديث بيانات مستخدم
+export const updateUser = async (userId, formData) => {
+  const res = await api.post(`/api/users/${userId}?_method=PUT`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data;
 };
 
-// Delete a user
+// حذف مستخدم
 export const deleteUser = async (userId) => {
-  try {
-    const response = await api.delete(`/api/users/${userId}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const res = await api.delete(`/api/users/${userId}`);
+  return res.data;
 };
 
-// Get permissions for all users
+/* ==== 🔐 إدارة الصلاحيات ==== */
+
+// جلب كل الصلاحيات
 export const getPermissions = async () => {
-  try {
-    const response = await api.get('/api/permissions');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const res = await api.get('/api/permissions');
+  return res.data;
 };
 
-// Get permissions for a specific user
-export const getUserPermissions = async (userId) => {
-  try {
-    const response = await api.get(`/api/users/${userId}/permissions`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Get all roles
+// جلب كل الأدوار
 export const getRoles = async () => {
-  try {
-    const response = await api.get('/api/roles');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const res = await api.get('/api/roles');
+  return res.data;
 };
 
-// Give permission to a user
-export const givePermission = async (userId, permissionId) => {
-  try {
-    const response = await api.post(`/api/users/${userId}/give-permission`, {
-      permission: permissionId,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Revoke permission from a user
-export const revokePermission = async (userId, permissionId) => {
-  try {
-    const response = await api.post(`/api/users/${userId}/revoke-permission`, {
-      permission: permissionId,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-// Smart permission manager
+// تغيير صلاحية مستخدم (ذكي)
 export const changeUserPermission = async (userId, permission, action) => {
-  try {
-    const response = await api.post(`/api/users/${userId}/permission/change`, {
-      permission,
-      action, // 'add' or 'remove'
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const res = await api.post(`/api/users/${userId}/permission/change`, {
+    permission,
+    action,
+  });
+  return res.data;
+};
+
+// إعطاء صلاحية
+export const givePermission = async (userId, permissionId) => {
+  const res = await api.post(`/api/users/${userId}/give-permission`, {
+    permission: permissionId,
+  });
+  return res.data;
+};
+
+// إلغاء صلاحية
+export const revokePermission = async (userId, permissionId) => {
+  const res = await api.post(`/api/users/${userId}/revoke-permission`, {
+    permission: permissionId,
+  });
+  return res.data;
+};
+
+/* ==== 👤 إدارة الملف الشخصي ==== */
+
+// جلب بيانات مستخدم واحد
+export const getProfile = async (userId) => {
+  const res = await api.get(`/api/users/${userId}`);
+  return res.data;
+};
+
+// تحديث الملف الشخصي
+export const updateProfile = async (userId, formData) => {
+  const res = await api.post(`/api/users/${userId}?_method=PUT`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data;
+};
+
+// تغيير كلمة المرور
+export const changePassword = async (userId, passwordData) => {
+  const res = await api.post(`/api/users/${userId}/change-password`, passwordData);
+  return res.data;
 };

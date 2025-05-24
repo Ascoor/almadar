@@ -1,19 +1,20 @@
 import { useThemeProvider } from '../../utils/ThemeContext';
 import { SunMedium , MoonStar  } from 'lucide-react';
+import IconButton from './iconButton';
 
-export default function ThemeToggle({ size = 'md' }) {
+export default function ThemeToggle() {
   const { currentTheme, changeCurrentTheme } = useThemeProvider();
 
   return (
-    <button
+    <IconButton
       onClick={() => changeCurrentTheme(currentTheme === 'light' ? 'dark' : 'light')}
-      className="flex items-center justify-center w-12 h-12 rounded-full shadow-md bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition"
+      active={false}
     >
       {currentTheme === 'light' ? (
-        <SunMedium  className="w-6 h-6" />
+        <SunMedium className="w-5 h-5" />
       ) : (
-        <MoonStar  className="w-6 h-6" />
+        <MoonStar className="w-5 h-5" />
       )}
-    </button>
+    </IconButton>
   );
 }

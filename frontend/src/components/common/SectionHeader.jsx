@@ -5,11 +5,12 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
  <div className="
   flex flex-col items-center text-center space-y-4 
   p-4 sm:p-6 md:p-8 shadow-xl transition-all duration-300
-  bg-gradient-to-r from-white via-blue-50 to-white
-  border border-blue-200 rounded-full mb-6
-  dark:bg-gradient-to-r dark:from-navy/20 dark:to-navy/10
-  dark:text-foreground dark:ring-2 dark:ring-mint-500 
-  dark:shadow-[0_0_30px_#66ffcc40]
+  bg-white bg-gradient-to-r from-royal/20 via-gold/20 to-royal/20
+  border border-greenic/10 rounded-full mb-6
+  dark:bg-black
+  dark:bg-gradient-to-b dark:from-royal-dark/10 dark:via-navy-dark/80 dark:to-navy/10
+  dark:text-foreground dark:ring-2 dark:ring-greenic/30 
+  dark:shadow-greenic/30
 ">
   {icon && (
     <img

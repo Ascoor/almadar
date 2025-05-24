@@ -7,7 +7,7 @@ use App\Models\Archive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-
+use App\Helpers\AdminNotifier;
 class ContractController extends Controller
 {
         public function __construct()
@@ -44,7 +44,12 @@ class ContractController extends Controller
         if (!empty($validated['attachment'])) {
             $this->storeArchive($contract);
         }
-
+// بعد إنشاء العقد:
+AdminNotifier::notifyAll(
+    '📄 عقد جديد',
+    'تمت إضافة عقد رقم: ' . $contract->number . ' بواسطة ' . auth()->user()->name,
+    '/contracts/' . $contract->id
+);
         return response()->json([
             'message' => 'تم إنشاء العقد بنجاح.',
             'contract' => $contract,
@@ -73,6 +78,11 @@ class ContractController extends Controller
         if (!empty($validated['attachment'])) {
             $this->storeArchive($contract);
         }
+AdminNotifier::notifyAll(
+    '✏️ تعديل عقد',
+    'تم تعديل عقد رقم: ' . $contract->number . ' بواسطة ' . auth()->user()->name,
+    '/contracts/' . $contract->id
+);
 
         return response()->json([
             'message' => 'تم تحديث العقد بنجاح.',

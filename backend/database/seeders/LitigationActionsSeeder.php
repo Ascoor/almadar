@@ -58,6 +58,7 @@ class LitigationActionsSeeder extends Seeder
                     'location'      => fake()->randomElement(['محكمة الرياض', 'محكمة جدة', 'محكمة الدمام']),
                     'notes'         => fake()->optional()->paragraph(2),
                     'status'        => fake()->randomElement(['pending', 'in_review', 'done']),
+                      'created_by' => 1, // ✅ مضاف
                 ]);
             }
         }

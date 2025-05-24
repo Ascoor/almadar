@@ -3,12 +3,13 @@
   import { TooltipProvider } from "@/components/ui/tooltip";
   import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
   import { useLocation } from "react-router-dom";
-import {NotificationProvider} from '@/components/notifications/NotificationContext';
+import {NotificationProvider} from '../components/Notifications/NotificationContext';
   import Header from '../components/dashboard/Header';
   import Sidebar from '../components/dashboard/Sidebar';
   import AuthRoutes from '../components/layout/AuthRoutes'; 
 import { AuthContext } from '@/components/auth/AuthContext';   
 import EchoListener from '../components/EchoListener';
+import AdminListener from '../components/AdminListener';
   const queryClient = new QueryClient();
 
   export default function AuthWrapper() {
@@ -42,7 +43,8 @@ import EchoListener from '../components/EchoListener';
         <TooltipProvider> 
        
       <NotificationProvider> 
-  <EchoListener /> {/* ← استخدم المكون هنا مباشرة */}
+   <AdminListener />  
+   <EchoListener />  
  
 <div className="min-h-screen flex flex-col sm:flex-row relative">
         {/* Sidebar */}
@@ -62,7 +64,7 @@ import EchoListener from '../components/EchoListener';
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col">
-              <Header isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
+              <Header user={user.id} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
 <main
   className={`
     flex-1 pt-16 px-4 sm:px-6 md:px-8 transition-all duration-300

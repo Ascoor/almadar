@@ -38,6 +38,7 @@ class LitigationSeeder extends Seeder
                 'filing_date' => Carbon::now()->subDays(rand(90, 500))->format('Y-m-d'),
                 'status'      => ['open', 'in_progress', 'closed'][rand(0, 2)],
                 'notes'       => 'الخصم طالب بتعويض مالي مرفق بمستندات إثبات. القضية في طور المرافعة.',
+                  'created_by' => 1, // ✅ مضاف
             ]);
         }
     }

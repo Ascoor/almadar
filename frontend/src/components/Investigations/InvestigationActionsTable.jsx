@@ -42,34 +42,35 @@ export default function InvestigationActionsTable({ actions = [], investigationI
       toast.error("فشل تحميل أنواع الإجراءات");
     }
   };
-
+  
   const handleSave = async (data) => {
-    try {
-      if (editingAction) {
-        await updateInvestigationAction(investigationId, editingAction.id, data);
-        toast.success("تم تعديل الإجراء بنجاح");
-      } else {
-        await createInvestigationAction(investigationId, data);
-        toast.success("تمت إضافة الإجراء بنجاح");
-      }
-      setShowModal(false);
-      onReload();
-    } catch {
-      toast.error("فشل في حفظ الإجراء");
+  try {
+    if (editingAction) {
+      await updateInvestigationAction(investigationId, editingAction.id, data);
+      toast.success("✅ تم تعديل الإجراء بنجاح", { id: "investigation-action" });
+    } else {
+      await createInvestigationAction(investigationId, data);
+      toast.success("✅ تمت إضافة الإجراء بنجاح", { id: "investigation-action" });
     }
-  };
+    setShowModal(false);
+    onReload();
+  } catch {
+    toast.error("❌ فشل في حفظ الإجراء", { id: "investigation-action" });
+  }
+};
 
-  const handleConfirmDelete = async () => {
-    if (!actionToDelete) return;
-    try {
-      await deleteInvestigationAction(investigationId, actionToDelete.id);
-      toast.success("تم حذف الإجراء بنجاح");
-      setActionToDelete(null);
-      onReload();
-    } catch {
-      toast.error("فشل في حذف الإجراء");
-    }
-  };
+const handleConfirmDelete = async () => {
+  if (!actionToDelete) return;
+  try {
+    await deleteInvestigationAction(investigationId, actionToDelete.id);
+    toast.success("🗑️ تم حذف الإجراء بنجاح", { id: "investigation-action" });
+    setActionToDelete(null);
+    onReload();
+  } catch {
+    toast.error("❌ فشل في حذف الإجراء", { id: "investigation-action" });
+  }
+};
+
 
   // ✅ إرجاع رسالة في حال عدم وجود صلاحية view
   if (!can("view")) {

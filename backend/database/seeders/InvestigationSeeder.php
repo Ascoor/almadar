@@ -20,6 +20,7 @@ class InvestigationSeeder extends Seeder
                 'case_number' => 'INV-' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'decision' => null,
                 'status' => 'open',
+                'created_by' => 1, // ✅ معرف المستخدم المنشئ
             ]);
         }
     }

@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Broadcast;
 
+use App\Events\TestEvent;
 use Illuminate\Support\Facades\Route;  
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,10 @@ use Illuminate\Support\Facades\Route;
 Broadcast::routes(['middleware' => ['auth:api']]);  
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/test-event', function () {
+    // إرسال الحدث مع رسالة اختبار
+    event(new TestEvent("This is a test message from the backend!"));
+    return "Test event broadcasted!";
 });

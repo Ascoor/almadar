@@ -20,8 +20,19 @@ class LegalAdvice extends Model
         'advice_number',
         'attachment',
         'notes',
+ 
+        'created_by',
+        'updated_by',
     ];
+    public function creator()
+{
+    return $this->belongsTo(User::class, 'created_by');
+}
 
+public function updater()
+{
+    return $this->belongsTo(User::class, 'updated_by');
+}
     // العلاقة مع AdviceType (Many-to-One)
     public function adviceType()
     {

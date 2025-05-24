@@ -36,6 +36,7 @@ class LegalAdviceSeeder extends Seeder
                 'advice_date' => '2024-01-15',
                 'advice_number' => 'MSH-001',
                 'attachment' => null,
+                  'created_by' => 1, // ✅ مضاف
             ],
             [
                 'advice_type_id' => AdviceType::inRandomOrder()->first()->id,
@@ -46,6 +47,7 @@ class LegalAdviceSeeder extends Seeder
                 'advice_date' => '2024-02-03',
                 'advice_number' => 'MSH-002',
                 'attachment' => null,
+                  'created_by' => 1, // ✅ مضاف
             ],
             [
                 'advice_type_id' => AdviceType::inRandomOrder()->first()->id,
@@ -56,6 +58,7 @@ class LegalAdviceSeeder extends Seeder
                 'advice_date' => '2024-03-10',
                 'advice_number' => 'HR-2024-001',
                 'attachment' => null,
+                  'created_by' => 1, // ✅ مضاف
             ],
             [
                 'advice_type_id' => AdviceType::inRandomOrder()->first()->id,
@@ -66,6 +69,7 @@ class LegalAdviceSeeder extends Seeder
                 'advice_date' => '2024-04-01',
                 'advice_number' => 'FN-2024-017',
                 'attachment' => null,
+                  'created_by' => 1, // ✅ مضاف
             ],
         ];
 

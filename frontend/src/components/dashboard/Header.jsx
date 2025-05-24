@@ -5,18 +5,18 @@ import ThemeToggle from '../common/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 
-export default function Header({ isOpen, onToggleSidebar }) {
+export default function Header({ isOpen,user, onToggleSidebar }) {
   
   return (
     <nav
       dir="rtl"
       className={`
-        fixed top-0 left-0 right-0
+        fixed top-0 left-0 -right-0
         transition-all duration-300
         ${isOpen ? 'sm:mr-64' : 'sm:mr-16'}
         py-3 px-6 flex justify-between items-center
-        bg-white dark:bg-black
-        bg-gradient-to-l from-gold/70 via-navy/80 to-navy-light/80 
+        bg-gold-light dark:bg-black
+        bg-gradient-to-l from-gold/60 via-reded/20 to-navy-light/70 
              dark:bg-gradient-to-l dark:from-navy-dark/30 dark:via-navy-dark/40 dark:to-reded-dark/60
         text-gray-900 dark:text-white
         border-b border-gray-200 dark:border-navy-dark
@@ -31,7 +31,7 @@ export default function Header({ isOpen, onToggleSidebar }) {
 
       {/* أدوات التحكم */}
       <div className="flex items-center gap-3">
-        <Notifications align="right" />
+        <Notifications userId={user.id} align="right" />
         <ThemeToggle />
         <div className="hidden sm:block w-px h-6 bg-border" />
         <UserMenu align="left" />

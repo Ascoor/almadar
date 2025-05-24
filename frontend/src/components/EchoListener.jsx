@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/components/auth/AuthContext';
-import { useNotifications } from '@/components/notifications/NotificationContext';
+import { useNotifications } from '@/components/Notifications/NotificationContext';
 import { toast } from 'sonner';
 import { initEcho } from '@/lib/echo';
 

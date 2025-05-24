@@ -17,7 +17,19 @@ class InvestigationAction extends Model
         'requirements',
         'results',
         'status', // pending | in_review | done
+  
+        'created_by',
+        'updated_by',
     ];
+    public function creator()
+{
+    return $this->belongsTo(User::class, 'created_by');
+}
+
+public function updater()
+{
+    return $this->belongsTo(User::class, 'updated_by');
+}
 
     // ✅ علاقة: كل إجراء يتبع تحقيق واحد
     public function investigation()

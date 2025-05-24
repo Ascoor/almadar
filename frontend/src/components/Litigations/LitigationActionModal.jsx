@@ -24,25 +24,28 @@ export default function LitigationActionModal({
   const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
 
+  // Handle the opening of the modal and the initialization of the form
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) return; // Only reset if the modal is opened
     if (initialData) {
-      setForm({ ...EMPTY_FORM, ...initialData });
+      setForm({ ...EMPTY_FORM, ...initialData }); // If editing, fill in form with initial data
     } else {
-      setForm(EMPTY_FORM);
+      setForm(EMPTY_FORM); // If creating new, reset the form
     }
   }, [isOpen, initialData]);
 
+  // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle save action (create or update)
   const handleSave = async () => {
     setLoading(true);
     try {
-      await onSubmit(form);
-      onClose();
+      await onSubmit(form); // Call onSubmit with form data
+      onClose(); // Close the modal after saving
     } catch (err) {
       toast.error("فشل في حفظ الإجراء");
     } finally {
@@ -50,7 +53,7 @@ export default function LitigationActionModal({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) return null; // Don't render if the modal is not open
 
   return (
     <ModalCard
@@ -62,6 +65,7 @@ export default function LitigationActionModal({
       submitLabel={form.id ? "تحديث" : "إضافة"}
     >
       <form className="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
+        {/* Action Date */}
         <div>
           <label className="block mb-1 text-sm">تاريخ الإجراء</label>
           <input
@@ -74,6 +78,7 @@ export default function LitigationActionModal({
           />
         </div>
 
+        {/* Action Type */}
         <div>
           <label className="block mb-1 text-sm">نوع الإجراء</label>
           <select
@@ -92,6 +97,7 @@ export default function LitigationActionModal({
           </select>
         </div>
 
+        {/* Lawyer Name */}
         <div>
           <label className="block mb-1 text-sm">اسم القائم بالإجراء</label>
           <input
@@ -105,6 +111,7 @@ export default function LitigationActionModal({
           />
         </div>
 
+        {/* Requirements */}
         <div>
           <label className="block mb-1 text-sm">المطلوب</label>
           <input
@@ -116,6 +123,7 @@ export default function LitigationActionModal({
           />
         </div>
 
+        {/* Location */}
         <div>
           <label className="block mb-1 text-sm">جهة الإجراء</label>
           <input
@@ -127,6 +135,7 @@ export default function LitigationActionModal({
           />
         </div>
 
+        {/* Results */}
         <div>
           <label className="block mb-1 text-sm">النتيجة</label>
           <input
@@ -138,6 +147,7 @@ export default function LitigationActionModal({
           />
         </div>
 
+        {/* Notes */}
         <div>
           <label className="block mb-1 text-sm">ملاحظات</label>
           <textarea
@@ -149,6 +159,7 @@ export default function LitigationActionModal({
           />
         </div>
 
+        {/* Status */}
         <div>
           <label className="block mb-1 text-sm">الحالة</label>
           <select

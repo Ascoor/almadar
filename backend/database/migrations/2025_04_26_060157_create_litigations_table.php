@@ -20,6 +20,16 @@ $table->unsignedSmallInteger('case_year');
             $table->string('subject');                    // نوع الدعوى
             $table->enum('status', ['open', 'in_progress', 'closed'])->default('open'); // حالة الدعوى
             $table->string('notes')->nullable();          // ملاحظات
+                        $table->foreignId('created_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
+
+      
+            $table->foreignId('updated_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
             $table->timestamps();
         }); 
 
@@ -33,7 +43,16 @@ $table->unsignedSmallInteger('case_year');
         // إنشاء جدول "litigation_actions"
         Schema::create('litigation_actions', function (Blueprint $table) {
             $table->id();
+                   $table->foreignId('created_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
 
+      
+            $table->foreignId('updated_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
             // الربط مع جدول "litigations"
             $table->foreignId('litigation_id')->constrained()->onDelete('cascade');
 

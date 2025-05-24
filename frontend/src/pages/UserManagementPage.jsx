@@ -19,6 +19,7 @@ changeUserPermission,
   getRoles,
 } from '@/services/api/users';
 import {  toast } from 'sonner';
+import AddButton from '../components/common/AddButton';
 
 export default function UsersManagementPage() {
   const [users, setUsers] = useState([]);
@@ -172,16 +173,18 @@ const handlePermChange = async (permName, shouldEnable) => {
     <div className="container mx-auto p-6 space-y-6">
       <SectionHeader icon={RoleIcon} listName="إدارة المستخدمين والصلاحيات" />
       <div className="flex justify-between items-center">
-        <button
+        <AddButton
           onClick={() => { setSelectedUser(null); setModalMode('add'); }}
-          className="flex items-center gap-2 bg-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 rounded-lg shadow hover:opacity-90 transition"
+          className="flex items-center gap-2  px-4 py-2 rounded-lg shadow hover:opacity-90 transition"
         >
           إضافة مستخدم
-        </button>
+        </AddButton>
       </div>
 
       <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow min-w-full">
         <TableComponent
+        
+        moduleName="users~"
           data={users}
           headers={[
             { key: 'id', text: 'الرقم' },

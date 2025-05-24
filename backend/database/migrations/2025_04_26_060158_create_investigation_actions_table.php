@@ -30,7 +30,17 @@ return new class extends Migration
                   ->onDelete('cascade');
             $table->string('officer_name');            // اسم الضابط القائم بالإجراء
             $table->text('requirements')->nullable();  // الطلبات الخاصة بالإجراء
-            $table->text('results')->nullable();      // النتائج
+            $table->text('results')->nullable(); 
+                        $table->foreignId('created_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
+
+      
+            $table->foreignId('updated_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();     // النتائج
             $table->enum('status', ['pending', 'done', 'cancelled', 'in_review'])->default('pending');  // حالة الإجراء
             $table->timestamps();  // التاريخ الزمني
         });

@@ -38,6 +38,11 @@
           DEFAULT: '#EF4444',
           dark: '#7F1D1D',
         },
+        greenic: {
+  light: '#81C784',  // Light green
+  DEFAULT: '#4CAF50', // Default green
+  dark: '#388E3C',   // Dark green
+        },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))'

@@ -5,6 +5,7 @@ import GlobalSpinner from '../common/Spinners/GlobalSpinner';
 import { lazy } from 'react';  
  import Forbidden from '@/pages/Forbidden';
 import ProtectedRoute from '../auth/ProtectedRoute.jsx';
+import ProfilePage from '../../pages/ProfilePage.jsx';
 
 const Home = lazy(() => import('../dashboard/Dashboard'));
  
@@ -49,6 +50,14 @@ const AuthRoutes = () => {
   element={
     <ProtectedRoute permission="view contracts">
       <Contracts />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/profile"
+  element={
+    <ProtectedRoute permission="view profile">
+      <ProfilePage />
     </ProtectedRoute>
   }
 />

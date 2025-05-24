@@ -15,8 +15,8 @@ const translatePermission = (name) => {
 const translateSection = (section) => {
   const map = {
     'litigation-from': 'دعاوى من الشركة',
-    'litigation-against': 'دعاوى ضد الشركة',
     'litigation-against-actions': 'إجراءات دعاوى ضد الشركة',
+    'litigation-against': 'دعاوى ضد الشركة',
     'litigation-from-actions': 'إجراءات دعاوى من الشركة',
     legaladvices: 'الرأي والمشورة',
     'managment-lists': 'قوائم البيانات',
@@ -26,32 +26,40 @@ const translateSection = (section) => {
     'investigation-actions': 'إجراءات التحقيق',
     users: 'المستخدمين',
     roles: 'الأدوار',
-    permissions: 'الصلاحيات',
     profile: 'الملف الشخصي',
+    permissions: 'الصلاحيات',
   };
   return map[section] || section;
 };
 
 const groupPermissionsBySection = (allPermissions = [], userPermissions = []) => {
-  const userPermissionNames = new Set(userPermissions.map(p => p.name));
+  const userPermissionNames = new Set(userPermissions.map(p => p.name.toLowerCase()));
   return allPermissions.reduce((acc, perm) => {
-    const parts = perm.name.toLowerCase().split(' ');
-    const action = parts[0];
-    const section = parts.slice(1).join(' ');
+    const [action, ...sectionParts] = perm.name.toLowerCase().split(' ');
+    const section = sectionParts.join(' ');
+    if (!section) return acc; // تجاهل أي صلاحية ليس فيها قسم
 
     if (!acc[section]) acc[section] = [];
-    const enabled = userPermissionNames.has(perm.name);
-    acc[section].push({ ...perm, action, enabled });
+    acc[section].push({
+      ...perm,
+      action,
+      enabled: userPermissionNames.has(perm.name.toLowerCase()),
+    });
     return acc;
   }, {});
 };
 
-const PermissionRow = ({ action, enabled, onChange }) => (
+const PermissionRow = ({ action, enabled, onChange, disabled }) => (
   <div className='flex items-center justify-between w-full p-2 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md transition-transform transform hover:scale-105 mb-2'>
     <label className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
       {translatePermission(action)}
     </label>
-    <button onClick={onChange} className='focus:outline-none cursor-pointer text-2xl'>
+    <button
+      onClick={onChange}
+      className='focus:outline-none cursor-pointer text-2xl'
+      disabled={disabled}
+      title={disabled ? 'الصلاحية مقيدة بدون "عرض"' : ''}
+    >
       {enabled ? <ToggleRight className='text-green-500' /> : <ToggleLeft className='text-red-500' />}
     </button>
   </div>
@@ -80,13 +88,13 @@ const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionC
               const disabled = (!isViewEnabled && actionType !== 'view') || loading;
 
               return (
-               <PermissionRow
-  key={permission.id}
-  action={permission.action}
-  enabled={permission.enabled}
-  onChange={() => handlePermissionChange(permission.name, !permission.enabled)}
-/>
-
+                <PermissionRow
+                  key={permission.id}
+                  action={permission.action}
+                  enabled={permission.enabled}
+                  disabled={disabled}
+                  onChange={() => handlePermissionChange(permission.name, !permission.enabled)}
+                />
               );
             })}
           </div>

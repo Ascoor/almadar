@@ -18,6 +18,7 @@ trap cleanup SIGINT SIGTERM
 # -----------------------------------------------------------------------------
 echo "🚀 Starting Laravel on http://127.0.0.1:8000"
 cd backend
+php artisan optimize:clear 
 php artisan serve --host=127.0.0.1 --port=8000 > /dev/null 2>&1 &
 BACKEND_PID=$!
 cd ..

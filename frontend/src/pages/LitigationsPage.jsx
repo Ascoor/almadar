@@ -56,7 +56,7 @@ export default function LitigationsPage() {
       : litigations.filter((c) => c.scope === "from");
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-900 min-h-screen transition-colors">
+    <div className="p-4 sm:p-6 lg:p-8 bg-white dark:bg-black dark:bg-gradient-to-r dark:from-greenic-dark/10 dark:via-navy-dark  dark:to-royal-dark dark:bg-greenic-dark/10 shadow-greenic shadow-md min-h-screen  ">
       <SectionHeader listName="وحدة التقاضي" icon={CaseIcon} />
 
       {/* Tab Buttons */}

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Litigation;
 use App\Models\LitigationAction;
 use Illuminate\Http\Request;
+use App\Helpers\AdminNotifier;
 
 class LitigationActionController extends Controller
 {
@@ -17,11 +18,19 @@ class LitigationActionController extends Controller
     public function store(Request $request, Litigation $litigation)
     {
         $validated = $this->validateAction($request);
+        $validated['created_by'] = auth()->id();
+
         $action = $litigation->actions()->create($validated);
+
+        AdminNotifier::notifyAll(
+            '📄 إجراء قضائي جديد',
+            'تمت إضافة إجراء على القضية: ' . $litigation->case_number,
+            '/litigations/' . $litigation->id
+        );
 
         return response()->json([
             'message' => 'تم إضافة الإجراء القضائي بنجاح.',
-            'data' => $action,
+            'data'    => $action,
         ], 201);
     }
 
@@ -32,11 +41,19 @@ class LitigationActionController extends Controller
         }
 
         $validated = $this->validateAction($request);
+        $validated['updated_by'] = auth()->id();
+
         $action->update($validated);
+
+        AdminNotifier::notifyAll(
+            '✏️ تعديل إجراء قضائي',
+            'تم تعديل إجراء في القضية: ' . $litigation->case_number,
+            '/litigations/' . $litigation->id
+        );
 
         return response()->json([
             'message' => 'تم تحديث الإجراء القضائي.',
-            'data' => $action,
+            'data'    => $action,
         ]);
     }
 
@@ -48,20 +65,22 @@ class LitigationActionController extends Controller
 
         $action->delete();
 
-        return response()->json(['message' => 'تم حذف الإجراء القضائي.']);
+        return response()->json([
+            'message' => 'تم حذف الإجراء القضائي.',
+        ]);
     }
 
     private function validateAction(Request $request)
     {
-    return $request->validate([
-            'action_date' => 'required|date',
-            'action_type_id' => 'required|exists:litigation_action_types,id', // Validate against litigation_action_types table
-            'requirements' => 'nullable|string',
-            'lawyer_name' => 'required|string|max:1000',
-            'location' => 'required|string|max:1000',
-            'notes' => 'nullable|string',
-            'results' => 'nullable|string',
-            'status' => 'required|in:pending,done,in_review',
+        return $request->validate([
+            'action_date'     => 'required|date',
+            'action_type_id'  => 'required|exists:litigation_action_types,id',
+            'requirements'    => 'nullable|string',
+            'lawyer_name'     => 'required|string|max:1000',
+            'location'        => 'required|string|max:1000',
+            'notes'           => 'nullable|string',
+            'results'         => 'nullable|string',
+            'status'          => 'required|in:pending,done,in_review',
         ]);
     }
 }

@@ -1,33 +1,40 @@
-  
-import React, { useState, useContext } from 'react'; 
+import React, { useState, useContext } from 'react';
 import { Mail, LockKeyhole } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-    // لا نحتاجه بعد استخدام الـContext
 import { AuthContext } from '@/components/auth/AuthContext';
-import { motion } from 'framer-motion'; 
+import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Input } from '../../components/ui/input';
 
-const Login = ({ onAuthStart, handleFormClose }) => { 
+const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
   const { login } = useContext(AuthContext);
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    handleFormClose();
     onAuthStart();
-    const success = await login(email, password);
 
-    toast(
-      success ? 'تم تسجيل الدخول بنجاح ✅' : 'فشل تسجيل الدخول ❌', 
-      {
-        description: success
-          ? 'تم تسجيل الدخول بنجاح إلى النظام.'
-          : 'الرجاء التأكد من صحة البريد وكلمة المرور.',
+    try {
+      const { success, message } = await login(email, password);
+
+      if (success) {
+        toast.success('✅ تم تسجيل الدخول بنجاح', {
+          description: 'تم الدخول إلى النظام بنجاح.',
+        });
+        onAuthComplete(true);
+      } else {
+        toast.error('❌ فشل تسجيل الدخول', {
+          description: message || 'الرجاء التحقق من البريد وكلمة المرور.',
+        });
+        onAuthComplete(false);
       }
-    );
+    } catch (error) {
+      toast.error('حدث خطأ غير متوقع', {
+        description: error.message,
+      });
+      onAuthComplete(false);
+    }
   };
 
   const handleCancel = () => {

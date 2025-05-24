@@ -38,19 +38,18 @@ export default function InvestigationActionModal({
     const { name, value } = e.target;
     setForm(p => ({ ...p, [name]: value }));
   };
+const handleSave = async () => {
+  setLoading(true);
+  try {
+    await onSubmit(form); // table will handle toast
+    onClose();
+  } catch {
+    toast.error("حدث خطأ أثناء الحفظ");
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      await onSubmit(form);
-      toast.success("تم الحفظ بنجاح");
-      onClose();
-    } catch {
-      toast.error("حدث خطأ أثناء الحفظ");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <ModalCard
