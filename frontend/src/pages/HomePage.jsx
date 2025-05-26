@@ -4,7 +4,7 @@ import Login from '../components/auth/Login';
 import { WelcomeLogoWhite, LoginBg } from '../assets/images'; 
  
 import AuthSpinner from '../components/common/Spinners/AuthSpinner';
-import { toast } from 'sonner';
+ 
 
 const HomePage = () => {
   const [showLoginForm, setShowLoginForm] = useState(false);
@@ -68,7 +68,7 @@ const HomePage = () => {
                   setIsLoading(false);
                   // رسالة التوستر تظهر فقط عند نجاح التسجيل
                   if (success) {
-                    toast('success', 'تم تسجيل الدخول بنجاح ✅');
+            
                     setShowLoginForm(false);
                   }
                 }}
