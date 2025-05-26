@@ -24,7 +24,7 @@ return [
     'http://127.0.0.1:3000',
     'http://localhost:7000',
     'http://127.0.0.1:7000',
-    'https://almadar.ask-ar.net',
+    'https://madar-app.ask-ar.net',
 ],
 'allowed_headers' => ['*'],
 'allowed_methods' => ['*'],
