@@ -12,8 +12,7 @@ dist
 build
 dist-ssr
 *.local
-
-
+ /frontend/src/config/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
