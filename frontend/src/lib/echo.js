@@ -19,8 +19,6 @@ export function initEcho(config = {}) {
     wsHost: import.meta.env.VITE_REVERB_HOST,
     wsPort: import.meta.env.VITE_REVERB_PORT,
     forceTLS: false,  
-    encrypted: false,
-    
     disableStats: true,
     enabledTransports: ['ws'],
     authEndpoint: `${import.meta.env.VITE_API_BASE_URL}/broadcasting/auth`,

@@ -1,2 +1,4 @@
 /public_html/
 /frontend/src/config/
+/frontend/.env
+/frontend/.env.production
