@@ -25,10 +25,14 @@ const AuthRoutes = () => {
   const { showSpinner, hideSpinner, loading } = useSpinner();
   const location = useLocation();
 
-  useEffect(() => {
-    showSpinner();
+useEffect(() => {
+  showSpinner();
+  const timeout = setTimeout(() => {
     hideSpinner();
-  }, [location]);
+  }, 600); // توقيت بسيط يعطي سلاسة
+
+  return () => clearTimeout(timeout);
+}, [location]);
 
   return (
 <>

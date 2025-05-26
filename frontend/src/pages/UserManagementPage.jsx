@@ -1,24 +1,23 @@
-// src/pages/UsersManagementPage.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import SectionHeader from '@/components/common/SectionHeader';
 import TableComponent from '@/components/common/TableComponent';
 import UserModalForm from '@/components/Users/UserModalForm';
 import UserInfoCard from '@/components/Users/UserInfoCard';
-import { RoleIcon } from '@/assets/icons'; 
+import { RoleIcon } from '@/assets/icons';
 import PermissionsSection from '@/components/Users/Sections/PermissionsSection';
 import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteModal';
 import API_CONFIG from '../config/config';
 import { Edit2, Trash2 } from 'lucide-react';
 import {
-  getUsers, 
+  getUsers,
   getPermissions,
   createUser,
   updateUser,
   deleteUser,
-changeUserPermission,
+  changeUserPermission,
   getRoles,
 } from '@/services/api/users';
-import {  toast } from 'sonner';
+import { toast } from 'sonner';
 import AddButton from '../components/common/AddButton';
 
 export default function UsersManagementPage() {
@@ -63,24 +62,22 @@ export default function UsersManagementPage() {
     fetchRoles();
     fetchPerms();
   }, [fetchUsers, fetchRoles, fetchPerms]);
-const handlePermChange = async (permName, shouldEnable) => {
-  setLoading(true);
-  try {
-    await changeUserPermission(selectedUser.id, permName, shouldEnable ? 'add' : 'remove');
-    toast.success('تم تحديث الصلاحية');
 
-    const updatedUsers = await getUsers(); // بديل مباشر لـ fetchUsers()
-    setUsers(updatedUsers); // تحديث users في الواجهة
-
-    const updated = updatedUsers.find(u => u.id === selectedUser.id);
-    if (updated) setSelectedUser(updated); // ✅ تحديث المستخدم الحالي نفسه
-
-  } catch {
-    toast.error('فشل في تحديث الصلاحية');
-  } finally {
-    setLoading(false);
-  }
-};
+  const handlePermChange = async (permName, shouldEnable) => {
+    setLoading(true);
+    try {
+      await changeUserPermission(selectedUser.id, permName, shouldEnable ? 'add' : 'remove');
+      toast.success('تم تحديث الصلاحية');
+      const updatedUsers = await getUsers();
+      setUsers(updatedUsers);
+      const updated = updatedUsers.find(u => u.id === selectedUser.id);
+      if (updated) setSelectedUser(updated);
+    } catch {
+      toast.error('فشل في تحديث الصلاحية');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCreate = async formData => {
     setLoading(true);
@@ -124,7 +121,6 @@ const handlePermChange = async (permName, shouldEnable) => {
       setLoading(false);
     }
   };
- 
 
   const customRenderers = {
     role: (user) => (
@@ -170,33 +166,38 @@ const handlePermChange = async (permName, shouldEnable) => {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <SectionHeader icon={RoleIcon} listName="إدارة المستخدمين والصلاحيات" />
-      <div className="flex justify-between items-center">
+
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <AddButton
-          onClick={() => { setSelectedUser(null); setModalMode('add'); }}
-          className="flex items-center gap-2  px-4 py-2 rounded-lg shadow hover:opacity-90 transition"
+          onClick={() => {
+            setSelectedUser(null);
+            setModalMode('add');
+          }}
+          className="min-w-[140px] px-4 py-2 rounded-lg shadow bg-primary text-white hover:bg-primary/90"
         >
           إضافة مستخدم
         </AddButton>
       </div>
 
-      <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow min-w-full">
-        <TableComponent
-        
-        moduleName="users~"
-          data={users}
-          headers={[
-            { key: 'id', text: 'الرقم' },
-            { key: 'name', text: 'الاسم' },
-            { key: 'email', text: 'البريد الإلكتروني' },
-            { key: 'role', text: 'الدور' },
-            { key: 'image', text: 'الصورة' },
-            { key: 'actions', text: 'إجراءات' },
-          ]}
-          customRenderers={customRenderers}
-          onRowClick={user => setSelectedUser(user)}
-        />
+      <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div className="min-w-[720px]">
+          <TableComponent
+            moduleName="users"
+            data={users}
+            headers={[
+              { key: 'id', text: 'الرقم' },
+              { key: 'name', text: 'الاسم' },
+              { key: 'email', text: 'البريد الإلكتروني' },
+              { key: 'role', text: 'الدور' },
+              { key: 'image', text: 'الصورة' },
+              { key: 'actions', text: 'إجراءات' },
+            ]}
+            customRenderers={customRenderers}
+            onRowClick={user => setSelectedUser(user)}
+          />
+        </div>
       </div>
 
       {(modalMode === 'add' || modalMode === 'edit') && (
@@ -210,7 +211,7 @@ const handlePermChange = async (permName, shouldEnable) => {
       )}
 
       {selectedUser && !modalMode && (
-        <div className="mt-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow space-y-4">
+        <div className="mt-6 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow space-y-4">
           <UserInfoCard user={selectedUser} />
           <h2 className="text-xl font-semibold text-center text-green-700 dark:text-green-400">
             صلاحيات المستخدم

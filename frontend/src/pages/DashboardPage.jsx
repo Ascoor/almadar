@@ -67,12 +67,12 @@ import AdminListener from '../components/AdminListener';
               <Header user={user.id} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
 <main
   className={`
-    flex-1 pt-16 px-4 sm:px-6 md:px-8 transition-all duration-300
+    flex-1 pt-16 pb-8
+    px-4 sm:px-6 lg:px-8
     ${sidebarOpen ? 'sm:mr-[280px]' : 'sm:mr-[80px]'}
-  
-    `}
+  `}
 >
- 
+
 
                 <AuthRoutes />
               </main>

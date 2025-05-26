@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom'; 
-  
+  import { registerSW } from 'virtual:pwa-register';
 import { SpinnerProvider } from './context/SpinnerContext';
 import App from './App';
 import { Suspense } from 'react';
@@ -11,7 +11,7 @@ import { AuthProvider } from '@/components/auth/AuthContext';
 import { Toaster } from 'sonner';
 import './index.css'; 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-
+registerSW();
 root.render(
   <React.StrictMode>
     <ThemeProvider>

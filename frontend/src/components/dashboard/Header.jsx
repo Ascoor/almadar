@@ -11,16 +11,16 @@ export default function Header({ isOpen,user, onToggleSidebar }) {
     <nav
       dir="rtl"
       className={`
-        fixed top-0 left-0 -right-0
+        fixed top-0 left-0 right-0
         transition-all duration-300
         ${isOpen ? 'sm:mr-64' : 'sm:mr-16'}
         py-3 px-6 flex justify-between items-center
         bg-gold-light dark:bg-black
         bg-gradient-to-l from-gold/60 via-reded/20 to-navy-light/70 
-             dark:bg-gradient-to-l dark:from-navy-dark/30 dark:via-navy-dark/40 dark:to-reded-dark/60
+             dark:bg-gradient-to-l dark:from-navy-dark/30 dark:via-navy-dark/40 dark:to-greenic-dark/60
         text-gray-900 dark:text-white
         border-b border-gray-200 dark:border-navy-dark
-        shadow-md dark:shadow-[0_0_10px_#14b8a640]
+        shadow-md dark:shadow-[0_01px_#16b8f640]
         z-20
       `}
     >

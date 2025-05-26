@@ -319,56 +319,59 @@ const can = (action) => hasPermission(`${action} ${moduleName}`);
       
     );
   };
+return (
+  <div className="bg-card border mt-6 border-border rounded-xl shadow-md p-4 mb-6">
+    <SectionHeader listName="قوائم البيانات" icon={MainProcedures} />
 
-  return (
-    <div className="bg-card border mt-6 border-border rounded-xl shadow-md p-4 mb-6">
-      <SectionHeader listName="قوائم البيانات" icon={MainProcedures} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {renderTable('إجراءات التقاضي', litigationTypes, 'litigation')}
-        {renderTable('إجراءات التحقيق', investigationTypes, 'investigation')}
-        {renderTable('فئات العقود', contractCategories, 'contract')}
-        {renderTable('أنواع الرأي والمشورة', adviceTypes, 'advice')}
-      </div>
+    {/* ✅ Layout متجاوب حسب حجم الشاشة */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6">
+      {renderTable('إجراءات التقاضي', litigationTypes, 'litigation')}
+      {renderTable('إجراءات التحقيق', investigationTypes, 'investigation')}
+      {renderTable('فئات العقود', contractCategories, 'contract')}
+      {renderTable('أنواع الرأي والمشورة', adviceTypes, 'advice')}
+    </div>
 
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-card p-6 rounded-lg w-96 shadow-lg">
-            <h2 className="text-lg font-bold mb-4 text-foreground">
-              {editMode ? 'تعديل العنصر' : 'إضافة عنصر جديد'}
-            </h2>
-            <input
-              type="text"
-              value={newItem}
-              onChange={e => setNewItem(e.target.value)}
-              className="w-full px-4 py-2 mb-4 border border-border rounded bg-background text-foreground"
-              placeholder="أدخل الاسم هنا"
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                className="px-4 py-2 bg-muted text-muted-foreground rounded hover:bg-muted/80"
-                onClick={() => {
-                  setShowModal(false);
-                  setNewItem('');
-                  setEditMode(false);
-                  setEditItemId(null);
-                }}
-              >
-                إلغاء
-              </button>
-              <button className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90" onClick={handleAdd}>
-                {editMode ? 'حفظ التعديلات' : 'إضافة'}
-              </button>
-            </div>
+    {/* ✅ مودال متجاوب */}
+    {showModal && (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 px-4">
+        <div className="bg-card w-full max-w-md p-6 rounded-lg shadow-lg">
+          <h2 className="text-lg font-bold mb-4 text-foreground">
+            {editMode ? 'تعديل العنصر' : 'إضافة عنصر جديد'}
+          </h2>
+          <input
+            type="text"
+            value={newItem}
+            onChange={e => setNewItem(e.target.value)}
+            className="w-full px-4 py-2 mb-4 border border-border rounded bg-background text-foreground"
+            placeholder="أدخل الاسم هنا"
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              className="px-4 py-2 bg-muted text-muted-foreground rounded hover:bg-muted/80"
+              onClick={() => {
+                setShowModal(false);
+                setNewItem('');
+                setEditMode(false);
+                setEditItemId(null);
+              }}
+            >
+              إلغاء
+            </button>
+            <button className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90" onClick={handleAdd}>
+              {editMode ? 'حفظ التعديلات' : 'إضافة'}
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
-      <GlobalConfirmDeleteModal
-        isOpen={confirmDelete.isOpen}
-        onClose={() => setConfirmDelete({ isOpen: false, id: null, name: '', type: '' })}
-        onConfirm={handleDelete}
-        itemName={confirmDelete.name}
-      />
-    </div>
-  );
+    <GlobalConfirmDeleteModal
+      isOpen={confirmDelete.isOpen}
+      onClose={() => setConfirmDelete({ isOpen: false, id: null, name: '', type: '' })}
+      onConfirm={handleDelete}
+      itemName={confirmDelete.name}
+    />
+  </div>
+);
+
 }

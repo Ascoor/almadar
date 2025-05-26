@@ -1,26 +1,24 @@
-  import  { useState, useEffect } from "react";
-  import { Button } from "@/components/ui/button";
-  import { Card } from "@/components/ui/card";
-  import { toast } from "sonner";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 
-  import SectionHeader from "@/components/common/SectionHeader";
-  import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
-  import UnifiedLitigationsTable from "@/components/Litigations/UnifiedLitigationsTable";
-  import { getLitigations, deleteLitigation } from "@/services/api/litigations";
-  import { CaseIcon } from "@/assets/icons";
+import SectionHeader from "@/components/common/SectionHeader";
+import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
+import UnifiedLitigationsTable from "@/components/Litigations/UnifiedLitigationsTable";
+import { getLitigations, deleteLitigation } from "@/services/api/litigations";
+import { CaseIcon } from "@/assets/icons";
 
 export default function LitigationsPage() {
   const [activeTab, setActiveTab] = useState("against");
-  const [litigations, setLitigations] = useState([]); 
+  const [litigations, setLitigations] = useState([]);
   const [litigationToDelete, setLitigationToDelete] = useState(null);
-  const [loadingLitigations, setLoadingLitigations] = useState(false); 
+  const [loadingLitigations, setLoadingLitigations] = useState(false);
 
-  // Load litigations when the component is mounted
   useEffect(() => {
-    loadLitigations(); 
+    loadLitigations();
   }, []);
 
-  // Function to load litigations
   const loadLitigations = async () => {
     setLoadingLitigations(true);
     try {
@@ -33,62 +31,60 @@ export default function LitigationsPage() {
     } finally {
       setLoadingLitigations(false);
     }
-  }; 
+  };
 
-  // Handle deletion of litigation
   const handleConfirmDelete = async () => {
     if (!litigationToDelete) return;
     try {
       await deleteLitigation(litigationToDelete.id);
       toast.success("تم الحذف بنجاح");
       setLitigationToDelete(null);
-      loadLitigations(); // Reload after deletion
+      loadLitigations();
     } catch (error) {
       toast.error("فشل الحذف");
       console.error(error);
     }
   };
 
-  // Filter litigations by the active tab (against or from)
   const filteredLitigations =
     activeTab === "against"
       ? litigations.filter((c) => c.scope === "against")
       : litigations.filter((c) => c.scope === "from");
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-white dark:bg-black dark:bg-gradient-to-r dark:from-greenic-dark/10 dark:via-navy-dark  dark:to-royal-dark dark:bg-greenic-dark/10 shadow-greenic shadow-md min-h-screen  ">
+    <div className="px-4 sm:px-6 lg:px-8 py-6 ">
       <SectionHeader listName="وحدة التقاضي" icon={CaseIcon} />
 
-      {/* Tab Buttons */}
-      <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+      {/* Tabs */}
+      <div className="flex flex-wrap justify-center gap-4 mt-6 mb-6 text-center">
         <Button
           variant={activeTab === "against" ? "default" : "outline"}
           onClick={() => setActiveTab("against")}
-          className="rounded-full px-6 mb-2 sm:mb-0 sm:mr-2"
+          className="rounded-full px-6 min-w-[200px]"
         >
           دعاوى ضد الشركة
         </Button>
         <Button
           variant={activeTab === "from" ? "default" : "outline"}
           onClick={() => setActiveTab("from")}
-          className="rounded-full px-6"
+          className="rounded-full px-6 min-w-[200px]"
         >
           دعاوى من الشركة
         </Button>
       </div>
 
-      {/* Litigations Table */}
-      <Card className="p-6 rounded-xl shadow border">
+      {/* Table */}
+      <Card className="p-4 sm:p-6 rounded-xl shadow border overflow-x-auto">
         <UnifiedLitigationsTable
           litigations={filteredLitigations}
           reloadLitigations={loadLitigations}
-        
           scope={activeTab}
-          onDelete={setLitigationToDelete} // Set the litigation to delete
+          onDelete={setLitigationToDelete}
+          loading={loadingLitigations}
         />
       </Card>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       <GlobalConfirmDeleteModal
         isOpen={!!litigationToDelete}
         onClose={() => setLitigationToDelete(null)}
