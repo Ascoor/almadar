@@ -14,7 +14,7 @@
     "build": "vite build",
   
    "deploy": "rsync -av --delete --exclude='.htaccess' dist/ /home/ask-ar.net/almadar/public_html/",
-
+  "release": "yarn build && yarn deploy",
     "lint": "eslint \"src/**/*.{js,jsx}\"",
     "lint-fix": "eslint \"src/**/*.{js,jsx}\" --fix",
     "preview": "vite preview",

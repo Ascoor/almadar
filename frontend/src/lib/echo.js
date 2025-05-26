@@ -15,17 +15,17 @@ export function initEcho(config = {}) {
   const defaultConfig = {
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,
-    cluster: import.meta.env.VITE_REVERB_APP_CLUSTER,
+    cluster: import.meta.env.VITE_REVERB_CLUSTER,
     wsHost: import.meta.env.VITE_REVERB_HOST,
     wsPort: import.meta.env.VITE_REVERB_PORT,
-    forceTLS: false,
+    forceTLS: false,  
     encrypted: false,
+    
     disableStats: true,
-    enabledTransports: ['ws', 'wss'],
+    enabledTransports: ['ws'],
     authEndpoint: `${import.meta.env.VITE_API_BASE_URL}/broadcasting/auth`,
     auth: {
       headers: {
-        Accept: 'application/json',
         Authorization: token ? `Bearer ${token}` : '', // ✅ أضف التوكن هنا
       },
     },
