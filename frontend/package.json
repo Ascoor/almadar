@@ -12,7 +12,9 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "copy-dist": "cp -R dist/* /var/www/html/almadar.live/public",
+  
+   "deploy": "rsync -av --delete --exclude='.htaccess' dist/ /home/ask-ar.net/almadar/public_html/",
+
     "lint": "eslint \"src/**/*.{js,jsx}\"",
     "lint-fix": "eslint \"src/**/*.{js,jsx}\" --fix",
     "preview": "vite preview",
