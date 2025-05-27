@@ -24,6 +24,9 @@ export default function Header({ isOpen,user, onToggleSidebar }) {
         z-20
       `}
     > 
+  
+
+
       <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
         <Menu className="text-white dark:text-greenic h-5 w-5 hover:text-greenic-light" />
       </Button>
