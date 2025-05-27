@@ -51,8 +51,8 @@ export default function Contracts() {
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-2 rounded-full text-sm font-bold transition border ${
               activeTab === tab
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-background text-primary border-primary hover:bg-muted'
+                ? 'dark:bg-greenic  bg-gold/80 text-black dark:text-white'
+                : '  dark:text-greenic text-gold dark:border-greenic  border-gold hover:bg-royal'
             }`}
           >
             {tab === 'local' ? 'العقود المحلية' : 'العقود الدولية'}
