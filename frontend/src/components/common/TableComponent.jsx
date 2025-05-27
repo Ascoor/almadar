@@ -123,6 +123,8 @@ export default function TableComponent({
   const [filteredData, setFilteredData] = useState(data);
   const [sortKey, setSortKey] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
+const [currentPage, setCurrentPage] = useState(1);
+const rowsPerPage = 10;
 
   useEffect(() => {
     const keywords = searchQuery.trim().toLowerCase().split(/\s+/);
@@ -179,6 +181,12 @@ export default function TableComponent({
       setSortDirection('asc');
     }
   };
+const totalPages = Math.ceil(sortedData.length / rowsPerPage);
+
+const paginatedData = useMemo(() => {
+  const start = (currentPage - 1) * rowsPerPage;
+  return sortedData.slice(start, start + rowsPerPage);
+}, [sortedData, currentPage]);
 
   return (
     <section className="bg-card p-6 rounded-xl shadow-lg border border-border">
@@ -215,24 +223,41 @@ export default function TableComponent({
             </tr>
           </thead>
           <tbody>
-            {sortedData.map((row, idx) => (
-              <React.Fragment key={row.id}>
-                <AnimatedRow
-                  row={row}
-                  rowIndex={idx}
-                  headers={headers}
-                  customRenderers={customRenderers}
-                  onView={onView}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  onRowClick={onRowClick}
-                  moduleName={moduleName}
-                />
-                {expandedRowRenderer?.(row)}
-              </React.Fragment>
-            ))}
+          {paginatedData.map((row, idx) => (
+  <React.Fragment key={row.id}>
+    <AnimatedRow
+      row={row}
+      rowIndex={idx}
+      headers={headers}
+      customRenderers={customRenderers}
+      onView={onView}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      onRowClick={onRowClick}
+      moduleName={moduleName}
+    />
+    {expandedRowRenderer?.(row)}
+  </React.Fragment>
+))}
+
           </tbody>
         </table>
+        {totalPages > 1 && (
+  <div className="flex justify-center mt-4 gap-2">
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      <button
+        key={page}
+        onClick={() => setCurrentPage(page)}
+        className={`px-3 py-1 border rounded ${
+          page === currentPage ? 'bg-primary text-white' : 'hover:bg-muted'
+        }`}
+      >
+        {page}
+      </button>
+    ))}
+  </div>
+)}
+
       </div>
     </section>
   );

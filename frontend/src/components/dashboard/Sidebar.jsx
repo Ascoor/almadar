@@ -45,7 +45,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   return (
     <aside
       dir="rtl"
-      className={`fixed right-0 bg-gold-light dark:bg-black top-0 z-20 h-full bg-gradient-to-b from-gold/60 via-reded/20 to-navy-light/90 dark:from-navy-dark/40 dark:via-navy-dark/20 dark:to-greenic-dark/60
+      className={`fixed right-0 bg-gold dark:bg-black top-0 z-20 h-full bg-gradient-to-b from-gold-light/70 via-reded/20 to-navy-light/90 dark:from-navy-dark/40 dark:via-navy-dark/20 dark:to-greenic-dark/60
         transition-all duration-300
         ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-16' : 'translate-x-full')}`}
     >
@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 <button
                   onClick={() => handleSectionClick(item.id, !!item.children)}
                   className={`flex items-center gap-3 p-2 w-full rounded-md transition-colors duration-200
-                    ${activeSection === item.id ? 'bg-navy-light text-white' : 'hover:bg-yellow-100 hover:text-navy'}`}
+                    ${activeSection === item.id ? 'bg-navy-light text-white' : 'hover:bg-yellow-100 hover:text-greenic'}`}
                 >
                   {React.cloneElement(item.icon, {
                     className: `transition-colors duration-200 ${
@@ -112,14 +112,14 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                       onClick={onLinkClick}
                       className={({ isActive }) =>
                         `flex items-center gap-2 p-2 rounded-md text-sm transition-colors duration-200
-                         ${isActive ? 'bg-navy-light text-white' : 'hover:bg-yellow-100 hover:text-navy'}`
+                         ${isActive ? 'bg-navy-light text-white' : 'hover:bg-yellow-100 hover:greenic'}`
                       }
                     >
                       {({ isActive }) => (
                         <>
                           {React.cloneElement(ch.icon, {
                             className: `transition-colors duration-200 ${
-                              isActive ? 'text-yellow-300' : 'text-gray-700 dark:text-gray-300'
+                              isActive ? 'text-yellow-300' : 'text-gold dark:text-gray-300'
                             }`
                           })}
                           <span>{ch.label}</span>
@@ -143,14 +143,14 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 onClick={onLinkClick}
                 title={it.label}
                 className={({ isActive }) =>
-                  `p-2 rounded hover:bg-yellow-100 dark:hover:bg-navy cursor-pointer
-                   ${isActive ? 'bg-navy-light' : ''}`
+                  `p-2 rounded hover:bg-yellow-100 dark:hover:bg-greenic-light/80  hover:bg-gold-light/80 cursor-pointer
+                   ${isActive ? 'bg-gold-light dark:bg-gold ' : ''}`
                 }
               >
                 {({ isActive }) =>
                   React.cloneElement(it.icon, {
                     className: `transition-colors duration-200 ${
-                      isActive ? 'text-yellow-300' : 'text-gray-700 dark:text-gray-300'
+                      isActive ? 'text-black font-bold ' : 'dark:text-greenic-dark  '
                     }`
                   })
                 }

@@ -53,8 +53,8 @@
         sm:right-auto sm:translate-x-6
       top-16 left-1/2  -translate-x-1/3 -translate-y-1/6
       `}
-    >  <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">الإشعارات</span>
+    >  <div className="px-4 py-3 border-b border-greenic dark:border-greenic flex items-center justify-between">
+              <span className="text-sm font-semibold text-greenic dark:text-greenic">الإشعارات</span>
               {notifications.length > 0 && (
                 <button
                   onClick={markAllAsRead}

@@ -19,6 +19,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\LitigationController;
 use App\Http\Controllers\LitigationActionController;
 use App\Http\Controllers\InvestigationActionTypeController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LitigationActionTypeController;
  
 
@@ -52,7 +53,8 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::apiResource('investigation-action-types', InvestigationActionTypeController::class);
     Route::apiResource('litigation-action-types', LitigationActionTypeController::class); 
-    
+    Route::get('/dashboard/statistics', [DashboardController::class, 'statistics']);
+
     // Legal Advices
     Route::apiResource('legal-advices', LegalAdviceController::class);
     Route::apiResource('advice-types', AdviceTypeController::class);

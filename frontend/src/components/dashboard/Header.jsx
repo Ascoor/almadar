@@ -15,8 +15,8 @@ export default function Header({ isOpen,user, onToggleSidebar }) {
         transition-all duration-300
         ${isOpen ? 'sm:mr-64' : 'sm:mr-16'}
         py-3 px-6 flex justify-between items-center
-        bg-gold-light dark:bg-black
-        bg-gradient-to-l from-gold/60 via-reded/20 to-navy-light/70 
+        bg-gold dark:bg-black
+        bg-gradient-to-l from-gold-light/70 via-reded/20 to-navy-light/70 
              dark:bg-gradient-to-l dark:from-navy-dark/30 dark:via-navy-dark/40 dark:to-greenic-dark/60
         text-gray-900 dark:text-white
         border-b border-gray-200 dark:border-navy-dark
@@ -26,7 +26,7 @@ export default function Header({ isOpen,user, onToggleSidebar }) {
     >
       {/* زر الفتح/الإغلاق */}
       <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-        <Menu className="h-5 w-5" />
+        <Menu className="text-greenic h-5 w-5 hover:text-greenic-light" />
       </Button>
 
       {/* أدوات التحكم */}

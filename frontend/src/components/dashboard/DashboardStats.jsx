@@ -1,38 +1,53 @@
-import React from 'react';
-import { FileText, Gavel, MessageSquare } from "lucide-react";
-import DashCard from '../common/DashCard';
+import React, { useEffect, useState } from 'react';
 import { ServiceIcon, ContractSection, MainLegalCases } from '../../assets/icons'; 
+import DashCard from '../common/DashCard';
+import { getDashboardCounts } from '../../services/api/dashboard';
 
 const DashboardStats = () => {
-  const stats = [
-    {
-      title: 'التعاقدات',
-      count: 46,
-      imageSrc: ContractSection,
-      subcategories: [
-        { title: 'دولي', count: 25 },
-        { title: 'محلي', count: 21 },
-      ],
-    },
-    {
-      title: 'الرأي والفتوى',
-      count: 32,
-      imageSrc: ServiceIcon,
-      subcategories: [
-        { title: 'تحقيقات', count: 15 }, 
-        { title: 'مشورة', count: 17 },
-      ],
-    },
-    {
-      title: 'القضايا',
-      count: 18,
-      imageSrc: MainLegalCases,
-      subcategories: [
-        { title: 'من الشركة', count: 10 },
-        { title: 'ضد الشركة', count: 8 },
-      ],
-    },
-  ];
+  const [stats, setStats] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getDashboardCounts();
+        const { contracts, litigations, investigations, legal_advices } = response.data;
+
+        setStats([
+          {
+            title: 'التعاقدات',
+            count: contracts.length,
+            imageSrc: ContractSection,
+            subcategories: [
+              { title: 'دولي', count: contracts.filter(c => c.scope === 'local').length },
+              { title: 'محلي', count: contracts.filter(c => c.scope === 'international').length },
+            ],
+          },
+          {
+            title: 'الرأي والفتوى',
+            count: legal_advices.length,
+            imageSrc: ServiceIcon,
+            subcategories: [
+              { title: 'تحقيقات', count: investigations.length },
+              { title: 'مشورة', count: legal_advices.length },
+            ],
+          },
+          {
+            title: 'القضايا',
+            count: litigations.length,
+            imageSrc: MainLegalCases,
+            subcategories: [
+              { title: 'من الشركة', count: litigations.filter(l => l.scope === 'from').length },
+              { title: 'ضد الشركة', count: litigations.filter(l => l.scope === 'against').length },
+            ],
+          },
+        ]);
+      } catch (error) {
+        console.error('Error fetching dashboard statistics:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">

@@ -28,6 +28,17 @@ public function notifications()
     {
         return $this->morphMany(Notification::class, 'notifiable');
     }
+// Contract.php
+
+public function scopeLocal($query)
+{
+    return $query->where('scope', 'local');
+}
+
+public function scopeInternational($query)
+{
+    return $query->where('scope', 'international');
+}
 
     public function category()
     {

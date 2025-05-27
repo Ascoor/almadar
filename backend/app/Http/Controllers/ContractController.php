@@ -19,7 +19,7 @@ class ContractController extends Controller
     }
     public function index()
     {
-        $contracts = Contract::with('category')->latest()->paginate(15);
+        $contracts = Contract::with('category')->latest()->paginate(50);
         return response()->json($contracts);
     }
 
