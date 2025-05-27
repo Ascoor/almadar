@@ -147,15 +147,15 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
      flex items-center gap-2 group
      ${
        isActive
-         ? 'bg-greenic text-white shadow-md dark:bg-greenic-light'
-         : 'text-foreground hover:bg-gold-light/20 hover:text-gold-dark dark:text-greenic-light dark:hover:bg-gold-light/10 dark:hover:text-gold'
+         ? 'bg-gold-light text-white shadow-md dark:bg-greenic-light'
+         : 'text-foreground hover:bg-gold-light/20 hover:text-gold-dark dark:text-greenic-light dark:hover:bg-gold-light dark:hover:text-royal'
      }`
   }
               >
                 {({ isActive }) =>
                   React.cloneElement(it.icon, {
-                    className: `transition-greenic duration-200 ${
-                      isActive ? 'text-royal  font-bold ' : ' hover:bg-gold-light/80 hover:text-   '
+                    className: `transition duration-200 ${
+                      isActive ? 'text-royal dark:text-muted   font-bold ' : ' hover:text-royal-light  '
                     }`
                   })
                 }

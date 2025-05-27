@@ -22,7 +22,7 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
         border border-greenic/20 rounded-full mb-6
         dark:bg-black
        
-        dark:bg-gradient-to-r dark:from-royal/40 dark:via-royal/60 dark:to-navy-dark/20
+        dark:bg-gradient-to-r dark:from-royal/20 dark:via-royal-dark/70 dark:to-royal-dark/20
         dark:text-greenic dark:ring-2 dark:ring-greenic/30 
         dark:shadow-greenic/40
       "

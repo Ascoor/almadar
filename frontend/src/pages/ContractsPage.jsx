@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ContractsTable from '../components/Contracts/ContractsTable';
 import { getContracts, getContractCategories } from '../services/api/contracts';
 import SectionHeader from '../components/common/SectionHeader';
-import { ContractSection } from '../assets/icons';
-import AuthSpinner from '../components/common/Spinners/AuthSpinner';
+import { ContractSection } from '../assets/icons'; 
 import { useNavigate } from 'react-router-dom';
 
 export default function Contracts() {
@@ -13,7 +12,7 @@ export default function Contracts() {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isError, refetch } = useQuery({
     queryKey: ['contracts'],
     queryFn: getContracts,
     onError: (error) => {
@@ -37,7 +36,7 @@ export default function Contracts() {
 
   const contracts = data?.data?.data || [];
 
-  if (isLoading) return <AuthSpinner />;
+ 
   if (isError) return null; // تم التوجيه إلى forbidden بالفعل
 
   return (

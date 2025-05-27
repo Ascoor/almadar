@@ -37,7 +37,7 @@ const groupPermissionsBySection = (allPermissions = [], userPermissions = []) =>
   return allPermissions.reduce((acc, perm) => {
     const [action, ...sectionParts] = perm.name.toLowerCase().split(' ');
     const section = sectionParts.join(' ');
-    if (!section) return acc; // تجاهل أي صلاحية ليس فيها قسم
+    if (!section) return acc;
 
     if (!acc[section]) acc[section] = [];
     acc[section].push({
@@ -50,17 +50,25 @@ const groupPermissionsBySection = (allPermissions = [], userPermissions = []) =>
 };
 
 const PermissionRow = ({ action, enabled, onChange, disabled }) => (
-  <div className='flex items-center justify-between w-full p-2 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md transition-transform transform hover:scale-105 mb-2'>
-    <label className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
+  <div
+    className={`flex items-center justify-between w-full px-4 py-2 rounded-lg shadow-sm 
+                transition-all duration-200 hover:shadow-md transform hover:scale-[1.01] mb-2
+                ${enabled ? 'bg-green-50 dark:bg-green-900/20' : 'bg-gray-100 dark:bg-zinc-800'}`}
+  >
+    <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
       {translatePermission(action)}
     </label>
     <button
       onClick={onChange}
-      className='focus:outline-none cursor-pointer text-2xl'
       disabled={disabled}
       title={disabled ? 'الصلاحية مقيدة بدون "عرض"' : ''}
+      className="focus:outline-none cursor-pointer transition-all"
     >
-      {enabled ? <ToggleRight className='text-green-500' /> : <ToggleLeft className='text-red-500' />}
+      {enabled ? (
+        <ToggleRight className="text-green-600 dark:text-green-400" size={22} />
+      ) : (
+        <ToggleLeft className="text-red-500 dark:text-red-400" size={22} />
+      )}
     </button>
   </div>
 );
@@ -70,14 +78,17 @@ const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionC
   const sections = Object.entries(grouped);
 
   return (
-    <div className="permissions-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="permissions-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {sections.map(([section, perms]) => {
         const viewPermission = perms.find(p => p.action === 'view');
         const isViewEnabled = viewPermission?.enabled ?? false;
 
         return (
-          <div key={section} className="p-4 bg-white dark:bg-gray-800 rounded shadow flex flex-col">
-            <h3 className="text-lg font-bold mb-3 text-center text-green-800 dark:text-white">
+          <div
+            key={section}
+            className="p-5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-2xl shadow-lg transition-all hover:shadow-xl"
+          >
+            <h3 className="text-lg font-bold mb-4 text-center text-navy dark:text-gold">
               {translateSection(section)}
             </h3>
 

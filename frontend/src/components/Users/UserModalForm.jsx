@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Phone, User } from 'lucide-react';
-import { AuthContext } from '@/components/auth/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import { User } from 'lucide-react';
 import API_CONFIG from '@/config/config';
 
 const roleTranslations = { 1: 'أدمن', 2: 'موظف', 3: 'مستخدم' };
@@ -13,109 +13,92 @@ export default function UserModalForm({
   onClose,
   selectedUser,
   refreshUsers,
-  createUser,  // passed as a prop
-  updateUser,  // passed as a prop
+  createUser,
+  updateUser,
 }) {
-  // Initialize the formData state
+  const isEdit = !!selectedUser;
+
   const [formData, setFormData] = useState({
     name: '',
-    phone: '',
     role_id: '',
     emailPrefix: '',
     image: null,
   });
 
-  const [imageFile, setImageFile] = useState(null);  // For the uploaded image
+  const [imageFile, setImageFile] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
 
-    if (selectedUser) {
-      // Load user data into the form
-      const [emailPrefix] = selectedUser.email?.split('@') || [''];
+    if (isEdit) {
+      const [prefix] = selectedUser.email?.split('@') || [''];
       setFormData({
         name: selectedUser.name || '',
-        phone: selectedUser.phone || '',
-        role: selectedUser.role?.name || '',
-        emailPrefix,
-        image: selectedUser.image ? API_CONFIG.baseURL + selectedUser.image : null,
+        role_id: selectedUser.roles?.[0]?.name || '',
+        emailPrefix: prefix,
+        image: selectedUser.image ? `${API_CONFIG.baseURL}/${selectedUser.image}` : null,
       });
-      setImageFile(null);
     } else {
-      // Reset to blank state when adding new user
-      setFormData({
-        name: '',
-        phone: '',
-        role_id: '',
-        emailPrefix: '',
-        image: null,
-      });
-      setImageFile(null);
+      setFormData({ name: '', role_id: '', emailPrefix: '', image: null });
     }
+
+    setImageFile(null);
     setValidationErrors({});
     setIsSubmitting(false);
   }, [isOpen, selectedUser]);
 
-  // Handle changes to form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle file selection for image
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setFormData((prev) => ({
-        ...prev,
-        image: URL.createObjectURL(file),
-      }));
+      setFormData((prev) => ({ ...prev, image: URL.createObjectURL(file) }));
     }
+  };
+
+  const validate = () => {
+    const errors = {};
+    if (!formData.name) errors.name = true;
+    if (!formData.role_id) errors.role_id = true;
+    if (!formData.emailPrefix) errors.emailPrefix = true;
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setValidationErrors({});
-
-    if (!formData.name || !formData.phone || !formData.role || !formData.emailPrefix) {
-      setValidationErrors({
-        name: !formData.name,
-        phone: !formData.phone,
-        role: !formData.role_id,
-        emailPrefix: !formData.emailPrefix,
-      });
-      setIsSubmitting(false);
+    const errors = validate();
+    if (Object.keys(errors).length) {
+      setValidationErrors(errors);
       return;
     }
+
+    setIsSubmitting(true);
 
     try {
       const payload = new FormData();
       payload.append('name', formData.name);
-      payload.append('phone', formData.phone);
-      payload.append('role', translateRoleToEnglish(formData.role_id ));
-      payload.append('email', `${formData.emailPrefix}@hadathah.org`);
-      if (imageFile) {
-        payload.append('image', imageFile);
-      }
+      payload.append('email', `${formData.emailPrefix}@almadar.ly`);
+      payload.append('roles[]', translateRoleToEnglish(formData.role_id));
+      if (imageFile) payload.append('image', imageFile);
 
-      if (selectedUser && selectedUser.id) {
+      if (isEdit) {
         await updateUser(selectedUser.id, payload);
+        toast.success('✅ تم تعديل المستخدم');
       } else {
         await createUser(payload);
+        toast.success('✅ تم إنشاء المستخدم');
       }
 
-      refreshUsers();
+      await refreshUsers();
       onClose();
-    } catch (error) {
-      if (error.response?.data?.errors) {
-        setValidationErrors(error.response.data.errors);
-      } else {
-        alert('حدث خطأ أثناء حفظ المستخدم.');
-      }
+    } catch {
+      toast.error('❌ فشل العملية، حاول مرة أخرى');
     } finally {
       setIsSubmitting(false);
     }
@@ -124,61 +107,35 @@ export default function UserModalForm({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md p-6 overflow-auto max-h-[90vh]">
-        <h2 className="text-xl font-bold mb-6 text-center">
-          {selectedUser ? 'تعديل المستخدم' : 'إضافة مستخدم'}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white dark:bg-gray-900 w-full max-w-lg p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-auto max-h-[90vh]">
+        <h2 className="text-xl font-bold text-center mb-6 text-gray-800 dark:text-white">
+          {isEdit ? 'تعديل المستخدم' : 'إضافة مستخدم'}
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Name Input */}
-          <div>
-            <label className="block mb-1 flex items-center">
-              <User className="ml-2" /> إسم الموظف
-            </label>
-            <input
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`w-full p-2 border rounded ${
-                validationErrors.name ? 'border-red-500' : 'border-gray-300'
-              }`}
-              disabled={isSubmitting}
-            />
-            {validationErrors.name && (
-              <p className="text-red-600 mt-1 text-sm">يرجى إدخال الاسم</p>
-            )}
-          </div>
 
-          {/* Phone Input */}
-          <div>
-            <label className="block mb-1 flex items-center">
-              <Phone className="ml-2" /> رقم الهاتف
-            </label>
-            <input
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className={`w-full p-2 border rounded ${
-                validationErrors.phone ? 'border-red-500' : 'border-gray-300'
-              }`}
-              disabled={isSubmitting}
-            />
-            {validationErrors.phone && (
-              <p className="text-red-600 mt-1 text-sm">يرجى إدخال رقم الهاتف</p>
-            )}
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-5 text-sm">
+          {/* الاسم */}
+          <FormField
+            label="اسم الموظف"
+            icon={<User className="ml-2" />}
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            error={validationErrors.name}
+            disabled={isSubmitting}
+          />
 
-          {/* Role Select */}
+          {/* الدور */}
           <div>
-            <label className="block mb-1">الدور</label>
+            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">الدور</label>
             <select
-              name="role"
+              name="role_id"
               value={formData.role_id}
               onChange={handleChange}
-              className={`w-full p-2 border rounded ${
-                validationErrors.role ? 'border-red-500' : 'border-gray-300'
-              }`}
               disabled={isSubmitting}
+              className={`w-full p-2 rounded border bg-white dark:bg-zinc-800 text-gray-900 dark:text-white ${
+                validationErrors.role_id ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
+              }`}
             >
               <option value="">اختر الدور</option>
               {Object.values(roleTranslations).map((r) => (
@@ -187,68 +144,64 @@ export default function UserModalForm({
                 </option>
               ))}
             </select>
-            {validationErrors.role && (
-              <p className="text-red-600 mt-1 text-sm">يرجى اختيار الدور</p>
-            )}
+            {validationErrors.role_id && <p className="text-red-600 mt-1 text-xs">يرجى اختيار الدور</p>}
           </div>
 
-          {/* Email Prefix */}
+          {/* البريد الإلكتروني */}
           <div>
-            <label className="block mb-1">البريد الإلكتروني</label>
-            <div className="flex">
+            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">البريد الإلكتروني</label>
+            <div className="flex rounded overflow-hidden border bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-600">
               <input
                 name="emailPrefix"
                 value={formData.emailPrefix}
                 onChange={handleChange}
-                className={`flex-1 p-2 border rounded-l ${
-                  validationErrors.emailPrefix ? 'border-red-500' : 'border-gray-300'
-                }`}
                 disabled={isSubmitting}
+                className="flex-1 p-2 bg-transparent text-gray-900 dark:text-white"
               />
-              <span className="p-2 border rounded-r bg-gray-200 dark:bg-gray-700 select-none">
-                @hadathah.org
+              <span className="p-2 bg-gray-100 dark:bg-zinc-700 text-gray-500 text-xs select-none">
+                @almadar.ly
               </span>
             </div>
             {validationErrors.emailPrefix && (
-              <p className="text-red-600 mt-1 text-sm">يرجى إدخال البريد الإلكتروني</p>
+              <p className="text-red-600 mt-1 text-xs">يرجى إدخال البريد الإلكتروني</p>
             )}
           </div>
 
-          {/* Image Upload */}
+          {/* الصورة */}
           <div>
-            <label className="block mb-1">الصورة</label>
+            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">الصورة</label>
             <input
               type="file"
-              onChange={handleFileChange}
-              disabled={isSubmitting}
-              className="w-full"
               accept="image/*"
+              disabled={isSubmitting}
+              onChange={handleFileChange}
+              className="w-full text-sm text-gray-700 dark:text-gray-300"
             />
             {formData.image && (
               <img
                 src={formData.image}
                 alt="preview"
-                className="w-24 h-24 mt-2 object-cover rounded"
+                className="w-24 h-24 mt-3 object-cover rounded shadow border"
               />
             )}
           </div>
 
-          {/* Buttons */}
-          <div className="flex justify-end space-x-2">
+          {/* الأزرار */}
+          <div className="flex justify-end gap-2 mt-6">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
+              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-gray-800 dark:text-white"
             >
               إلغاء
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white shadow"
             >
-              {isSubmitting ? 'جاري الحفظ...' : selectedUser ? 'تحديث' : 'إضافة'}
+              {isSubmitting ? '...جاري الحفظ' : isEdit ? 'تحديث' : 'إضافة'}
             </button>
           </div>
         </form>
@@ -256,3 +209,24 @@ export default function UserModalForm({
     </div>
   );
 }
+
+function FormField({ label, icon, name, value, onChange, error, disabled }) {
+  return (
+    <div>
+      <label className="block mb-1 flex items-center font-medium text-gray-800 dark:text-gray-200">
+        {icon} {label}
+      </label>
+      <input
+        name={name}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        className={`w-full p-2 rounded border bg-white dark:bg-zinc-800 text-gray-900 dark:text-white ${
+          error ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
+        }`}
+      />
+      {error && <p className="text-red-600 mt-1 text-xs">هذا الحقل مطلوب</p>}
+    </div>
+  );
+}
+  

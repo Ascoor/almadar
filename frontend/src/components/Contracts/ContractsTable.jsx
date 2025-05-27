@@ -14,12 +14,7 @@ export default function ContractsTable({ contracts = [], categories = [], reload
   const [selectedContract, setSelectedContract] = useState(null);
 
   const filteredContracts = contracts.filter((c) => c.scope === scope);
-
-  const openAdd = () => {
-    setEditing(null);
-    setIsModalOpen(true);
-  };
-
+ 
   const openEdit = (row) => {
     setEditing(row);
     setIsModalOpen(true);

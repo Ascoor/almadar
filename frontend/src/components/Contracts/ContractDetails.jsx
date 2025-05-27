@@ -9,7 +9,8 @@ export default function ContractDetails({ selected, onClose }) {
   if (!selected) return null;
 
   return (
-    <div className="relative bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-3xl shadow-xl p-6 md:p-10 mt-4 transition-all duration-300 hover:shadow-2xl">
+    <div className="relative bg-gradient-to-br from-white to-gray-50 dark:from-zinc-900 dark:to-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-3xl shadow-xl p-6 md:p-10 mt-4 transition-all duration-300 hover:shadow-2xl">
+
       {/* زر الإغلاق */}
       <button
         onClick={onClose}
@@ -18,21 +19,25 @@ export default function ContractDetails({ selected, onClose }) {
         <XCircle size={22} />
       </button>
 
-      {/* العنوان */}
+      {/* عنوان الصفحة */}
       <div className="flex items-center gap-3 mb-6">
         <FileText size={28} className="text-blue-600 dark:text-blue-400" />
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">تفاصيل العقد</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          تفاصيل العقد
+        </h2>
       </div>
 
-      {/* الشبكة */}
+      {/* الشبكة الديناميكية */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
         <InfoItem icon={<File />} label="رقم العقد" value={selected.number} />
         <InfoItem icon={<Globe />} label="نوع العقد" value={selected.scope === 'local' ? 'محلي' : 'دولي'} />
         <InfoItem icon={<Layers />} label="تصنيف العقد" value={selected.category?.name} />
         <InfoItem icon={<ShieldCheck />} label="الحالة" value={selected.status} />
-        <InfoItem icon={<BadgeDollarSign />} label="القيمة" value={`${selected.value?.toLocaleString()} ريال`} />
+        <InfoItem icon={<BadgeDollarSign />} label="القيمة" value={selected.value ? `${selected.value.toLocaleString()} ريال` : '—'} />
         <InfoItem icon={<Calendar />} label="تاريخ البداية" value={selected.start_date} />
         <InfoItem icon={<Calendar />} label="تاريخ النهاية" value={selected.end_date} />
+
+        {/* المرفق */}
         <div className="col-span-full sm:col-span-2 lg:col-span-1">
           <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300 font-semibold">
             <File size={16} />
@@ -43,7 +48,7 @@ export default function ContractDetails({ selected, onClose }) {
               href={`${API_CONFIG.baseURL}/storage/${selected.attachment}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 dark:text-blue-400 hover:underline ml-1 block mt-1"
+              className="text-blue-600 dark:text-blue-400 hover:underline ml-1 block mt-1 transition"
             >
               عرض الملف
             </a>
@@ -53,8 +58,8 @@ export default function ContractDetails({ selected, onClose }) {
         </div>
       </div>
 
-      {/* ملخص */}
-      <div className="mt-8 p-6 rounded-2xl bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700">
+      {/* ملخص العقد */}
+      <div className="mt-8 p-6 rounded-2xl bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 shadow-inner">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
           <UserCheck size={18} className="text-blue-500 dark:text-blue-300" />
           ملخص العقد
@@ -67,6 +72,7 @@ export default function ContractDetails({ selected, onClose }) {
   );
 }
 
+// ✅ مكون فرعي مرتب لعرض الحقول
 function InfoItem({ icon, label, value }) {
   return (
     <div className="flex items-start gap-2 text-gray-800 dark:text-gray-100">

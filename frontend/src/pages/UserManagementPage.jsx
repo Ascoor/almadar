@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; 
 import SectionHeader from '@/components/common/SectionHeader';
 import TableComponent from '@/components/common/TableComponent';
 import UserModalForm from '@/components/Users/UserModalForm';
@@ -18,14 +18,14 @@ import {
   getRoles,
 } from '@/services/api/users';
 import { toast } from 'sonner';
-import AddButton from '../components/common/AddButton';
+import {Button} from '@/components/ui/button';
 
 export default function UsersManagementPage() {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [allPerms, setAllPerms] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [modalMode, setModalMode] = useState(null); // 'add' | 'edit'
+  const [modalMode, setModalMode] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -79,6 +79,7 @@ export default function UsersManagementPage() {
     }
   };
 
+
   const handleCreate = async formData => {
     setLoading(true);
     try {
@@ -121,24 +122,22 @@ export default function UsersManagementPage() {
       setLoading(false);
     }
   };
+const customRenderers = {
+  role: (user) => (
+    <div className="text-center text-sm font-semibold text-green-700 dark:text-green-400">
+      {user.roles?.[0]?.name || '—'}
+    </div>
+  ),
+  image: (user) => (
+    <div className="flex justify-center">
+      {user.image ? (
+        <img src={`${API_CONFIG.baseURL}/${user.image}`} alt={user.name} className="w-10 h-10 rounded-full object-cover border" />
+      ) : (
+        <span className="text-gray-500 text-xs">لا توجد صورة</span>
+      )}
+    </div>
+  ),
 
-  const customRenderers = {
-    role: (user) => (
-      <div className="flex justify-center">{user.role?.name || 'غير محدد'}</div>
-    ),
-    image: (user) => (
-      <div className="flex justify-center">
-        {user.image ? (
-          <img
-            src={`${API_CONFIG.baseURL}/${user.image}`}
-            alt={user.name}
-            className="w-10 h-10 rounded-full object-cover"
-          />
-        ) : (
-          <span className="text-gray-500">لا توجد صورة</span>
-        )}
-      </div>
-    ),
     actions: (user) => (
       <div className="flex justify-center gap-2">
         <button
@@ -147,7 +146,7 @@ export default function UsersManagementPage() {
             setSelectedUser(user);
             setModalMode('edit');
           }}
-          className="p-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded transition"
+          className="p-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded shadow transition"
         >
           <Edit2 className="w-4 h-4" />
         </button>
@@ -157,7 +156,7 @@ export default function UsersManagementPage() {
             setSelectedUser(user);
             setShowDelete(true);
           }}
-          className="p-2 bg-red-500 hover:bg-red-600 text-white rounded transition"
+          className="p-2 bg-red-500 hover:bg-red-600 text-white rounded shadow transition"
         >
           <Trash2 className="w-4 h-4" />
         </button>
@@ -169,51 +168,56 @@ export default function UsersManagementPage() {
     <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <SectionHeader icon={RoleIcon} listName="إدارة المستخدمين والصلاحيات" />
 
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <AddButton
+      <div className="flex justify-start">
+        <Button
           onClick={() => {
             setSelectedUser(null);
             setModalMode('add');
           }}
-          className="min-w-[140px] px-4 py-2 rounded-lg shadow bg-primary text-white hover:bg-primary/90"
+          className="px-6 py-2 rounded-lg shadow bg-primary text-white hover:bg-primary/90 transition"
         >
           إضافة مستخدم
-        </AddButton>
+        </Button>
       </div>
 
-      <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div className="overflow-x-auto bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-zinc-700">
         <div className="min-w-[720px]">
-          <TableComponent
-            moduleName="users"
-            data={users}
-            headers={[
-              { key: 'id', text: 'الرقم' },
-              { key: 'name', text: 'الاسم' },
-              { key: 'email', text: 'البريد الإلكتروني' },
-              { key: 'role', text: 'الدور' },
-              { key: 'image', text: 'الصورة' },
-              { key: 'actions', text: 'إجراءات' },
-            ]}
-            customRenderers={customRenderers}
-            onRowClick={user => setSelectedUser(user)}
-          />
+        <TableComponent
+  moduleName="users"
+  data={users}
+  headers={[
+    { key: 'id', text: 'الرقم' },
+    { key: 'name', text: 'الاسم' },
+    { key: 'email', text: 'البريد الإلكتروني' },
+    { key: 'role', text: 'الدور' },
+    { key: 'image', text: 'الصورة' },
+    { key: 'actions', text: 'إجراءات' },
+  ]}
+  customRenderers={customRenderers}
+  onRowClick={(user) => {
+    setSelectedUser(user);
+    setModalMode('edit');
+  }}
+/>
+
         </div>
       </div>
 
       {(modalMode === 'add' || modalMode === 'edit') && (
         <UserModalForm
-          isOpen={true}
+          isOpen
           onClose={() => setModalMode(null)}
           selectedUser={modalMode === 'edit' ? selectedUser : null}
           createUser={handleCreate}
           updateUser={handleUpdate}
+          refreshUsers={fetchUsers}
         />
       )}
 
       {selectedUser && !modalMode && (
-        <div className="mt-6 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow space-y-4">
+        <div className="mt-6 space-y-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700">
           <UserInfoCard user={selectedUser} />
-          <h2 className="text-xl font-semibold text-center text-green-700 dark:text-green-400">
+          <h2 className="text-xl font-semibold text-center text-green-700 dark:text-green-400 mt-4">
             صلاحيات المستخدم
           </h2>
           <PermissionsSection

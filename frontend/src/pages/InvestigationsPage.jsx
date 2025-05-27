@@ -114,7 +114,7 @@ export default function InvestigationsPage() {
         moduleName={moduleName}
      renderAddButton={{
   render: () => (
-    <Button onClick={() => setIsModalOpen(true)}>
+    <Button  variant="default" onClick={() => setIsModalOpen(true)}>
       إضافة تحقيق جديد
 
         <svg
