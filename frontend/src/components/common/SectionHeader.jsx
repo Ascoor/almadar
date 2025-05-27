@@ -20,10 +20,11 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
         p-4 sm:p-6 md:p-8 shadow-2xl transition-all
         bg-white bg-gradient-to-tr from-royal/10 via-gold/10 to-royal/10
         border border-greenic/20 rounded-full mb-6
-        dark:bg-navy-dark/80
-        dark:bg-gradient-to-br dark:from-royal-dark/10 dark:via-navy-dark/60 dark:to-navy-dark/10
-        dark:text-foreground dark:ring-2 dark:ring-greenic/30 
-        dark:shadow-greenic/30
+        dark:bg-black
+       
+        dark:bg-gradient-to-r dark:from-royal/40 dark:via-royal/60 dark:to-navy-dark/20
+        dark:text-greenic dark:ring-2 dark:ring-greenic/30 
+        dark:shadow-greenic/40
       "
     >
       {icon && (
@@ -57,3 +58,4 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
 };
 
 export default SectionHeader;
+

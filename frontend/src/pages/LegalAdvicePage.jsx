@@ -6,7 +6,7 @@ import LegalAdviceModal from "../components/LegalAdvices/LegalAdviceModal";
 import GlobalConfirmDeleteModal from "../components/common/GlobalConfirmDeleteModal";
 import TableComponent from "../components/common/TableComponent";
 import SectionHeader from "../components/common/SectionHeader";
-import AddButton from "../components/common/AddButton";
+import {Button} from "../components/ui/button";
 import LegalAdviceDetails from "../components/LegalAdvices/LegalAdviceDetails";
 import { LegalAdviceIcon } from "../assets/icons";
 import { AuthContext } from "@/components/auth/AuthContext";
@@ -80,7 +80,29 @@ export default function LegalAdvicePage() {
 
       <TableComponent
         moduleName={moduleName}
-        renderAddButton={can("create") ? { render: () => <AddButton label="مشورة أو رأي" onClick={handleAdd} /> } : null}
+        renderAddButton={can("create") ? {   render: () => (
+                    <Button onClick={() => setIsModalOpen(true)}>
+                      إضافة مشورة / رأي
+                
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                              className="w-4 h-4 ml-2"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 4v16m8-8H4"
+                              />
+                              </svg>
+                              
+                      
+                    </Button>
+                  )
+                  } : null}
         onEdit={can("edit") ? handleEdit : null}
         onDelete={can("delete") ? (row) => setDeleteTarget(row) : null}
         data={advices}

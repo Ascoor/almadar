@@ -143,14 +143,19 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 onClick={onLinkClick}
                 title={it.label}
                 className={({ isActive }) =>
-                  `p-2 rounded hover:bg-yellow-100 dark:hover:bg-gold-light/80  hover:bg-gold-light/80 hover:text-royal-light/80 cursor-pointer
-                   ${isActive ? 'bg-gold-light dark:bg-greenic-light ' : ''}`
-                }
+                `px-4 py-2 rounded-md transition-all duration-200 font-semibold tracking-tight 
+     flex items-center gap-2 group
+     ${
+       isActive
+         ? 'bg-greenic text-white shadow-md dark:bg-greenic-light'
+         : 'text-foreground hover:bg-gold-light/20 hover:text-gold-dark dark:text-greenic-light dark:hover:bg-gold-light/10 dark:hover:text-gold'
+     }`
+  }
               >
                 {({ isActive }) =>
                   React.cloneElement(it.icon, {
-                    className: `transition-colors duration-200 ${
-                      isActive ? 'text-black font-bold ' : ' hover:bg-gold-light/80 hover:text-royal '
+                    className: `transition-greenic duration-200 ${
+                      isActive ? 'text-royal  font-bold ' : ' hover:bg-gold-light/80 hover:text-   '
                     }`
                   })
                 }

@@ -4,7 +4,7 @@ import { deleteLitigation } from "@/services/api/litigations";
 import TableComponent from "@/components/common/TableComponent";
 import LitigationModal from "@/components/Litigations/LitigationModal";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
-import AddButton from "@/components/common/AddButton";
+import {Button} from "@/components/ui/button";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import LitigationActionsTable from "@/components/Litigations/LitigationActionsTable";
 import { AuthContext } from "@/components/auth/AuthContext";
@@ -124,9 +124,31 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
         onEdit={can("edit") ? handleEdit : null}
         onDelete={can("delete") ? (row) => setDeleteTarget(row) : null}
         expandedRowRenderer={expandedRowRenderer}
-        renderAddButton={can("create") ? { render: () => <AddButton label="دعوى" onClick={handleAdd} /> } : null}
-        title="وحدة الدعاوى"
-      />
+        renderAddButton={can("create") ? { render: () => (
+                    <Button
+                      onClick={handleAdd}
+                       >
+                      إضافة دعوى
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                              className="w-4 h-4 ml-2"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                   d="M12 4v16m8-8H4"
+                              />
+                        </svg>
+                    </Button>
+                  )
+        } : null}
+      />                                   
+
+
 
       <LitigationModal
         isOpen={isModalOpen}

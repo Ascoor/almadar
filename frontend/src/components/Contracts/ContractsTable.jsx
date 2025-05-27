@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import TableComponent from "../common/TableComponent";
-import AddButton from "../common/AddButton";
+import {Button} from "@/components/ui/button";
 import ContractModal from "./ContractModal";
 import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
 import ContractDetails from "./ContractDetails";
@@ -62,7 +62,28 @@ export default function ContractsTable({ contracts = [], categories = [], reload
 onDelete={confirmDelete}
   renderAddButton={{
           action: "create",
-          render: () => <AddButton label="عقد" onClick={openAdd} />,
+        render: () => (
+            <Button onClick={() => setIsModalOpen(true)}>
+              إضافة عقد جديد
+        
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4 ml-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4v16m8-8H4"
+                      />
+                      </svg>
+                      
+              
+            </Button>
+          )
         }}
         onRowClick={(row) =>
           setSelectedContract((prev) => (prev?.id === row.id ? null : row))

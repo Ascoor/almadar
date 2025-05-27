@@ -12,7 +12,7 @@ import { AuthContext } from "@/components/auth/AuthContext";
 import TableComponent from "@/components/common/TableComponent";
 import SectionHeader from "@/components/common/SectionHeader";
 import InvestigationModal from "@/components/Investigations/InvestigationModal";
-import AddButton from "@/components/common/AddButton";
+import {Button} from "@/components/ui/button";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import { InvestigationSection } from "@/assets/icons";
 import InvestigationActionsTable from "@/components/Investigations/InvestigationActionsTable";
@@ -103,7 +103,7 @@ export default function InvestigationsPage() {
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 min-h-screen">
+    <div className="p-6  min-h-screen">
       <SectionHeader icon={InvestigationSection} listName="وحدة التحقيقات" />
 
       <TableComponent
@@ -112,9 +112,31 @@ export default function InvestigationsPage() {
         headers={headers}
         customRenderers={customRenderers}
         moduleName={moduleName}
-        renderAddButton={{
-          render: () => <AddButton label="تحقيق" onClick={() => setIsModalOpen(true)} />
-        }}
+     renderAddButton={{
+  render: () => (
+    <Button onClick={() => setIsModalOpen(true)}>
+      إضافة تحقيق جديد
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+              className="w-4 h-4 ml-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4v16m8-8H4"
+              />
+              </svg>
+              
+      
+    </Button>
+  )
+}}
+
         onEdit={handleEdit}
         onDelete={(row) => setToDelete(row)}
         expandedRowRenderer={(row) =>
