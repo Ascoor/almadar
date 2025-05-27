@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import TableComponent from "../common/TableComponent";
+import TableComponent from "@/components/common/TableComponent";
 import {Button} from "@/components/ui/button";
 import ContractModal from "./ContractModal";
 import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
