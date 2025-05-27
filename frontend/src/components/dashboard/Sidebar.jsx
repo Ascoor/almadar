@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 <button
                   onClick={() => handleSectionClick(item.id, !!item.children)}
                   className={`flex items-center gap-3 p-2 w-full rounded-md transition-colors duration-200
-                    ${activeSection === item.id ? 'bg-navy-light text-white' : 'hover:bg-yellow-100 hover:text-greenic'}`}
+                    ${activeSection === item.id ? 'bg-navy-light text-white' : 'hover:bg-yellow-100 hover:text-g'}`}
                 >
                   {React.cloneElement(item.icon, {
                     className: `transition-colors duration-200 ${
@@ -112,14 +112,14 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                       onClick={onLinkClick}
                       className={({ isActive }) =>
                         `flex items-center gap-2 p-2 rounded-md text-sm transition-colors duration-200
-                         ${isActive ? 'bg-navy-light text-white' : 'hover:bg-yellow-100 hover:greenic'}`
+                         ${isActive ? 'bg-navy-light text-white' : ' hover:bg-gold-light/80 hover:text-royal'}`
                       }
                     >
                       {({ isActive }) => (
                         <>
                           {React.cloneElement(ch.icon, {
                             className: `transition-colors duration-200 ${
-                              isActive ? 'text-yellow-300' : 'text-gold dark:text-gray-300'
+                              isActive ? 'text-yellow-300' : ' hover:bg-gold-light/80 hover:text-royal'
                             }`
                           })}
                           <span>{ch.label}</span>
@@ -143,14 +143,14 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 onClick={onLinkClick}
                 title={it.label}
                 className={({ isActive }) =>
-                  `p-2 rounded hover:bg-yellow-100 dark:hover:bg-greenic-light/80  hover:bg-gold-light/80 cursor-pointer
-                   ${isActive ? 'bg-gold-light dark:bg-gold ' : ''}`
+                  `p-2 rounded hover:bg-yellow-100 dark:hover:bg-gold-light/80  hover:bg-gold-light/80 hover:text-royal-light/80 cursor-pointer
+                   ${isActive ? 'bg-gold-light dark:bg-greenic-light ' : ''}`
                 }
               >
                 {({ isActive }) =>
                   React.cloneElement(it.icon, {
                     className: `transition-colors duration-200 ${
-                      isActive ? 'text-black font-bold ' : 'dark:text-greenic-dark  '
+                      isActive ? 'text-black font-bold ' : ' hover:bg-gold-light/80 hover:text-royal '
                     }`
                   })
                 }

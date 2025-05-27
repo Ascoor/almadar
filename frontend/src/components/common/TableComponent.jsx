@@ -19,12 +19,11 @@ const AnimatedRow = ({
   const can = (action) => hasPermission(`${action} ${moduleName}`);
 
   return (
-    <motion.tr
-      whileHover={{ scale: 1.01 }}
-      transition={{ duration: 0.2 }}
-      onClick={() => onRowClick?.(row)}
-      className="cursor-pointer border-b border-muted hover:bg-muted/50 transition"
-    >
+   <motion.tr
+  initial={{ opacity: 0, y: 10 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3, ease: 'easeOut' }}
+>
       {onView && can('view') && (
         <td className="p-2 text-center">
           <button onClick={(e) => { e.stopPropagation(); onView.handler(row); }} className="text-primary">
@@ -189,8 +188,12 @@ const paginatedData = useMemo(() => {
 }, [sortedData, currentPage]);
 
   return (
-    <section className="bg-card p-6 rounded-xl shadow-lg border border-border">
-      <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
+    <motion.section
+  initial={{ opacity: 0, y: 50 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, ease: 'easeOut' }}
+  className="bg-card p-6 rounded-xl shadow-lg border border-border"
+>  <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
         {renderAddButton?.render && can('create') && (
           <div>{renderAddButton.render()}</div>
         )}
@@ -202,45 +205,63 @@ const paginatedData = useMemo(() => {
         />
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-center text-sm border-collapse">
-          <thead className="bg-muted text-muted-foreground">
-            <tr>
-              {onView && can('view') && <th className="p-2">عرض</th>}
-              {headers.map((h) => (
-                <th
-                  key={h.key}
-                  className="p-2 cursor-pointer select-none"
-                  onClick={() => handleSort(h.key)}
-                >
-                  {h.text}{' '}
-                  {sortKey === h.key &&
-                    (sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />)}
-                </th>
-              ))}
-              {onEdit && can('edit') && <th className="p-2">تعديل</th>}
-              {onDelete && can('delete') && <th className="p-2">حذف</th>}
-            </tr>
-          </thead>
-          <tbody>
-          {paginatedData.map((row, idx) => (
-  <React.Fragment key={row.id}>
-    <AnimatedRow
-      row={row}
-      rowIndex={idx}
-      headers={headers}
-      customRenderers={customRenderers}
-      onView={onView}
-      onEdit={onEdit}
-      onDelete={onDelete}
-      onRowClick={onRowClick}
-      moduleName={moduleName}
-    />
-    {expandedRowRenderer?.(row)}
-  </React.Fragment>
-))}
+<div className="overflow-x-auto rounded-lg shadow ring-1 ring-border ring-opacity-10 max-w-full">
+  <table className="min-w-full divide-y divide-border text-xs sm:text-sm text-center">
+   <thead className="bg-muted text-muted-foreground">
+      <tr>
+        {onView && can('view') && <th className="p-3">عرض</th>}
+        {headers.map((h) => (
+          <th
+            key={h.key}
+            onClick={() => handleSort(h.key)}
+            className="p-3 cursor-pointer select-none whitespace-nowrap"
+          >
+            <div className="flex items-center justify-center gap-1">
+              {h.text}
+              {sortKey === h.key &&
+                (sortDirection === 'asc' ? (
+                  <ArrowUp size={14} />
+                ) : (
+                  <ArrowDown size={14} />
+                ))}
+            </div>
+          </th>
+        ))}
+        {onEdit && can('edit') && <th className="p-3">تعديل</th>}
+        {onDelete && can('delete') && <th className="p-3">حذف</th>}
+      </tr>
+    </thead>
+    <motion.tbody
+  key={currentPage}
+  initial={{ opacity: 0, y: 50 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{
+    duration: 0.5,
+    ease: 'easeOut',
+    delayChildren: 0.15,
+    staggerChildren: 0.04,
+  }}
+>
 
-          </tbody>
+     {paginatedData.map((row, idx) => (
+    <React.Fragment key={row.id}>
+      <AnimatedRow
+        row={row}
+        rowIndex={idx}
+        headers={headers}
+        customRenderers={customRenderers}
+        onView={onView}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onRowClick={onRowClick}
+        moduleName={moduleName}
+      />
+      {expandedRowRenderer?.(row)}
+    </React.Fragment>
+  ))}
+
+
+</motion.tbody>
         </table>
         {totalPages > 1 && (
   <div className="flex justify-center mt-4 gap-2">
@@ -259,6 +280,6 @@ const paginatedData = useMemo(() => {
 )}
 
       </div>
-    </section>
+</motion.section>
   );
 }
