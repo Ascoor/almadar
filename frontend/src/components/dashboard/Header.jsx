@@ -23,13 +23,11 @@ export default function Header({ isOpen,user, onToggleSidebar }) {
         shadow-md dark:shadow-[0_01px_#16b8f640]
         z-20
       `}
-    >
-      {/* زر الفتح/الإغلاق */}
+    > 
       <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-        <Menu className="text-greenic h-5 w-5 hover:text-greenic-light" />
+        <Menu className="text-white dark:text-greenic h-5 w-5 hover:text-greenic-light" />
       </Button>
-
-      {/* أدوات التحكم */}
+ 
       <div className="flex items-center gap-3">
         <Notifications userId={user.id} align="right" />
         <ThemeToggle />
