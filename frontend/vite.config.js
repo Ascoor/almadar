@@ -1,8 +1,8 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { VitePWA } from "vite-plugin-pwa";
-import { componentTagger } from "lovable-tagger";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
+import { VitePWA } from 'vite-plugin-pwa';
+import { componentTagger } from 'lovable-tagger';
 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -13,42 +13,44 @@ export default defineConfig(({ mode }) => ({
         ws: true,
       },
     },
-    host: "::",
+    host: '::',
     port: 3000,
   },
+
   optimizeDeps: {
     include: ['socket.io-client', 'laravel-echo'],
   },
+
   plugins: [
     react(),
-    mode === "development" && componentTagger(),
+    mode === 'development' && componentTagger(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: 'autoUpdate',
       devOptions: {
         enabled: true,
-        type: "module",  // ES modules support in dev
+        type: 'module',
       },
       manifest: {
-        short_name: "Almadar",
-        name: "نظام إدارة مكاتب المحاماة",
-        description: "Comprehensive Law Firm Management System",
-        lang: "ar",
-        dir: "rtl",
-        start_url: ".",
-        display: "standalone",
-        orientation: "portrait",
-        theme_color: "#0d3346",
-        background_color: "#0d3346",
+        short_name: 'Almadar',
+        name: 'نظام إدارة مكاتب المحاماة',
+        description: 'Comprehensive Law Firm Management System',
+        lang: 'ar',
+        dir: 'rtl',
+        start_url: '.',
+        display: 'standalone',
+        orientation: 'portrait',
+        theme_color: '#0d3346',
+        background_color: '#0d3346',
         icons: [
-          { src: "favicon.ico", sizes: "64x64 32x32 24x24 16x16", type: "image/x-icon" },
-          { src: "splash-image.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
-          { src: "splash-image.png", sizes: "512x512", type: "image/png" },
+          { src: 'favicon.ico', sizes: '64x64 32x32 24x24 16x16', type: 'image/x-icon' },
+          { src: 'splash-image.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: 'splash-image.png', sizes: '512x512', type: 'image/png' },
         ],
       },
       workbox: {
-        globDirectory: 'dev-dist',  // Ensure it's pointing to the right folder
+        globDirectory: 'dist',
         globPatterns: [
-          '**/*.{js,css,html}',  // Adjust this if your assets are in different folders
+          '**/*.{js,css,html}',
         ],
         globIgnores: [
           '**/node_modules/**/*',
@@ -58,22 +60,23 @@ export default defineConfig(({ mode }) => ({
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/your-api-domain\.com\/.*$/,
-            handler: "NetworkFirst",
-            options: { cacheName: "api-cache" },
+            handler: 'NetworkFirst',
+            options: { cacheName: 'api-cache' },
           },
           {
             urlPattern: /\.(?:js|css|html)$/,
-            handler: "StaleWhileRevalidate",
-            options: { cacheName: "static-assets" },
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'static-assets' },
           },
         ],
       },
     }),
   ].filter(Boolean),
+
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
-    extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
 }));

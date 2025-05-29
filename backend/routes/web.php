@@ -1,6 +1,8 @@
 <?php
 use Illuminate\Support\Facades\Broadcast;
 
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use App\Events\TestEvent;
 use Illuminate\Support\Facades\Route;  
 /*
@@ -19,8 +21,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/test-event', function () {
-    // إرسال الحدث مع رسالة اختبار
-    event(new TestEvent("This is a test message from the backend!"));
-    return "Test event broadcasted!";
-});
+
+Route::get('/open-pdf/{path}', function ($path) {
+    $path = str_replace('..', '', $path); // حماية
+
+    $fullPath = storage_path("app/public/" . $path);
+
+    if (!file_exists($fullPath)) {
+        abort(404, 'الملف غير موجود');
+    }
+
+    return response()->file($fullPath, [
+        'Access-Control-Allow-Origin' => '*', // 💡 هذه التي تحل المشكلة
+        'Content-Type' => 'application/pdf',
+    ]);
+})->where('path', '.*');

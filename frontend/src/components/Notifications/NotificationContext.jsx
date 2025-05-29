@@ -57,26 +57,38 @@ export function useEcho({ userId = null, autoInit = true, config = {} } = {}) {
   };
 
   return { notifications, loading, markAllAsRead };
-}
-
-export function NotificationProvider({ children }) {
+}export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [hasNew, setHasNew] = useState(false);
 
   const addNotification = (notification) => {
-    setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+    setNotifications((prev) => [notification, ...prev]);
     setHasNew(true);
   };
 
   const markAllAsRead = () => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.map((n) => ({ ...n, read: true }))
-    );
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     setHasNew(false);
   };
 
+  const updateNotifications = (newList) => {
+    setNotifications(newList);
+    const newOnes = newList.filter((n) => !n.read).length;
+    setHasNew(newOnes > 0);
+  };
+
   return (
-    <NotificationContext.Provider value={{ notifications, addNotification, hasNew, markAllAsRead }}>
+    <NotificationContext.Provider
+      value={{
+        notifications,
+        setNotifications, // ✅ مهم جداً
+        hasNew,
+        setHasNew,        // ✅ مهم جداً
+        addNotification,
+        markAllAsRead,
+        updateNotifications
+      }}
+    >
       {children}
     </NotificationContext.Provider>
   );
