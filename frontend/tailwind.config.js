@@ -111,7 +111,7 @@ export default {
     },
   },
 
-  plugins: [
+  plugins: [ 
     plugin(function ({ addBase }) {
       addBase({
         '@font-face': [

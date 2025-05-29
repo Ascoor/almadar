@@ -75,7 +75,7 @@ export default function LegalAdvicePage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-900 min-h-screen transition-colors">
+    <div className="p-4 sm:p-6 lg:p-8 min-h-screen transition-colors">
          <motion.div
         key="header"
         initial={{ opacity: 0, y: -100 }}

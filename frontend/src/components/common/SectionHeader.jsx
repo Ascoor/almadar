@@ -9,9 +9,9 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
         bg-white bg-gradient-to-tr from-royal/10 via-gold/10 to-royal/10
         border border-greenic/20 rounded-full mb-6
         dark:bg-greenic-darker
-        dark:bg-gradient-to-r dark:from-navy-darker/50 dark:via-royal-darker/40 dark:to-navy-darker/50
+        dark:bg-gradient-to-r dark:from-navy-darker/50 dark:via-royal-darker/40 dark:to-navy-darker/80
         dark:text-greenic dark:ring-2 dark:ring-greenic/30 
-        dark:shadow-greenic/40
+        dark:shadow-greenic/2 0
       "
     >
       {icon && (

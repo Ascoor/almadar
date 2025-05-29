@@ -26,6 +26,7 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       devOptions: {
         enabled: true,
+        type: "module",  // ES modules support in dev
       },
       manifest: {
         short_name: "Almadar",
@@ -39,32 +40,31 @@ export default defineConfig(({ mode }) => ({
         theme_color: "#0d3346",
         background_color: "#0d3346",
         icons: [
-          {
-            src: "favicon.ico",
-            sizes: "64x64 32x32 24x24 16x16",
-            type: "image/x-icon",
-          },
-          {
-            src: "splash-image.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "maskable",
-          },
-          {
-            src: "splash-image.png",
-            sizes: "512x512",
-            type: "image/png",
-          },
+          { src: "favicon.ico", sizes: "64x64 32x32 24x24 16x16", type: "image/x-icon" },
+          { src: "splash-image.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
+          { src: "splash-image.png", sizes: "512x512", type: "image/png" },
         ],
       },
       workbox: {
+        globDirectory: 'dev-dist',  // Ensure it's pointing to the right folder
+        globPatterns: [
+          '**/*.{js,css,html}',  // Adjust this if your assets are in different folders
+        ],
+        globIgnores: [
+          '**/node_modules/**/*',
+          'sw.js',
+          'workbox-*.js',
+        ],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/your-api-domain\.com\/.*$/,
             handler: "NetworkFirst",
-            options: {
-              cacheName: "api-cache",
-            },
+            options: { cacheName: "api-cache" },
+          },
+          {
+            urlPattern: /\.(?:js|css|html)$/,
+            handler: "StaleWhileRevalidate",
+            options: { cacheName: "static-assets" },
           },
         ],
       },

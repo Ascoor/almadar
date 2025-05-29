@@ -130,7 +130,7 @@ export default function UserModalForm({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6">
       <div className="bg-white dark:bg-gray-900 w-full max-w-lg p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-auto max-h-[90vh]">
         <h2 className="text-xl font-bold text-center mb-6 text-gray-800 dark:text-white">
           {isEdit ? 'تعديل المستخدم' : 'إضافة مستخدم'}

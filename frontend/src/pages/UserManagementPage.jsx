@@ -25,13 +25,19 @@ export default function UsersManagementPage() {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [allPerms, setAllPerms] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [expandedUserId, setExpandedUserId] = useState(null);
+const [selectedUser, setSelectedUser] = useState(null);
+const userCardRef = useRef(null);
   const [modalMode, setModalMode] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [expandedUserId, setExpandedUserId] = useState(null);
-  const userCardRef = useRef(null);
 
+const prevScrollY  = useRef(window.scrollY);
+const cardTop      = useRef(0);          // يُحدث عند فتح الكارت
+const MARGIN       = 40;                 // هامش الأمان
+
+ 
+  // جلب المستخدمين والبيانات الأخرى
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
@@ -65,6 +71,35 @@ export default function UsersManagementPage() {
     fetchRoles();
     fetchPerms();
   }, [fetchUsers, fetchRoles, fetchPerms]);
+
+  // تحديد موقع الكارت عند تحميل الصفحة
+  useEffect(() => {
+    if (userCardRef.current) {
+      cardTop.current = userCardRef.current.offsetTop; // تخزين الموقع العلوي للكارت
+    }
+  }, [expandedUserId]);
+ 
+
+/* مستمع التمرير: يعمل فقط والكارت مفتوح */
+useEffect(() => {
+  if (!expandedUserId) return;           // لا مستمع إذا كان الكارت مغلقًا
+
+  const handleScroll = () => {
+    const currentY  = window.scrollY;
+    const scrollingUp = currentY < prevScrollY.current;
+
+    // إذا كنت تصعد للأعلى وتجاوزت رأس الكارت بهامش MARGIN → أغلِق
+    if (scrollingUp && currentY + MARGIN < cardTop.current) {
+      setExpandedUserId(null);
+      setSelectedUser(null);
+    }
+
+    prevScrollY.current = currentY;
+  };
+
+  window.addEventListener('scroll', handleScroll);
+  return () => window.removeEventListener('scroll', handleScroll);
+}, [expandedUserId]);
 
   const handlePermChange = async (permName, shouldEnable) => {
     setLoading(true);
@@ -142,70 +177,114 @@ export default function UsersManagementPage() {
     ),
     actions: (user) => (
       <div className="flex justify-center gap-2">
-        <button
+        <motion.button
           onClick={(e) => {
             e.stopPropagation();
             setSelectedUser(user);
             setModalMode('edit');
           }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className="p-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded shadow transition"
         >
           <Edit2 className="w-4 h-4" />
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={(e) => {
             e.stopPropagation();
             setSelectedUser(user);
             setShowDelete(true);
           }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className="p-2 bg-red-500 hover:bg-red-600 text-white rounded shadow transition"
         >
           <Trash2 className="w-4 h-4" />
-        </button>
+        </motion.button>
       </div>
     ),
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      <SectionHeader icon={RoleIcon} listName="إدارة المستخدمين والصلاحيات" />
+    <div className="p-6 sm:p-4 lg:p-6 bg-white dark:bg-royal-darker/10 min-h-screen">
+      <motion.div
+        key="section-header"
+        initial={{ opacity: 0, y: -80 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -40 }}
+        transition={{
+          type: 'spring',
+          stiffness: 60,
+          damping: 18,
+          delay: 0.1,
+        }}
+      >
+        <SectionHeader icon={RoleIcon} listName="إدارة المستخدمين والصلاحيات" />
+      </motion.div>
 
-      <div className="flex justify-start">
-        <Button
-          onClick={() => {
+ 
+
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-zinc-700">
+        <div className="min-w-[720px]">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            transition={{ type: 'spring', stiffness: 60, damping: 25 }}
+          >
+            <TableComponent
+              moduleName="users"
+              data={users}
+              headers={[
+                { key: 'id', text: 'الرقم' },
+                { key: 'name', text: 'الاسم' },
+                { key: 'email', text: 'البريد الإلكتروني' },
+                { key: 'role', text: 'الدور' },
+                { key: 'image', text: 'الصورة' },
+                { key: 'actions', text: 'إجراءات' },
+              ]}
+              customRenderers={customRenderers}
+                 renderAddButton={{
+  render: () => (
+    <Button  variant="default" 
+        onClick={() => {
             setSelectedUser(null);
             setModalMode('add');
           }}
-          className="px-6 py-2 rounded-lg shadow bg-primary text-white hover:bg-primary/90 transition"
-        >
-          إضافة مستخدم
-        </Button>
-      </div>
-
-      <div className="overflow-x-auto bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-zinc-700">
-        <div className="min-w-[720px]">
-          <TableComponent
-            moduleName="users"
-            data={users}
-            headers={[
-              { key: 'id', text: 'الرقم' },
-              { key: 'name', text: 'الاسم' },
-              { key: 'email', text: 'البريد الإلكتروني' },
-              { key: 'role', text: 'الدور' },
-              { key: 'image', text: 'الصورة' },
-              { key: 'actions', text: 'إجراءات' },
-            ]}
-            customRenderers={customRenderers}
-            onRowClick={(user) => {
-              setExpandedUserId((prevId) => (prevId === user.id ? null : user.id));
-              setSelectedUser(user);
-              setTimeout(() => {
-                if (userCardRef.current) {
-                  userCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }, 300);
-            }}
-          />
+    >
+   
+                                    إضافة مستخدم
+                              
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                            className="w-4 h-4 ml-2"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            strokeWidth={2}
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              d="M12 4v16m8-8H4"
+                                            />
+                                            </svg>
+                                            
+                                    
+                                  </Button>
+                                )
+                 }}
+              onRowClick={(user) => {
+                setExpandedUserId((prevId) => (prevId === user.id ? null : user.id));
+                setSelectedUser(user);
+                setTimeout(() => {
+                  if (userCardRef.current) {
+                    userCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }, 300);
+              }}
+            />
+          </motion.div>
         </div>
       </div>
 
@@ -220,16 +299,16 @@ export default function UsersManagementPage() {
         />
       )}
 
-      <AnimatePresence>
-        {selectedUser && expandedUserId === selectedUser.id && !modalMode && (
-          <motion.div
-            key="user-details"
-            ref={userCardRef}
+   <AnimatePresence>
+  {selectedUser && expandedUserId === selectedUser.id && !modalMode && (
+    <motion.div
+      key="user-details"
+      ref={userCardRef} 
             layout
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
             <div className="mt-6 space-y-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700">
