@@ -18,32 +18,44 @@ function toHinduNumerals(str) {
   };
   return str.toString().replace(/[0-9]/g, d => numerals[d]);
 }
-
-export default function WarpperCard() {
+export default function WrapperCard() {
   const [date, setDate] = useState(new Date());
 
   useEffect(() => {
-    const interval = setInterval(() => setDate(new Date()), 1000);
-    return () => clearInterval(interval);
+    const id = setInterval(() => setDate(new Date()), 1000);
+    return () => clearInterval(id);
   }, []);
 
-  const day = toHinduNumerals(date.getDate());
-  const month = arabicMonths[date.getMonth()];
-  const year = toHinduNumerals(date.getFullYear());
+  const day     = toHinduNumerals(date.getDate());
+  const month   = arabicMonths[date.getMonth()];
+  const year    = toHinduNumerals(date.getFullYear());
   const weekday = arabicWeekdays[date.getDay()];
 
   return (
-    <div className="w-full flex justify-center px-6 md:px-2  sm:px-0">
-      <div className="w-full max-w-md bg-gradient-to-br from-gold/50 via-royal/10 to-gold/30 dark:from-zinc-900 dark:via-greenic-darker dark:to-navy border border-gold-dark dark:border-greenic-light rounded-full shadow-md p-4">
-        <div className="flex items-center justify-between">
-          <div className="w-[160px] sm:w-[140px]">
-            <DashboardClock />
-          </div>
-          <div className="text-right mr-9">
-            <h2 className="text-lg sm:text-xl font-bold text-royal dark:text-gold-light mb-1">{weekday}</h2>
-            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">{`${day} ${month} ${year}`}</p>
-          </div>
+    <div className="flex justify-center">
+      {/* بطاقة رشيقة وطوليّة (عرض ثابت ~10rem) */}
+      <div
+        className="
+          flex flex-col items-center justify-center gap-2
+          w-40 sm:w-44 lg:w-48       /* 👈 عرض متناسق ضيّق */
+          h-64                       /* 👈 ارتفاع ثابت لطابع الطول */
+          bg-gradient-to-b from-gold/50 via-royal/10 to-gold/30
+          dark:from-zinc-900 dark:via-greenic-darker dark:to-navy
+          border border-gold-dark dark:border-greenic-light
+          rounded-3xl shadow-md p-4   /* زوايا كبيرة بدل rounded-full */
+        "
+      >
+        {/* ساعة اللوحة – تأكّد أن مكوّن DashboardClock لا يفرض حجماً زائداً */}
+        <DashboardClock className="text-3xl sm:text-4xl" />
 
+        {/* اليوم + التاريخ */}
+        <div className="text-center mt-2">
+          <h2 className="text-base sm:text-lg font-bold text-royal dark:text-gold-light mb-1">
+            {weekday}
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+            {`${day} ${month} ${year}`}
+          </p>
         </div>
       </div>
     </div>

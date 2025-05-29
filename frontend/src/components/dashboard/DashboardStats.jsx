@@ -1,72 +1,85 @@
-import React, { useEffect, useState } from 'react';
-import { ServiceIcon, ContractSection, MainLegalCases } from '../../assets/icons'; 
-import DashCard from '../common/DashCard';
-import { getDashboardCounts } from '../../services/api/dashboard'; 
-import WarpperCard from '../layout/WarpperCard';
+import React, { useEffect, useState } from "react";
+import {
+  ServiceIcon,
+  ContractSection,
+  MainLegalCases
+} from "@/assets/icons";
+import DashCard     from "@/components/common/DashCard";   // فيه Link
+import WarpperCard  from "@/components/layout/WarpperCard";
+import { getDashboardCounts } from "@/services/api/dashboard";
 
-const DashboardStats = () => {
+export default function DashboardStats() {
   const [stats, setStats] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
-        const response = await getDashboardCounts();
-        const { contracts, litigations, investigations, legal_advices } = response.data;
+        const { data } = await getDashboardCounts();
+        const { contracts, litigations, investigations, legal_advices } = data;
 
         setStats([
           {
-            title: 'التعاقدات',
+            title: "التعاقدات",
             count: contracts.length,
             imageSrc: ContractSection,
             subcategories: [
-              { title: 'دولي', count: contracts.filter(c => c.scope === 'local').length },
-              { title: 'محلي', count: contracts.filter(c => c.scope === 'international').length },
-            ],
+              {
+                title: "محلي",
+                count: contracts.filter(c => c.scope === "local").length,
+                to: "/contracts?scope=local"
+              },
+              {
+                title: "دولي",
+                count: contracts.filter(c => c.scope === "international").length,
+                to: "/contracts?scope=international"
+              }
+            ]
           },
           {
-            title: 'الرأي والفتوى',
+            title: "الرأي والفتوى",
             count: legal_advices.length,
             imageSrc: ServiceIcon,
             subcategories: [
-              { title: 'تحقيقات', count: investigations.length },
-              { title: 'مشورة', count: legal_advices.length },
-            ],
+              {
+                title: "تحقيقات",
+                count: investigations.length,
+                to: "/legal/investigations"
+              },
+              {
+                title: "مشورة",
+                count: legal_advices.length,
+                to: "/legal/legal-advices"
+              }
+            ]
           },
           {
-            title: 'القضايا',
+            title: "القضايا",
             count: litigations.length,
             imageSrc: MainLegalCases,
             subcategories: [
-              { title: 'من الشركة', count: litigations.filter(l => l.scope === 'from').length },
-              { title: 'ضد الشركة', count: litigations.filter(l => l.scope === 'against').length },
-            ],
-          },
+              {
+                title: "من الشركة",
+                count: litigations.filter(l => l.scope === "from").length,
+                to: "/legal/litigations?scope=from"
+              },
+              {
+                title: "ضد الشركة",
+                count: litigations.filter(l => l.scope === "against").length,
+                to: "/legal/litigations?scope=against"
+              }
+            ]
+          }
         ]);
-      } catch (error) {
-        console.error('Error fetching dashboard statistics:', error);
+      } catch (err) {
+        console.error("Error fetching dashboard statistics:", err);
       }
-    };
-
-    fetchData();
+    })();
   }, []);
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-6 md:grid-cols-4">
-              <div className="   z-10"> 
-            <WarpperCard />
-              </div>
-      
-      {stats.map((stat) => (
-        <DashCard
-          key={stat.title}
-          title={stat.title}
-          count={stat.count}
-          imageSrc={stat.imageSrc}
-          subcategories={stat.subcategories}
-        />
-      ))}
+    <div className="grid gap-2 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+      <WarpperCard />   {/* بطاقة الساعة */}
+      {stats.map(stat => <DashCard key={stat.title} {...stat} />)}
     </div>
   );
-};
-
-export default DashboardStats;
+}

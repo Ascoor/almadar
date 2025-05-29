@@ -33,7 +33,7 @@
     return (<
       div className="relative">  
       <motion.h2
-      className="text-xl sm:text-2xl text-center font-bold mb-2 text-royal-light dark:text-gold"
+      className="text-xl sm:text-2xl text-center font-bold mb-2 text-royal-dark dark:text-gold"
       variants={titleVariants}
       initial="hidden"
       animate="show"
