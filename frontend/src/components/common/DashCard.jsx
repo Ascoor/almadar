@@ -23,7 +23,7 @@ const iconFor = (label) => {
 
 export default function DashCard({ title, count, subcategories = [], imageSrc }) {
   return (
-    <div className="flex items-center mb-6 w-full max-w-xs p-2 rounded-full shadow-lg z-30
+    <div className="flex items-center mb-6 w-full max-w-xs p-2 rounded-full shadow-lg 
                     bg-gradient-to-t from-gold/40 via-royal/20 to-royal/20
                     dark:from-navy-dark/40 dark:via-greenic-dark/10 dark:to-navy-darker/90
                     transition-transform transform hover:scale-105 mx-auto">
