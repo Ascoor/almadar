@@ -55,7 +55,7 @@ const PermissionRow = ({ action, enabled, onChange, disabled }) => (
                 transition-all duration-200 hover:shadow-md transform hover:scale-[1.01] mb-2
                 ${enabled ? 'bg-green-50 dark:bg-green-900/20' : 'bg-gray-100 dark:bg-zinc-800'}`}
   >
-    <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
+    <label className="text-sm font-medium  text-gray-800 dark:text-gray-200">
       {translatePermission(action)}
     </label>
     <button
@@ -86,7 +86,7 @@ const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionC
         return (
           <div
             key={section}
-            className="p-5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-2xl shadow-lg transition-all hover:shadow-xl"
+            className="p-5 bg-white dark:bg-royal-darker dark:bg-greenic/10 border border-gray-200 dark:border-zinc-700 rounded-2xl shadow-lg transition-all hover:shadow-xl"
           >
             <h3 className="text-lg font-bold mb-4 text-center text-navy dark:text-gold">
               {translateSection(section)}

@@ -78,7 +78,7 @@ export default function UserMenu({ align = 'right' }) {
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="inline-flex items-center gap-2 focus:outline-none"
       >
-        <span className="hidden md:inline font-bold text-gold-light dark:text-gold-light">
+        <span className="hidden md:inline font-bold text-white dark:text-gold-light">
           {user?.name || 'زائر'}
         </span>
         <img
@@ -111,7 +111,7 @@ export default function UserMenu({ align = 'right' }) {
               onClick={() => setDropdownOpen(false)}
               className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              الإعدادات
+              الملف الشخصى
             </Link>
           </li>
           <li>

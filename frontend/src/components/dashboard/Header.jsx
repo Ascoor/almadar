@@ -15,9 +15,9 @@ export default function Header({ isOpen,user, onToggleSidebar }) {
         transition-all duration-300
         ${isOpen ? 'sm:mr-64' : 'sm:mr-16'}
         py-3 px-6 flex justify-between items-center
-        bg-gold dark:bg-black
-        bg-gradient-to-l from-gold-light/70 via-reded/20 to-navy-light/70 
-             dark:bg-gradient-to-l dark:from-navy-dark/30 dark:via-navy-dark/40 dark:to-greenic-dark/60
+        bg-navy-light dark:bg-black
+        bg-gradient-to-l from-gold  via-greenic/80 to-royal/80 
+             dark:bg-gradient-to-l dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/60
         text-gray-900 dark:text-white
         border-b border-gray-200 dark:border-navy-dark
         shadow-md dark:shadow-[0_01px_#16b8f640]

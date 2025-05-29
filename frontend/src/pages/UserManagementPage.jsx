@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react'; 
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import SectionHeader from '@/components/common/SectionHeader';
 import TableComponent from '@/components/common/TableComponent';
 import UserModalForm from '@/components/Users/UserModalForm';
 import UserInfoCard from '@/components/Users/UserInfoCard';
-import { RoleIcon } from '@/assets/icons';
 import PermissionsSection from '@/components/Users/Sections/PermissionsSection';
 import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteModal';
+import { RoleIcon } from '@/assets/icons';
 import API_CONFIG from '../config/config';
 import { Edit2, Trash2 } from 'lucide-react';
 import {
@@ -18,7 +19,7 @@ import {
   getRoles,
 } from '@/services/api/users';
 import { toast } from 'sonner';
-import {Button} from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 
 export default function UsersManagementPage() {
   const [users, setUsers] = useState([]);
@@ -28,6 +29,8 @@ export default function UsersManagementPage() {
   const [modalMode, setModalMode] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [expandedUserId, setExpandedUserId] = useState(null);
+  const userCardRef = useRef(null);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -79,7 +82,6 @@ export default function UsersManagementPage() {
     }
   };
 
-
   const handleCreate = async formData => {
     setLoading(true);
     try {
@@ -122,22 +124,22 @@ export default function UsersManagementPage() {
       setLoading(false);
     }
   };
-const customRenderers = {
-  role: (user) => (
-    <div className="text-center text-sm font-semibold text-green-700 dark:text-green-400">
-      {user.roles?.[0]?.name || '—'}
-    </div>
-  ),
-  image: (user) => (
-    <div className="flex justify-center">
-      {user.image ? (
-        <img src={`${API_CONFIG.baseURL}/${user.image}`} alt={user.name} className="w-10 h-10 rounded-full object-cover border" />
-      ) : (
-        <span className="text-gray-500 text-xs">لا توجد صورة</span>
-      )}
-    </div>
-  ),
 
+  const customRenderers = {
+    role: (user) => (
+      <div className="text-center text-sm font-semibold text-green-700 dark:text-green-400">
+        {user.roles?.[0]?.name || '—'}
+      </div>
+    ),
+    image: (user) => (
+      <div className="flex justify-center">
+        {user.image ? (
+          <img src={`${API_CONFIG.baseURL}/${user.image}`} alt={user.name} className="w-10 h-10 rounded-full object-cover border" />
+        ) : (
+          <span className="text-gray-500 text-xs">لا توجد صورة</span>
+        )}
+      </div>
+    ),
     actions: (user) => (
       <div className="flex justify-center gap-2">
         <button
@@ -182,24 +184,28 @@ const customRenderers = {
 
       <div className="overflow-x-auto bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-zinc-700">
         <div className="min-w-[720px]">
-        <TableComponent
-  moduleName="users"
-  data={users}
-  headers={[
-    { key: 'id', text: 'الرقم' },
-    { key: 'name', text: 'الاسم' },
-    { key: 'email', text: 'البريد الإلكتروني' },
-    { key: 'role', text: 'الدور' },
-    { key: 'image', text: 'الصورة' },
-    { key: 'actions', text: 'إجراءات' },
-  ]}
-  customRenderers={customRenderers}
-  onRowClick={(user) => {
-    setSelectedUser(user);
-    setModalMode('edit');
-  }}
-/>
-
+          <TableComponent
+            moduleName="users"
+            data={users}
+            headers={[
+              { key: 'id', text: 'الرقم' },
+              { key: 'name', text: 'الاسم' },
+              { key: 'email', text: 'البريد الإلكتروني' },
+              { key: 'role', text: 'الدور' },
+              { key: 'image', text: 'الصورة' },
+              { key: 'actions', text: 'إجراءات' },
+            ]}
+            customRenderers={customRenderers}
+            onRowClick={(user) => {
+              setExpandedUserId((prevId) => (prevId === user.id ? null : user.id));
+              setSelectedUser(user);
+              setTimeout(() => {
+                if (userCardRef.current) {
+                  userCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }, 300);
+            }}
+          />
         </div>
       </div>
 
@@ -214,20 +220,33 @@ const customRenderers = {
         />
       )}
 
-      {selectedUser && !modalMode && (
-        <div className="mt-6 space-y-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700">
-          <UserInfoCard user={selectedUser} />
-          <h2 className="text-xl font-semibold text-center text-green-700 dark:text-green-400 mt-4">
-            صلاحيات المستخدم
-          </h2>
-          <PermissionsSection
-            allPermissions={allPerms}
-            userPermissions={selectedUser.permissions}
-            handlePermissionChange={handlePermChange}
-            loading={loading}
-          />
-        </div>
-      )}
+      <AnimatePresence>
+        {selectedUser && expandedUserId === selectedUser.id && !modalMode && (
+          <motion.div
+            key="user-details"
+            ref={userCardRef}
+            layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-6 space-y-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700">
+              <UserInfoCard user={selectedUser} />
+              <h2 className="text-xl font-semibold text-center text-green-700 dark:text-green-400 mt-4">
+                صلاحيات المستخدم
+              </h2>
+              <PermissionsSection
+                allPermissions={allPerms}
+                userPermissions={selectedUser.permissions}
+                handlePermissionChange={handlePermChange}
+                loading={loading}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {showDelete && (
         <GlobalConfirmDeleteModal

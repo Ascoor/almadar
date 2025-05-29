@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ServiceIcon, ContractSection, MainLegalCases } from '../../assets/icons'; 
 import DashCard from '../common/DashCard';
-import { getDashboardCounts } from '../../services/api/dashboard';
+import { getDashboardCounts } from '../../services/api/dashboard'; 
+import WarpperCard from '../layout/WarpperCard';
 
 const DashboardStats = () => {
   const [stats, setStats] = useState([]);
@@ -50,7 +51,11 @@ const DashboardStats = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-6 md:grid-cols-4">
+              <div className="   z-10"> 
+            <WarpperCard />
+              </div>
+      
       {stats.map((stat) => (
         <DashCard
           key={stat.title}

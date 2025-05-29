@@ -9,6 +9,7 @@ import {
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { AuthContext } from "@/components/auth/AuthContext";
 
+import { motion } from 'framer-motion';
 import TableComponent from "@/components/common/TableComponent";
 import SectionHeader from "@/components/common/SectionHeader";
 import InvestigationModal from "@/components/Investigations/InvestigationModal";
@@ -104,10 +105,25 @@ export default function InvestigationsPage() {
 
   return (
     <div className="p-6  min-h-screen">
-      <SectionHeader icon={InvestigationSection} listName="وحدة التحقيقات" />
-
+            {/* ✅ رأس الصفحة بحركة من الأعلى */}
+      <motion.div
+        key="header"
+        initial={{ opacity: 0, y: -100 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -40 }}
+        transition={{ type: 'spring', stiffness: 70, damping: 14 }}
+      >
+      <SectionHeader icon={InvestigationSection} listName="قسم التحقيقات" />
+</motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 60 }}
+            transition={{ type: 'spring', stiffness: 60, damping: 14, delay: 0.1 }}
+            className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
+          >
       <TableComponent
-        title="وحدة التحقيقات القانونية"
+        title="قسم التحقيقات القانونية"
         data={investigations}
         headers={headers}
         customRenderers={customRenderers}
@@ -153,7 +169,7 @@ export default function InvestigationsPage() {
           )
         }
       />
-
+</motion.div>
       <InvestigationModal
         isOpen={isModalOpen}
         onClose={() => {

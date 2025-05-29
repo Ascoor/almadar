@@ -30,50 +30,39 @@ class UserController extends Controller
             'image_url' => $user->image ? asset('storage/' . $user->image) : null,
         ]);
     }
+public function store(Request $request)
+{
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|email|unique:users,email',
+        'roles'    => 'array',
+        'roles.*'  => 'exists:roles,name',
+        'image'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
-            'roles'    => 'array',
-            'roles.*'  => 'exists:roles,name',
-            'permissions' => 'array',
-            'permissions.*' => 'exists:permissions,name',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+    $user = User::create([
+        'name'     => $request->name,
+        'email'    => $request->email,
+        'password' => Hash::make('12345678'),
+    ]);
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        if ($request->has('roles')) {
-            $user->syncRoles($request->roles);
-        }
-
-        if ($request->has('permissions')) {
-            $user->syncPermissions($request->permissions);
-        }
-
-        if ($request->hasFile('image')) {
-            $extension = $request->file('image')->getClientOriginalExtension();
-            $filename = "user-{$user->id}." . $extension;
-            $path = $request->file('image')->storeAs('users_images', $filename, 'public');
-            $user->image = $path;
-            $user->save();
-        }
-
-        return response()->json([
-            'message' => 'تم إنشاء المستخدم بنجاح',
-            'user' => $user->load(['roles', 'permissions']),
-            'image_url' => $user->image ? asset('storage/' . $user->image) : null,
-        ], 201);
+    if ($request->has('roles')) {
+        $user->syncRoles($request->roles);
     }
 
-    public function update(Request $request, $id)
+    if ($request->hasFile('image')) {
+        $filename = 'user-' . $user->id . '.' . $request->file('image')->getClientOriginalExtension();
+        $path = $request->file('image')->storeAs('users_images', $filename, 'public');
+        $user->image = $path;
+        $user->save();
+    }
+
+    return response()->json([
+        'message' => 'تم إنشاء المستخدم بنجاح',
+        'user' => $user->load(['roles', 'permissions']),
+    ]);
+}
+  public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
 

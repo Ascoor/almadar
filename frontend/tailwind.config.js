@@ -60,16 +60,20 @@ export default {
           light: '#81C784',
           DEFAULT: '#4CAF50',
           dark: '#388E3C',
+          darker: '#05140f',
         },
         navy: {
-          light: '#1A5DAD',
+           light: '#1A5DAD',
           DEFAULT: '#0F3460',
           dark: '#0A1E37',
+
+          darker: '#080a23',
         },
         royal: {
-          light: '#1c4592',
-          DEFAULT: '#0d1d44',
-          dark: '#0a152e',
+  light: '#A3BFFA',     
+          DEFAULT: '#3B82F6' ,
+          dark: '#1E3A8A',   
+          darker: '#1E293B', 
         },
         gold: {
           light: '#F5DA81',

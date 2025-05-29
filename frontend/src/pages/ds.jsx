@@ -1,143 +1,112 @@
+  import   { useState, useEffect ,useContext} from 'react'; 
+ import { motion, AnimatePresence } from 'framer-motion';
 
-import React, { useState, useEffect, useMemo, useContext } from 'react';
-import { Edit, Eye, Trash, ArrowUp, ArrowDown } from 'lucide-react';
-import * as XLSX from 'xlsx';
-import { AuthContext } from '@/components/auth/AuthContext';
+  import { TooltipProvider } from "@/components/ui/tooltip";
+  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+  import { useLocation } from "react-router-dom";
+import {NotificationProvider} from '../components/Notifications/NotificationContext';
+  import Header from '../components/dashboard/Header';
+  import Sidebar from '../components/dashboard/Sidebar';
+  import AuthRoutes from '../components/layout/AuthRoutes'; 
+import { AuthContext } from '@/components/auth/AuthContext';   
+import EchoListener from '../components/EchoListener';
+import AdminListener from '../components/AdminListener';
+  const queryClient = new QueryClient();
 
-export default function TableComponent({
-  data = [],
-  headers = [],
-  customRenderers = {},
-  moduleName = '',
-  onEdit,
-  onDelete,
-  onView,
-  renderAddButton,
-  onRowClick,
-  expandedRowRenderer,
-}) {
-  const { hasPermission } = useContext(AuthContext);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortKey, setSortKey] = useState(null);
-  const [sortDirection, setSortDirection] = useState('asc');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedIds, setSelectedIds] = useState([]);
-  const rowsPerPage = 10;
-
-  const can = (action) => hasPermission(`${action} ${moduleName}`);
-
-  const filteredData = useMemo(() => {
-    const keywords = searchQuery.toLowerCase().split(/\s+/);
-    return data.filter(item =>
-      keywords.every(kw =>
-        headers.some(h => {
-          const val = item[h.key] ?? '';
-          return String(val).toLowerCase().includes(kw);
-        })
-      )
-    );
-  }, [searchQuery, data, headers]);
-
-  const sortedData = useMemo(() => {
-    if (!sortKey) return filteredData;
-    return [...filteredData].sort((a, b) => {
-      const aVal = a[sortKey] || '';
-      const bVal = b[sortKey] || '';
-      return sortDirection === 'asc'
-        ? String(aVal).localeCompare(bVal)
-        : String(bVal).localeCompare(aVal);
-    });
-  }, [filteredData, sortKey, sortDirection]);
-
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * rowsPerPage;
-    return sortedData.slice(start, start + rowsPerPage);
-  }, [sortedData, currentPage]);
-
-  const toggleSelectRow = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
+  export default function AuthWrapper() {
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const location = useLocation();
+  const { user } = useContext(AuthContext); 
+// Demo function to simulate logging in a user
+  const activateEcho = () => {
+    setUserId(1); // Simulate user ID 1
+    setIsEchoEnabled(true);
   };
+    // إغلاق الـ sidebar عند تغيير المسار على الشاشات الصغيرة
+    useEffect(() => {
+      if (window.innerWidth < 640) {
+        setSidebarOpen(false);
+      }
+    }, [location.pathname]);
 
-  const exportToExcel = () => {
-    const headersRow = headers.map(h => h.text);
-    const rows = (selectedIds.length ? data.filter(d => selectedIds.includes(d.id)) : filteredData)
-      .map(row => headers.map(h => row[h.key] ?? ''));
-    const sheet = XLSX.utils.aoa_to_sheet([headersRow, ...rows]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, sheet, 'Export');
-    XLSX.writeFile(workbook, 'export.xlsx');
-  };
+    const toggleSidebar = () => {
+      setSidebarOpen(prev => !prev);
+    };
 
-  return (
-    <div className="p-4 border rounded shadow-sm bg-white dark:bg-gray-900">
-      <div className="flex justify-between mb-4">
-        <input
-          type="text"
-          placeholder="ابحث..."
-          className="border p-2 rounded"
-          onChange={(e) => setSearchQuery(e.target.value)}
+    const handleLinkClick = () => {
+      if (window.innerWidth < 640) {
+        setSidebarOpen(false);
+      }
+    };
+
+    return (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider> 
+       
+      <NotificationProvider> 
+   <AdminListener />  
+   <EchoListener />  
+   <div className="min-h-screen flex flex-col sm:flex-row relative">
+    {/* Sidebar with slide animation */}
+  <AnimatePresence initial={false} mode="wait">
+    {sidebarOpen ? (
+      <motion.div
+        key="expanded-sidebar"
+        initial={{ x: '-100%', opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: '-100%', opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 80, damping: 14 }}
+      >
+        <Sidebar
+          isOpen={true}
+          onToggle={toggleSidebar}
+          onLinkClick={handleLinkClick}
         />
-        <div className="space-x-2">
-          <button onClick={exportToExcel} className="bg-green-600 text-white px-3 py-1 rounded">تصدير</button>
-          {renderAddButton && can('create') && renderAddButton()}
-        </div>
+      </motion.div>
+    ) : (
+      // ✅ Sidebar in collapsed mode (no animation)
+      <div key="mini-sidebar" className="hidden sm:block">
+        <Sidebar
+          isOpen={false}
+          onToggle={toggleSidebar}
+          onLinkClick={handleLinkClick}
+        />
       </div>
+    )}
+  </AnimatePresence>
 
-      <table className="w-full text-sm text-center border">
-        <thead className="bg-gray-100">
-          <tr>
-            <th></th>
-            {headers.map(h => (
-              <th key={h.key} onClick={() => {
-                if (sortKey === h.key) setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-                else setSortKey(h.key);
-              }} className="cursor-pointer">
-                {h.text}
-                {sortKey === h.key && (sortDirection === 'asc' ? ' 🔼' : ' 🔽')}
-              </th>
-            ))}
-            {(onEdit || onDelete || onView) && <th>إجراءات</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedData.map((row, index) => (
-            <React.Fragment key={row.id}>
-              <tr className="hover:bg-gray-100">
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.includes(row.id)}
-                    onChange={() => toggleSelectRow(row.id)}
-                  />
-                </td>
-                {headers.map(h => (
-                  <td key={h.key}>{customRenderers[h.key]?.(row) ?? row[h.key] ?? '—'}</td>
-                ))}
-                <td className="space-x-1">
-                  {onView && <button onClick={() => onView(row)} className="text-blue-600"><Eye size={14} /></button>}
-                  {onEdit && <button onClick={() => onEdit(row)} className="text-purple-600"><Edit size={14} /></button>}
-                  {onDelete && <button onClick={() => onDelete(row)} className="text-red-600"><Trash size={14} /></button>}
-                </td>
-              </tr>
-              {expandedRowRenderer?.(row)}
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+  {/* Main Content */}
+  <div className="flex-1 flex flex-col">
+    {/* Header Animation */}
+    <motion.div
+      key="header"
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+    >
+      <Header user={user.id} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
+    </motion.div>
 
-      <div className="flex justify-center mt-4 space-x-2">
-        {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-2 py-1 rounded ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
+    {/* Main Area */}
+    <motion.main
+      key={location.pathname}
+      initial={{ y: 60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: 40, opacity: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className={`
+        flex-1 pt-16 pb-8
+        px-4 sm:px-6 lg:px-8
+        ${sidebarOpen ? 'sm:mr-[280px]' : 'sm:mr-[80px]'}
+      `}
+    >
+      <AuthRoutes />
+    </motion.main>
+  </div>
+</div>
+
+  </NotificationProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    );
+  }

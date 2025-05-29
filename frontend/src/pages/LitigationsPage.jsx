@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-
+import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "@/components/common/SectionHeader";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import UnifiedLitigationsTable from "@/components/Litigations/UnifiedLitigationsTable";
+import { useNavigate } from "react-router-dom";
 import { getLitigations, deleteLitigation } from "@/services/api/litigations";
 import { CaseIcon } from "@/assets/icons";
 
@@ -14,6 +14,7 @@ export default function LitigationsPage() {
   const [litigations, setLitigations] = useState([]);
   const [litigationToDelete, setLitigationToDelete] = useState(null);
   const [loadingLitigations, setLoadingLitigations] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadLitigations();
@@ -27,7 +28,6 @@ export default function LitigationsPage() {
       setLitigations(litigationsData);
     } catch (error) {
       toast.error("فشل تحميل الدعاوى");
-      console.error(error);
     } finally {
       setLoadingLitigations(false);
     }
@@ -40,9 +40,8 @@ export default function LitigationsPage() {
       toast.success("تم الحذف بنجاح");
       setLitigationToDelete(null);
       loadLitigations();
-    } catch (error) {
+    } catch {
       toast.error("فشل الحذف");
-      console.error(error);
     }
   };
 
@@ -52,28 +51,78 @@ export default function LitigationsPage() {
       : litigations.filter((c) => c.scope === "from");
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-6 ">
-      <SectionHeader listName="وحدة التقاضي" icon={CaseIcon} />
+    <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-10">
 
-      {/* Tabs */}
-      <div className="flex flex-wrap justify-center gap-4 mt-6 mb-6 text-center">
-        <Button
-          variant={activeTab === "against" ? "default" : "outline"}
-          onClick={() => setActiveTab("against")}
-          className="rounded-full px-6 min-w-[200px]"
-        >
-          دعاوى ضد الشركة
-        </Button>
-        <Button
-          variant={activeTab === "from" ? "default" : "outline"}
-          onClick={() => setActiveTab("from")}
-          className="rounded-full px-6 min-w-[200px]"
-        >
-          دعاوى من الشركة
-        </Button>
-      </div>
+      {/* ✅ العنوان يتحرك من الأعلى */}
+     <motion.div
+  key="section-header"
+  initial={{ opacity: 0, y: -80 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -40 }}
+  transition={{
+    type: "spring",
+    stiffness: 60,
+    damping: 18,
+    delay: 0.1
+  }}
+>
+  <SectionHeader listName="قسم التقاضي" icon={CaseIcon} />
+</motion.div>
 
-      {/* Table */}
+
+      {/* ✅ التبويبات بانتقال ناعم */}
+      <motion.div
+        className="flex justify-center gap-4"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.15, duration: 0.3 }}
+      >
+        {[
+          { key: "from", label: "ضد الشركة" },
+          { key: "against", label: "من الشركة" },
+        ].map((tab) => (
+          <motion.button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`px-6 py-2 rounded-full text-sm font-bold transition border ${
+              activeTab === tab.key
+                ? "bg-gold/90 text-black dark:bg-greenic dark:text-white shadow-md"
+                : "bg-white text-gold dark:text-greenic border-gold dark:border-greenic hover:bg-gray-100 dark:hover:bg-zinc-700"
+            }`}
+          >
+            {tab.label}
+          </motion.button>
+        ))}
+      </motion.div>
+
+  {/* ✅ التغليف الثابت بالموشن لعرض أولي */}
+<motion.div
+  key={`table-wrapper-${activeTab}`}
+  initial={{ opacity: 0, y: 60 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -40 }}
+  transition={{
+    type: "spring",
+    stiffness: 60,
+    damping: 18,
+    delay: 0.2
+  }}
+>
+  <AnimatePresence mode="wait">
+    <motion.div
+      key={activeTab}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -30 }}
+      transition={{
+        type: "spring",
+        stiffness: 60,
+        damping: 18,
+        delay: 0.1
+      }}
+    >
       <Card className="p-4 sm:p-6 rounded-xl shadow border overflow-x-auto">
         <UnifiedLitigationsTable
           litigations={filteredLitigations}
@@ -83,8 +132,12 @@ export default function LitigationsPage() {
           loading={loadingLitigations}
         />
       </Card>
+    </motion.div>
+  </AnimatePresence>
+</motion.div>
 
-      {/* Delete Modal */}
+
+      {/* ✅ نافذة تأكيد الحذف */}
       <GlobalConfirmDeleteModal
         isOpen={!!litigationToDelete}
         onClose={() => setLitigationToDelete(null)}

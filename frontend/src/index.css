@@ -72,7 +72,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Tajawal', sans-serif;
   }
 
   /* Add RTL support */
@@ -112,3 +112,4 @@
   margin-right: 80px;
   transition: margin-right 0.3s ease;
 }
+ 

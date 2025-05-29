@@ -8,8 +8,7 @@ import { ArchiveSection } from "../assets/icons";
 import API_CONFIG from "../config/config";
  
 export default function ArchivePage() {
-  const [archives, setArchives] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [archives, setArchives] = useState({}); 
   const [openFolders, setOpenFolders] = useState({}); // لتتبع المجلدات المفتوحة
 
   useEffect(() => {
@@ -45,13 +44,7 @@ export default function ArchivePage() {
     }));
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[50vh] text-almadar-blue dark:text-almadar-yellow text-lg font-bold">
-        جاري التحميل...
-      </div>
-    );
-  }
+ 
 
   return (
     <div className="p-6 space-y-8">

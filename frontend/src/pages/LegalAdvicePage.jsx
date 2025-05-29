@@ -10,7 +10,7 @@ import {Button} from "../components/ui/button";
 import LegalAdviceDetails from "../components/LegalAdvices/LegalAdviceDetails";
 import { LegalAdviceIcon } from "../assets/icons";
 import { AuthContext } from "@/components/auth/AuthContext";
-
+import { motion } from 'framer-motion';
 export default function LegalAdvicePage() {
   const [advices, setAdvices] = useState([]);
   const [adviceTypes, setAdviceTypes] = useState([]);
@@ -76,8 +76,22 @@ export default function LegalAdvicePage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-900 min-h-screen transition-colors">
-      <SectionHeader listName="وحدة المشورة القانونية" icon={LegalAdviceIcon} />
-
+         <motion.div
+        key="header"
+        initial={{ opacity: 0, y: -100 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -40 }}
+        transition={{ type: 'spring', stiffness: 70, damping: 14 }}
+      >
+           <SectionHeader listName="قسم المشورة القانونية" icon={LegalAdviceIcon} />
+        </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 60 }}
+            transition={{ type: 'spring', stiffness: 60, damping: 14, delay: 0.1 }}
+            className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
+          >
       <TableComponent
         moduleName={moduleName}
         renderAddButton={can("create") ? {   render: () => (
@@ -142,7 +156,7 @@ export default function LegalAdvicePage() {
           )
         }
       />
-
+</motion.div>
       <LegalAdviceModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

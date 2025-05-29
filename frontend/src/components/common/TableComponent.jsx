@@ -78,10 +78,10 @@ export default function TableComponent({
   };
 
   return (
-    <div className="bg-white dark:bg-zinc-900 p-4 rounded-xl shadow-lg border dark:border-zinc-700">
+    <div className="bg-white dark:bg-zinc-900 p-4 rounded-xl shadow-lg border dark:border-zinc-700 transition-all">
       {/* Toolbar */}
       <div className="flex flex-col md:flex-row justify-between gap-3 mb-4 items-center">
-       
+        {renderAddButton?.render && can('create') && renderAddButton.render()}
         <div className="flex flex-wrap gap-2">
           <button onClick={() => exportTo('xlsx')} className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
             📁 Excel
@@ -89,20 +89,19 @@ export default function TableComponent({
           <button onClick={() => exportTo('csv')} className="bg-amber-500 text-white px-3 py-1 rounded hover:bg-amber-600 text-sm">
             🧾 CSV
           </button>
-          {renderAddButton?.render && can('create') && renderAddButton.render()}
+          <input
+            type="text"
+            placeholder="🔍 ابحث..."
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full md:w-64 px-3 py-2 border rounded-lg text-sm focus:outline-none dark:bg-zinc-800 dark:text-white"
+          />
         </div>
-         <input
-          type="text"
-          placeholder="🔍 ابحث..."
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full md:w-64 px-3 py-2 border rounded-lg text-sm focus:outline-none dark:bg-zinc-800 dark:text-white"
-        />
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full table-auto text-sm border rounded">
-          <thead className="bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-200">
+          <thead className="bg-gold-light/80 dark:bg-greenic-light/30 text-gray-700 dark:text-gray-200">
             <tr>
               <th className="p-3"></th>
               {headers.map((h) => (
@@ -132,8 +131,11 @@ export default function TableComponent({
           <tbody className="divide-y dark:divide-zinc-800">
             {paginatedData.map((row) => (
               <React.Fragment key={row.id}>
-                <tr  className="hover:bg-gray-50 dark:hover:bg-zinc-800 transition">
-                  <td className="p-2">
+                <tr
+                  className="hover:bg-gold-light/30 dark:hover:bg-greenic-light/10 transition cursor-pointer"
+                  onClick={() => onRowClick?.(row)}
+                >
+                  <td className="p-2 text-center">
                     <input
                       type="checkbox"
                       checked={selectedIds.includes(row.id)}
@@ -143,7 +145,22 @@ export default function TableComponent({
                   </td>
                   {headers.map(h => (
                     <td key={h.key} className="p-2 text-center">
-                      {customRenderers[h.key]?.(row) ?? row[h.key] ?? '—'}
+                      {h.key === 'attachment' ? (
+                        row.attachment ? (
+                          <a
+                            href={`${import.meta.env.VITE_API_BASE_URL}/storage/${row.attachment}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300"
+                          >
+                            عرض المرفق
+                          </a>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">لا يوجد</span>
+                        )
+                      ) : (
+                        customRenderers[h.key]?.(row) ?? row[h.key] ?? '—'
+                      )}
                     </td>
                   ))}
                   <td className="p-2 space-x-1 text-center">
@@ -178,7 +195,9 @@ export default function TableComponent({
             key={i}
             onClick={() => setCurrentPage(i + 1)}
             className={`px-3 py-1 text-sm rounded ${
-              currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+              currentPage === i + 1
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-black dark:text-white'
             }`}
           >
             {i + 1}

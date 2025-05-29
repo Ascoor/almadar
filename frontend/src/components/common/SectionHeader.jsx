@@ -1,28 +1,15 @@
 import { ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const SectionHeader = ({ listName, icon, showBackButton }) => {
   return (
-    <motion.div
-      key={listName}
-      initial={{ opacity: 0, y: -80 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -40 }}
-      transition={{
-        duration: 1.2,       // زمن أطول للحركة
-        delay: 0.3,          // تأخير بسيط قبل البداية
-        type: 'spring',
-        stiffness: 60,       // مرونة أقل لنزول أبطأ
-        damping: 12
-      }}
+    <div
       className="
         flex flex-col items-center text-center space-y-4 
         p-4 sm:p-6 md:p-8 shadow-2xl transition-all
         bg-white bg-gradient-to-tr from-royal/10 via-gold/10 to-royal/10
         border border-greenic/20 rounded-full mb-6
-        dark:bg-black
-       
-        dark:bg-gradient-to-r dark:from-royal/20 dark:via-royal-dark/70 dark:to-royal-dark/20
+        dark:bg-greenic-darker
+        dark:bg-gradient-to-r dark:from-navy-darker/50 dark:via-royal-darker/40 dark:to-navy-darker/50
         dark:text-greenic dark:ring-2 dark:ring-greenic/30 
         dark:shadow-greenic/40
       "
@@ -53,9 +40,8 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
           <span className="text-sm sm:text-base">رجوع</span>
         </button>
       )}
-    </motion.div>
+    </div>
   );
 };
 
 export default SectionHeader;
-

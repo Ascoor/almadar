@@ -95,6 +95,10 @@ export function AuthProvider({ children }) {
 
   return { success: false, message: 'بيانات الدخول غير صحيحة' };
 };
+const updateUserContext = (updatedUser) => {
+  sessionStorage.setItem('user', JSON.stringify(updatedUser));
+  setUser(updatedUser);
+};
 
   const logout = async () => {
     try {
@@ -131,6 +135,7 @@ export function AuthProvider({ children }) {
         logout,
         hasRole,
         hasPermission,
+        updateUserContext,
         updatePermissions,
         http,
       }}

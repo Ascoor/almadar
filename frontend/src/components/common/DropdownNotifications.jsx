@@ -37,10 +37,10 @@
 
     return (
       <div className="relative inline-block text-right" ref={dropdownRef}>
-        <IconButton onClick={toggleDropdown} active={dropdownOpen}>
-          <Bell className="w-6 h-6 text-gray-700 dark:text-gray-200" />
-          {hasNew && (
-            <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-800 animate-pulse" />
+       <IconButton onClick={toggleDropdown} active={dropdownOpen}>
+  <Bell className="w-6 h-6" />
+  {hasNew && (
+         <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-800 animate-pulse" />
           )}
         </IconButton>
 

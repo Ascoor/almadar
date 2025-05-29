@@ -3,12 +3,12 @@ import { FileText, WalletCards, Warehouse, ArrowRightFromLine, ArrowLeftFromLine
 
 const DashCard = ({ title, count, subcategories, imageSrc }) => {
   return (
-    <div className="flex items-center mb-6 w-full max-w-xs bg-reded-light/20 rounded-xl p-4 shadow-lg dark:bg-royal/70 transition-transform transform hover:scale-105 mx-auto">
+    <div className="flex items-center mb-6 w-full max-w-xs  rounded-full p-2 shadow-lg  bg-gradient-to-t from-gold/40 via-royal/20 to-royal/20   dark:from-navy-dark/40 dark:via-greenic-dark/10 dark:to-navy-darker/90  transition-transform transform hover:scale-105 mx-auto">
 
       <div className="flex flex-col w-full">
         <div className="flex flex-col mb-2">
-          <h2 className="text-md font-bold dark:text-cyan-200 text-navy">{title}</h2>
-          <p className="text-base font-md text-center mr-6 p-2 font-semibold dark:text-gray-100 text-gray-600">إجمالي {count}</p>
+          <h2 className="text-md p-6 font-bold dark:text-cyan-200 text-navy">{title}</h2>
+          <p className="text-base font-md text-center mr-6   font-semibold dark:text-gray-100 text-gray-600">إجمالي {count}</p>
         </div>
 
         <div className="flex flex-col space-y-2 w-full">

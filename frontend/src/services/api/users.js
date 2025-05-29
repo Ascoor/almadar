@@ -1,63 +1,37 @@
 import api from './axiosConfig';
 
+// بيانات المستخدم
+export const getUsers = () => api.get('/api/users').then(res => res.data);
+export const getProfile = (id) => api.get(`/api/users/${id}`).then(res => res.data);
 
-export const getUsers = async () => {
-  const res = await api.get('/api/users');
-  return res.data;
-};
+// إنشاء/تحديث مستخدم
+export const createUser = (formData) =>
+  api.post('/api/users', formData).then(res => res.data);
 
-export const createUser = async (formData) => {
-  const res = await api.post('/api/users', formData);
-  return res.data;
-};
+export const updateUser = (id, formData) =>
+  api.post(`/api/users/${id}?_method=PUT`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }).then(res => res.data);
 
-export const updateUser = async (id, formData) => {
-  const res = await api.post(`/api/users/${id}?_method=PUT`, formData);
-  return res.data;
-};
+// حذف مستخدم
+export const deleteUser = (id) => api.delete(`/api/users/${id}`).then(res => res.data);
 
-export const deleteUser = async (id) => {
-  const res = await api.delete(`/api/users/${id}`);
-  return res.data;
-};
+// كلمة المرور
+export const changePassword = (id, data) =>
+  api.post(`/api/users/${id}/change-password`, data).then(res => res.data);
+// الأدوار
+export const getRoles = () => api.get('/api/roles').then(res => res.data);
+export const assignRole = (userId, role) =>
+  api.post(`/api/users/${userId}/roles/assign`, { role }).then(res => res.data);
+export const removeRole = (userId, role) =>
+  api.post(`/api/users/${userId}/roles/remove`, { role }).then(res => res.data);
 
-
-// جلب كل الصلاحيات
-export const getPermissions = async () => {
-  const res = await api.get('/api/permissions');
-  return res.data;
-};
-
-// جلب كل الأدوار
-export const getRoles = async () => {
-  const res = await api.get('/api/roles');
-  return res.data;
-};
-
- 
+// الصلاحيات
+export const getPermissions = () => api.get('/api/permissions').then(res => res.data); 
  export const changeUserPermission = async (userId, permissionName, action) => {
-  const res = await api.post(`/api/users/${userId}/permissions`, {
+  const res = await api.post(`/api/users/${userId}/permission/change`, {
     permission: permissionName,
     action
   });
   return res.data;
 };
-// تحديث الملف الشخصي
-export const updateProfile = async (userId, formData) => {
-  const res = await api.post(`/api/users/${userId}?_method=PUT`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return res.data;
-};
-
-// تغيير كلمة المرور
-export const changePassword = async (userId, passwordData) => {
-  const res = await api.post(`/api/users/${userId}/change-password`, passwordData);
-  return res.data;
-};
-// جلب بيانات مستخدم واحد
-export const getProfile = async (userId) => {
-  const res = await api.get(`/api/users/${userId}`);
-  return res.data;
-};
-  

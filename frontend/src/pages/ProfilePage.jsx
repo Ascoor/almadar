@@ -1,6 +1,6 @@
 
 import React, { useContext, useEffect, useState } from 'react';
-import { getProfile, updateProfile, changePassword } from '@/services/api/users';
+import { getProfile, updateUser, changePassword } from '@/services/api/users';
 import { AuthContext } from '@/components/auth/AuthContext';
 import { toast } from 'sonner';
 import API_CONFIG from '../config/config';
@@ -52,7 +52,7 @@ export default function ProfilePage() {
     if (form.image) data.append('image', form.image);
 
     try {
-      await updateProfile(user.id, data); // ✅ استخدم user.id
+      await updateUser(user.id, data); // ✅ استخدم user.id
       toast.success('✅ تم تحديث البيانات بنجاح');
     } catch {
       toast.error('حدث خطأ أثناء التحديث');
