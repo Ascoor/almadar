@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { Edit, Eye, Trash, ChevronUp, ChevronDown } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import API_CONFIG from '../../config/config';
 import { AuthContext } from '@/components/auth/AuthContext';
 
 export default function TableComponent({
@@ -148,7 +149,7 @@ export default function TableComponent({
                       {h.key === 'attachment' ? (
                         row.attachment ? (
                           <a
-                            href={`${import.meta.env.VITE_API_BASE_URL}/storage/${row.attachment}`}
+                            href={`${API_CONFIG.baseURL}/storage/${row.attachment}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300"
