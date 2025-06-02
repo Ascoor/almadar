@@ -12,6 +12,7 @@ import AdminListener from '../components/AdminListener';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const queryClient = new QueryClient();
+
 export default function AuthWrapper() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
@@ -36,37 +37,17 @@ export default function AuthWrapper() {
           <AdminListener />
           <EchoListener />
           <div className="min-h-screen flex flex-col sm:flex-row relative">
-
-            {/* الشريط الجانبي */}
             <Sidebar
               isOpen={sidebarOpen}
               onToggle={toggleSidebar}
               onLinkClick={() => !isLargeScreen && setSidebarOpen(false)}
             />
-
-            {/* التعتيم للجوال */}
             {!isLargeScreen && sidebarOpen && (
-              <div
-                className="fixed inset-0 bg-black/50 z-10"
-                onClick={() => setSidebarOpen(false)}
-              />
+              <div className="fixed inset-0 bg-black/50 z-10" onClick={() => setSidebarOpen(false)} />
             )}
-
-            {/* محتوى الصفحة */}
             <div className="flex-1 flex flex-col transition-all duration-300">
-              <Header
-                user={user?.id}
-                isOpen={sidebarOpen}
-                onToggleSidebar={toggleSidebar}
-              />
-              <main
-                className={`
-                  flex-1 pt-28 pb-8 px-4 sm:px-6 lg:px-8
-                  bg-greenic-light/20 dark:bg-greenic-darker/20
-                  transition-all duration-500
-                  ${isLargeScreen ? (sidebarOpen ? 'sm:mr-[260px]' : 'sm:mr-[64px]') : ''}
-                `}
-              >
+              <Header user={user?.id} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
+              <main className={`flex-1 pt-28 pb-8 px-4 sm:px-6 lg:px-8 bg-greenic-light/10 dark:bg-greenic-darker/20 transition-all duration-500 ${isLargeScreen ? (sidebarOpen ? 'sm:mr-[260px]' : 'sm:mr-[64px]') : ''}`}>
                 <AuthRoutes />
               </main>
             </div>

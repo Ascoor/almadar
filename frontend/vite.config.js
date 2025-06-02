@@ -46,30 +46,34 @@ export default defineConfig(({ mode }) => ({
           { src: 'splash-image.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
           { src: 'splash-image.png', sizes: '512x512', type: 'image/png' },
         ],
+      },workbox: {
+  globDirectory: 'dist', // المجلد الذي يحتوي على الملفات لتخزينها مؤقتاً
+  globPatterns: [
+    '**/*.{js,css,html}', // تحديد أنواع الملفات التي سيتم تخزينها مؤقتاً
+  ],
+  globIgnores: [
+    '**/node_modules/**/*', // تجاهل ملفات node_modules
+    'sw.js',                // تجاهل ملف service worker نفسه
+    'workbox-*.js',         // تجاهل ملفات workbox الخاصة
+  ],
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/your-api-domain\.com\/.*$/, // تحديد نمط URL للـ API
+      handler: 'NetworkFirst', // محاولة أولاً للحصول على البيانات من الشبكة
+      options: {
+        cacheName: 'api-cache', // اسم الذاكرة المؤقتة
       },
-      workbox: {
-        globDirectory: 'dist',
-        globPatterns: [
-          '**/*.{js,css,html}',
-        ],
-        globIgnores: [
-          '**/node_modules/**/*',
-          'sw.js',
-          'workbox-*.js',
-        ],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/your-api-domain\.com\/.*$/,
-            handler: 'NetworkFirst',
-            options: { cacheName: 'api-cache' },
-          },
-          {
-            urlPattern: /\.(?:js|css|html)$/,
-            handler: 'StaleWhileRevalidate',
-            options: { cacheName: 'static-assets' },
-          },
-        ],
+    },
+    {
+      urlPattern: /\.(?:js|css|html)$/, // تحديد أنواع الملفات الثابتة مثل JS و CSS و HTML
+      handler: 'StaleWhileRevalidate', // تقديم النسخة المخزنة مؤقتاً أولاً ثم إعادة التحديث في الخلفية
+      options: {
+        cacheName: 'static-assets', // اسم الذاكرة المؤقتة للملفات الثابتة
       },
+    },
+  ],
+},
+
     }),
   ].filter(Boolean),
 

@@ -178,6 +178,7 @@ AdminNotifier::notifyAll(
             'model_type' => 'Contract',
             'model_id' => $contract->id,
             'title' => $contract->category?->name . ' - ' . ($contract->scope === 'local' ? 'محلي' : 'دولي'),
+            'number' => $contract->number,
             'file_path' => $contract->attachment,
             'extracted_text' => $contract->contract_parties,
         ]);

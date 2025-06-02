@@ -192,17 +192,19 @@ export default function TableComponent({
       {/* Pagination */}
       <div className="flex justify-center mt-6 gap-2">
         {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-3 py-1 text-sm rounded ${
-              currentPage === i + 1
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-black dark:text-white'
-            }`}
-          >
-            {i + 1}
-          </button>
+   <button
+  key={i}
+  onClick={() => setCurrentPage(i + 1)}
+  className={`px-3 py-1 text-sm rounded font-bold transition-all duration-200
+    ${
+      currentPage === i + 1
+        ? 'bg-greenic text-white dark:bg-gold-light dark:text-greenic-dark'
+        : 'bg-white text-greenic hover:bg-greenic/10   dark:bg-transparent dark:text-gold-light dark:hover:text-white dark:hover:bg-gold/20'
+    }`}
+>
+  {i + 1}
+</button>
+
         ))}
       </div>
     </div>

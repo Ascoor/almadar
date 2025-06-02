@@ -38,11 +38,7 @@ export default function WrapperCard() {
         className="
           flex flex-col items-center justify-center gap-2
           w-40 sm:w-44 lg:w-48       /* 👈 عرض متناسق ضيّق */
-          h-64                       /* 👈 ارتفاع ثابت لطابع الطول */
-          bg-gradient-to-b from-gold/50 via-royal/10 to-gold/30
-          dark:from-zinc-900 dark:via-greenic-darker dark:to-navy
-          border border-gold-dark dark:border-greenic-light
-          rounded-3xl shadow-md p-4   /* زوايا كبيرة بدل rounded-full */
+          h-64                       /* 👈 ارتفاع ثابت لطابع الطول */ 
         "
       >
         {/* ساعة اللوحة – تأكّد أن مكوّن DashboardClock لا يفرض حجماً زائداً */}

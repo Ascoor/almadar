@@ -13,6 +13,7 @@ class Archive extends Model
         'model_type',
         'model_id',
         'title',
+        'number',
         'file_path',
         'extracted_text',
         'file_type',

@@ -6,7 +6,7 @@ import UserModalForm from '@/components/Users/UserModalForm';
 import UserInfoCard from '@/components/Users/UserInfoCard';
 import PermissionsSection from '@/components/Users/Sections/PermissionsSection';
 import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteModal';
-import { RoleIcon } from '@/assets/icons';
+import { UsersIcon } from '@/assets/icons';
 import API_CONFIG from '../config/config';
 import { Edit2, Trash2 } from 'lucide-react';
 import {
@@ -219,7 +219,7 @@ useEffect(() => {
           delay: 0.1,
         }}
       >
-        <SectionHeader icon={RoleIcon} listName="إدارة المستخدمين والصلاحيات" />
+        <SectionHeader icon={UsersIcon} listName="إدارة المستخدمين والصلاحيات" />
       </motion.div>
 
  

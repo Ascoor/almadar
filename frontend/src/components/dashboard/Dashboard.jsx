@@ -1,67 +1,75 @@
-  import React from 'react';
-  import DashboardStats from './DashboardStats';
-  import RecentItems from './RecentItems';
-  import { motion } from 'framer-motion'; 
+import React from 'react';
+import DashboardStats from './DashboardStats';
+import RecentItems from './RecentItems';
+import { motion } from 'framer-motion';
+import { Separator } from '@/components/ui/separator'; // استيراد مكون Separator
 
-  const titleVariants = {
-    hidden: { opacity: 0, y: -40 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: 'easeOut'
-      }
+// Variants للتحكم في الرسوم المتحركة للعناوين
+const titleVariants = {
+  hidden: { opacity: 0, y: -40 },  // الحالة المخفية
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      duration: 0.6, 
+      ease: 'easeOut' 
     }
-  };
+  }
+};
 
-  const sectionVariants = {
-    hidden: { opacity: 0, y: 40 },
-    show: (delay = 0) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay,
-        type: 'spring',
-        stiffness: 80,
-        damping: 14
-      }
-    })
-  };
+// Variants للتحكم في الرسوم المتحركة للأقسام
+const sectionVariants = {
+  hidden: { opacity: 0, y: 40 },  // الحالة المخفية
+  show: (delay = 0) => ({
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      delay,
+      type: 'spring', 
+      stiffness: 80, 
+      damping: 14 
+    }
+  })
+};
 
-  const Dashboard = () => {
-    return (<
-      div className="relative">  
+const Dashboard = () => {
+  return (
+    <div className="relative">
+      {/* عرض العنوان بشكل متحرك */}
       <motion.h2
-      className="text-xl sm:text-2xl text-center font-bold mb-2 text-royal-dark dark:text-gold"
-      variants={titleVariants}
-      initial="hidden"
-      animate="show"
+        className="text-xl sm:text-2xl text-center font-bold mb-2 text-royal-dark dark:text-gold"
+        variants={titleVariants}
+        initial="hidden"
+        animate="show"
       >
-      لوحة التحكم
+        لوحة التحكم
       </motion.h2>
 
- 
-        <motion.div
-          className="mb-4"
-          custom={0.2}
-          variants={sectionVariants}
-          initial="hidden"
-          animate="show"
-        >
-          <DashboardStats />
-        </motion.div>
+      {/* عرض الإحصائيات */}
+      <motion.div
+        className="mb-4"
+        custom={0.2}
+        variants={sectionVariants}
+        initial="hidden"
+        animate="show"
+      >
+        <DashboardStats />
+      </motion.div>
 
-        <motion.div
-          custom={0.5}
-          variants={sectionVariants}
-          initial="hidden"
-          animate="show"
-        >
-          <RecentItems />
-        </motion.div>
-      </div> 
-    );
-  };
+      {/* فاصل بين الإحصائيات والعناصر التالية */}
+      <Separator className="my-4" orientation="horizontal" />
 
-  export default Dashboard;
+      {/* عرض العناصر التالية (مثل RecentItems) */}
+      <motion.div
+        custom={0.5}
+        variants={sectionVariants}
+        initial="hidden"
+        animate="show"
+      >
+        <RecentItems />
+      </motion.div>
+    </div>
+  );
+};
+
+export default Dashboard;

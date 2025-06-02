@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ContractsTable from '../components/Contracts/ContractsTable';
 import SectionHeader from '../components/common/SectionHeader';
 import { getContracts, getContractCategories } from '../services/api/contracts';
-import { ContractSection } from '../assets/icons';
+import { LocalIcon, InternationalIcon } from '../assets/icons';
+
 import { useNavigate } from 'react-router-dom';
 
 export default function Contracts() {
@@ -47,7 +48,10 @@ export default function Contracts() {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: 'spring', stiffness: 70, damping: 14 }}
       >
-        <SectionHeader icon={ContractSection} listName="قسم التعاقدات" />
+       <SectionHeader
+  icon={activeTab === 'local' ? LocalIcon : InternationalIcon}
+  listName={activeTab === 'local' ? 'العقود المحلية' : 'العقود الدولية'}
+/>
       </motion.div>
 
       {/* 🔘 التبويبات */}

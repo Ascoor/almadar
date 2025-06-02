@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
-  ServiceIcon,
+  DoceIcon,
   ContractSection,
-  MainLegalCases
+  MainProcedure
 } from "@/assets/icons";
-import DashCard     from "@/components/common/DashCard";   // فيه Link
-import WarpperCard  from "@/components/layout/WarpperCard";
+import DashCard from "@/components/common/DashCard"; // Ensure correct import path
+import WarpperCard from "@/components/layout/WarpperCard";
 import { getDashboardCounts } from "@/services/api/dashboard";
 
-export default function DashboardStats() {
+const DashboardStats = () => {
+  const [loading, setLoading] = useState(true); // State for loading indicator
   const [stats, setStats] = useState([]);
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function DashboardStats() {
           {
             title: "الرأي والفتوى",
             count: legal_advices.length,
-            imageSrc: ServiceIcon,
+            imageSrc: DoceIcon,
             subcategories: [
               {
                 title: "تحقيقات",
@@ -55,7 +56,7 @@ export default function DashboardStats() {
           {
             title: "القضايا",
             count: litigations.length,
-            imageSrc: MainLegalCases,
+            imageSrc: MainProcedure,
             subcategories: [
               {
                 title: "من الشركة",
@@ -70,16 +71,28 @@ export default function DashboardStats() {
             ]
           }
         ]);
+        setLoading(false); // Turn off loading indicator after data fetch
       } catch (err) {
         console.error("Error fetching dashboard statistics:", err);
       }
     })();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-lg font-bold">جارٍ التحميل...</p>
+        {/* Add your loading animation or spinner here */}
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-2 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
-      <WarpperCard />   {/* بطاقة الساعة */}
+      <WarpperCard /> {/* Assuming this is a placeholder card */}
       {stats.map(stat => <DashCard key={stat.title} {...stat} />)}
     </div>
   );
-}
+};
+
+export default DashboardStats;

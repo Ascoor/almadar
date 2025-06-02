@@ -9,7 +9,7 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
         bg-white bg-gradient-to-tr from-royal/10 via-gold/10 to-royal/10
         border border-greenic/20 rounded-full mb-6
         dark:bg-greenic-darker
-        dark:bg-gradient-to-r dark:from-navy-darker/50 dark:via-royal-darker/40 dark:to-navy-darker/80
+        dark:bg-gradient-to-r dark:from-royal-darker/40 dark:via-navy/40 dark:to-royal-darker/40
         dark:text-greenic dark:ring-2 dark:ring-greenic/30 
         dark:shadow-greenic/2 0
       "
@@ -22,7 +22,7 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
         />
       )}
 
-      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-blue-900 dark:text-white">
+      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-gold-dark dark:text-white">
         {listName}
       </h2>
 

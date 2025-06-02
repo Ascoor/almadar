@@ -65,15 +65,17 @@ export default {
         navy: {
            light: '#1A5DAD',
           DEFAULT: '#0F3460',
-          dark: '#0A1E37',
+          dark: '#020f23',
 
-          darker: '#080a23',
+          darker: '#020c1a',
         },
-        royal: {
-  light: '#A3BFFA',     
-          DEFAULT: '#3B82F6' ,
-          dark: '#1E3A8A',   
-          darker: '#1E293B', 
+    royal: {
+          light: '#A3BFFA',       // أزرق ملكي فاتح
+          DEFAULT: '#3B82F6',     // الأزرق الملكي الأساسي
+          dark: '#1E3A8A',        // الأزرق الملكي الداكن
+          darker: '#1E293B',      // الأزرق الملكي الأكثر عمقًا
+          ultraDark: '#0D1720',   // الأزرق الملكي العميق جدًا
+          electric: '#6C7DFF',    // الأزرق الملكي الكهربائي
         },
         gold: {
           light: '#F5DA81',

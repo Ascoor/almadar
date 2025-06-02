@@ -53,8 +53,9 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::apiResource('investigation-action-types', InvestigationActionTypeController::class);
     Route::apiResource('litigation-action-types', LitigationActionTypeController::class); 
+    
     Route::get('/dashboard/statistics', [DashboardController::class, 'statistics']);
-
+    Route::get('/dashboard/get-recent-data', [DashboardController::class, 'getAllRecentData']);
     // Legal Advices
     Route::apiResource('legal-advices', LegalAdviceController::class);
     Route::apiResource('advice-types', AdviceTypeController::class);

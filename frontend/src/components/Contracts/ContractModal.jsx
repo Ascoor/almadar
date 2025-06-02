@@ -31,33 +31,49 @@ export default function ContractModal({
   const [hasDuration, setHasDuration] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // كلما تم فتح المودال أو تغيّرت بيانات initialData، نعيد تهيئة الـ form
   useEffect(() => {
     if (!isOpen) return;
+
     if (initialData) {
       setForm({
-        ...EMPTY_FORM,
-        ...initialData,
-        oldAttachment: initialData.attachment,
-        start_date: initialData.start_date?.slice(0, 10) || "",
-        end_date: initialData.end_date?.slice(0, 10) || "",
+        id: initialData.id || null,
+        contract_category_id: initialData.contract_category_id || "",
+        scope: initialData.scope || "local",
+        number: initialData.number || "",
+        value: initialData.value != null ? initialData.value : "",
+        contract_parties: initialData.contract_parties || "",
+        start_date: initialData.start_date
+          ? initialData.start_date.slice(0, 10)
+          : "",
+        end_date: initialData.end_date ? initialData.end_date.slice(0, 10) : "",
+        notes: initialData.notes || "",
+        status: initialData.status || "active",
+        summary: initialData.summary || "",
+        attachment: null,
+        oldAttachment: initialData.attachment || null,
       });
-      setHasDuration(!!initialData.end_date);
+      setHasDuration(Boolean(initialData.end_date));
     } else {
       setForm(EMPTY_FORM);
       setHasDuration(false);
     }
+
     setErrors({});
   }, [isOpen, initialData]);
 
   const validateForm = () => {
     const newErrors = {};
-    if (!form.contract_category_id) newErrors.contract_category_id = "هذا الحقل مطلوب.";
+    if (!form.contract_category_id)
+      newErrors.contract_category_id = "هذا الحقل مطلوب.";
     if (!form.number) newErrors.number = "يرجى إدخال رقم العقد.";
     if (!form.value) newErrors.value = "يرجى إدخال قيمة العقد.";
-    if (!form.contract_parties) newErrors.contract_parties = "يرجى إدخال أطراف العقد.";
+    if (!form.contract_parties)
+      newErrors.contract_parties = "يرجى إدخال أطراف العقد.";
     if (!form.start_date) newErrors.start_date = "يرجى إدخال تاريخ البداية.";
     if (!form.summary) newErrors.summary = "يرجى كتابة ملخص للعقد.";
-    if (hasDuration && !form.end_date) newErrors.end_date = "يرجى إدخال تاريخ الانتهاء.";
+    if (hasDuration && !form.end_date)
+      newErrors.end_date = "يرجى إدخال تاريخ الانتهاء.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -65,17 +81,20 @@ export default function ContractModal({
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
     if (name === "attachment") {
       const file = files[0];
       if (file && file.type !== "application/pdf") {
         toast.error("📄 الملف يجب أن يكون بصيغة PDF فقط.");
         return;
       }
-      setForm((f) => ({ ...f, attachment: file }));
+      setForm((prev) => ({ ...prev, attachment: file }));
     } else {
-      setForm((f) => ({ ...f, [name]: value }));
+      setForm((prev) => ({ ...prev, [name]: value }));
     }
-    setErrors((prev) => ({ ...prev, [name]: undefined })); // إزالة الخطأ عند التغيير
+
+    // إزالة رسالة الخطأ عند التعديل
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
   const handleSave = async () => {
@@ -87,6 +106,7 @@ export default function ContractModal({
     setLoading(true);
     try {
       const payload = new FormData();
+
       Object.entries(form).forEach(([key, val]) => {
         if (key === "attachment" && val instanceof File) {
           payload.append("attachment", val);
@@ -123,7 +143,7 @@ export default function ContractModal({
     }`;
 
   const errorText = (name) =>
-    errors[name] && <p className="text-xs text-red-600 mt-1">{errors[name]}</p>;
+    errors[name] ? <p className="text-xs text-red-600 mt-1">{errors[name]}</p> : null;
 
   return (
     <ModalCard
@@ -147,7 +167,9 @@ export default function ContractModal({
           >
             <option value="">اختر تصنيف</option>
             {categories.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
             ))}
           </select>
           {errorText("contract_category_id")}
@@ -205,51 +227,61 @@ export default function ContractModal({
           {errorText("contract_parties")}
         </div>
 
+        {/* البداية – النهاية */}
+        <div>
+          <label className="block mb-1 text-sm">
+            {hasDuration ? "تاريخ بداية العقد" : "تاريخ العقد"}
+          </label>
+          <input
+            type="date"
+            name="start_date"
+            value={form.start_date}
+            onChange={handleChange}
+            className={inputClass("start_date")}
+          />
+          {errorText("start_date")}
 
-        {/* البداية والنهاية */}
-     <div>
-  <label className="block mb-1 text-sm">
-    {hasDuration ? "تاريخ بداية العقد" : "تاريخ العقد"}
-  </label>
-  <input
-    type="date"
-    name="start_date"
-    value={form.start_date}
-    onChange={handleChange}
-    className={inputClass("start_date")}
-  />
-  {errorText("start_date")}
+          {hasDuration && (
+            <div className="mt-2">
+              <label className="block mb-1 text-sm">تاريخ النهاية</label>
+              <input
+                type="date"
+                name="end_date"
+                value={form.end_date}
+                onChange={handleChange}
+                className={inputClass("end_date")}
+              />
+              {errorText("end_date")}
+            </div>
+          )}
+        </div>
 
-
-     
-        {hasDuration && (
-          <div>
-            <label className="block mb-1 text-sm">تاريخ النهاية</label>
-            <input
-              type="date"
-              name="end_date"
-              value={form.end_date}
-              onChange={handleChange}
-              className={inputClass("end_date")}
-            />
-            {errorText("end_date")}
-          </div>
-        )}
-</div>
-   <div>
+        {/* هل للعقد مدة؟ */}
+        <div>
           <label className="block mb-2 text-sm font-medium">هل للعقد مدة؟</label>
           <div className="flex gap-4 items-center">
             <label className="flex items-center gap-2">
-              <input type="radio" checked={hasDuration} onChange={() => setHasDuration(true)} />
+              <input
+                type="radio"
+                name="hasDuration"
+                checked={hasDuration}
+                onChange={() => setHasDuration(true)}
+              />
               <span>نعم</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="radio" checked={!hasDuration} onChange={() => setHasDuration(false)} />
+              <input
+                type="radio"
+                name="hasDuration"
+                checked={!hasDuration}
+                onChange={() => setHasDuration(false)}
+              />
               <span>لا</span>
             </label>
           </div>
         </div>
-        {/* الحالة (تحديث فقط) */}
+
+        {/* الحالة (فقط عند التعديل) */}
         {initialData && (
           <div className="md:col-span-2">
             <label className="block mb-1 text-sm">الحالة</label>
@@ -303,8 +335,11 @@ export default function ContractModal({
             onChange={handleChange}
             className={inputClass("attachment")}
           />
+
           {form.attachment ? (
-            <p className="mt-1 text-sm text-green-600">{form.attachment.name}</p>
+            <p className="mt-1 text-sm text-green-600">
+              {form.attachment.name}
+            </p>
           ) : form.oldAttachment ? (
             <a
               href={`/storage/${form.oldAttachment}`}

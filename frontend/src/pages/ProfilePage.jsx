@@ -1,4 +1,3 @@
-
 import React, { useContext, useEffect, useState } from 'react';
 import { getProfile, updateUser, changePassword } from '@/services/api/users';
 import { AuthContext } from '@/components/auth/AuthContext';
@@ -6,7 +5,7 @@ import { toast } from 'sonner';
 import API_CONFIG from '../config/config';
 
 export default function ProfilePage() {
-  const { user } = useContext(AuthContext);
+  const { user, updateUserContext } = useContext(AuthContext);  // جلب دالة updateUserContext من السياق
 
   const [profileData, setProfileData] = useState(null);
   const [form, setForm] = useState({ name: '', email: '', image: null });
@@ -20,11 +19,11 @@ export default function ProfilePage() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const res = await getProfile(user.id); // ✅ استخدم user.id
+        const res = await getProfile(user.id); // استخدم user.id
         setProfileData(res.user);
         setForm({ name: res.user.name, email: res.user.email, image: null });
         if (res.user.image) {
-       setPreview(`${API_CONFIG.baseURL}/${res.user.image}`);
+          setPreview(`${API_CONFIG.baseURL}/${res.user.image}`);
         }
       } catch {
         toast.error('فشل تحميل الملف الشخصي');
@@ -52,8 +51,12 @@ export default function ProfilePage() {
     if (form.image) data.append('image', form.image);
 
     try {
-      await updateUser(user.id, data); // ✅ استخدم user.id
+      await updateUser(user.id, data);  // استخدم user.id
       toast.success('✅ تم تحديث البيانات بنجاح');
+      
+      // بعد التحديث بنجاح، قم بإعادة تحميل البيانات من الخادم
+      const res = await getProfile(user.id); // إعادة تحميل البيانات
+      updateUserContext(res.user);  // تحديث المستخدم في السياق المحلي
     } catch {
       toast.error('حدث خطأ أثناء التحديث');
     }
@@ -62,7 +65,7 @@ export default function ProfilePage() {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     try {
-      await changePassword(user.id, passwordForm); // ✅ استخدم user.id
+      await changePassword(user.id, passwordForm); // استخدم user.id
       toast.success('✅ تم تغيير كلمة المرور');
       setPasswordForm({
         old_password: '',

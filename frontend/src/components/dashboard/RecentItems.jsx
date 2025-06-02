@@ -1,85 +1,59 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
+import React, { useEffect, useState } from 'react';
+import { getAllRecentData } from '../../services/api/dashboard'; // استيراد خدمة جلب البيانات
+import DataCard from './DataCard'; // استيراد مكون DataCard
+import {ReceiptText } from 'lucide-react';
 const RecentItems = () => {
-  const recentItems = [
-    {
-      id: 1,
-      title: 'عقد توريد معدات صناعية',
-      type: 'العقود الدولية',
-      status: 'نشط',
-      date: '٢٠٢٣/٠٥/١٥',
-      statusColor: 'bg-green-100 text-green-800',
-    },
-    {
-      id: 2,
-      title: 'قضية تعويض ضد شركة النهضة',
-      type: 'القضايا المرفوعة من الشركة',
-      status: 'قيد النظر',
-      date: '٢٠٢٣/٠٦/٢٢',
-      statusColor: 'bg-amber-100 text-amber-800',
-    },
-    {
-      id: 3,
-      title: 'استشارة قانونية حول حقوق الملكية الفكرية',
-      type: 'الاستشارات القانونية',
-      status: 'مكتمل',
-      date: '٢٠٢٣/٠٧/٠٣',
-      statusColor: 'bg-blue-100 text-blue-800',
-    },
-    {
-      id: 4,
-      title: 'عقد إيجار مكاتب الشركة',
-      type: 'العقود المحلية',
-      status: 'نشط',
-      date: '٢٠٢٣/٠٤/١٠',
-      statusColor: 'bg-green-100 text-green-800',
-    },
-    {
-      id: 5,
-      title: 'دعوى عمالية ضد الشركة',
-      type: 'القضايا المرفوعة على الشركة',
-      status: 'قيد النظر',
-      date: '٢٠٢٣/٠٧/١٨',
-      statusColor: 'bg-amber-100 text-amber-800',
-    },
-  ];
+  const [data, setData] = useState({
+    latestAddedContracts: [],
+    latestUpdatedContracts: [],
+    latestInvestigationActions: [],
+    latestLitigationActions: [],
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getAllRecentData(); // جلب البيانات من الخادم
+      setData(response); // تخزين البيانات المسترجعة في الحالة
+    };
+
+    fetchData();
+  }, []);
 
   return (
-    <Card className="border shadow-lg dark:shadow-reded-dark/50 transition-all duration-200">
-      <CardHeader className="bg-gray-200 dark:bg-gray-800">
-        <CardTitle className="text-xl text-navy dark:text-white">آخر الملفات</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
-          <table className="w-full text-right">
-            <thead className="bg-muted text-muted-foreground text-sm dark:bg-gray-700">
-              <tr>
-                <th className="p-3 rounded-tr-lg">الموضوع</th>
-                <th className="p-3">النوع</th>
-                <th className="p-3">الحالة</th>
-                <th className="p-3 rounded-tl-lg">التاريخ</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y dark:divide-gray-600">
-              {recentItems.map((item) => (
-                <tr key={item.id} className="hover:bg-muted/50 dark:hover:bg-gray-600">
-                  <td className="p-3">{item.title}</td>
-                  <td className="p-3 text-sm text-gray-600 dark:text-gray-300">{item.type}</td>
-                  <td className="p-3">
-                    <Badge variant="outline" className={item.statusColor}>
-                      {item.status}
-                    </Badge>
-                  </td>
-                  <td className="p-3 text-sm text-gray-600 dark:text-gray-300">{item.date}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {/* عرض أول كارتين في سطر واحد */}
+      <div className="flex justify-center">
+        <DataCard
+          title="أحدث العقود المضافة"
+          items={data.latestAddedContracts} // تمرير بيانات العقود المضافة
+          type="contracts" // تم تمرير نوع البيانات
+          icon={<ReceiptText  />}
+        />
+      </div>
+      <div className="flex justify-center">
+        <DataCard
+          title="أحدث العقود المحدثة"
+          items={data.latestUpdatedContracts} // تمرير بيانات العقود المحدثة
+          type="contracts"
+        />
+      </div>
+
+      {/* عرض ثاني كارتين في سطر واحد */}
+      <div className="flex justify-center">
+        <DataCard
+          title="أحدث إجراءات التحقيقات"
+          items={data.latestInvestigationActions} // تمرير بيانات التحقيقات
+          type="investigation_actions"
+        />
+      </div>
+      <div className="flex justify-center">
+        <DataCard
+          title="أحدث إجراءات القضايا"
+          items={data.latestLitigationActions} // تمرير بيانات القضايا
+          type="litigation_actions"
+        />
+      </div>
+    </div>
   );
 };
 
