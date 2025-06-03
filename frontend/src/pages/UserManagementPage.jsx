@@ -26,18 +26,14 @@ export default function UsersManagementPage() {
   const [roles, setRoles] = useState([]);
   const [allPerms, setAllPerms] = useState([]);
   const [expandedUserId, setExpandedUserId] = useState(null);
-const [selectedUser, setSelectedUser] = useState(null);
-const userCardRef = useRef(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [modalMode, setModalMode] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [loading, setLoading] = useState(false);
 
-const prevScrollY  = useRef(window.scrollY);
-const cardTop      = useRef(0);          // يُحدث عند فتح الكارت
-const MARGIN       = 40;                 // هامش الأمان
+  const permissionsRef = useRef(null);
+const tableRef = useRef(null);
 
- 
-  // جلب المستخدمين والبيانات الأخرى
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
@@ -65,59 +61,39 @@ const MARGIN       = 40;                 // هامش الأمان
       toast.error('فشل تحميل الصلاحيات');
     }
   }, []);
+useEffect(() => {
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        setExpandedUserId(null);
+        setSelectedUser(null);
+      }
+    },
+    {
+      root: null,
+      threshold: 0.5, // 50% من ظهور الجدول كافية للإغلاق
+    }
+  );
+
+  if (tableRef.current) {
+    observer.observe(tableRef.current);
+  }
+
+  return () => {
+    if (tableRef.current) {
+      observer.unobserve(tableRef.current);
+    }
+  };
+}, []);
 
   useEffect(() => {
     fetchUsers();
     fetchRoles();
     fetchPerms();
   }, [fetchUsers, fetchRoles, fetchPerms]);
-
-  // تحديد موقع الكارت عند تحميل الصفحة
-  useEffect(() => {
-    if (userCardRef.current) {
-      cardTop.current = userCardRef.current.offsetTop; // تخزين الموقع العلوي للكارت
-    }
-  }, [expandedUserId]);
  
 
-/* مستمع التمرير: يعمل فقط والكارت مفتوح */
-useEffect(() => {
-  if (!expandedUserId) return;           // لا مستمع إذا كان الكارت مغلقًا
-
-  const handleScroll = () => {
-    const currentY  = window.scrollY;
-    const scrollingUp = currentY < prevScrollY.current;
-
-    // إذا كنت تصعد للأعلى وتجاوزت رأس الكارت بهامش MARGIN → أغلِق
-    if (scrollingUp && currentY + MARGIN < cardTop.current) {
-      setExpandedUserId(null);
-      setSelectedUser(null);
-    }
-
-    prevScrollY.current = currentY;
-  };
-
-  window.addEventListener('scroll', handleScroll);
-  return () => window.removeEventListener('scroll', handleScroll);
-}, [expandedUserId]);
-
-  const handlePermChange = async (permName, shouldEnable) => {
-    setLoading(true);
-    try {
-      await changeUserPermission(selectedUser.id, permName, shouldEnable ? 'add' : 'remove');
-      toast.success('تم تحديث الصلاحية');
-      const updatedUsers = await getUsers();
-      setUsers(updatedUsers);
-      const updated = updatedUsers.find(u => u.id === selectedUser.id);
-      if (updated) setSelectedUser(updated);
-    } catch {
-      toast.error('فشل في تحديث الصلاحية');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreate = async formData => {
+  const handleCreate = async (formData) => {
     setLoading(true);
     try {
       await createUser(formData);
@@ -145,12 +121,28 @@ useEffect(() => {
     }
   };
 
+  const handlePermChange = async (permName, shouldEnable) => {
+    setLoading(true);
+    try {
+      await changeUserPermission(selectedUser.id, permName, shouldEnable ? 'add' : 'remove');
+      toast.success('تم تحديث الصلاحية');
+      const updatedUsers = await getUsers();
+      setUsers(updatedUsers);
+      const updated = updatedUsers.find(u => u.id === selectedUser.id);
+      if (updated) setSelectedUser(updated);
+    } catch {
+      toast.error('فشل في تحديث الصلاحية');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDelete = async () => {
     setLoading(true);
     try {
       await deleteUser(selectedUser.id);
       toast.success('تم حذف المستخدم');
-      setUsers(prev => prev.filter(u => u.id !== selectedUser.id));
+      setUsers((prev) => prev.filter((u) => u.id !== selectedUser.id));
       setShowDelete(false);
       setSelectedUser(null);
     } catch {
@@ -206,33 +198,27 @@ useEffect(() => {
   };
 
   return (
-    <div className="p-6 sm:p-4 lg:p-6 bg-white dark:bg-royal-darker/10 min-h-screen">
+    <div className="p-6 sm:p-4 lg:p-6 bg-white dark:bg-royal-darker/10">
       <motion.div
         key="section-header"
         initial={{ opacity: 0, y: -80 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -40 }}
-        transition={{
-          type: 'spring',
-          stiffness: 60,
-          damping: 18,
-          delay: 0.1,
-        }}
+        transition={{ type: 'spring', stiffness: 60, damping: 18, delay: 0.1 }}
       >
         <SectionHeader icon={UsersIcon} listName="إدارة المستخدمين والصلاحيات" />
       </motion.div>
 
- 
-
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-zinc-700">
-        <div className="min-w-[720px]">
+        <div className="w-full max-w-full">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ type: 'spring', stiffness: 60, damping: 25 }}
           >
-            <TableComponent
+            <div ref={tableRef}>
+  <TableComponent 
               moduleName="users"
               data={users}
               headers={[
@@ -244,46 +230,30 @@ useEffect(() => {
                 { key: 'actions', text: 'إجراءات' },
               ]}
               customRenderers={customRenderers}
-                 renderAddButton={{
-  render: () => (
-    <Button  variant="default" 
-        onClick={() => {
-            setSelectedUser(null);
-            setModalMode('add');
-          }}
-    >
-   
-                                    إضافة مستخدم
-                              
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                            className="w-4 h-4 ml-2"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            strokeWidth={2}
-                                          >
-                                            <path
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                              d="M12 4v16m8-8H4"
-                                            />
-                                            </svg>
-                                            
-                                    
-                                  </Button>
-                                )
-                 }}
+              renderAddButton={{
+                render: () => (
+                  <Button variant="default" onClick={() => {
+                    setSelectedUser(null);
+                    setModalMode('add');
+                  }}>
+                    إضافة مستخدم
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </Button>
+                ),
+              }}
               onRowClick={(user) => {
                 setExpandedUserId((prevId) => (prevId === user.id ? null : user.id));
                 setSelectedUser(user);
                 setTimeout(() => {
-                  if (userCardRef.current) {
-                    userCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  if (permissionsRef.current) {
+                    permissionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }
                 }, 300);
               }}
             />
+            </div>
           </motion.div>
         </div>
       </div>
@@ -299,23 +269,21 @@ useEffect(() => {
         />
       )}
 
-   <AnimatePresence>
-  {selectedUser && expandedUserId === selectedUser.id && !modalMode && (
-    <motion.div
-      key="user-details"
-      ref={userCardRef} 
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
-          >
-            <div className="mt-6 space-y-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700">
-              <UserInfoCard user={selectedUser} />
-              <h2 className="text-xl font-semibold text-center text-green-700 dark:text-green-400 mt-4">
-                صلاحيات المستخدم
-              </h2>
+      <AnimatePresence>
+        {selectedUser && expandedUserId === selectedUser.id && !modalMode && (
+<motion.div
+  key="user-details"
+  ref={permissionsRef} // هذا يغطي الآن كرت البيانات + الصلاحيات
+  layout
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: 20 }}
+  transition={{ duration: 0.3 }}
+  className="overflow-hidden"
+>
+  <div className="mt-6 space-y-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 ">
+       <UserInfoCard user={selectedUser} />
+              <h2 className="text-xl font-semibold text-center text-green-700 dark:text-green-400 mt-4">صلاحيات المستخدم</h2>
               <PermissionsSection
                 allPermissions={allPerms}
                 userPermissions={selectedUser.permissions}
@@ -329,8 +297,10 @@ useEffect(() => {
 
       {showDelete && (
         <GlobalConfirmDeleteModal
-          onDelete={handleDelete}
-          onCancel={() => setShowDelete(false)}
+          isOpen={showDelete}
+          itemName={selectedUser?.name}
+          onConfirm={handleDelete}
+          onClose={() => setShowDelete(false)}
         />
       )}
     </div>

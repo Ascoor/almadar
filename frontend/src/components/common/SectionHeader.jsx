@@ -2,18 +2,20 @@ import { ArrowLeft } from 'lucide-react';
 
 const SectionHeader = ({ listName, icon, showBackButton }) => {
   return (
-    <div
-      className="
-        flex flex-col items-center text-center space-y-4 
-        p-4 sm:p-6 md:p-8 shadow-2xl transition-all
-        bg-white bg-gradient-to-tr from-royal/10 via-gold/10 to-royal/10
-        border border-greenic/20 rounded-full mb-6
-        dark:bg-greenic-darker
-        dark:bg-gradient-to-r dark:from-royal-darker/40 dark:via-navy/40 dark:to-royal-darker/40
-        dark:text-greenic dark:ring-2 dark:ring-greenic/30 
-        dark:shadow-greenic/2 0
-      "
-    >
+<div
+  className="
+    flex flex-col items-center justify-center text-center space-y-4
+    px-6 py-8 sm:py-10 rounded-3xl shadow-lg transition-all
+    border border-greenic/30 backdrop-blur-md
+
+    bg-gradient-to-br from-gold/10 via-white to-royal/10
+    text-royal font-semibold text-xl sm:text-2xl tracking-wide
+
+    dark:bg-gradient-to-br dark:from-royal-darker/50 dark:via-navy/40 dark:to-greenic/20
+    dark:text-greenic-light dark:shadow-md dark:shadow-greenic/10
+  "
+>
+  
       {icon && (
         <img
           src={icon}

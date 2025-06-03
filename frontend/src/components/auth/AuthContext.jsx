@@ -84,7 +84,12 @@ export function AuthProvider({ children }) {
 
     if (u && t) {
       saveAuth({ user: u, token: t, roles: rl, permissions: pr });
-      return { success: true };
+
+      return {
+        success: true,
+        requirePasswordChange: u.password_changed === false,
+        user: u,
+      };
     }
   } catch (err) {
     return {
@@ -92,9 +97,8 @@ export function AuthProvider({ children }) {
       message: err.response?.data?.message || 'فشل الاتصال بالخادم',
     };
   }
-
-  return { success: false, message: 'بيانات الدخول غير صحيحة' };
 };
+ 
 const updateUserContext = (updatedUser) => {
   sessionStorage.setItem('user', JSON.stringify(updatedUser));
   setUser(updatedUser);

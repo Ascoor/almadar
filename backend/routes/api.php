@@ -61,6 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('advice-types', AdviceTypeController::class);
     Route::apiResource('litigations', LitigationController::class);
 Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
+Route::post('/users/{id}/first-login-password', [UserController::class, 'firstLoginPassword']);
 
     Route::get('/notifications', [NotificationController::class, 'getUserNotifications'])->middleware('auth');
   Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);

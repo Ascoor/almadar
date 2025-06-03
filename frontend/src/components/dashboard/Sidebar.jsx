@@ -3,13 +3,13 @@ import { NavLink } from 'react-router-dom';
 import { LogoArt, LogoPatren } from '../../assets/images';
 import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
-  ArchiveIcon, CourtHouseIcon, LawBookIcon
+  ArchiveIcon, CourtHouseIcon, LawBookIcon, LegalBriefcaseIcon
 } from '@/components/ui/Icons';
 import {
   Settings2, ListTree, UsersRound, UserCheck, ChevronRight
 } from 'lucide-react';
 
-export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
+const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
   const [activeSection, setActiveSection] = useState(null);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
 
@@ -20,6 +20,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   }, []);
 
   const logoSrc = isOpen ? LogoPatren : LogoArt;
+
 
   const navConfig = useMemo(() => [
     { id: 'home', label: 'الرئيسية', to: '/', icon: <DashboardIcon size={20} /> },
@@ -44,6 +45,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
     { id: 'archive', label: 'الأرشيف', to: '/archive', icon: <ArchiveIcon size={20} /> },
   ], []);
 
+
   const handleSectionClick = (id, hasChildren) => {
     if (!isLargeScreen && !isOpen) onToggle();
     if (hasChildren) setActiveSection(prev => (prev === id ? null : id));
@@ -53,7 +55,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
     <aside
       dir="rtl"
       className={`
-        fixed right-0 top-0 z-20 h-full
+        fixed right-0 top-0 z-20 h-full    bg-navy-light dark:bg-navy-dark 
         bg-gradient-to-b from-gold via-greenic-dark/50 to-royal/80
         dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/40
         transition-all duration-300
@@ -73,7 +75,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
         {(isOpen || !isLargeScreen) ? navConfig.map(item => (
           <div key={item.id}>
             {item.to ? (
-              <NavLink
+                 <NavLink
                 to={item.to}
                 onClick={onLinkClick}
                 className={({ isActive }) =>
@@ -107,8 +109,8 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                   className: `transition-colors duration-200
                     ${activeSection === item.id
                       ? 'text-gold-light dark:text-gold'
-                      : 'text-white group-hover:text-greenic-dark dark:group-hover:text-gold'}`,
-                })}
+                      : 'text-white group-hover:text-greenic-dark dark:group-hover:text-gold'}`}
+                )}
                 <span className="flex-1 text-right">{item.label}</span>
                 {item.children && (
                   <ChevronRight
@@ -181,3 +183,5 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
     </aside>
   );
 }
+
+export default Sidebar;

@@ -46,6 +46,7 @@ export default function ManagementSettings() {
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null, name: '', type: '' });
   const [pageState, setPageState] = useState({});
   const itemsPerPage = 5;
+const [expandedItem, setExpandedItem] = useState(null);
 
   const can = (action) => hasPermission(`${action} ${moduleName}`);
 
@@ -171,39 +172,78 @@ export default function ManagementSettings() {
                 {can('delete') && <th>الإجراء</th>}
               </tr>
             </thead>
-            <tbody>
-              {pagedData.map(item => (
-                <motion.tr
-                  key={item.id}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="border-t border-border hover:bg-greenic-light/20"
-                >
-                  <td>{getItemName(item, type)}</td>
-                  {can('edit') && (
-                    <td>
-                      <button onClick={() => {
-                        setShowModal(true);
-                        setModalType(type);
-                        setEditMode(true);
-                        setEditItemId(item.id);
-                        setNewItem(getItemName(item, type));
-                      }}><Pencil color="#4ef454"    />
-                    
-                      </button>
-                    </td>
-                  )}
-                  {can('delete') && (
-                    <td>
-                      <button onClick={() => setConfirmDelete({ isOpen: true, id: item.id, name: getItemName(item, type), type })}>
-                        <Trash  color="#f00f0f"    />
-                      </button>
-                    </td>
-                  )}
-                </motion.tr>
-              ))}
-            </tbody>
+     <tbody>
+  {pagedData.map(item => (
+    <React.Fragment key={item.id}>
+      <motion.tr
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.4 }}
+        className="border-t border-border hover:bg-greenic-light/20 cursor-pointer"
+        onClick={() =>
+          setExpandedItem((prev) =>
+            prev?.id === item.id && prev?.type === type ? null : { id: item.id, type }
+          )
+        }
+      >
+        <td>{getItemName(item, type)}</td>
+
+        {can('edit') && (
+          <td>
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // يمنع فتح التفاصيل
+                setShowModal(true);
+                setModalType(type);
+                setEditMode(true);
+                setEditItemId(item.id);
+                setNewItem(getItemName(item, type));
+              }}
+            >
+              <Pencil color="#4ef454" />
+            </button>
+          </td>
+        )}
+
+        {can('delete') && (
+          <td>
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // يمنع فتح التفاصيل
+                setConfirmDelete({
+                  isOpen: true,
+                  id: item.id,
+                  name: getItemName(item, type),
+                  type,
+                });
+              }}
+            >
+              <Trash color="#f00f0f" />
+            </button>
+          </td>
+        )}
+      </motion.tr>
+
+      {/* ✅ عرض تفاصيل العنصر */}
+      <AnimatePresence>
+        {expandedItem?.id === item.id && expandedItem?.type === type && (
+          <motion.tr
+            key={`expanded-${item.id}`}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <td colSpan={3} className="p-4 bg-muted/20 text-right rounded-b-xl">
+              تفاصيل إضافية للعنصر: <strong>{getItemName(item, type)}</strong>
+            </td>
+          </motion.tr>
+        )}
+      </AnimatePresence>
+    </React.Fragment>
+  ))}
+</tbody>
+
           </table>
         )}
       </motion.div>

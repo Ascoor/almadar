@@ -36,6 +36,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Super Admin',
             'email' => 'admin@example.com',
             'password' => Hash::make('Ask@123456'),
+            'password_changed' => true,
             'image' => 'users_images/admin.png',
         ]);
         // تعيين صلاحيات Admin (جميع الصلاحيات)
@@ -47,6 +48,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'Site Moderator',
             'email' => 'moderator@example.com',
             'password' => Hash::make('Ask@123456'),
+            'password_changed' => true,
             'image' => 'users_images/moderator.png',
         ]);
         // تعيين صلاحيات Moderator (صلاحيات محدودة)
@@ -56,6 +58,7 @@ class UsersTableSeeder extends Seeder
         $user = User::create([
             'name' => 'Normal User',
             'email' => 'user@example.com',
+                  'password_changed' => true,
             'password' => Hash::make('Ask@123456'),
             'image' => 'users_images/user.png',
         ]);

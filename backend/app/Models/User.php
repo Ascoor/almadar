@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
            'image',
         'password',
+        'password_changed'
     ];
     protected $guard_name = 'api'; 
   protected $with = ['roles', 'permissions']; 

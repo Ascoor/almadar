@@ -10,20 +10,26 @@
     const { login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPasswordChangeModal, setShowPasswordChangeModal] = useState(false);
+
 const handleSubmit = async (e) => {
   e.preventDefault();
   onAuthStart();
 
   try {
-    const { success, message } = await login(email, password);
+    const { success, message, requirePasswordChange } = await login(email, password);
 
     if (success) {
       toast.success('✅ تم تسجيل الدخول بنجاح', {
         description: 'تم الدخول إلى النظام بنجاح.',
       });
-      onAuthComplete(true);
+
+      if (requirePasswordChange) {
+        setShowPasswordChangeModal(true); // إلزام المستخدم بتغيير كلمة المرور
+      } else {
+        onAuthComplete(true);
+      }
     } else {
-      // إذا كانت رسالة الخطأ هي "Bad credentials" استبدالها بالعربية:
       const errorMsg = message === 'Bad credentials'
         ? 'تأكد من صحة اسم المستخدم وكلمة المرور.'
         : message;
@@ -40,6 +46,7 @@ const handleSubmit = async (e) => {
     onAuthComplete(false);
   }
 };
+
 
 
     const handleCancel = () => {

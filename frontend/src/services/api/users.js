@@ -17,6 +17,8 @@ export const updateUser = (id, formData) =>
 export const deleteUser = (id) => api.delete(`/api/users/${id}`).then(res => res.data);
 
 // كلمة المرور
+export const firstLoginPassword = (id, data) =>
+  api.post(`/api/users/${id}/first-login-password`, data).then(res => res.data);
 export const changePassword = (id, data) =>
   api.post(`/api/users/${id}/change-password`, data).then(res => res.data);
 // الأدوار

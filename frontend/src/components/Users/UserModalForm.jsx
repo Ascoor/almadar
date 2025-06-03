@@ -111,10 +111,10 @@ export default function UserModalForm({
 
       if (isEdit) {
         await updateUser(selectedUser.id, payload);
-        toast.success('✅ تم تعديل المستخدم');
+  
       } else {
         await createUser(payload);
-        toast.success('✅ تم إنشاء المستخدم');
+ 
       }
 
       await refreshUsers();
