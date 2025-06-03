@@ -34,7 +34,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
     {
       id: 'management', label: 'إدارة التطبيق', icon: <Settings2 size={20} />, children: [
         { id: 'lists', label: 'القوائم', to: '/managment-lists', icon: <ListTree size={16} /> },
-        { id: 'reports', label: 'التقارير', to: '/reports-page', icon: <LegalBriefcaseIcon size={16} /> },
+        // { id: 'reports', label: 'التقارير', to: '/reports-page', icon: <LegalBriefcaseIcon size={16} /> },
       ]
     },
     {
@@ -54,11 +54,11 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
     <aside
       dir="rtl"
       className={`
-        fixed right-0 top-0 z-20 h-full
+        fixed right-0 top-0 z-20 h-full bg-gold dark:bg-navy-darker
         bg-gradient-to-b from-gold via-greenic-dark/50 to-royal/80
         dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/40
         transition-all duration-300
-        ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-16' : 'translate-x-full')}
+        ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-12' : 'translate-x-full')}
       `}
     >
       <div className="flex items-center justify-center p-0 mt-6">
