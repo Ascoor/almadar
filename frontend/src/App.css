@@ -1,24 +1,24 @@
+/* Root container with centered content and a max-width */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  @apply max-w-screen-xl mx-auto p-8 text-center;
 }
 
+/* Logo styles with padding, transition, and hover effect */
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  @apply h-24 p-6 transition-all duration-300 ease-in-out;
   will-change: filter;
-  transition: filter 300ms;
 }
 
+/* Hover effects for the logo */
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  @apply filter drop-shadow-xl;
 }
 
+.logo.react:hover {
+  @apply filter drop-shadow-2xl;
+}
+
+/* Keyframe animation for spinning logo */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -28,8 +28,20 @@
   }
 }
 
+/* Apply spinning animation when prefers-reduced-motion is not set */
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
-  } 
+}
+
+/* Additional responsive styles (for example, adjusting logo size on small screens) */
+@media (max-width: 768px) {
+  #root {
+    @apply px-4; /* Reduce padding on small screens */
+  }
+
+  .logo {
+    @apply h-16 p-4; /* Adjust logo size for mobile screens */
+  }
+}
