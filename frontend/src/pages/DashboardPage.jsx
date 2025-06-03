@@ -4,29 +4,23 @@ import { useLocation } from "react-router-dom";
 import { NotificationProvider } from '@/components/Notifications/NotificationContext';
 import Header from '@/components/dashboard/Header';
 import Sidebar from '@/components/dashboard/Sidebar';
-import AuthRoutes from '@/components/layout/AuthRoutes';
-import { firstLoginPassword } from '@/services/api/users';
+import AuthRoutes from '@/components/layout/AuthRoutes'; 
 import ForcePasswordChangeModal from '@/components/auth/ForcePasswordChangeModal';
 import { AuthContext } from '@/components/auth/AuthContext';
 import EchoListener from '@/components/EchoListener';
 import AdminListener from '@/components/AdminListener';
-import { AnimatePresence, motion } from 'framer-motion';
-import { toast } from 'sonner'; 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { AnimatePresence } from 'framer-motion'; 
 import { MobileThemeProvider, useMobileTheme } from '@/components/MobileThemeProvider';
 import ResponsiveLayout from '@/components/ResponsiveLayout';
 
 const queryClient = new QueryClient();
 
 const DashboardContent = () => {
-  const { user, updateUserContext } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
 
   const [forcePasswordModal, setForcePasswordModal] = useState(false);
-const [newPassword, setNewPassword] = useState('');
-const [confirmPassword, setConfirmPassword] = useState('');
-const [submitting, setSubmitting] = useState(false);
+ 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation(); 
 
