@@ -1,17 +1,23 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LogoArt, LogoPatren } from '../../assets/images';
 import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
   ArchiveIcon, CourtHouseIcon, LawBookIcon, LegalBriefcaseIcon
 } from '@/components/ui/Icons';
-import { UsersRound, UserCheck, ChevronRight } from 'lucide-react';
-import { useMobileTheme } from '../MobileThemeProvider';
+import {
+  Settings2, ListTree, UsersRound, UserCheck, ChevronRight
+} from 'lucide-react';
 
-const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
+export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   const [activeSection, setActiveSection] = useState(null);
-  const [showMiniSidebar, setShowMiniSidebar] = useState(false);
-  const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const logoSrc = isOpen ? LogoPatren : LogoArt;
 
@@ -26,8 +32,9 @@ const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
       ]
     },
     {
-      id: 'management', label: 'إدارة التطبيق', icon: <LegalBriefcaseIcon size={20} />, children: [
-        { id: 'lists', label: 'القوائم', to: '/managment-lists', icon: <LegalBriefcaseIcon size={16} /> },
+      id: 'management', label: 'إدارة التطبيق', icon: <Settings2 size={20} />, children: [
+        { id: 'lists', label: 'القوائم', to: '/managment-lists', icon: <ListTree size={16} /> },
+        { id: 'reports', label: 'التقارير', to: '/reports-page', icon: <LegalBriefcaseIcon size={16} /> },
       ]
     },
     {
@@ -39,62 +46,32 @@ const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
   ], []);
 
   const handleSectionClick = (id, hasChildren) => {
-    if (isMobile && !isOpen) onToggle();
+    if (!isLargeScreen && !isOpen) onToggle();
     if (hasChildren) setActiveSection(prev => (prev === id ? null : id));
-  };
-
-  const sidebarStyles = {
-    paddingTop: isStandalone && isMobile ? `${safeAreaInsets.top + 16}px` : undefined,
-    paddingBottom: isStandalone && isMobile ? `${safeAreaInsets.bottom + 16}px` : undefined
-  };
-
-  const handleToggleSidebar = () => {
-    setShowMiniSidebar(prev => !prev);
   };
 
   return (
     <aside
       dir="rtl"
       className={`
-        fixed top-0 z-20 h-full bg-navy-light dark:bg-navy-dark 
+        fixed right-0 top-0 z-20 h-full
         bg-gradient-to-b from-gold via-greenic-dark/50 to-royal/80
         dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/40
         transition-all duration-300
-        ${isMobile ? 
-          (isOpen ? 'w-full mt-12' : 'translate-x-full') : 
-          (isOpen ? 'w-64' : showMiniSidebar ? 'w-16' : 'w-0')
-        }
-        ${isStandalone ? 'standalone-sidebar' : ''}
+        ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-16' : 'translate-x-full')}
       `}
-      style={sidebarStyles}
     >
       <div className="flex items-center justify-center p-0 mt-6">
         <img
           src={logoSrc}
           alt="Logo"
-          className={`transition-all duration-300 ${isOpen ? (isMobile ? 'w-32' : 'w-36') : 'w-10'}`}
+          className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
         />
-        {isOpen && isMobile && (
-          <button 
-            onClick={onToggle} 
-            className="absolute top-4 left-4 text-white text-2xl"
-          >
-            ×
-          </button>
-        )}
+        {isOpen && <button onClick={onToggle} className="absolute top-4 left-4">×</button>}
       </div>
 
-      {!isMobile && (
-        <button 
-          onClick={handleToggleSidebar} 
-          className="absolute top-4 right-4 text-white text-xl"
-        >
-          {showMiniSidebar ? '☰' : '×'}
-        </button>
-      )}
-
-      <nav className="px-4 space-y-4 overflow-y-auto h-full pb-20">
-        {(isOpen || !isMobile || showMiniSidebar) ? navConfig.map(item => (
+      <nav className={`${isOpen ? 'px-4 space-y-4 mt-6' : 'px-2 space-y-2 mt-8'} overflow-y-auto h-full`}>
+        {(isOpen || !isLargeScreen) ? navConfig.map(item => (
           <div key={item.id}>
             {item.to ? (
               <NavLink
@@ -131,8 +108,8 @@ const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
                   className: `transition-colors duration-200
                     ${activeSection === item.id
                       ? 'text-gold-light dark:text-gold'
-                      : 'text-white group-hover:text-greenic-dark dark:group-hover:text-gold'}`}
-                )}
+                      : 'text-white group-hover:text-greenic-dark dark:group-hover:text-gold'}`,
+                })}
                 <span className="flex-1 text-right">{item.label}</span>
                 {item.children && (
                   <ChevronRight
@@ -204,6 +181,4 @@ const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
       </nav>
     </aside>
   );
-};
-
-export default Sidebar;
+}
