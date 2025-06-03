@@ -26,15 +26,15 @@ export default function DashboardClock() {
     <div className="relative w-[140px] h-[140px] md:w-[120px] md:h-[120px] mx-auto mt-4 rounded-full shadow-lg border-[2px] border-greenic-dark bg-royal-light dark:bg-navy-darker bg-gradient-to-t from-gold/40 via-royal/10 to-gold/40  dark:from-navy-darker/30 dark:via-royal-dark/50 dark:to-navy-darker/40 transition-all duration-300">
       
       {/* مركز الساعة */}
-      <div className="absolute w-3 h-3 bg-black dark:bg-white rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50" />
+      <div className="absolute w-3 h-3 bg-black dark:bg-white rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10" />
 
       {/* عقارب الساعة */}
       <div
-        className="absolute top-1/2 left-1/2 w-[4px] h-[35px] bg-red-600 rounded-full origin-bottom z-30"
+        className="absolute top-1/2 left-1/2 w-[4px] h-[35px] bg-red-600 rounded-full origin-bottom z-10"
         style={{ transform: `translate(-50%, -100%) rotate(${hourDeg}deg)` }}
       />
       <div
-        className="absolute top-1/2 left-1/2 w-[3px] h-[45px] bg-black dark:bg-white rounded-full origin-bottom z-20"
+        className="absolute top-1/2 left-1/2 w-[3px] h-[45px] bg-black dark:bg-white rounded-full origin-bottom z-10"
         style={{ transform: `translate(-50%, -100%) rotate(${minDeg}deg)` }}
       />
       <div
