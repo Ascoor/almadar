@@ -5,15 +5,12 @@ import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
   ArchiveIcon, CourtHouseIcon, LawBookIcon, LegalBriefcaseIcon
 } from '@/components/ui/Icons';
- 
-import {
- UsersRound, UserCheck, ChevronRight
-} from 'lucide-react';
- 
+import { UsersRound, UserCheck, ChevronRight } from 'lucide-react';
 import { useMobileTheme } from '../MobileThemeProvider';
 
 const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
   const [activeSection, setActiveSection] = useState(null);
+  const [showMiniSidebar, setShowMiniSidebar] = useState(false);  // Track mini sidebar state
   const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
 
   const logoSrc = isOpen ? LogoPatren : LogoArt;
@@ -41,7 +38,6 @@ const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
     { id: 'archive', label: 'الأرشيف', to: '/archive', icon: <ArchiveIcon size={20} /> },
   ], []);
 
-
   const handleSectionClick = (id, hasChildren) => {
     if (isMobile && !isOpen) onToggle();
     if (hasChildren) setActiveSection(prev => (prev === id ? null : id));
@@ -50,6 +46,10 @@ const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
   const sidebarStyles = {
     paddingTop: isStandalone && isMobile ? `${safeAreaInsets.top + 16}px` : undefined,
     paddingBottom: isStandalone && isMobile ? `${safeAreaInsets.bottom + 16}px` : undefined
+  };
+
+  const handleToggleSidebar = () => {
+    setShowMiniSidebar(prev => !prev);  // Toggle mini sidebar visibility
   };
 
   return (
@@ -62,7 +62,7 @@ const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
         transition-all duration-300
         ${isMobile ? 
           (isOpen ? 'w-full mt-12' : 'translate-x-full') : 
-          (isOpen ? 'w-64' : 'w-16')
+          (isOpen ? 'w-64' : showMiniSidebar ? 'w-16' : 'w-0')  // Handle mini sidebar
         }
         ${isStandalone ? 'standalone-sidebar' : ''}
       `}
@@ -84,12 +84,21 @@ const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
         )}
       </div>
       
-   <nav className={`px-4 space-y-4 overflow-y-auto h-full pb-20`}>
-        {(isOpen || !isMobile) ? navConfig.map(item => (
+      {/* Toggle button for mini sidebar */}
+      {!isMobile && (
+        <button 
+          onClick={handleToggleSidebar} 
+          className="absolute top-4 right-4 text-white text-xl"
+        >
+          {showMiniSidebar ? '☰' : '×'}
+        </button>
+      )}
+
+      <nav className={`px-4 space-y-4 overflow-y-auto h-full pb-20`}>
+        {(isOpen || !isMobile || showMiniSidebar) ? navConfig.map(item => (
           <div key={item.id}>
             {item.to ? (
               <NavLink
-              
                 to={item.to}
                 onClick={onLinkClick}
                 className={({ isActive }) =>
@@ -196,6 +205,6 @@ const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
       </nav>
     </aside>
   );
-}
+};
 
 export default Sidebar;
