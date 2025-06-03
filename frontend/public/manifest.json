@@ -32,6 +32,28 @@
   "orientation": "portrait",
   "theme_color": "#0d3346",
   "background_color": "#0d3346",
+  "categories": ["business", "productivity", "legal"],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "الرئيسية",
+      "short_name": "Home",
+      "description": "الانتقال إلى الصفحة الرئيسية",
+      "url": "/",
+      "icons": [{ "src": "splash-image.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "التعاقدات",
+      "short_name": "Contracts",
+      "description": "إدارة التعاقدات",
+      "url": "/contracts",
+      "icons": [{ "src": "splash-image.png", "sizes": "96x96" }]
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 480
+  },
+  "scope": "/",
   "splash_pages": [
     {
       "src": "splash-image.png",
