@@ -1,3 +1,6 @@
 /public_html/
 /frontend/src/config/
 /frontend/dev-dist
+/frontend/.env
+/frontend/.env.production
+/frontend/src/lib/echo.js
