@@ -34,7 +34,7 @@ const sectionVariants = {
 
 const Dashboard = () => {
   return (
-    <div className="relative">
+    <>
       {/* عرض العنوان بشكل متحرك */}
       <motion.h2
         className="text-xl sm:text-2xl text-center font-bold mb-2 text-royal-dark dark:text-gold"
@@ -68,7 +68,7 @@ const Dashboard = () => {
       >
         <RecentItems />
       </motion.div>
-    </div>
+    </>
   );
 };
 
