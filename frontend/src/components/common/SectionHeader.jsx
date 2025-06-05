@@ -8,7 +8,7 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
     px-6 py-8 sm:py-10 rounded-3xl shadow-lg transition-all
     border border-greenic/30 backdrop-blur-md
 
-    bg-gradient-to-br from-gold/10 via-white to-royal/10
+    bg-gradient-to-br from-gold/20 via-navy-light/10 to-royal/10
     text-royal font-semibold text-xl sm:text-2xl tracking-wide
 
     dark:bg-gradient-to-br dark:from-royal-darker/50 dark:via-navy/40 dark:to-greenic/20
