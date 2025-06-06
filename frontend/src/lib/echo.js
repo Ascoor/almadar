@@ -18,9 +18,9 @@ export function initEcho(config = {}) {
     cluster: import.meta.env.VITE_REVERB_CLUSTER,
     wsHost: import.meta.env.VITE_REVERB_HOST,
     wsPort: import.meta.env.VITE_REVERB_PORT,
-    forceTLS: false,  
-    disableStats: true,
-    enabledTransports: ['ws'],
+   forceTLS: true, // ✅ استخدام TLS (HTTPS/WSS)
+  disableStats: true,
+  enabledTransports: ['ws', 'wss'], // ✅ السماح بالاتصال الآمن
     authEndpoint: `${import.meta.env.VITE_API_BASE_URL}/broadcasting/auth`,
     auth: {
       headers: {
