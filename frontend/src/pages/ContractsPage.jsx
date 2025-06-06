@@ -1,26 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import ContractsTable from '../components/Contracts/ContractsTable';
 import SectionHeader from '../components/common/SectionHeader';
-import { getContracts, getContractCategories } from '../services/api/contracts';
+import { getContractCategories } from '../services/api/contracts';
 import { LocalIcon, InternationalIcon } from '../assets/icons';
-
 import { useNavigate } from 'react-router-dom';
+import { useContracts } from '@/hooks/dataHooks'; // ✅ استخدم الهُوك المُخصص
 
 export default function Contracts() {
   const [activeTab, setActiveTab] = useState('local');
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
-  const { data, isError, refetch } = useQuery({
-    queryKey: ['contracts'],
-    queryFn: getContracts,
-    onError: (error) => {
-      if (error.response?.status === 403) navigate('/forbidden');
-    },
-    retry: false,
-  });
+  // ✅ استدعِ البيانات من hook
+  const { data, isLoading, refetch } = useContracts();
 
   useEffect(() => {
     (async () => {
@@ -33,14 +26,19 @@ export default function Contracts() {
     })();
   }, []);
 
+  // ✅ الوصول للعقود بطريقة آمنة
   const contracts = data?.data?.data || [];
 
-  if (isError) return null;
+  // ✅ معالجات الخطأ يمكن أن تُنقل للهُوك لاحقًا إن أردت
+  useEffect(() => {
+    if (data?.status === 403) {
+      navigate('/forbidden');
+    }
+  }, [data, navigate]);
 
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-6">
 
-      {/* ✅ رأس الصفحة بحركة من الأعلى */}
       <motion.div
         key="header"
         initial={{ opacity: 0, y: -100 }}
@@ -48,13 +46,12 @@ export default function Contracts() {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: 'spring', stiffness: 70, damping: 14 }}
       >
-       <SectionHeader
-  icon={activeTab === 'local' ? LocalIcon : InternationalIcon}
-  listName={activeTab === 'local' ? 'العقود المحلية' : 'العقود الدولية'}
-/>
+        <SectionHeader
+          icon={activeTab === 'local' ? LocalIcon : InternationalIcon}
+          listName={activeTab === 'local' ? 'العقود المحلية' : 'العقود الدولية'}
+        />
       </motion.div>
 
-      {/* 🔘 التبويبات */}
       <div className="flex justify-center gap-4">
         {['local', 'international'].map((tab) => (
           <button
@@ -71,7 +68,6 @@ export default function Contracts() {
         ))}
       </div>
 
-      {/* ✅ جدول العقود بحركة من الأسفل */}
       <div className="mt-6 min-h-[300px]">
         <AnimatePresence mode="wait">
           <motion.div
@@ -87,6 +83,7 @@ export default function Contracts() {
               categories={categories}
               reloadContracts={refetch}
               scope={activeTab}
+              loading={isLoading}
             />
           </motion.div>
         </AnimatePresence>

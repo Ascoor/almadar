@@ -10,7 +10,8 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
+use App\Events\UserDataUpdated;
+ 
 class UserController extends Controller
 {
     public function index()
@@ -111,7 +112,10 @@ public function store(Request $request)
     $filename = "user-{$user->id}." . $file->getClientOriginalExtension();
     $file->move(public_path('users_images'), $filename);
     $user->image = "users_images/{$filename}";
-}
+} 
+
+event(new  UserDataUpdated($user));
+
 
 
         $user->save();
@@ -165,7 +169,7 @@ public function store(Request $request)
         $user->save();
 
         return response()->json(['message' => 'تم تغيير كلمة المرور بنجاح']);
-    }
+    } 
 public function firstLoginPassword(Request $request)
 {
     /** @var \App\Models\User $user */

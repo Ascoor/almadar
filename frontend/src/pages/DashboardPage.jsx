@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { NotificationProvider } from '@/components/Notifications/NotificationContext';
 import Header from '@/components/dashboard/Header';
@@ -13,14 +12,13 @@ import { AnimatePresence } from 'framer-motion';
 import { MobileThemeProvider, useMobileTheme } from '@/components/MobileThemeProvider';
 import ResponsiveLayout from '@/components/ResponsiveLayout';
 
-const queryClient = new QueryClient();
+import { AppWithQuery } from '@/hooks/dataHooks'; // ✅ تم استيراده بدل QueryClientProvider و DataProvider
 
 const DashboardContent = () => {
   const { user } = useContext(AuthContext);
   const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
 
   const [forcePasswordModal, setForcePasswordModal] = useState(false);
- 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation(); 
 
@@ -44,7 +42,7 @@ const DashboardContent = () => {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <AppWithQuery> {/* ✅ استخدم التغليف هنا */}
       <NotificationProvider>
         <AdminListener />
         <EchoListener />
@@ -55,7 +53,6 @@ const DashboardContent = () => {
             onLinkClick={() => isMobile && setSidebarOpen(false)}
           />
           
-          {/* Mobile overlay */}
           {isMobile && sidebarOpen && (
             <div 
               className="fixed inset-0 bg-black/50 z-10" 
@@ -81,13 +78,13 @@ const DashboardContent = () => {
           </div>
 
           <AnimatePresence>
-      {forcePasswordModal && (
-    <ForcePasswordChangeModal onClose={() => setForcePasswordModal(false)} />
-  )}
+            {forcePasswordModal && (
+              <ForcePasswordChangeModal onClose={() => setForcePasswordModal(false)} />
+            )}
           </AnimatePresence>
         </ResponsiveLayout>
       </NotificationProvider>
-    </QueryClientProvider>
+    </AppWithQuery>
   );
 };
 

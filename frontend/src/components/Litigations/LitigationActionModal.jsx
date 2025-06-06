@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import ModalCard from "../common/ModalCard";
+import { useActionTypes } from "@/hooks/dataHooks";
 
 const EMPTY_FORM = {
   id: null,
@@ -14,46 +15,35 @@ const EMPTY_FORM = {
   status: "pending",
 };
 
-export default function LitigationActionModal({
-  isOpen,
-  onClose,
-  onSubmit,
-  initialData,
-  actionTypes = [],
-}) {
+export default function LitigationActionModal({ isOpen, onClose, onSubmit, initialData }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
 
-  // Handle the opening of the modal and the initialization of the form
+  const { data: actionTypes = [], isLoading } = useActionTypes("litigation");
+
   useEffect(() => {
-    if (!isOpen) return; // Only reset if the modal is opened
-    if (initialData) {
-      setForm({ ...EMPTY_FORM, ...initialData }); // If editing, fill in form with initial data
-    } else {
-      setForm(EMPTY_FORM); // If creating new, reset the form
-    }
+    if (!isOpen) return;
+    setForm(initialData ? { ...EMPTY_FORM, ...initialData } : EMPTY_FORM);
   }, [isOpen, initialData]);
 
-  // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle save action (create or update)
   const handleSave = async () => {
     setLoading(true);
     try {
-      await onSubmit(form); // Call onSubmit with form data
-      onClose(); // Close the modal after saving
-    } catch (err) {
+      await onSubmit(form);
+      onClose();
+    } catch {
       toast.error("فشل في حفظ الإجراء");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isOpen) return null; // Don't render if the modal is not open
+  if (!isOpen) return null;
 
   return (
     <ModalCard
@@ -65,116 +55,131 @@ export default function LitigationActionModal({
       submitLabel={form.id ? "تحديث" : "إضافة"}
     >
       <form className="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
-        {/* Action Date */}
-        <div>
-          <label className="block mb-1 text-sm">تاريخ الإجراء</label>
-          <input
-            type="date"
-            name="action_date"
-            value={form.action_date}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-            required
-          />
-        </div>
+        <Field
+          label="تاريخ الإجراء"
+          name="action_date"
+          type="date"
+          value={form.action_date}
+          onChange={handleChange}
+        />
 
-        {/* Action Type */}
-        <div>
-          <label className="block mb-1 text-sm">نوع الإجراء</label>
-          <select
-            name="action_type_id"
-            value={form.action_type_id}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-            required
-          >
-            <option value="">اختر النوع</option>
-            {actionTypes.map((type) => (
-              <option key={type.id} value={type.id}>
-                {type.action_name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Field
+          label="نوع الإجراء"
+          name="action_type_id"
+          type="select"
+          options={actionTypes.map((t) => ({
+            value: t.id,
+            label: t.action_name,
+          }))}
+          value={form.action_type_id}
+          onChange={handleChange}
+          disabled={isLoading}
+        />
 
-        {/* Lawyer Name */}
-        <div>
-          <label className="block mb-1 text-sm">اسم القائم بالإجراء</label>
-          <input
-            type="text"
-            name="lawyer_name"
-            value={form.lawyer_name}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-            placeholder="مثال: د. فاطمة"
-            required
-          />
-        </div>
+        <Field
+          label="اسم القائم بالإجراء"
+          name="lawyer_name"
+          type="text"
+          value={form.lawyer_name}
+          onChange={handleChange}
+          placeholder="مثال: د. فاطمة"
+        />
 
-        {/* Requirements */}
-        <div>
-          <label className="block mb-1 text-sm">المطلوب</label>
-          <input
-            type="text"
-            name="requirements"
-            value={form.requirements}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-          />
-        </div>
+        <Field
+          label="المطلوب"
+          name="requirements"
+          type="text"
+          value={form.requirements}
+          onChange={handleChange}
+        />
 
-        {/* Location */}
-        <div>
-          <label className="block mb-1 text-sm">جهة الإجراء</label>
-          <input
-            type="text"
-            name="location"
-            value={form.location}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-          />
-        </div>
+        <Field
+          label="جهة الإجراء"
+          name="location"
+          type="text"
+          value={form.location}
+          onChange={handleChange}
+        />
 
-        {/* Results */}
-        <div>
-          <label className="block mb-1 text-sm">النتيجة</label>
-          <input
-            type="text"
-            name="results"
-            value={form.results}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-          />
-        </div>
+        <Field
+          label="النتيجة"
+          name="results"
+          type="text"
+          value={form.results}
+          onChange={handleChange}
+        />
 
-        {/* Notes */}
-        <div>
+        <div className="md:col-span-2">
           <label className="block mb-1 text-sm">ملاحظات</label>
           <textarea
             name="notes"
-            value={form.notes}
+            value={form.notes ?? ""}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg"
             rows={2}
           />
         </div>
 
-        {/* Status */}
-        <div>
-          <label className="block mb-1 text-sm">الحالة</label>
-          <select
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-            required
-          >
-            <option value="pending">معلق</option>
-            <option value="in_review">قيد المراجعة</option>
-            <option value="done">منجز</option>
-          </select>
-        </div>
+        <Field
+          label="الحالة"
+          name="status"
+          type="select"
+          options={[
+            { value: "pending", label: "معلق" },
+            { value: "in_review", label: "قيد المراجعة" },
+            { value: "done", label: "منجز" },
+          ]}
+          value={form.status}
+          onChange={handleChange}
+        />
       </form>
     </ModalCard>
+  );
+}
+
+function Field({
+  label,
+  name,
+  type,
+  options = [],
+  value,
+  onChange,
+  placeholder,
+  disabled = false,
+}) {
+  const baseCls =
+    "w-full p-2 border rounded-md bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none";
+
+  return (
+    <div>
+      <label className="block mb-1 text-sm">{label}</label>
+      {type === "select" ? (
+        <select
+          name={name}
+          value={value ?? ""}
+          onChange={onChange}
+          disabled={disabled}
+          className={baseCls}
+          required
+        >
+          <option value="">اختر {label}</option>
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={value ?? ""}
+          onChange={onChange}
+          className={baseCls}
+          placeholder={placeholder}
+          required
+        />
+      )}
+    </div>
   );
 }

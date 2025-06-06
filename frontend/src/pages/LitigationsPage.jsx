@@ -1,36 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "@/components/common/SectionHeader";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import UnifiedLitigationsTable from "@/components/Litigations/UnifiedLitigationsTable"; 
-import { getLitigations, deleteLitigation } from "@/services/api/litigations";
+import { deleteLitigation } from "@/services/api/litigations";
 import { CaseIcon } from "@/assets/icons";
+import { useLitigations } from "@/hooks/dataHooks"; // ✅ hook من React Query
 
 export default function LitigationsPage() {
   const [activeTab, setActiveTab] = useState("against");
-  const [litigations, setLitigations] = useState([]);
   const [litigationToDelete, setLitigationToDelete] = useState(null);
-  const [loadingLitigations, setLoadingLitigations] = useState(false);
- 
 
-  useEffect(() => {
-    loadLitigations();
-  }, []);
+  // ✅ استخدام React Query لجلب الدعاوى
+  const { data, isLoading, refetch } = useLitigations();
 
-  const loadLitigations = async () => {
-    setLoadingLitigations(true);
-    try {
-      const res = await getLitigations();
-      const litigationsData = Array.isArray(res?.data?.data) ? res.data.data : [];
-      setLitigations(litigationsData);
-    } catch (error) {
-      toast.error("فشل تحميل الدعاوى");
-    } finally {
-      setLoadingLitigations(false);
-    }
-  };
+  const allLitigations = data?.data?.data || [];
+
+  const filteredLitigations =
+    activeTab === "against"
+      ? allLitigations.filter((c) => c.scope === "against")
+      : allLitigations.filter((c) => c.scope === "from");
 
   const handleConfirmDelete = async () => {
     if (!litigationToDelete) return;
@@ -38,17 +29,13 @@ export default function LitigationsPage() {
       await deleteLitigation(litigationToDelete.id);
       toast.success("تم الحذف بنجاح");
       setLitigationToDelete(null);
-      loadLitigations();
+      await refetch(); // ✅ تحديث البيانات بعد الحذف
     } catch {
       toast.error("فشل الحذف");
     }
   };
 
-  const filteredLitigations =
-    activeTab === "against"
-      ? litigations.filter((c) => c.scope === "against")
-      : litigations.filter((c) => c.scope === "from");
- return (
+  return (
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen space-y-8 transition-colors">
       <motion.div
         key="header"
@@ -114,10 +101,10 @@ export default function LitigationsPage() {
             <Card className="p-4 sm:p-6 rounded-xl shadow-md border overflow-x-auto bg-card text-card-foreground">
               <UnifiedLitigationsTable
                 litigations={filteredLitigations}
-                reloadLitigations={loadLitigations}
+                reloadLitigations={refetch}
                 scope={activeTab}
                 onDelete={setLitigationToDelete}
-                loading={loadingLitigations}
+                loading={isLoading}
               />
             </Card>
           </motion.div>

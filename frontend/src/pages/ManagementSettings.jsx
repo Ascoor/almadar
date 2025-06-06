@@ -1,77 +1,62 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Plus, Trash, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
 import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteModal';
 import SectionHeader from '@/components/common/SectionHeader';
 import { useAuth } from '@/components/auth/AuthContext';
+import { MainProcedures } from '@/assets/icons';
+import { useContractCategories, useAdviceTypes, useActionTypes } from '@/hooks/dataHooks';
+
 import {
-  getContractCategories,
   deleteContractCategory,
   createContractCategory,
   updateContractCategory,
-} from '../services/api/contracts';
+} from '@/services/api/contracts';
 import {
-  getLitigationActionTypes,
   deleteLitigationActionType,
   createLitigationActionType,
   updateLitigationActionType,
-} from '../services/api/litigations';
+} from '@/services/api/litigations';
 import {
-  getInvestigationActionTypes,
   deleteInvestigationActionType,
   createInvestigationActionType,
   updateInvestigationActionType,
-} from '../services/api/investigations';
+} from '@/services/api/investigations';
 import {
-  getAdviceTypes,
   deleteAdviceType,
   createAdviceType,
   updateAdviceType,
-} from '../services/api/legalAdvices';
-import { MainProcedures } from '../assets/icons';
-import { motion, AnimatePresence } from 'framer-motion';
+} from '@/services/api/legalAdvices';
+import { useQueryClient } from '@tanstack/react-query';
+
+const ITEMS_PER_PAGE = 5;
 
 export default function ManagementSettings() {
-  const [litigationTypes, setLitigationTypes] = useState([]);
-  const [investigationTypes, setInvestigationTypes] = useState([]);
-  const [contractCategories, setContractCategories] = useState([]);
-  const [adviceTypes, setAdviceTypes] = useState([]);
+  const { hasPermission } = useAuth();
+  const moduleName = 'managment-lists';
+  const queryClient = useQueryClient();
+
+  const { data: litigationTypes = [] } = useActionTypes('litigation');
+  const { data: investigationTypes = [] } = useActionTypes('investigation');
+  const { data: contractCategories = [] } = useContractCategories();
+  const { data: adviceTypes = [] } = useAdviceTypes();
+
+  const [pageState, setPageState] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [newItem, setNewItem] = useState('');
   const [modalType, setModalType] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [editItemId, setEditItemId] = useState(null);
-  const { hasPermission } = useAuth();
-  const moduleName = 'managment-lists';
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null, name: '', type: '' });
-  const [pageState, setPageState] = useState({});
-  const itemsPerPage = 5;
-const [expandedItem, setExpandedItem] = useState(null);
+  const [expandedItem, setExpandedItem] = useState(null);
 
   const can = (action) => hasPermission(`${action} ${moduleName}`);
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
-  const fetchAll = async () => {
-    try {
-      const [lits, invs, cats, advs] = await Promise.all([
-        getLitigationActionTypes(),
-        getInvestigationActionTypes(),
-        getContractCategories(),
-        getAdviceTypes(),
-      ]);
-      setLitigationTypes(Array.isArray(lits?.data) ? lits.data : []);
-      setInvestigationTypes(Array.isArray(invs?.data) ? invs.data : []);
-      setContractCategories(Array.isArray(cats?.data?.data) ? cats.data.data : []);
-      setAdviceTypes(Array.isArray(advs?.data) ? advs.data : []);
-      setPageState({ litigation: 1, investigation: 1, contract: 1, advice: 1 });
-    } catch (err) {
-      toast.error('فشل تحميل بيانات الإعدادات');
-      console.error(err);
-    }
-  };
+  const getItemName = (item, type) =>
+    type === 'contract' ? item.name :
+    type === 'advice' ? item.type_name :
+    item.action_name;
 
   const handleDelete = async () => {
     const { id, type } = confirmDelete;
@@ -84,20 +69,19 @@ const [expandedItem, setExpandedItem] = useState(null);
       }
       toast.success('تم الحذف بنجاح');
       setConfirmDelete({ isOpen: false, id: null, name: '', type: '' });
-      fetchAll();
-    } catch (err) {
+      queryClient.invalidateQueries(['actionTypes', type]);
+      queryClient.invalidateQueries({ queryKey: ['contractCategories'] });
+queryClient.invalidateQueries({ queryKey: ['adviceTypes'] });
+
+    } catch {
       toast.error('فشل في حذف العنصر');
     }
   };
 
   const handleAdd = async () => {
     if (!newItem.trim()) return toast.error('الرجاء إدخال اسم صالح');
+    const payload = modalType === 'contract' ? { name: newItem } : modalType === 'advice' ? { type_name: newItem } : { action_name: newItem };
     try {
-      const payload =
-        modalType === 'contract' ? { name: newItem } :
-        modalType === 'advice' ? { type_name: newItem } :
-        { action_name: newItem };
-
       if (editMode && editItemId !== null) {
         switch (modalType) {
           case 'litigation': await updateLitigationActionType(editItemId, payload); break;
@@ -107,43 +91,43 @@ const [expandedItem, setExpandedItem] = useState(null);
         }
         toast.success('تم التحديث بنجاح');
       } else {
-        let res;
         switch (modalType) {
-          case 'litigation': res = await createLitigationActionType(payload); setLitigationTypes(prev => [...prev, res.data]); break;
-          case 'investigation': res = await createInvestigationActionType(payload); setInvestigationTypes(prev => [...prev, res.data]); break;
-          case 'contract': res = await createContractCategory(payload); setContractCategories(prev => [...prev, res.data]); break;
-          case 'advice': res = await createAdviceType(payload); setAdviceTypes(prev => [...prev, res.data]); break;
+          case 'litigation': await createLitigationActionType(payload); break;
+          case 'investigation': await createInvestigationActionType(payload); break;
+          case 'contract': await createContractCategory(payload); break;
+          case 'advice': await createAdviceType(payload); break;
         }
         toast.success('تمت الإضافة بنجاح');
       }
-
       setShowModal(false);
       setNewItem('');
       setEditMode(false);
       setEditItemId(null);
-      fetchAll();
-    } catch (err) {
+      queryClient.invalidateQueries(['actionTypes', modalType]);
+      queryClient.invalidateQueries({ queryKey: ['contractCategories'] });
+queryClient.invalidateQueries({ queryKey: ['adviceTypes'] });
+
+    } catch {
       toast.error('فشل في العملية');
     }
   };
 
-  const getItemName = (item, type) =>
-    type === 'contract' ? item.name :
-    type === 'advice' ? item.type_name :
-    item.action_name;
-
   const renderTable = (title, data, type, delay = 0.1) => {
     const currentPage = pageState[type] || 1;
-    const pagedData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const pagedData = Array.isArray(data)
+      ? data.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+      : [];
 
     return (
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay, type: 'spring', stiffness: 80, damping: 14 }}
-        className=" border shadow-greenic-light/20 shadow-lg mt-6 border-border rounded-xl   p-4"
+        className="border shadow-greenic-light/20 shadow-lg mt-6 border-border rounded-xl p-4"
       >
-          <h3 className="text-xl font-bold text-center text-greenic-dark  dark:text-greenic-light   dark:bg-greenic-darker  dark:bg-navy-dark/70  shadow-md shadow-greenic-dark/70 p-6 ">{title}</h3>
+        <h3 className="text-xl font-bold text-center text-greenic-dark dark:text-gold-light dark:bg-greenic-darker dark:bg-navy-dark/70 shadow-md shadow-greenic-dark/70 p-6">
+          {title}
+        </h3>
         <div className="flex justify-between items-center mb-4">
           {can('create') && (
             <button
@@ -164,143 +148,121 @@ const [expandedItem, setExpandedItem] = useState(null);
         {pagedData.length === 0 ? (
           <p className="text-muted-foreground">لا توجد بيانات</p>
         ) : (
-          <table className="min-w-full text-sm text-center table-auto text-foreground">
-            <thead className="bg-greenic bg-greenic-dark/10 text-muted-foreground">
-              <tr>
-                <th className="px-4 py-3 border-b border-border">الاسم</th>
-                {can('edit') && <th>تعديل</th>}
-                {can('delete') && <th>الإجراء</th>}
-              </tr>
-            </thead>
-     <tbody>
-  {pagedData.map(item => (
-    <React.Fragment key={item.id}>
-      <motion.tr
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.4 }}
-        className="border-t border-border hover:bg-greenic-light/20 cursor-pointer"
-        onClick={() =>
-          setExpandedItem((prev) =>
-            prev?.id === item.id && prev?.type === type ? null : { id: item.id, type }
-          )
-        }
-      >
-        <td>{getItemName(item, type)}</td>
-
-        {can('edit') && (
-          <td>
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // يمنع فتح التفاصيل
-                setShowModal(true);
-                setModalType(type);
-                setEditMode(true);
-                setEditItemId(item.id);
-                setNewItem(getItemName(item, type));
-              }}
-            >
-              <Pencil color="#4ef454" />
-            </button>
-          </td>
-        )}
-
-        {can('delete') && (
-          <td>
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // يمنع فتح التفاصيل
-                setConfirmDelete({
-                  isOpen: true,
-                  id: item.id,
-                  name: getItemName(item, type),
-                  type,
-                });
-              }}
-            >
-              <Trash color="#f00f0f" />
-            </button>
-          </td>
-        )}
-      </motion.tr>
-
-      {/* ✅ عرض تفاصيل العنصر */}
-      <AnimatePresence>
-        {expandedItem?.id === item.id && expandedItem?.type === type && (
-          <motion.tr
-            key={`expanded-${item.id}`}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            <td colSpan={3} className="p-4 bg-muted/20 text-right rounded-b-xl">
-              تفاصيل إضافية للعنصر: <strong>{getItemName(item, type)}</strong>
+  <table className="min-w-full text-sm text-center table-auto border border-border rounded-xl overflow-hidden shadow-lg">
+  <thead className="bg-greenic-light/40 dark:bg-navy-dark text-navy-dark dark:text-gold-light">
+    <tr>
+      <th className="px-4 py-3 border-b border-border">الاسم</th>
+      {can('edit') && <th className="border-b border-border">تعديل</th>}
+      {can('delete') && <th className="border-b border-border">الإجراء</th>}
+    </tr>
+  </thead>
+  <tbody className="text-navy-dark dark:text-greenic-light bg-white dark:bg-[#111827]">
+    {pagedData.map((item) => (
+      <React.Fragment key={item.id}>
+        <motion.tr
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
+          className="border-t border-border hover:bg-greenic/10 dark:hover:bg-greenic/20 transition-colors cursor-pointer"
+          onClick={() =>
+            setExpandedItem((prev) =>
+              prev?.id === item.id && prev?.type === type ? null : { id: item.id, type }
+            )
+          }
+        >
+          <td className="px-4 py-2">{getItemName(item, type)}</td>
+          {can('edit') && (
+            <td>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowModal(true);
+                  setModalType(type);
+                  setEditMode(true);
+                  setEditItemId(item.id);
+                  setNewItem(getItemName(item, type));
+                }}
+                className="hover:text-greenic-light  dark:hover:text-gold transition"
+              >
+             <Pencil color="#00b803" absoluteStrokeWidth size={18} />
+              </button>
             </td>
-          </motion.tr>
-        )}
-      </AnimatePresence>
-    </React.Fragment>
-  ))}
-</tbody>
+          )}
+          {can('delete') && (
+            <td>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setConfirmDelete({
+                    isOpen: true,
+                    id: item.id,
+                    name: getItemName(item, type),
+                    type,
+                  });
+                }}
+                className="hover:text-red-500 dark:hover:text-red-400 transition"
+              >
+                <Trash  color="red" absoluteStrokeWidth  size={18} />
+              </button>
+            </td>
+          )}
+        </motion.tr>
 
-          </table>
+        <AnimatePresence>
+          {expandedItem?.id === item.id && expandedItem?.type === type && (
+            <motion.tr
+              key={`expanded-${item.id}`}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <td colSpan={3} className="p-4 bg-muted/30 dark:bg-navy/30 text-right rounded-b-xl text-gray-700 dark:text-navy-darker">
+                تفاصيل إضافية للعنصر: <strong>{getItemName(item, type)}</strong>
+              </td>
+            </motion.tr>
+          )}
+        </AnimatePresence>
+      </React.Fragment>
+    ))}
+  </tbody>
+</table>
+
         )}
       </motion.div>
     );
   };
 
   return (
-    <motion.div
-      className="p-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <motion.div
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 60, damping: 14 }}
-      >
+    <motion.div className="p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 60, damping: 14 }}>
         <SectionHeader listName="قوائم البيانات" icon={MainProcedures} />
       </motion.div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 mt-8">
         {renderTable('إجراءات التقاضي', litigationTypes, 'litigation', 0.1)}
         {renderTable('إجراءات التحقيق', investigationTypes, 'investigation', 0.2)}
         {renderTable('فئات العقود', contractCategories, 'contract', 0.3)}
         {renderTable('أنواع الرأي والمشورة', adviceTypes, 'advice', 0.4)}
       </div>
-
       <AnimatePresence>
         {showModal && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-          >
+          <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}>
             <div className="bg-white dark:bg-background w-full max-w-md p-6 rounded-xl shadow-xl">
-              <h2 className="text-lg font-bold mb-4">
-                {editMode ? 'تعديل العنصر' : 'إضافة عنصر جديد'}
-              </h2>
+              <h2 className="text-lg font-bold mb-4">{editMode ? 'تعديل العنصر' : 'إضافة عنصر جديد'}</h2>
               <input
                 value={newItem}
-                onChange={e => setNewItem(e.target.value)}
+                onChange={(e) => setNewItem(e.target.value)}
                 placeholder="أدخل الاسم هنا"
-                className="w-full p-2 border border-greenic-light  dark:border-navy rounded mb-4"
+                className="w-full p-2 border border-greenic-light dark:border-navy rounded mb-4"
               />
               <div className="flex justify-end gap-2">
                 <button className="bg-muted px-4 py-2 rounded" onClick={() => setShowModal(false)}>إلغاء</button>
-                <button className="bg-primary text-white px-4 py-2 rounded" onClick={handleAdd}>
-                  {editMode ? 'حفظ' : 'إضافة'}
-                </button>
+                <button className="bg-primary text-white px-4 py-2 rounded" onClick={handleAdd}>{editMode ? 'حفظ' : 'إضافة'}</button>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
       <GlobalConfirmDeleteModal
         isOpen={confirmDelete.isOpen}
         onClose={() => setConfirmDelete({ isOpen: false, id: null, name: '', type: '' })}
