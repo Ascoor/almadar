@@ -3,7 +3,7 @@
 /frontend/src/config/config.jsx
 /frontend/src/lib/echo.js
 
-# ⛔️ ملفات بيئة العمل (env)
+# ⛔️ ملفات بيئة العمل (env) 
 frontend/.env
 frontend/.env.production
 
