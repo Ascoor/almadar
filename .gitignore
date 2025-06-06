@@ -1,6 +1,16 @@
-/public_html/
-/frontend/src/config/
-/frontend/dev-dist
+# تجاهل ملفات الحساسة في الواجهة
+/frontend/src/config/config.jsx
+/frontend/src/lib/echo.js
+
+# بيئة العمل
 /frontend/.env
 /frontend/.env.production
-/frontend/src/lib/echo.js
+
+# مجلدات التوزيع
+/frontend/dev-dist
+/frontend/dist
+/frontend/build
+
+# النظام
+node_modules
+.DS_Store
