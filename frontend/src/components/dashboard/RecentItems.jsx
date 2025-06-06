@@ -1,55 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import { getAllRecentData } from '../../services/api/dashboard'; // استيراد خدمة جلب البيانات
-import DataCard from './DataCard'; // استيراد مكون DataCard
-import {ReceiptText } from 'lucide-react';
+import React from 'react';
+import { useRecentData } from '@/hooks/dataHooks';
+import DataCard from './DataCard';
+import { ReceiptText } from 'lucide-react';
+
 const RecentItems = () => {
-  const [data, setData] = useState({
-    latestAddedContracts: [],
-    latestUpdatedContracts: [],
-    latestInvestigationActions: [],
-    latestLitigationActions: [],
-  });
+  const { data: recentData, isLoading, isError } = useRecentData();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await getAllRecentData(); // جلب البيانات من الخادم
-      setData(response); // تخزين البيانات المسترجعة في الحالة
-    };
+  const {
+    latestAddedContracts = [],
+    latestUpdatedContracts = [],
+    latestInvestigationActions = [],
+    latestLitigationActions = [],
+  } = recentData || {};
 
-    fetchData();
-  }, []);
+  if (isLoading) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-lg font-bold">جارٍ التحميل...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center py-4 text-red-500 font-bold">
+        فشل في تحميل البيانات
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      {/* عرض أول كارتين في سطر واحد */}
       <div className="flex justify-center">
         <DataCard
           title="أحدث العقود المضافة"
-          items={data.latestAddedContracts} // تمرير بيانات العقود المضافة
-          type="contracts" // تم تمرير نوع البيانات
-          icon={<ReceiptText  />}
+          items={latestAddedContracts}
+          type="contracts"
+          icon={<ReceiptText />}
         />
       </div>
       <div className="flex justify-center">
         <DataCard
           title="أحدث العقود المحدثة"
-          items={data.latestUpdatedContracts} // تمرير بيانات العقود المحدثة
+          items={latestUpdatedContracts}
           type="contracts"
         />
       </div>
-
-      {/* عرض ثاني كارتين في سطر واحد */}
       <div className="flex justify-center">
         <DataCard
           title="أحدث إجراءات التحقيقات"
-          items={data.latestInvestigationActions} // تمرير بيانات التحقيقات
+          items={latestInvestigationActions}
           type="investigation_actions"
         />
       </div>
       <div className="flex justify-center">
         <DataCard
           title="أحدث إجراءات القضايا"
-          items={data.latestLitigationActions} // تمرير بيانات القضايا
+          items={latestLitigationActions}
           type="litigation_actions"
         />
       </div>

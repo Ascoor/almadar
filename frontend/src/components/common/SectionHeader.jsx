@@ -4,15 +4,14 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
   return (
 <div
   className="
-    flex flex-col items-center justify-center text-center space-y-4
-    px-6 py-8 sm:py-10 rounded-3xl shadow-lg transition-all
-    border border-greenic/30 backdrop-blur-md
+    relative z-10 flex flex-col items-center justify-center text-center space-y-4
+    px-6 py-8 sm:py-10 rounded-3xl shadow-xl transition-all border border-greenic/30 backdrop-blur-md
 
-    bg-gradient-to-br from-gold/20 via-navy-light/10 to-royal/10
-    text-royal font-semibold text-xl sm:text-2xl tracking-wide
+    bg-gradient-to-br from-[#fdf6e3]/60 via-[#f0f9ff]/50 to-[#dbeafe]/80
+    text-navy-dark font-bold text-xl sm:text-2xl tracking-wide
 
-    dark:bg-gradient-to-br dark:from-royal-darker/50 dark:via-navy/40 dark:to-greenic/20
-    dark:text-greenic-light dark:shadow-md dark:shadow-greenic/10
+    dark:bg-gradient-to-br dark:from-[#1a1a2e]/70 dark:via-[#16213e]/60 dark:to-[#0f3460]/50
+    dark:text-green-200 dark:shadow-lg dark:shadow-greenic/10
   "
 >
   
@@ -24,8 +23,8 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
         />
       )}
 
-      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-gold-dark dark:text-white">
-        {listName}
+
+  <h2 className="text-shadow text-balance leading-relaxed">   {listName}
       </h2>
 
       {showBackButton && (

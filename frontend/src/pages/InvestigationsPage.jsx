@@ -1,46 +1,30 @@
-import { useEffect, useState, useContext } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
-  getInvestigations,
   createInvestigation,
   updateInvestigation,
   deleteInvestigation,
 } from "@/services/api/investigations";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { AuthContext } from "@/components/auth/AuthContext";
-
 import { motion } from 'framer-motion';
 import TableComponent from "@/components/common/TableComponent";
 import SectionHeader from "@/components/common/SectionHeader";
 import InvestigationModal from "@/components/Investigations/InvestigationModal";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import { InvestigationSection } from "@/assets/icons";
 import InvestigationActionsTable from "@/components/Investigations/InvestigationActionsTable";
+import { useInvestigations } from "../hooks/dataHooks";
 
 export default function InvestigationsPage() {
-  const [investigations, setInvestigations] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const [toDelete, setToDelete] = useState(null);
 
-  const { hasPermission } = useContext(AuthContext);
   const moduleName = "investigations";
-
-  const loadInvestigations = async () => {
-    try {
-      const res = await getInvestigations();
-      const data = Array.isArray(res?.data?.data) ? res.data.data : [];
-      setInvestigations(data);
-    } catch {
-      toast.error("فشل تحميل التحقيقات");
-    }
-  };
-
-  useEffect(() => {
-    loadInvestigations();
-  }, []);
+  const { data, isLoading, refetch } = useInvestigations();
+  const investigations = data?.data?.data || [];
 
   const handleSave = async (formData) => {
     try {
@@ -53,7 +37,7 @@ export default function InvestigationsPage() {
       }
       setIsModalOpen(false);
       setEditingItem(null);
-      await loadInvestigations();
+      await refetch();
     } catch {
       toast.error("فشل في الحفظ");
     }
@@ -69,7 +53,7 @@ export default function InvestigationsPage() {
     try {
       await deleteInvestigation(toDelete.id);
       toast.success("تم حذف التحقيق بنجاح");
-      await loadInvestigations();
+      await refetch();
     } catch {
       toast.error("فشل حذف التحقيق");
     } finally {
@@ -104,8 +88,7 @@ export default function InvestigationsPage() {
   };
 
   return (
-    <div className="p-6  min-h-screen">
-            {/* ✅ رأس الصفحة بحركة من الأعلى */}
+    <div className="p-6 min-h-screen">
       <motion.div
         key="header"
         initial={{ opacity: 0, y: -100 }}
@@ -113,63 +96,50 @@ export default function InvestigationsPage() {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: 'spring', stiffness: 70, damping: 14 }}
       >
-      <SectionHeader icon={InvestigationSection} listName="قسم التحقيقات" />
-</motion.div>
-          <motion.div 
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 60 }}
-            transition={{ type: 'spring', stiffness: 60, damping: 14, delay: 0.1 }}
-            className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
-          >
-      <TableComponent
-        title="قسم التحقيقات القانونية"
-        data={investigations}
-        headers={headers}
-        customRenderers={customRenderers}
-        moduleName={moduleName}
-     renderAddButton={{
-  render: () => (
-    <Button  variant="default" onClick={() => setIsModalOpen(true)}>
-      إضافة تحقيق جديد
+        <SectionHeader icon={InvestigationSection} listName="قسم التحقيقات" />
+      </motion.div>
 
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-              className="w-4 h-4 ml-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4v16m8-8H4"
-              />
-              </svg>
-              
-      
-    </Button>
-  )
-}}
+      <motion.div
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 60 }}
+        transition={{ type: 'spring', stiffness: 60, damping: 14, delay: 0.1 }}
+        className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
+      >
+        <TableComponent
+          title="قسم التحقيقات القانونية"
+          data={investigations}
+          headers={headers} 
+          customRenderers={customRenderers}
+          moduleName={moduleName}
+          renderAddButton={{
+            render: () => (
+              <Button variant="default" onClick={() => setIsModalOpen(true)}>
+                إضافة تحقيق جديد
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+              </Button>
+            ),
+          }}
+          onEdit={handleEdit}
+          onDelete={(row) => setToDelete(row)}
+          expandedRowRenderer={(row) =>
+            expandedId === row.id && (
+              <tr>
+                <td colSpan={headers.length + 2} className="p-4 bg-gray-50 dark:bg-gray-800">
+                  <InvestigationActionsTable
+                    investigationId={row.id}
+                    actions={row.actions || []}
+                    reloadInvestigations={refetch}
+                  />
+                </td>
+              </tr>
+            )
+          }
+        />
+      </motion.div>
 
-        onEdit={handleEdit}
-        onDelete={(row) => setToDelete(row)}
-        expandedRowRenderer={(row) =>
-          expandedId === row.id && (
-            <tr>
-              <td colSpan={headers.length + 2} className="p-4 bg-gray-50 dark:bg-gray-800">
-                <InvestigationActionsTable
-                  investigationId={row.id}
-                  actions={row.actions || []}
-                  onReload={loadInvestigations}
-                />
-              </td>
-            </tr>
-          )
-        }
-      />
-</motion.div>
       <InvestigationModal
         isOpen={isModalOpen}
         onClose={() => {

@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bell } from 'lucide-react';
-import { getNotifications, markAsRead } from '@/services/api/notifications';
+import { markAsRead } from '@/services/api/notifications';
 import { useNotifications } from '@/components/Notifications/NotificationContext';
 import IconButton from './iconButton';
+
+import { useNotificationQuery } from '@/hooks/dataHooks'; // ✅
 
 export default function DropdownNotifications() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -16,30 +18,25 @@ export default function DropdownNotifications() {
     setHasNew,
   } = useNotifications();
 
-  // ✅ جلب الإشعارات عند الفتح
+  const {
+    data: fetchedNotifications = [],
+    isLoading,
+    refetch,
+  } = useNotificationQuery(); // ✅
+
+  // عند الفتح نستخدم refetch لجلب البيانات
   const toggleDropdown = async () => {
     const nextOpen = !dropdownOpen;
     setDropdownOpen(nextOpen);
     if (nextOpen) {
-      await fetchNotifications();
-      setHasNew(false); // ✅ أطفئ اللمبة
+      const result = await refetch();
+      if (result?.data) {
+        setNotifications(result.data);
+      }
+      setHasNew(false);
     }
   };
 
-  // ✅ جلب الإشعارات من السيرفر
-  const fetchNotifications = async () => {
-    setLoading(true);
-    try {
-      const data = await getNotifications();
-      setNotifications(data);
-    } catch (err) {
-      console.error('فشل في جلب الإشعارات', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ✅ عند الضغط على إشعار
   const handleNotificationClick = async (id) => {
     try {
       await markAsRead(id);
@@ -47,22 +44,18 @@ export default function DropdownNotifications() {
         prev.map((n) => (n.id === id ? { ...n, read: true } : n))
       );
       const anyUnread = notifications.some((n) => !n.read);
-      if (!anyUnread) setHasNew(false); // ✅ أطفئ اللمبة إذا الكل مقروء
+      if (!anyUnread) setHasNew(false);
     } catch (e) {
       console.error('تعذر تعيين الإشعار كمقروء', e);
     }
     setDropdownOpen(false);
   };
 
-  // ✅ تعيين الكل كمقروء
   const handleMarkAllAsRead = () => {
-    setNotifications((prev) =>
-      prev.map((n) => ({ ...n, read: true }))
-    );
-    setHasNew(false); // ✅ أطفئ اللمبة
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setHasNew(false);
   };
 
-  // ✅ إغلاق عند الضغط خارج المكون
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -97,7 +90,7 @@ export default function DropdownNotifications() {
           </div>
 
           <ul className="max-h-80 overflow-y-auto divide-y divide-gray-200 dark:divide-gray-600">
-            {loading ? (
+            {isLoading ? (
               <li className="p-4 text-center text-sm text-gray-400 dark:text-gray-500">جارٍ التحميل...</li>
             ) : notifications.length === 0 ? (
               <li className="p-4 text-center text-sm text-gray-400 dark:text-gray-500">لا توجد إشعارات</li>
