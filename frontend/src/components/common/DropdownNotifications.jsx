@@ -76,7 +76,7 @@ export default function DropdownNotifications() {
       </IconButton>
 
       {dropdownOpen && (
-        <div className="absolute right-0 z-50 w-80 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+        <div className="absolute -right-44 z-50 w-60 lg:right-0 lg:w-80 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
             <span className="font-semibold text-sm text-gray-700 dark:text-gray-200">الإشعارات</span>
             {notifications.length > 0 && (
