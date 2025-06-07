@@ -3,13 +3,25 @@ import { Navigate } from 'react-router-dom';
 import { AuthContext } from '@/components/auth/AuthContext';
 
 /**
- * @param {string} permission - e.g. "view contracts"
- * @param {ReactNode} children - component to render if allowed
+ * @param {string|string[]} permission
+ * @param {ReactNode} children - 
+ * @param {boolean} superAdminOnly - 
  */
-const ProtectedRoute = ({ permission, children }) => {
-  const { hasPermission } = useContext(AuthContext);
+const ProtectedRoute = ({ permission, children, superAdminOnly = false }) => {
+  const { hasPermission, user } = useContext(AuthContext);
 
-  return hasPermission(permission) ? children : <Navigate to="/forbidden" replace />;
+  const isSuperAdmin = user?.email === 'superadmin@almadar.ly';
+
+  // منع الوصول إذا كانت الصفحة مخصصة للسوبر أدمن فقط
+  if (superAdminOnly && !isSuperAdmin) {
+    return <Navigate to="/forbidden" replace />;
+  }
+
+  // دعم أكثر من صلاحية
+  const permissions = Array.isArray(permission) ? permission : [permission];
+  const allowed = permissions.every((perm) => hasPermission(perm));
+
+  return allowed ? children : <Navigate to="/forbidden" replace />;
 };
 
 export default ProtectedRoute;

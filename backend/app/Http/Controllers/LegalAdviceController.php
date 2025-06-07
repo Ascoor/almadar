@@ -11,6 +11,13 @@ use App\Helpers\AdminNotifier;
 
 class LegalAdviceController extends Controller
 {
+                 public function __construct()
+        {
+        $this->middleware('permission:view legalAdvices')->only(['index','show']);
+        $this->middleware('permission:create legalAdvices')->only('store');
+        $this->middleware('permission:edit legalAdvices')->only('update');
+        $this->middleware('permission:delete legalAdvices')->only('destroy');
+    }
     /**
      * Display a listing of all legal advices (with their types eager‐loaded).
      */

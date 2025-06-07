@@ -8,6 +8,13 @@ use App\Helpers\AdminNotifier;
 
 class LitigationController extends Controller
 {
+                 public function __construct()
+        {
+        $this->middleware('permission:view  litigations')->only(['index','show']);
+        $this->middleware('permission:create  litigations')->only('store');
+        $this->middleware('permission:edit  litigations')->only('update');
+        $this->middleware('permission:delete  litigations')->only('destroy');
+    }
     public function index()
     {
         $litigations = Litigation::with('actions.actionType')->latest()->paginate(15);

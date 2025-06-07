@@ -1,4 +1,4 @@
-export { default as LoginBg } from './login-bg.jpg';
+export { default as LoginBg } from './login-bg.png';
 export { default as LogoArt } from './logo-art.png';
 export { default as LogoWhite } from './logo-white.png';
 export { default as WelcomeLogoWhite } from './welcome-logo-white.png';

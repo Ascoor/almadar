@@ -29,6 +29,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'managment-lists'         => ['view', 'create', 'edit', 'delete'],
             'roles'                   => ['view', 'create', 'edit', 'delete'],
             'permissions'             => ['view', 'create', 'edit', 'delete'],
+            'reports'             => ['view', 'create', 'edit', 'delete'],
             'profile'                 => ['view', 'edit'],
         ];
 
