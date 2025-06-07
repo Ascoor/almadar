@@ -10,7 +10,6 @@ const HomePage = () => {
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden font-['Tajawal']">
-      {/* الخلفية */}
       <img
         src={LoginBg}
         alt="خلفية"
@@ -19,7 +18,6 @@ const HomePage = () => {
       />
       <div className="absolute inset-0 bg-black/70 z-10" />
 
-      {/* المحتوى */}
       <div className="relative z-20 flex items-center justify-center h-screen px-4 sm:px-6">
         {isLoading && <AuthSpinner />}
 
@@ -47,7 +45,7 @@ const HomePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                 إدارة الشؤون القانونية
+                إدارة الشؤون القانونية
               </motion.h1>
 
               <motion.button
@@ -62,7 +60,6 @@ const HomePage = () => {
           )}
         </AnimatePresence>
 
-        {/* نموذج تسجيل الدخول */}
         <AnimatePresence>
           {showLoginForm && (
             <motion.div
