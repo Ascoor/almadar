@@ -12,6 +12,22 @@ const translatePermission = (name) => {
   }
 };
 
+const translateSection = (section) => {
+  const sectionNames = {
+    'litigations': 'القضايا',
+    'users': 'المستخدمين',
+    'roles': 'الأدوار',
+    'permissions': 'الصلاحيات',
+    'legaladvices': 'الرأي والمشورة',
+    'contracts': 'العقود',
+    'investigations': 'التحقيقات',
+    'investigation-actions': 'إجراءات التحقيق',
+    'managment-lists': 'قوائم البيانات',
+  };
+
+  return sectionNames[section] || section;  // إذا لم تجد القسم في القاموس، أرجع الاسم الأصلي.
+};
+
 const groupPermissionsBySection = (allPermissions = [], userPermissions = []) => {
   const userPermissionNames = new Set(userPermissions.map(p => p.name.toLowerCase()));
   return allPermissions.reduce((acc, perm) => {
@@ -91,7 +107,7 @@ const PermissionsSection = ({ userId, allPermissions, userPermissions, handlePer
                   action={permission.action}
                   enabled={permission.enabled}
                   disabled={disabled}
-                  onChange={handlePermissionChange} // تمرير الدالة
+                  onChange={handlePermissionChange}
                 />
               );
             })}
