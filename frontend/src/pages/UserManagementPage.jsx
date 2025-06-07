@@ -95,25 +95,41 @@ export default function UsersManagementPage() {
       setLoading(false);
     }
   };
-
   const handlePermChange = async (permName, shouldEnable) => {
-    setLoading(true);
-    try {
-      await changeUserPermission(
-        selectedUser.id,
-        permName,
-        shouldEnable ? 'add' : 'remove'
-      );
-      showToast('success', 'تم تحديث الصلاحية');
-      await refetchUsers();
-      const updated = users.find((u) => u.id === selectedUser.id);
-      if (updated) setSelectedUser(updated);
-    } catch {
-      showToast('error', 'فشل في تحديث الصلاحية');
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    // تمرير الصلاحية والـ action (add/remove) في الطلب
+    await changeUserPermission(
+      selectedUser.id,
+      permName,  // اسم الصلاحية
+      shouldEnable ? 'add' : 'remove'  // الأكشن (إضافة أو إزالة)
+    );
+    showToast('success', 'تم تحديث الصلاحية');
+    
+    // تحديث حالة الصلاحية مباشرة في الواجهة
+    const updatedPermissions = selectedUser.permissions.map((perm) => {
+      if (perm.name === permName) {
+        return { ...perm, enabled: shouldEnable }; // تحديث قيمة "enabled" بناءً على التغيير
+      }
+      return perm;
+    });
+
+    // تحديث حالة المستخدم المعروض بناءً على الصلاحيات المعدلة
+    setSelectedUser((prevUser) => ({
+      ...prevUser,
+      permissions: updatedPermissions,
+    }));
+
+    // إعادة تحميل المستخدمين لتحديث القائمة
+    await refetchUsers();
+  } catch (error) {
+    showToast('error', 'فشل في تحديث الصلاحية');
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleDelete = async () => {
     setLoading(true);

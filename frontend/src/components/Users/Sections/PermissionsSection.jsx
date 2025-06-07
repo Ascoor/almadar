@@ -13,19 +13,23 @@ const translatePermission = (name) => {
 };
 
 const translateSection = (section) => {
-  const sectionNames = {
-    'litigations': 'القضايا',
-    'users': 'المستخدمين',
-    'roles': 'الأدوار',
-    'permissions': 'الصلاحيات',
-    'legaladvices': 'الرأي والمشورة',
-    'contracts': 'العقود',
-    'investigations': 'التحقيقات',
-    'investigation-actions': 'إجراءات التحقيق',
+  const map = {
+    'litigation-from': 'دعاوى من الشركة',
+    'litigation-against-actions': 'إجراءات دعاوى ضد الشركة',
+    'litigation-against': 'دعاوى ضد الشركة',
+    'litigation-from-actions': 'إجراءات دعاوى من الشركة',
+    legaladvices: 'الرأي والمشورة',
     'managment-lists': 'قوائم البيانات',
+    litigations: 'القضايا',
+    contracts: 'العقود',
+    investigations: 'التحقيقات',
+    'investigation-actions': 'إجراءات التحقيق',
+    users: 'المستخدمين',
+    roles: 'الأدوار',
+    profile: 'الملف الشخصي',
+    permissions: 'الصلاحيات',
   };
-
-  return sectionNames[section] || section;  // إذا لم تجد القسم في القاموس، أرجع الاسم الأصلي.
+  return map[section] || section;
 };
 
 const groupPermissionsBySection = (allPermissions = [], userPermissions = []) => {
@@ -33,7 +37,7 @@ const groupPermissionsBySection = (allPermissions = [], userPermissions = []) =>
   return allPermissions.reduce((acc, perm) => {
     const [action, ...sectionParts] = perm.name.toLowerCase().split(' ');
     const section = sectionParts.join(' ');
-    if (!section) return acc;
+    if (!section) return acc; // تجاهل أي صلاحية ليس فيها قسم
 
     if (!acc[section]) acc[section] = [];
     acc[section].push({
@@ -44,53 +48,40 @@ const groupPermissionsBySection = (allPermissions = [], userPermissions = []) =>
     return acc;
   }, {});
 };
-
-const PermissionRow = ({ userId, action, enabled, onChange, disabled }) => (
-  <div
-    className={`flex items-center justify-between w-full px-4 py-2 rounded-lg shadow-sm 
-                transition-all duration-200 hover:shadow-md transform hover:scale-[1.01] mb-2
-                ${enabled ? 'bg-green-50 dark:bg-green-900/20' : 'bg-gray-100 dark:bg-zinc-800'}`}
-  >
-    <label className="text-sm font-medium text-gray-800 dark:text-gray-200 flex-1">
+const PermissionRow = ({ action, enabled, onChange, disabled }) => (
+  <div className="flex items-center justify-between w-full p-2 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md transition-transform transform hover:scale-105 mb-2">
+    <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex-1">
       {translatePermission(action)}
     </label>
-
-    <div className="flex items-center gap-2">
-      <span className={`text-xs font-bold ${enabled ? 'text-green-600' : 'text-red-500'}`}>
-        {enabled ? 'مفعل' : 'غير مفعل'}
-      </span>
-      <button
-        onClick={() => onChange(userId, action, enabled ? 'remove' : 'add')}
-        disabled={disabled}
-        title={disabled ? 'لا يمكن التفعيل بدون صلاحية "عرض"' : ''}
-        className="focus:outline-none cursor-pointer transition-all"
-      >
-        {enabled ? (
-          <ToggleRight className="text-green-600 dark:text-green-400" size={22} />
-        ) : (
-          <ToggleLeft className="text-red-500 dark:text-red-400" size={22} />
-        )}
-      </button>
-    </div>
+    <button
+      onClick={onChange}
+      className="focus:outline-none cursor-pointer text-2xl"
+      disabled={disabled}
+      title={disabled ? 'الصلاحية مقيدة بدون "عرض"' : ''}
+    >
+      {enabled ? (
+        <ToggleRight className="text-green-500" />
+      ) : (
+        <ToggleLeft className="text-red-500" />
+      )}
+    </button>
   </div>
 );
 
-const PermissionsSection = ({ userId, allPermissions, userPermissions, handlePermissionChange, loading }) => {
+
+const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionChange, loading }) => {
   const grouped = groupPermissionsBySection(allPermissions, userPermissions);
   const sections = Object.entries(grouped);
 
   return (
-    <div className="permissions-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="permissions-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {sections.map(([section, perms]) => {
         const viewPermission = perms.find(p => p.action === 'view');
         const isViewEnabled = viewPermission?.enabled ?? false;
 
         return (
-          <div
-            key={section}
-            className="p-5 bg-white dark:bg-royal-darker dark:bg-greenic/10 border border-gray-200 dark:border-zinc-700 rounded-2xl shadow-lg transition-all hover:shadow-xl"
-          >
-            <h3 className="text-lg font-bold mb-4 text-center text-navy dark:text-gold">
+          <div key={section} className="p-4 bg-white dark:bg-gray-800 rounded shadow flex flex-col">
+            <h3 className="text-lg font-bold mb-3 text-center text-green-800 dark:text-white">
               {translateSection(section)}
             </h3>
 
@@ -103,11 +94,10 @@ const PermissionsSection = ({ userId, allPermissions, userPermissions, handlePer
               return (
                 <PermissionRow
                   key={permission.id}
-                  userId={userId}
                   action={permission.action}
                   enabled={permission.enabled}
                   disabled={disabled}
-                  onChange={handlePermissionChange}
+                  onChange={() => handlePermissionChange(permission.name, !permission.enabled)}
                 />
               );
             })}
