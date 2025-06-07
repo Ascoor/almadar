@@ -8,12 +8,39 @@ use App\Helpers\AdminNotifier;
 
 class LitigationController extends Controller
 {
-                 public function __construct()
-        {
-        $this->middleware('permission:view  litigations')->only(['index','show']);
-        $this->middleware('permission:create  litigations')->only('store');
-        $this->middleware('permission:edit  litigations')->only('update');
-        $this->middleware('permission:delete  litigations')->only('destroy');
+
+    public function __construct()
+    {
+        // صلاحيات عامة لقسم 'litigations'
+        $this->middleware('permission:view litigations')->only(['index', 'show']);
+        $this->middleware('permission:create litigations')->only('store');
+        $this->middleware('permission:edit litigations')->only('update');
+        $this->middleware('permission:delete litigations')->only('destroy');
+        
+        // صلاحيات خاصة للقسم 'litigation-from'
+        $this->middleware('permission:view litigation-from')->only(['index', 'show']);
+        $this->middleware('permission:create litigation-from')->only('store');
+        $this->middleware('permission:edit litigation-from')->only('update');
+        $this->middleware('permission:delete litigation-from')->only('destroy');
+        
+        // صلاحيات خاصة للقسم 'litigation-from-actions'
+        $this->middleware('permission:view litigation-from-actions')->only(['index', 'show']);
+        $this->middleware('permission:create litigation-from-actions')->only('store');
+        $this->middleware('permission:edit litigation-from-actions')->only('update');
+        $this->middleware('permission:delete litigation-from-actions')->only('destroy');
+        
+        // صلاحيات خاصة للقسم 'litigation-against'
+        $this->middleware('permission:view litigation-against')->only(['index', 'show']);
+        $this->middleware('permission:create litigation-against')->only('store');
+        $this->middleware('permission:edit litigation-against')->only('update');
+        $this->middleware('permission:delete litigation-against')->only('destroy');
+        
+        // صلاحيات خاصة للقسم 'litigation-against-actions'
+        $this->middleware('permission:view litigation-against-actions')->only(['index', 'show']);
+        $this->middleware('permission:create litigation-against-actions')->only('store');
+        $this->middleware('permission:edit litigation-against-actions')->only('update');
+        $this->middleware('permission:delete litigation-against-actions')->only('destroy');
+    
     }
     public function index()
     {

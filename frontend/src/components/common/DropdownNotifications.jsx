@@ -9,6 +9,10 @@ import { useNotificationQuery } from '@/hooks/dataHooks'; // ✅
 export default function DropdownNotifications() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const [loadedNotifications, setLoadedNotifications] = useState([]);
+  const [allNotifications, setAllNotifications] = useState([]);
+
   const dropdownRef = useRef(null);
 
   const {
@@ -24,16 +28,42 @@ export default function DropdownNotifications() {
     refetch,
   } = useNotificationQuery(); // ✅
 
-  // عند الفتح نستخدم refetch لجلب البيانات
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !dropdownOpen) {
+          setDropdownOpen(false);
+        }
+      },
+      { root: null, threshold: 0.5 }
+    );
+
+    const el = dropdownRef.current;
+    if (el) observer.observe(el);
+
+    return () => {
+      if (el) observer.unobserve(el);
+    };
+  }, [dropdownOpen]);
+
   const toggleDropdown = async () => {
     const nextOpen = !dropdownOpen;
     setDropdownOpen(nextOpen);
+
     if (nextOpen) {
-      const result = await refetch();
-      if (result?.data) {
-        setNotifications(result.data);
+      setLoading(true);
+      try {
+        const result = await refetch();
+        if (result?.data) {
+          setAllNotifications(result.data);
+          setLoadedNotifications(result.data.slice(0, 5)); // Load the first 5 notifications
+        }
+        setHasNew(false);
+      } catch (error) {
+        console.error('Failed to fetch notifications:', error);
+      } finally {
+        setLoading(false);
       }
-      setHasNew(false);
     }
   };
 
@@ -56,15 +86,17 @@ export default function DropdownNotifications() {
     setHasNew(false);
   };
 
+  const handleShowMore = () => {
+    const moreNotifications = allNotifications.slice(5);
+    setLoadedNotifications((prev) => [...prev, ...moreNotifications]);
+    setShowMore(false);
+  };
+
   useEffect(() => {
-    const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+    if (allNotifications.length > 5) {
+      setShowMore(true); // Enable "show more" button if there are more than 5 notifications
+    }
+  }, [allNotifications]);
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -92,16 +124,14 @@ export default function DropdownNotifications() {
           <ul className="max-h-80 overflow-y-auto divide-y divide-gray-200 dark:divide-gray-600">
             {isLoading ? (
               <li className="p-4 text-center text-sm text-gray-400 dark:text-gray-500">جارٍ التحميل...</li>
-            ) : notifications.length === 0 ? (
+            ) : loadedNotifications.length === 0 ? (
               <li className="p-4 text-center text-sm text-gray-400 dark:text-gray-500">لا توجد إشعارات</li>
             ) : (
-              notifications.map((n) => (
+              loadedNotifications.map((n) => (
                 <li
                   key={n.id}
                   onClick={() => handleNotificationClick(n.id)}
-                  className={`p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                    !n.read ? 'bg-emerald-50 dark:bg-emerald-900/30' : ''
-                  }`}
+                  className={`p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${!n.read ? 'bg-emerald-50 dark:bg-emerald-900/30' : ''}`}
                 >
                   <div className="text-sm font-medium text-gray-800 dark:text-gray-100">{n.title || 'إشعار'}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -112,6 +142,17 @@ export default function DropdownNotifications() {
               ))
             )}
           </ul>
+
+          {showMore && (
+            <div className="text-center mt-2">
+              <button
+                onClick={handleShowMore}
+                className="text-blue-500 hover:text-blue-700 text-xs"
+              >
+                عرض المزيد
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

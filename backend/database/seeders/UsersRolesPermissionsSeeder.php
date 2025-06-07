@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -19,23 +18,24 @@ class UsersRolesPermissionsSeeder extends Seeder
         // 1. إنشاء كل الصلاحيات المطلوبة
         $modules = [
             'archive'             => ['view', 'create', 'edit', 'delete'],
-            'legaladvices'             => ['view', 'create', 'edit', 'delete'],
-            'litigations'              => ['view', 'create', 'edit', 'delete'],
-            'litigation-from'          => ['view', 'create', 'edit', 'delete'],
-            'litigation-from-actions'  => ['view', 'create', 'edit', 'delete'],
-            'litigation-against'       => ['view', 'create', 'edit', 'delete'],
+            'legaladvices'        => ['view', 'create', 'edit', 'delete'],
+            'litigations'         => ['view', 'create', 'edit', 'delete'],
+            'litigation-from'     => ['view', 'create', 'edit', 'delete'],
+            'litigation-from-actions' => ['view', 'create', 'edit', 'delete'],
+            'litigation-against'  => ['view', 'create', 'edit', 'delete'],
             'litigation-against-actions' => ['view', 'create', 'edit', 'delete'],
-            'contracts'                => ['view', 'create', 'edit', 'delete'],
-            'investigations'           => ['view', 'create', 'edit', 'delete'],
-            'investigation-actions'    => ['view', 'create', 'edit', 'delete'],
-            'users'                    => ['view', 'create', 'edit', 'delete'],
-            'roles'                    => ['view', 'create', 'edit', 'delete'],
-            'permissions'              => ['view', 'create', 'edit', 'delete'],
-            'managment-lists'          => ['view', 'create', 'edit', 'delete'],
-            'reports'                  => ['view', 'create', 'edit', 'delete'],
-            'profile'                  => ['view', 'edit'],
+            'contracts'           => ['view', 'create', 'edit', 'delete'],
+            'investigations'      => ['view', 'create', 'edit', 'delete'],
+            'investigation-actions' => ['view', 'create', 'edit', 'delete'],
+            'users'               => ['view', 'create', 'edit', 'delete'],
+            'roles'               => ['view', 'create', 'edit', 'delete'],
+            'permissions'         => ['view', 'create', 'edit', 'delete'],
+            'managment-lists'     => ['view', 'create', 'edit', 'delete'],
+            'reports'             => ['view', 'create', 'edit', 'delete'],
+            'profile'             => ['view', 'edit'],
         ];
 
+        // إنشاء كل الصلاحيات المطلوبة
         foreach ($modules as $module => $actions) {
             foreach ($actions as $action) {
                 Permission::firstOrCreate([
@@ -51,17 +51,8 @@ class UsersRolesPermissionsSeeder extends Seeder
             'guard_name' => 'api',
         ]);
 
-        // 3. تحديد صلاحيات إدارة المستخدمين (لـ محمد فقط)
-        $userManagementPermissions = Permission::whereIn('name', [
-            'view users', 'create users', 'edit users', 'delete users',
-            'view roles', 'create roles', 'edit roles', 'delete roles',
-            'view permissions', 'create permissions', 'edit permissions', 'delete permissions',
-        ])->pluck('id')->toArray();
-
+        // 3. إعطاء جميع الصلاحيات للمسؤول الأول (محمد)
         $allPermissions = Permission::all();
-        $otherPermissions = $allPermissions->whereNotIn('id', $userManagementPermissions);
-
-        // 4. إنشاء المستخدم الرئيسي (محمد) مع كل الصلاحيات
         $mohamed = User::create([
             'name' => 'د. محمد',
             'email' => 'mohamed@almadar.ly',
@@ -70,9 +61,9 @@ class UsersRolesPermissionsSeeder extends Seeder
             'image' => 'users_images/admin1.png',
         ]);
         $mohamed->assignRole($adminRole);
-        $mohamed->syncPermissions($allPermissions);
+        $mohamed->syncPermissions($allPermissions); // إعطاء جميع الصلاحيات
 
-        // 5. إنشاء باقي المستخدمين بدون صلاحيات إدارة المستخدمين
+        // 4. إنشاء باقي المستخدمين بدون صلاحيات إدارة المستخدمين
         $otherAdmins = [
             ['name' => 'أ. عدنان', 'email' => 'adnan@almadar.ly', 'image' => 'users_images/admin2.jpg'],
             ['name' => 'أ. سكينة', 'email' => 'sakeena@almadar.ly', 'image' => 'users_images/admin4.png'],
@@ -90,6 +81,14 @@ class UsersRolesPermissionsSeeder extends Seeder
             ]);
 
             $admin->assignRole($adminRole);
+
+            // إعطاء صلاحيات محددة (مجموعات من الصلاحيات الغير متعلقة بإدارة المستخدمين)
+            $otherPermissions = Permission::whereNotIn('name', [
+                'view users', 'create users', 'edit users', 'delete users',
+                'view roles', 'create roles', 'edit roles', 'delete roles',
+                'view permissions', 'create permissions', 'edit permissions', 'delete permissions',
+            ])->pluck('id');
+
             $admin->syncPermissions($otherPermissions);
         }
     }

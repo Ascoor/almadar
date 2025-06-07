@@ -12,26 +12,6 @@ const translatePermission = (name) => {
   }
 };
 
-const translateSection = (section) => {
-  const map = {
-    'litigation-from': 'دعاوى من الشركة',
-    'litigation-against-actions': 'إجراءات دعاوى ضد الشركة',
-    'litigation-against': 'دعاوى ضد الشركة',
-    'litigation-from-actions': 'إجراءات دعاوى من الشركة',
-    legaladvices: 'الرأي والمشورة',
-    'managment-lists': 'قوائم البيانات',
-    litigations: 'القضايا',
-    contracts: 'العقود',
-    investigations: 'التحقيقات',
-    'investigation-actions': 'إجراءات التحقيق',
-    users: 'المستخدمين',
-    roles: 'الأدوار',
-    profile: 'الملف الشخصي',
-    permissions: 'الصلاحيات',
-  };
-  return map[section] || section;
-};
-
 const groupPermissionsBySection = (allPermissions = [], userPermissions = []) => {
   const userPermissionNames = new Set(userPermissions.map(p => p.name.toLowerCase()));
   return allPermissions.reduce((acc, perm) => {
@@ -49,7 +29,7 @@ const groupPermissionsBySection = (allPermissions = [], userPermissions = []) =>
   }, {});
 };
 
-const PermissionRow = ({ action, enabled, onChange, disabled }) => (
+const PermissionRow = ({ userId, action, enabled, onChange, disabled }) => (
   <div
     className={`flex items-center justify-between w-full px-4 py-2 rounded-lg shadow-sm 
                 transition-all duration-200 hover:shadow-md transform hover:scale-[1.01] mb-2
@@ -64,7 +44,7 @@ const PermissionRow = ({ action, enabled, onChange, disabled }) => (
         {enabled ? 'مفعل' : 'غير مفعل'}
       </span>
       <button
-        onClick={onChange}
+        onClick={() => onChange(userId, action, enabled ? 'remove' : 'add')}
         disabled={disabled}
         title={disabled ? 'لا يمكن التفعيل بدون صلاحية "عرض"' : ''}
         className="focus:outline-none cursor-pointer transition-all"
@@ -79,7 +59,7 @@ const PermissionRow = ({ action, enabled, onChange, disabled }) => (
   </div>
 );
 
-const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionChange, loading }) => {
+const PermissionsSection = ({ userId, allPermissions, userPermissions, handlePermissionChange, loading }) => {
   const grouped = groupPermissionsBySection(allPermissions, userPermissions);
   const sections = Object.entries(grouped);
 
@@ -107,10 +87,11 @@ const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionC
               return (
                 <PermissionRow
                   key={permission.id}
+                  userId={userId}
                   action={permission.action}
                   enabled={permission.enabled}
                   disabled={disabled}
-                  onChange={() => handlePermissionChange(permission.name, !permission.enabled)}
+                  onChange={handlePermissionChange} // تمرير الدالة
                 />
               );
             })}
