@@ -51,7 +51,8 @@ const DashboardContent = () => {
             isOpen={sidebarOpen}
             onToggle={toggleSidebar}
             onLinkClick={() => isMobile && setSidebarOpen(false)}
-          />
+     userPermissions={user.permissions.map(p => p.name)} // أو أي مصدر مناسب
+/>
           
           {isMobile && sidebarOpen && (
             <div 

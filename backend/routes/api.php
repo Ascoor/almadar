@@ -34,7 +34,15 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::options('/{any}', function () {
     return response()->json([], 204);
-})->where('any', '.*');
+})->where('any', '.*'); 
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return response()->json([
+        'user' => $request->user(),
+        'roles' => $request->user()->getRoleNames(),
+        'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+    ]);
+});
 
 // Protected routes (requires authentication)
 Route::middleware('auth:sanctum')->group(function () {

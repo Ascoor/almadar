@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/components/auth/AuthContext';
 import { LogoArt, LogoPatren } from '../../assets/images';
 import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
-  ArchiveIcon, CourtHouseIcon, LawBookIcon, LegalBriefcaseIcon
+  ArchiveIcon, CourtHouseIcon, LawBookIcon
 } from '@/components/ui/Icons';
 import {
   Settings2, ListTree, UsersRound, UserCheck, ChevronRight
 } from 'lucide-react';
 
 export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
+  const { hasPermission } = useAuth();
   const [activeSection, setActiveSection] = useState(null);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
 
@@ -23,27 +25,36 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
 
   const navConfig = useMemo(() => [
     { id: 'home', label: 'الرئيسية', to: '/', icon: <DashboardIcon size={20} /> },
-    { id: 'contracts', label: 'التعاقدات', to: '/contracts', icon: <ContractsIcon size={20} /> },
-    {
-      id: 'fatwa', label: 'الرأي والفتوى', icon: <ConsultationsIcon size={20} />, children: [
-        { id: 'investigations', label: 'التحقيقات', to: '/legal/investigations', icon: <LawsuitsIcon size={16} /> },
-        { id: 'legal-advices', label: 'المشورة القانونية', to: '/legal/legal-advices', icon: <LawBookIcon size={16} /> },
-        { id: 'litigations', label: 'التقاضي', to: '/legal/litigations', icon: <CourtHouseIcon size={16} /> },
-      ]
+    hasPermission('view contracts') && {
+      id: 'contracts', label: 'التعاقدات', to: '/contracts', icon: <ContractsIcon size={20} />
     },
-    {
+    (hasPermission('view investigations') || hasPermission('view legaladvices') || hasPermission('view litigations')) && {
+      id: 'fatwa', label: 'الرأي والفتوى', icon: <ConsultationsIcon size={20} />, children: [
+        hasPermission('view investigations') && {
+          id: 'investigations', label: 'التحقيقات', to: '/legal/investigations', icon: <LawsuitsIcon size={16} />
+        },
+        hasPermission('view legaladvices') && {
+          id: 'legal-advices', label: 'المشورة القانونية', to: '/legal/legal-advices', icon: <LawBookIcon size={16} />
+        },
+        hasPermission('view litigations') && {
+          id: 'litigations', label: 'التقاضي', to: '/legal/litigations', icon: <CourtHouseIcon size={16} />
+        },
+      ].filter(Boolean)
+    },
+    hasPermission('view managment-lists') && {
       id: 'management', label: 'إدارة التطبيق', icon: <Settings2 size={20} />, children: [
         { id: 'lists', label: 'القوائم', to: '/managment-lists', icon: <ListTree size={16} /> },
-        // { id: 'reports', label: 'التقارير', to: '/reports-page', icon: <LegalBriefcaseIcon size={16} /> },
       ]
     },
-    {
+    hasPermission('view users') && {
       id: 'users', label: 'إدارة المستخدمين', icon: <UsersRound size={20} />, children: [
         { id: 'users-list', label: 'المستخدمين', to: '/users', icon: <UserCheck size={16} /> },
       ]
     },
-    { id: 'archive', label: 'الأرشيف', to: '/archive', icon: <ArchiveIcon size={20} /> },
-  ], []);
+    hasPermission('view archive') && {
+      id: 'archive', label: 'الأرشيف', to: '/archive', icon: <ArchiveIcon size={20} />
+    },
+  ].filter(Boolean), [hasPermission]);
 
   const handleSectionClick = (id, hasChildren) => {
     if (!isLargeScreen && !isOpen) onToggle();
@@ -53,8 +64,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   return (
     <aside
       dir="rtl"
-      className={`
-        fixed right-0 top-0 z-20 h-full bg-gold dark:bg-navy-darker
+      className={`fixed right-0 top-0 z-20 h-full bg-gold dark:bg-navy-darker
         bg-gradient-to-b from-gold via-greenic-dark/50 to-royal/80
         dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/40
         transition-all duration-300
@@ -62,11 +72,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
       `}
     >
       <div className="flex items-center justify-center p-0 mt-6">
-        <img
-          src={logoSrc}
-          alt="Logo"
-          className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
-        />
+        <img src={logoSrc} alt="Logo" className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`} />
         {isOpen && <button onClick={onToggle} className="absolute top-4 left-4">×</button>}
       </div>
 
@@ -80,8 +86,8 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 className={({ isActive }) =>
                   `group flex items-center gap-3 p-2 rounded-md text-sm font-semibold tracking-tight transition-all duration-300
                    ${isActive
-                    ? 'bg-greenic-dark text-gold-light dark:bg-greenic-light/80 dark:text-royal-dark'
-                    : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/50 dark:hover:text-white'}` 
+                     ? 'bg-greenic-dark text-gold-light dark:bg-greenic-light/80 dark:text-royal-dark'
+                     : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/50 dark:hover:text-white'}`
                 }
               >
                 {({ isActive }) => (
@@ -90,7 +96,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                       className: `transition-colors duration-200
                         ${isActive
                           ? 'text-gold-light dark:text-royal-darker'
-                          : 'text-white group-hover:text-greenic-dark dark:group-hover:text-white'}` 
+                          : 'text-white group-hover:text-greenic-dark dark:group-hover:text-white'}`
                     })}
                     <span className="flex-1 text-right">{item.label}</span>
                   </>
@@ -102,13 +108,13 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 className={`flex items-center gap-3 p-2 w-full rounded-md text-sm font-semibold tracking-tight transition-colors duration-200
                   ${activeSection === item.id
                     ? 'bg-gold-light text-greenic dark:bg-greenic-light/40 dark:text-gold'
-                    : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/30 dark:hover:text-white'}`} 
+                    : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/30 dark:hover:text-white'}`}
               >
                 {React.cloneElement(item.icon, {
                   className: `transition-colors duration-200
                     ${activeSection === item.id
                       ? 'text-gold-light dark:text-gold'
-                      : 'text-white group-hover:text-greenic-dark dark:group-hover:text-gold'}` 
+                      : 'text-white group-hover:text-greenic-dark dark:group-hover:text-gold'}`
                 })}
                 <span className="flex-1 text-right">{item.label}</span>
                 {item.children && (
@@ -130,8 +136,8 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                     className={({ isActive }) =>
                       `flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-300
                        ${isActive
-                        ? 'bg-gold-light/90 text-greenic-dark dark:bg-greenic-light/60 dark:text-white'
-                        : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/50 dark:hover:text-gold'}` 
+                         ? 'bg-gold-light/90 text-greenic-dark dark:bg-greenic-light/60 dark:text-white'
+                         : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/50 dark:hover:text-gold'}`
                     }
                   >
                     {({ isActive }) => (
@@ -140,7 +146,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                           className: `transition duration-200
                             ${isActive
                               ? 'text-greenic-dark dark:text-white'
-                              : 'group-hover:text-greenic-dark dark:group-hover:text-white'}` 
+                              : 'group-hover:text-greenic-dark dark:group-hover:text-white'}`
                         })}
                         <span>{ch.label}</span>
                       </>
@@ -164,8 +170,8 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 className={({ isActive }) =>
                   `px-4 py-2 rounded-md transition-all duration-200 font-semibold tracking-tight flex items-center gap-2 group
                    ${isActive
-                    ? 'bg-greenic-dark text-gold-light shadow-md dark:bg-greenic-light/60 dark:text-gold-light'
-                    : 'text-white hover:bg-gold-light/70 hover:text-greenic dark:hover:bg-greenic/50 dark:text-gold-light'}` 
+                     ? 'bg-greenic-dark text-gold-light shadow-md dark:bg-greenic-light/60 dark:text-gold-light'
+                     : 'text-white hover:bg-gold-light/70 hover:text-greenic dark:hover:bg-greenic/50 dark:text-gold-light'}`
                 }
               >
                 {({ isActive }) =>
@@ -173,7 +179,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                     className: `transition duration-200
                       ${isActive
                         ? 'text-gold-light dark:text-gold-light'
-                        : 'dark:text-gold-light group-hover:text-greenic-dark dark:group-hover:text-white'}` 
+                        : 'dark:text-gold-light group-hover:text-greenic-dark dark:group-hover:text-white'}`
                   })
                 }
               </NavLink>

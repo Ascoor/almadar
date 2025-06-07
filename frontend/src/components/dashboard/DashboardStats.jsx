@@ -3,7 +3,7 @@ import {
   DoceIcon,
   ContractSection,
   MainProcedure
-} from "@/assets/icons";
+} from "@/assets/icons/index";
 import DashCard from "@/components/common/DashCard";
 import WarpperCard from "@/components/layout/WarpperCard";
 import { useDashboardStats } from "@/hooks/dataHooks"; // تأكد من المسار الصحيح

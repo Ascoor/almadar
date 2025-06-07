@@ -55,21 +55,27 @@ const PermissionRow = ({ action, enabled, onChange, disabled }) => (
                 transition-all duration-200 hover:shadow-md transform hover:scale-[1.01] mb-2
                 ${enabled ? 'bg-green-50 dark:bg-green-900/20' : 'bg-gray-100 dark:bg-zinc-800'}`}
   >
-    <label className="text-sm font-medium  text-gray-800 dark:text-gray-200">
+    <label className="text-sm font-medium text-gray-800 dark:text-gray-200 flex-1">
       {translatePermission(action)}
     </label>
-    <button
-      onClick={onChange}
-      disabled={disabled}
-      title={disabled ? 'الصلاحية مقيدة بدون "عرض"' : ''}
-      className="focus:outline-none cursor-pointer transition-all"
-    >
-      {enabled ? (
-        <ToggleRight className="text-green-600 dark:text-green-400" size={22} />
-      ) : (
-        <ToggleLeft className="text-red-500 dark:text-red-400" size={22} />
-      )}
-    </button>
+
+    <div className="flex items-center gap-2">
+      <span className={`text-xs font-bold ${enabled ? 'text-green-600' : 'text-red-500'}`}>
+        {enabled ? 'مفعل' : 'غير مفعل'}
+      </span>
+      <button
+        onClick={onChange}
+        disabled={disabled}
+        title={disabled ? 'لا يمكن التفعيل بدون صلاحية "عرض"' : ''}
+        className="focus:outline-none cursor-pointer transition-all"
+      >
+        {enabled ? (
+          <ToggleRight className="text-green-600 dark:text-green-400" size={22} />
+        ) : (
+          <ToggleLeft className="text-red-500 dark:text-red-400" size={22} />
+        )}
+      </button>
+    </div>
   </div>
 );
 
