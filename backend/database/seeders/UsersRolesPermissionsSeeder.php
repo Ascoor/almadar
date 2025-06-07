@@ -18,6 +18,7 @@ class UsersRolesPermissionsSeeder extends Seeder
 
         // 1. إنشاء كل الصلاحيات المطلوبة
         $modules = [
+            'archive'             => ['view', 'create', 'edit', 'delete'],
             'legaladvices'             => ['view', 'create', 'edit', 'delete'],
             'litigations'              => ['view', 'create', 'edit', 'delete'],
             'litigation-from'          => ['view', 'create', 'edit', 'delete'],
