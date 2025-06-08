@@ -15,7 +15,7 @@ class UsersRolesPermissionsSeeder extends Seeder
         // إلغاء الكاش لضمان تحديث الصلاحيات
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // 1. إنشاء كل الصلاحيات المطلوبة
+        // 1. إنشاء كل الصلاحيات المطلوبة لجميع الأقسام
         $modules = [
             'archive'             => ['view', 'create', 'edit', 'delete'],
             'legaladvices'        => ['view', 'create', 'edit', 'delete'],
@@ -27,9 +27,9 @@ class UsersRolesPermissionsSeeder extends Seeder
             'contracts'           => ['view', 'create', 'edit', 'delete'],
             'investigations'      => ['view', 'create', 'edit', 'delete'],
             'investigation-actions' => ['view', 'create', 'edit', 'delete'],
-            'users'               => ['view', 'create', 'edit', 'delete'],
-            'roles'               => ['view', 'create', 'edit', 'delete'],
-            'permissions'         => ['view', 'create', 'edit', 'delete'],
+            'users'               => ['view', 'create', 'edit', 'delete'],  // صلاحيات إدارة المستخدمين
+            'roles'               => ['view', 'create', 'edit', 'delete'],  // صلاحيات إدارة الأدوار
+            'permissions'         => ['view', 'create', 'edit', 'delete'],  // صلاحيات إدارة الصلاحيات
             'managment-lists'     => ['view', 'create', 'edit', 'delete'],
             'reports'             => ['view', 'create', 'edit', 'delete'],
             'profile'             => ['view', 'edit'],
@@ -61,9 +61,9 @@ class UsersRolesPermissionsSeeder extends Seeder
             'image' => 'users_images/admin1.png',
         ]);
         $mohamed->assignRole($adminRole);
-        $mohamed->syncPermissions($allPermissions); // إعطاء جميع الصلاحيات
+        $mohamed->syncPermissions($allPermissions); // إعطاء جميع الصلاحيات بما في ذلك صلاحيات إدارة المستخدمين
 
-        // 4. إنشاء باقي المستخدمين بدون صلاحيات إدارة المستخدمين
+        // 4. إنشاء باقي المسؤولين وتخصيص الصلاحيات
         $otherAdmins = [
             ['name' => 'أ. عدنان', 'email' => 'adnan@almadar.ly', 'image' => 'users_images/admin2.jpg'],
             ['name' => 'أ. سكينة', 'email' => 'sakeena@almadar.ly', 'image' => 'users_images/admin4.png'],
@@ -82,14 +82,14 @@ class UsersRolesPermissionsSeeder extends Seeder
 
             $admin->assignRole($adminRole);
 
-            // إعطاء صلاحيات محددة (مجموعات من الصلاحيات الغير متعلقة بإدارة المستخدمين)
+            // إعطاء صلاحيات لجميع الأقسام باستثناء "إدارة المستخدمين" و"إدارة الأدوار" و"إدارة الصلاحيات"
             $otherPermissions = Permission::whereNotIn('name', [
                 'view users', 'create users', 'edit users', 'delete users',
                 'view roles', 'create roles', 'edit roles', 'delete roles',
                 'view permissions', 'create permissions', 'edit permissions', 'delete permissions',
             ])->pluck('id');
 
-            $admin->syncPermissions($otherPermissions);
+            $admin->syncPermissions($otherPermissions); // إعطاء الصلاحيات للبقية
         }
     }
 }

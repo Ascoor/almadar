@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Edit2, Trash2 } from 'lucide-react';
-
+import { toast } from "sonner";
 import SectionHeader from '@/components/common/SectionHeader';
 import TableComponent from '@/components/common/TableComponent';
 import UserModalForm from '@/components/Users/UserModalForm';
@@ -27,7 +27,7 @@ export default function UsersManagementPage() {
   const [modalMode, setModalMode] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
+ 
 
   const permissionsRef = useRef(null);
   const tableRef = useRef(null);
@@ -59,24 +59,16 @@ export default function UsersManagementPage() {
     };
   }, [modalMode]);
 
-  const showToast = (type, message) => {
-    if (toastMsg !== message) {
-      setToastMsg(message);
-      import('sonner').then(({ toast }) => {
-        toast[type](message);
-      });
-    }
-  };
-
+ 
   const handleCreate = async (formData) => {
     setLoading(true);
     try {
       await createUser(formData);
-      showToast('success', 'تم إضافة المستخدم');
+      toast(  'تم إضافة المستخدم');
       await refetchUsers();
       setModalMode(null);
     } catch {
-      showToast('error', 'فشل إضافة المستخدم');
+      toast(  'فشل إضافة المستخدم');
     } finally {
       setLoading(false);
     }
@@ -86,61 +78,77 @@ export default function UsersManagementPage() {
     setLoading(true);
     try {
       await updateUser(id, formData);
-      showToast('success', 'تم تعديل المستخدم');
+      toast('success', 'تم تعديل المستخدم');
       await refetchUsers();
       setModalMode(null);
     } catch {
-      showToast('error', 'فشل تعديل المستخدم');
+      toast('error', 'فشل تعديل المستخدم');
     } finally {
       setLoading(false);
     }
-  };
-  const handlePermChange = async (permName, shouldEnable) => {
+  };  
+
+const handlePermChange = async (permName, shouldEnable) => {
   setLoading(true);
   try {
-    // تمرير الصلاحية والـ action (add/remove) في الطلب
     await changeUserPermission(
       selectedUser.id,
-      permName,  // اسم الصلاحية
-      shouldEnable ? 'add' : 'remove'  // الأكشن (إضافة أو إزالة)
+      permName,
+      shouldEnable ? 'add' : 'remove'
     );
-    showToast('success', 'تم تحديث الصلاحية');
-    
-    // تحديث حالة الصلاحية مباشرة في الواجهة
-    const updatedPermissions = selectedUser.permissions.map((perm) => {
-      if (perm.name === permName) {
-        return { ...perm, enabled: shouldEnable }; // تحديث قيمة "enabled" بناءً على التغيير
-      }
-      return perm;
-    });
 
-    // تحديث حالة المستخدم المعروض بناءً على الصلاحيات المعدلة
-    setSelectedUser((prevUser) => ({
-      ...prevUser,
+    toast( 'تم تحديث الصلاحية');
+
+    // استخراج القسم
+    const [action, ...sectionParts] = permName.toLowerCase().split(' ');
+    const sectionPrefix = sectionParts.join(' ');
+
+    // تعديل الصلاحيات محليًا
+    let updatedPermissions;
+
+    if (action === 'view' && !shouldEnable) {
+      // عند إلغاء "عرض" → إزالة كل صلاحيات نفس القسم
+      updatedPermissions = selectedUser.permissions.filter(
+        p => !p.name.toLowerCase().includes(sectionPrefix)
+      );
+    } else {
+      // تعديل صلاحية واحدة فقط
+      const index = selectedUser.permissions.findIndex(p => p.name === permName);
+      if (index > -1) {
+        updatedPermissions = selectedUser.permissions.map(p =>
+          p.name === permName ? { ...p, enabled: shouldEnable } : p
+        );
+      } else {
+        updatedPermissions = [...selectedUser.permissions, { name: permName, enabled: shouldEnable }];
+      }
+    }
+
+    setSelectedUser(prev => ({
+      ...prev,
       permissions: updatedPermissions,
     }));
 
-    // إعادة تحميل المستخدمين لتحديث القائمة
-    await refetchUsers();
+    await refetchUsers(); // احتياطيًا
   } catch (error) {
-    showToast('error', 'فشل في تحديث الصلاحية');
-    console.error(error);
+    toast(  'فشل في تحديث الصلاحية');
   } finally {
     setLoading(false);
   }
 };
 
 
+
+
   const handleDelete = async () => {
     setLoading(true);
     try {
       await deleteUser(selectedUser.id);
-      showToast('success', 'تم حذف المستخدم');
+      toast('success', 'تم حذف المستخدم');
       await refetchUsers();
       setShowDelete(false);
       setSelectedUser(null);
     } catch {
-      showToast('error', 'فشل حذف المستخدم');
+      toast('error', 'فشل حذف المستخدم');
     } finally {
       setLoading(false);
     }

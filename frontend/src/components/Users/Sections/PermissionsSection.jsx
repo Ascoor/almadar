@@ -1,5 +1,7 @@
 import React from 'react';
 import { ToggleLeft, ToggleRight } from 'lucide-react';
+import { toast } from "sonner";
+
 
 const translatePermission = (name) => {
   switch (name) {
@@ -48,16 +50,21 @@ const groupPermissionsBySection = (allPermissions = [], userPermissions = []) =>
     return acc;
   }, {});
 };
-const PermissionRow = ({ action, enabled, onChange, disabled }) => (
+const PermissionRow = ({ action, enabled, onChange, canChange }) => (
   <div className="flex items-center justify-between w-full p-2 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md transition-transform transform hover:scale-105 mb-2">
     <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex-1">
       {translatePermission(action)}
     </label>
     <button
-      onClick={onChange}
+      onClick={() => {
+        if (!canChange) {
+          toast('لا يمكن منح الصلاحية. يرجى تفعيل صلاحية العرض أولاً.');
+          return;
+        }
+        onChange();
+      }}
       className="focus:outline-none cursor-pointer text-2xl"
-      disabled={disabled}
-      title={disabled ? 'الصلاحية مقيدة بدون "عرض"' : ''}
+      title={!canChange ? 'الصلاحية مقيدة بدون "عرض"' : ''}
     >
       {enabled ? (
         <ToggleRight className="text-green-500" />
@@ -89,16 +96,17 @@ const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionC
               const permission = perms.find(p => p.action === actionType);
               if (!permission) return null;
 
-              const disabled = (!isViewEnabled && actionType !== 'view') || loading;
+     const canChange = isViewEnabled || actionType === 'view';
 
               return (
-                <PermissionRow
-                  key={permission.id}
-                  action={permission.action}
-                  enabled={permission.enabled}
-                  disabled={disabled}
-                  onChange={() => handlePermissionChange(permission.name, !permission.enabled)}
-                />
+               <PermissionRow
+  key={permission.id}
+  action={permission.action}
+  enabled={permission.enabled}
+  canChange={canChange && !loading}
+  onChange={() => handlePermissionChange(permission.name, !permission.enabled)}
+/>
+
               );
             })}
           </div>
