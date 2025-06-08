@@ -3,8 +3,7 @@ import { Bell } from 'lucide-react';
 import { markAsRead } from '@/services/api/notifications';
 import { useNotifications } from '@/components/Notifications/NotificationContext';
 import IconButton from './iconButton';
-
-import { useNotificationQuery } from '@/hooks/dataHooks'; // ✅
+import { useNotificationQuery } from '@/hooks/dataHooks';
 
 export default function DropdownNotifications() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -14,19 +13,8 @@ export default function DropdownNotifications() {
   const [allNotifications, setAllNotifications] = useState([]);
 
   const dropdownRef = useRef(null);
-
-  const {
-    notifications,
-    setNotifications,
-    hasNew,
-    setHasNew,
-  } = useNotifications();
-
-  const {
-    data: fetchedNotifications = [],
-    isLoading,
-    refetch,
-  } = useNotificationQuery(); // ✅
+  const { notifications, setNotifications, hasNew, setHasNew } = useNotifications();
+  const { data: fetchedNotifications = [], isLoading, refetch } = useNotificationQuery();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -56,11 +44,12 @@ export default function DropdownNotifications() {
         const result = await refetch();
         if (result?.data) {
           setAllNotifications(result.data);
-          setLoadedNotifications(result.data.slice(0, 5)); // Load the first 5 notifications
+          setLoadedNotifications(result.data.slice(0, 5));
+          setShowMore(result.data.length > 5);
         }
         setHasNew(false);
       } catch (error) {
-        console.error('Failed to fetch notifications:', error);
+        console.error('فشل تحميل الإشعارات:', error);
       } finally {
         setLoading(false);
       }
@@ -70,11 +59,11 @@ export default function DropdownNotifications() {
   const handleNotificationClick = async (id) => {
     try {
       await markAsRead(id);
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      const updated = notifications.map(n =>
+        n.id === id ? { ...n, read: true } : n
       );
-      const anyUnread = notifications.some((n) => !n.read);
-      if (!anyUnread) setHasNew(false);
+      setNotifications(updated);
+      if (!updated.some(n => !n.read)) setHasNew(false);
     } catch (e) {
       console.error('تعذر تعيين الإشعار كمقروء', e);
     }
@@ -82,39 +71,44 @@ export default function DropdownNotifications() {
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setNotifications(notifications.map(n => ({ ...n, read: true })));
     setHasNew(false);
   };
 
   const handleShowMore = () => {
-    const moreNotifications = allNotifications.slice(5);
-    setLoadedNotifications((prev) => [...prev, ...moreNotifications]);
+    const more = allNotifications.slice(loadedNotifications.length);
+    setLoadedNotifications(prev => [...prev, ...more]);
     setShowMore(false);
   };
 
-  useEffect(() => {
-    if (allNotifications.length > 5) {
-      setShowMore(true); // Enable "show more" button if there are more than 5 notifications
+  const formatDate = (date) => {
+    try {
+      return new Intl.DateTimeFormat('ar-EG', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      }).format(new Date(date));
+    } catch {
+      return '';
     }
-  }, [allNotifications]);
+  };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef} dir="rtl">
       <IconButton onClick={toggleDropdown} active={dropdownOpen}>
         <Bell className="w-6 h-6" />
         {hasNew && (
-          <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white dark:border-gray-800 animate-pulse" />
+          <span className="absolute top-0 left-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white dark:border-gray-800 animate-ping" />
         )}
       </IconButton>
 
       {dropdownOpen && (
-        <div className="absolute -right-44 z-50 w-60 lg:right-0 lg:w-80 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+        <div className="absolute left-0 z-50 w-72 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
             <span className="font-semibold text-sm text-gray-700 dark:text-gray-200">الإشعارات</span>
             {notifications.length > 0 && (
               <button
-                className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                 onClick={handleMarkAllAsRead}
+                className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
               >
                 تعيين الكل كمقروء
               </button>
@@ -122,7 +116,7 @@ export default function DropdownNotifications() {
           </div>
 
           <ul className="max-h-80 overflow-y-auto divide-y divide-gray-200 dark:divide-gray-600">
-            {isLoading ? (
+            {isLoading || loading ? (
               <li className="p-4 text-center text-sm text-gray-400 dark:text-gray-500">جارٍ التحميل...</li>
             ) : loadedNotifications.length === 0 ? (
               <li className="p-4 text-center text-sm text-gray-400 dark:text-gray-500">لا توجد إشعارات</li>
@@ -131,13 +125,15 @@ export default function DropdownNotifications() {
                 <li
                   key={n.id}
                   onClick={() => handleNotificationClick(n.id)}
-                  className={`p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${!n.read ? 'bg-emerald-50 dark:bg-emerald-900/30' : ''}`}
+                  className={`p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                    !n.read ? 'bg-emerald-50 dark:bg-emerald-900/30' : ''
+                  }`}
                 >
                   <div className="text-sm font-medium text-gray-800 dark:text-gray-100">{n.title || 'إشعار'}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     {n.message || n.body || (n.data && n.data.message) || '—'}
                   </div>
-                  <div className="text-xs text-gray-400 mt-1">{n.time || n.created_at || ''}</div>
+                  <div className="text-xs text-gray-400 mt-1">{formatDate(n.created_at)}</div>
                 </li>
               ))
             )}
