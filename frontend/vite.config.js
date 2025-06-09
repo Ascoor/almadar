@@ -94,6 +94,9 @@ build: {
     output: {
       manualChunks(id) {
         if (id.includes('node_modules')) {
+            if (/node_modules[\\/](?:react(?:-dom)?|@radix-ui[\\/]|lucide-react)/.test(id)) {
+      return 'vendor_ui';
+    }
           // PDF.js & react-pdf & react-pdf-viewer
           if (/node_modules[\\/](pdfjs-dist|react-pdf|@react-pdf-viewer)/.test(id)) {
             return 'vendor_pdf';
@@ -101,11 +104,7 @@ build: {
           // Office & docx & xlsx
           if (/node_modules[\\/](docx|xlsx)/.test(id)) {
             return 'vendor_office';
-          }
-          // Radix UI, lucide-react، مع React و React-DOM
-          if (/node_modules[\\/](?:react(?:-dom)?|@radix-ui[\\/]react-(?:dialog|label|select|separator|slot|tooltip)|lucide-react)/.test(id)) {
-            return 'vendor_ui';
-          }
+          } 
           // React Query & axios & tesseract.js
           if (/node_modules[\\/](?:@tanstack[\\/]react-query|axios|tesseract\.js)/.test(id)) {
             return 'vendor_data';
