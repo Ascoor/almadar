@@ -219,9 +219,7 @@ export default {
           900: '#365314',
           950: '#1A2E05',
         },
-
-        // الألوان القديمة للتوافق مع النظام الحالي - Legacy Colors for Current System Compatibility
-        reded: {
+    reded: {
           light: '#FCA5A5',
           DEFAULT: '#EF4444',
           dark: '#7F1D1D',

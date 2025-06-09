@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRecentData } from '@/hooks/dataHooks';
 import DataCard from './DataCard';
+import HomeSpinner from '@/components/common/Spinners/HomeSpinner'
 import { ReceiptText } from 'lucide-react';
 
 const RecentItems = () => {
@@ -15,8 +16,8 @@ const RecentItems = () => {
 
   if (isLoading) {
     return (
-      <div className="text-center py-4">
-        <p className="text-lg font-bold">جارٍ التحميل...</p>
+      <div className="text-center pt-16 py-4">
+   <HomeSpinner />
       </div>
     );
   }
@@ -30,7 +31,7 @@ const RecentItems = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
       <DataCard
         title="أحدث العقود المضافة"
         items={latestAddedContracts}

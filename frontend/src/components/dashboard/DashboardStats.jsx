@@ -5,7 +5,8 @@ import {
   MainProcedure
 } from "@/assets/icons/index";
 import DashCard from "@/components/common/DashCard";
-import WarpperCard from "@/components/layout/WarpperCard";
+  import WarpperCard from "@/components/layout/WarpperCard";
+  import HomeSpinner from '@/components/common/Spinners/HomeSpinner'
 import { useDashboardStats } from "@/hooks/dataHooks"; // تأكد من المسار الصحيح
 
 const DashboardStats = () => {
@@ -13,8 +14,8 @@ const DashboardStats = () => {
 
   if (isLoading) {
     return (
-      <div className="text-center py-4">
-        <p className="text-lg font-bold">جارٍ التحميل...</p>
+      <div className="text-center pt-16 py-4">
+   <HomeSpinner />
       </div>
     );
   }

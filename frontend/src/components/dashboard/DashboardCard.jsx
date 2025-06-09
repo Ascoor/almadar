@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const DashboardCard = ({ title, count, icon, color = 'from-emerald-400 to-green-500', accent = 'text-emerald-600' }) => {
   return (
-    <Card className="group relative overflow-hidden shadow-lg shadow-navy-light ">
+    <Card className="group   relative overflow-hidden shadow-lg shadow-navy-light ">
       {/* خلفية خلف الأيقونة على شكل دوامة */}
       <div className={`absolute right-[-30px] top-[-30px] w-36 h-36 rounded-full blur-3xl opacity-20 bg-gradient-to-tr ${color}`} />
 
