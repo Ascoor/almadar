@@ -87,39 +87,40 @@ export default defineConfig(({ mode }) => ({
     }),
   ].filter(Boolean),
 
-    build: {
-    chunkSizeWarningLimit: 600,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            // PDF.js & react-pdf & react-pdf-viewer
-            if (/node_modules[\\/](pdfjs-dist|react-pdf|@react-pdf-viewer)/.test(id)) {
-              return 'vendor_pdf';
-            }
-            // Office & docx & xlsx
-            if (/node_modules[\\/](docx|xlsx)/.test(id)) {
-              return 'vendor_office';
-            }
-            // Radix UI و lucide-react
-            if (/node_modules[\\/](?:@radix-ui[\\/]react-(?:dialog|label|select|separator|slot|tooltip)|lucide-react)/.test(id)) {
-              return 'vendor_ui';
-            }
-            // React Query & axios & tesseract.js
-            if (/node_modules[\\/](?:@tanstack[\\/]react-query|axios|tesseract\.js)/.test(id)) {
-              return 'vendor_data';
-            }
-            // Workbox & PWA
-            if (/node_modules[\\/](?:workbox-build|workbox-window|vite-plugin-pwa)/.test(id)) {
-              return 'vendor_pwa';
-            }
-            // Sonner (notifications)
-            if (/node_modules[\\/]sonner/.test(id)) {
-              return 'vendor_toast';
-            }
-            // أيّ حزم أخرى تجمعها في ملف واحد خفيف
-            return 'vendor';
+// vite.config.js (جزء build.rollupOptions.output)
+build: {
+  chunkSizeWarningLimit: 600,
+  rollupOptions: {
+    output: {
+      manualChunks(id) {
+        if (id.includes('node_modules')) {
+          // PDF.js & react-pdf & react-pdf-viewer
+          if (/node_modules[\\/](pdfjs-dist|react-pdf|@react-pdf-viewer)/.test(id)) {
+            return 'vendor_pdf';
           }
+          // Office & docx & xlsx
+          if (/node_modules[\\/](docx|xlsx)/.test(id)) {
+            return 'vendor_office';
+          }
+          // Radix UI, lucide-react، مع React و React-DOM
+          if (/node_modules[\\/](?:react(?:-dom)?|@radix-ui[\\/]react-(?:dialog|label|select|separator|slot|tooltip)|lucide-react)/.test(id)) {
+            return 'vendor_ui';
+          }
+          // React Query & axios & tesseract.js
+          if (/node_modules[\\/](?:@tanstack[\\/]react-query|axios|tesseract\.js)/.test(id)) {
+            return 'vendor_data';
+          }
+          // Workbox & PWA
+          if (/node_modules[\\/](?:workbox-build|workbox-window|vite-plugin-pwa)/.test(id)) {
+            return 'vendor_pwa';
+          }
+          // Sonner (notifications)
+          if (/node_modules[\\/]sonner/.test(id)) {
+            return 'vendor_toast';
+          }
+          // بقية الحزم الخفيفة
+          return 'vendor';
+        }
 }
 
       },
