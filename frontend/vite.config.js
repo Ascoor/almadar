@@ -60,7 +60,7 @@ export default defineConfig(({ mode }) => ({
         globDirectory: 'dist',
         globPatterns: ['**/*.{js,css,html,png,jpg,svg,ico,webp}'],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\\/api\\//],
+navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
             urlPattern: new RegExp(`^${process.env.VITE_API_BASE_URL}/.*`),
