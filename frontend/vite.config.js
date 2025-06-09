@@ -16,14 +16,11 @@ export default defineConfig(({ mode }) => ({
     host: '::',
     port: 3000,
   },
-
-  optimizeDeps: {
-    include: ['socket.io-client', 'laravel-echo'],
-  },
-
+optimizeDeps: {
+  include: ['react', 'react-dom', 'socket.io-client', 'laravel-echo'],
+},
    plugins: [
     react(),
-    splitVendorChunkPlugin(),
 
     VitePWA({
       registerType: 'autoUpdate',
@@ -92,9 +89,9 @@ build: {
   chunkSizeWarningLimit: 600,
   rollupOptions: {
     output: {
-      manualChunks(id) {
-        if (id.includes('node_modules')) {
-            if (/node_modules[\\/](?:react(?:-dom)?|@radix-ui[\\/]|lucide-react)/.test(id)) {
+manualChunks(id) {
+  if (id.includes('node_modules')) {
+    if (/node_modules[\\/](react|react-dom|@radix-ui[\\/]|lucide-react)/.test(id)) {
       return 'vendor_ui';
     }
           // PDF.js & react-pdf & react-pdf-viewer
