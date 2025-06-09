@@ -54,8 +54,8 @@ export default function LitigationsPage() {
         className="flex justify-center gap-4"
       >
         {[
-          { key: "from", label: "ضد الشركة" },
-          { key: "against", label: "من الشركة" },
+          { key: "from", label: "من الشركة" },
+          { key: "against", label: "ضد الشركة" },
         ].map((tab) => (
           <motion.button
             key={tab.key}

@@ -8,40 +8,33 @@ use App\Helpers\AdminNotifier;
 
 class LitigationController extends Controller
 {
-
     public function __construct()
-    {
-        // صلاحيات عامة لقسم 'litigations'
-        $this->middleware('permission:view litigations')->only(['index', 'show']);
-        $this->middleware('permission:create litigations')->only('store');
-        $this->middleware('permission:edit litigations')->only('update');
-        $this->middleware('permission:delete litigations')->only('destroy');
-        
-        // صلاحيات خاصة للقسم 'litigation-from'
-        $this->middleware('permission:view litigation-from')->only(['index', 'show']);
-        $this->middleware('permission:create litigation-from')->only('store');
-        $this->middleware('permission:edit litigation-from')->only('update');
-        $this->middleware('permission:delete litigation-from')->only('destroy');
-        
-        // صلاحيات خاصة للقسم 'litigation-from-actions'
-        $this->middleware('permission:view litigation-from-actions')->only(['index', 'show']);
-        $this->middleware('permission:create litigation-from-actions')->only('store');
-        $this->middleware('permission:edit litigation-from-actions')->only('update');
-        $this->middleware('permission:delete litigation-from-actions')->only('destroy');
-        
-        // صلاحيات خاصة للقسم 'litigation-against'
-        $this->middleware('permission:view litigation-against')->only(['index', 'show']);
-        $this->middleware('permission:create litigation-against')->only('store');
-        $this->middleware('permission:edit litigation-against')->only('update');
-        $this->middleware('permission:delete litigation-against')->only('destroy');
-        
-        // صلاحيات خاصة للقسم 'litigation-against-actions'
-        $this->middleware('permission:view litigation-against-actions')->only(['index', 'show']);
-        $this->middleware('permission:create litigation-against-actions')->only('store');
-        $this->middleware('permission:edit litigation-against-actions')->only('update');
-        $this->middleware('permission:delete litigation-against-actions')->only('destroy');
-    
+{
+    foreach ($this->getModulePermissions() as $module => $actions) {
+        foreach ($actions as $action) {
+            $methods = $this->getPermissionMethodMap()[$action] ?? [];
+            if (!empty($methods)) {
+                $this->middleware("permission:{$action} {$module}")->only($methods);
+            }
+        }
     }
+}
+
+/**
+ * Permissions assigned to each module.
+ *
+ * @return array<string, string[]>
+ */
+protected function getModulePermissions(): array
+{
+    return [
+        'litigations' => ['view', 'create', 'edit', 'delete'],
+        'litigation-from' => ['view', 'create', 'edit', 'delete'],
+        'litigation-from-actions' => ['view', 'create', 'edit', 'delete'],
+        'litigation-against' => ['view', 'create', 'edit', 'delete'],
+        'litigation-against-actions' => ['view', 'create', 'edit', 'delete'],
+    ];
+}
     public function index()
     {
         $litigations = Litigation::with('actions.actionType')->latest()->paginate(15);
@@ -119,4 +112,19 @@ class LitigationController extends Controller
             'notes'        => 'nullable|string|max:1000',
         ]);
     }
+    
+/**
+ * Maps permission actions to controller methods.
+ *
+ * @return array<string, string[]>
+ */
+protected function getPermissionMethodMap(): array
+{
+    return [
+        'view' => ['index', 'show'],
+        'create' => ['store'],
+        'edit' => ['update'],
+        'delete' => ['destroy'],
+    ];
+}
 }

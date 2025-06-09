@@ -1,7 +1,10 @@
+ 
 import React from 'react';
 import { ToggleLeft, ToggleRight } from 'lucide-react';
 import { toast } from "sonner";
 
+import { useAuth } from '@/components/auth/AuthContext'; // Adjust the path if different
+ 
 
 const translatePermission = (name) => {
   switch (name) {
@@ -75,8 +78,9 @@ const PermissionRow = ({ action, enabled, onChange, canChange }) => (
   </div>
 );
 
-
 const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionChange, loading }) => {
+  const { hasPermission } = useAuth(); // ⬅️ Get it from context
+
   const grouped = groupPermissionsBySection(allPermissions, userPermissions);
   const sections = Object.entries(grouped);
 
@@ -96,17 +100,27 @@ const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionC
               const permission = perms.find(p => p.action === actionType);
               if (!permission) return null;
 
-     const canChange = isViewEnabled || actionType === 'view';
+              const canChange = isViewEnabled || actionType === 'view';
 
               return (
-               <PermissionRow
-  key={permission.id}
-  action={permission.action}
-  enabled={permission.enabled}
-  canChange={canChange && !loading}
-  onChange={() => handlePermissionChange(permission.name, !permission.enabled)}
-/>
+                <PermissionRow
+                  key={permission.id}
+                  action={permission.action}
+                  enabled={permission.enabled}
+                  canChange={canChange && !loading}
+                  onChange={() => {
+if (
+  hasPermission('edit permissions') ||
+  hasPermission('create permissions') ||
+  hasPermission('delete permissions')
+) {
 
+                      handlePermissionChange(permission.name, !permission.enabled);
+                    } else {
+                      toast.error('ليست لديك صلاحية تعديل الصلاحيات');
+                    }
+                  }}
+                />
               );
             })}
           </div>
@@ -115,5 +129,6 @@ const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionC
     </div>
   );
 };
+
 
 export default PermissionsSection;

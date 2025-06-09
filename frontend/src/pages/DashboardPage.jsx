@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, lazy, Suspense } from 'react';
 import { useLocation } from "react-router-dom";
    
+import AuthSpinner  from '@/components/common/Spinners/AuthSpinner';
 import { AuthContext } from '@/components/auth/AuthContext';
 import { AnimatePresence } from 'framer-motion'; 
 import { MobileThemeProvider, useMobileTheme } from '@/components/MobileThemeProvider';
@@ -56,7 +57,7 @@ const DashboardContent = () => {
       )}
       </Suspense>
       <div className="flex-1 flex flex-col transition-all duration-300">
-        <Suspense fallback={<div className="text-center p-4">جاري تحميل الرأس...</div>}>
+        <Suspense fallback={<AuthSpinner />}>
           <Header user={user?.id} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
         </Suspense>
   <main 
@@ -69,7 +70,7 @@ const DashboardContent = () => {
           `}
           style={mainStyles}
         >
-      <Suspense fallback={<div className="text-center p-4">تحميل المحتوى...</div>}>
+      <Suspense fallback={<AuthSpinner/>}>
             <AuthRoutes />
           </Suspense>
         </main>
@@ -77,7 +78,7 @@ const DashboardContent = () => {
 
       <AnimatePresence>
         {forcePasswordModal && (
-          <Suspense fallback={<div className="text-center p-4">تحميل نافذة تغيير كلمة المرور...</div>}>
+          <Suspense fallback={<div className="text-center mt-16 p-4"><AuthSpinner />تحميل نافذة تغيير كلمة المرور...</div>}>
             <ForcePasswordChangeModal onClose={() => setForcePasswordModal(false)} />
           </Suspense>
        )}
