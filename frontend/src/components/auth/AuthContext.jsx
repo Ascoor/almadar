@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useContext,
 } from 'react';
+import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
@@ -226,7 +227,7 @@ export function AuthProvider({ children }) {
     [user, token, roles, permissions]
   );
 
-  if (loading) return <div>جاري تحميل الحساب...</div>;
+  if (loading) return <div><AuthSpinner/></div>;
 
   return (
     <AuthContext.Provider value={authContextValue}>
