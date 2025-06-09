@@ -27,8 +27,9 @@ export default function UsersManagementPage() {
   const [modalMode, setModalMode] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [loading, setLoading] = useState(false);
+ const [showNewUserAlert, setShowNewUserAlert] = useState(false);
+const [newUserDetails, setNewUserDetails] = useState({ name: '', password: 'الان12345678' });
  
-
   const permissionsRef = useRef(null);
   const tableRef = useRef(null);
 
@@ -37,7 +38,8 @@ export default function UsersManagementPage() {
     isLoading: usersLoading,
     refetch: refetchUsers,
   } = useUsers();
-  const { data: roles = [] } = useRoles();
+const { data: rolesData = [], isLoading: rolesLoading } = useRoles();
+
   const { data: allPerms = [] } = usePermissions();
 
   useEffect(() => {
@@ -59,20 +61,22 @@ export default function UsersManagementPage() {
     };
   }, [modalMode]);
 
- 
-  const handleCreate = async (formData) => {
-    setLoading(true);
-    try {
-      await createUser(formData);
-      toast(  'تم إضافة المستخدم');
-      await refetchUsers();
-      setModalMode(null);
-    } catch {
-      toast(  'فشل إضافة المستخدم');
-    } finally {
-      setLoading(false);
-    }
-  };
+ const handleCreate = async (formData) => {
+  setLoading(true);
+  try {
+    const newUser = await createUser(formData);
+    toast('تم إضافة المستخدم');
+    setNewUserDetails({ name: newUser.name, password: 'الان12345678' });
+    setShowNewUserAlert(true);
+    await refetchUsers();
+    setModalMode(null);
+  } catch {
+    toast('فشل إضافة المستخدم');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleUpdate = async (id, formData) => {
     setLoading(true);
@@ -270,6 +274,7 @@ const handlePermChange = async (permName, shouldEnable) => {
           selectedUser={modalMode === 'edit' ? selectedUser : null}
           createUser={handleCreate}
           updateUser={handleUpdate}
+  roles={rolesData} // التعديل هنا 👈
           refreshUsers={refetchUsers}
         />
       )}
@@ -299,6 +304,18 @@ const handlePermChange = async (permName, shouldEnable) => {
           </motion.div>
         )}
       </AnimatePresence>
+{showNewUserAlert && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+      <h2 className="text-xl font-semibold mb-4">تم إضافة المستخدم الجديد</h2>
+      <p className="mb-2">اسم المستخدم: <strong>{newUserDetails.name}</strong></p>
+      <p className="mb-4">كلمة المرور الافتراضية: <strong>{newUserDetails.password}</strong></p>
+      <Button onClick={() => setShowNewUserAlert(false)} className="mt-4">
+        غلق
+      </Button>
+    </div>
+  </div>
+)}
 
       {showDelete && (
         <GlobalConfirmDeleteModal

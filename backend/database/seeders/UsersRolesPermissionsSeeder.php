@@ -11,10 +11,11 @@ use Spatie\Permission\PermissionRegistrar;
 
 class UsersRolesPermissionsSeeder extends Seeder
 {
-        public function run(): void
-        {
-            // إلغاء الكاش لضمان تحديث الصلاحيات
-            app()[PermissionRegistrar::class]->forgetCachedPermissions();
+    public function run(): void
+    {
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+      app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
             // 1. إنشاء كل الصلاحيات المطلوبة لجميع الأقسام
             $modules = [
@@ -46,58 +47,72 @@ class UsersRolesPermissionsSeeder extends Seeder
                 }
             }
 
-            // 2. إنشاء الدور Admin
-            $adminRole = Role::firstOrCreate([
-                'name' => 'Admin',
-                'guard_name' => 'api',
-            ]);
+        $adminRole = Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'api']);
+        $managerRole = Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'api']);
+        $userRole = Role::firstOrCreate(['name' => 'User', 'guard_name' => 'api']);
 
-            // 3. إعطاء جميع الصلاحيات للمسؤول الأول (محمد)
-            $allPermissions = Permission::all();
-            $mohamed = User::create([
-                'name' => 'د. محمد',
-                'email' => 'mohamed@almadar.ly',
+        $allPermissions = Permission::all();
+        $managerPermissions = Permission::whereIn('name', [
+            'view archive', 'view legaladvices', 'view litigations', 'view contracts', 'view investigations', 'view reports', 'view profile', 'edit profile'
+        ])->get();
+
+        $userPermissions = Permission::whereIn('name', [
+            'view legaladvices', 'view contracts', 'view profile', 'edit profile'
+        ])->get();
+
+        // Admin users
+        $adminUsers = [
+            ['name' => 'د. محمد', 'email' => 'mohamed@almadar.ly', 'image' => 'users_images/admin1.png'],
+            ['name' => 'أ. عدنان', 'email' => 'adnan@almadar.ly', 'image' => 'users_images/admin2.jpg'],
+            ['name' => 'أ. سكينة', 'email' => 'sakeena@almadar.ly', 'image' => 'users_images/admin4.png'],
+            ['name' => 'أدمن 4',   'email' => 'admin4@almadar.ly', 'image' => 'users_images/admin3.jpg'],
+            ['name' => 'أدمن 5',   'email' => 'admin5@almadar.ly', 'image' => 'users_images/admin5.jpg'],
+        ];
+
+        foreach ($adminUsers as $adminData) {
+            $admin = User::create([
+                'name' => $adminData['name'],
+                'email' => $adminData['email'],
                 'password' => Hash::make('Askar@1984'),
                 'password_changed' => true,
-                'image' => 'users_images/admin1.png',
+                'image' => $adminData['image'],
             ]);
-            $mohamed->assignRole($adminRole);
-            $mohamed->syncPermissions($allPermissions); // إعطاء جميع الصلاحيات بما في ذلك صلاحيات إدارة المستخدمين
-
-            // 4. إنشاء باقي المسؤولين وتخصيص الصلاحيات
-            $otherAdmins = [
-                ['name' => 'أ. عدنان', 'email' => 'adnan@almadar.ly', 'image' => 'users_images/admin2.jpg'],
-                ['name' => 'أ. سكينة', 'email' => 'sakeena@almadar.ly', 'image' => 'users_images/admin4.png'],
-                ['name' => 'أدمن 4',   'email' => 'admin4@almadar.ly', 'image' => 'users_images/admin3.jpg'],
-                ['name' => 'أدمن 5',   'email' => 'admin5@almadar.ly', 'image' => 'users_images/admin5.jpg'],
-            ];
-
-            foreach ($otherAdmins as $adminData) {
-    $admin = User::create([
-        'name' => $adminData['name'],
-        'email' => $adminData['email'],
-        'password' => Hash::make('Askar@1984'),
-        'password_changed' => true,
-        'image' => $adminData['image'],
-    ]);
-
-    $admin->assignRole($adminRole);
-
-    // ✖️ استثناء صلاحيات المستخدمين والأدوار والصلاحيات من التفعيل
-    $excluded = [
-        'users', 'roles', 'permissions'
-    ];
-
-    $grantedPermissions = Permission::all()->filter(function ($perm) use ($excluded) {
-        foreach ($excluded as $ex) {
-            if (str_contains($perm->name, $ex)) return false;
+            $admin->assignRole($adminRole);
+            $admin->syncPermissions($allPermissions);
         }
-        return true;
-    });
 
-    // ✅ منح باقي الصلاحيات فقط
-    $admin->syncPermissions($grantedPermissions);
-}
+        // Managers
+        $additionalManagers = [
+            ['name' => 'Manager User 1', 'email' => 'manager1@almadar.ly'],
+            ['name' => 'Manager User 2', 'email' => 'manager2@almadar.ly'],
+        ];
 
+        foreach ($additionalManagers as $managerData) {
+            $manager = User::create([
+                'name' => $managerData['name'],
+                'email' => $managerData['email'],
+                'password' => Hash::make('Manager123!'),
+                'password_changed' => true,
+            ]);
+            $manager->assignRole($managerRole);
+            $manager->syncPermissions($managerPermissions);
+        }
+
+        // Users
+        $additionalUsers = [
+            ['name' => 'User 1', 'email' => 'user1@almadar.ly'],
+            ['name' => 'User 2', 'email' => 'user2@almadar.ly'],
+        ];
+
+        foreach ($additionalUsers as $userData) {
+            $user = User::create([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'password' => Hash::make('User123!'),
+                'password_changed' => true,
+            ]);
+            $user->assignRole($userRole);
+            $user->syncPermissions($userPermissions);
         }
     }
+}
