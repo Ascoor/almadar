@@ -23,7 +23,7 @@ class LegalAdviceController extends Controller
      */
     public function index()
     {
-        $legalAdvices = LegalAdvice::with('adviceType')->get();
+        $legalAdvices = LegalAdvice::with('adviceType','updater','creator')->get();
         return response()->json($legalAdvices);
     }
 
