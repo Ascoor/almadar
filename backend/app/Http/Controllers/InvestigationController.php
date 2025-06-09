@@ -40,7 +40,8 @@ class InvestigationController extends Controller
         AdminNotifier::notifyAll(
             '🕵️‍♂️ تحقيق جديد',
             'تمت إضافة تحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id
+            '/investigations/' . $investigation->id,
+     auth()->id()
         );
 
         return response()->json([
@@ -73,7 +74,8 @@ class InvestigationController extends Controller
         AdminNotifier::notifyAll(
             '✏️ تعديل تحقيق',
             'تم تعديل التحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id
+            '/investigations/' . $investigation->id,
+     auth()->id()
         );
 
         return response()->json([

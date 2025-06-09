@@ -60,7 +60,8 @@ class LegalAdviceController extends Controller
         AdminNotifier::notifyAll(
             '📄 مشورة جديدة',
             'تمت إضافة مشورة بعنوان: ' . $advice->topic,
-            '/legal-advices/' . $advice->id
+            '/legal-advices/' . $advice->id,
+     auth()->id()
         );
 
         // 7) Return JSON response
@@ -104,7 +105,8 @@ class LegalAdviceController extends Controller
         AdminNotifier::notifyAll(
             '✏️ تعديل مشورة',
             'تم تعديل مشورة بعنوان: ' . $legalAdvice->topic,
-            '/legal-advices/' . $legalAdvice->id
+            '/legal-advices/' . $legalAdvice->id,
+     auth()->id()
         );
 
         // 7) Return JSON

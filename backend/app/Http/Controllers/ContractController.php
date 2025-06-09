@@ -48,7 +48,8 @@ class ContractController extends Controller
 AdminNotifier::notifyAll(
     '📄 عقد جديد',
     'تمت إضافة عقد رقم: ' . $contract->number . ' بواسطة ' . auth()->user()->name,
-    '/contracts/' . $contract->id
+    '/contracts/' . $contract->id,
+     auth()->id()
 );
         return response()->json([
             'message' => 'تم إنشاء العقد بنجاح.',
@@ -81,7 +82,8 @@ AdminNotifier::notifyAll(
 AdminNotifier::notifyAll(
     '✏️ تعديل عقد',
     'تم تعديل عقد رقم: ' . $contract->number . ' بواسطة ' . auth()->user()->name,
-    '/contracts/' . $contract->id
+    '/contracts/' . $contract->id,
+     auth()->id()
 );
 
         return response()->json([

@@ -58,7 +58,8 @@ class LitigationController extends Controller
         AdminNotifier::notifyAll(
             '📄 قضية جديدة',
             'تمت إضافة قضية برقم: ' . $litigation->case_number,
-            '/litigations/' . $litigation->id
+            '/litigations/' . $litigation->id,
+     auth()->id()
         );
 
         return response()->json([
@@ -77,7 +78,8 @@ class LitigationController extends Controller
         AdminNotifier::notifyAll(
             '✏️ تعديل قضية',
             'تم تعديل القضية رقم: ' . $litigation->case_number,
-            '/litigations/' . $litigation->id
+            '/litigations/' . $litigation->id,
+     auth()->id()
         );
 
         return response()->json([

@@ -25,7 +25,8 @@ class LitigationActionController extends Controller
         AdminNotifier::notifyAll(
             '📄 إجراء قضائي جديد',
             'تمت إضافة إجراء على القضية: ' . $litigation->case_number,
-            '/litigations/' . $litigation->id
+            '/litigations/' . $litigation->id,
+     auth()->id()
         );
 
         return response()->json([
@@ -48,7 +49,8 @@ class LitigationActionController extends Controller
         AdminNotifier::notifyAll(
             '✏️ تعديل إجراء قضائي',
             'تم تعديل إجراء في القضية: ' . $litigation->case_number,
-            '/litigations/' . $litigation->id
+            '/litigations/' . $litigation->id,
+     auth()->id()
         );
 
         return response()->json([
