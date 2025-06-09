@@ -1,14 +1,10 @@
-import { useState, useContext } from "react";
+import { useState, useContext, lazy, Suspense } from "react";
 import { toast } from 'sonner';
 import { deleteLegalAdvice } from "@/services/api/legalAdvices";
 import { getAdviceTypes } from "../services/api/adviceTypes.js";
-
-import LegalAdviceModal from "../components/LegalAdvices/LegalAdviceModal";
-import GlobalConfirmDeleteModal from "../components/common/GlobalConfirmDeleteModal";
 import TableComponent from "../components/common/TableComponent";
 import SectionHeader from "../components/common/SectionHeader";
 import { Button } from "../components/ui/button";
-import LegalAdviceDetails from "../components/LegalAdvices/LegalAdviceDetails";
 import { LegalAdviceIcon } from "../assets/icons";
 import { AuthContext } from "@/components/auth/AuthContext";
 import { motion } from 'framer-motion';
@@ -16,6 +12,9 @@ import { motion } from 'framer-motion';
 import { useLegalAdvices } from "@/hooks/dataHooks"; // ✅ من React Query
 import { useQuery } from "@tanstack/react-query"; // لاستدعاء أنواع المشورة
 import API_CONFIG  from "@/config/config";
+const LegalAdviceModal = lazy(() => import("../components/LegalAdvices/LegalAdviceModal"));
+const LegalAdviceDetails = lazy(() => import("../components/LegalAdvices/LegalAdviceDetails"));
+const GlobalConfirmDeleteModal = lazy(() => import("../components/common/GlobalConfirmDeleteModal"));
 
 export default function LegalAdvicePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -119,28 +118,35 @@ export default function LegalAdvicePage() {
             selectedAdvice?.id === row.id && (
               <tr>
                 <td colSpan={7} className="bg-muted/40 px-4 pb-6">
-                  <LegalAdviceDetails selected={selectedAdvice} onClose={() => setSelectedAdvice(null)} />
-                </td>
+                       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
+                    <LegalAdviceDetails selected={selectedAdvice} onClose={() => setSelectedAdvice(null)} />
+                  </Suspense>                </td>
               </tr>
             )
           }
         />
       </motion.div>
 
-      <LegalAdviceModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        adviceTypes={adviceTypes}
-        initialData={editingAdvice}
-        reload={refetchAdvices} // ✅ تحديث القائمة بعد إضافة/تعديل
-      />
+     <Suspense fallback={null}>
+        {isModalOpen && (
+          <LegalAdviceModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            adviceTypes={adviceTypes}
+            initialData={editingAdvice}
+            reload={refetchAdvices}
+          />
+        )}
 
-      <GlobalConfirmDeleteModal
-        isOpen={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={handleConfirmDelete}
-        itemName={deleteTarget?.topic || "المشورة"}
-      />
+        {deleteTarget && (
+          <GlobalConfirmDeleteModal
+            isOpen={!!deleteTarget}
+            onClose={() => setDeleteTarget(null)}
+            onConfirm={handleConfirmDelete}
+            itemName={deleteTarget?.topic || "المشورة"}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

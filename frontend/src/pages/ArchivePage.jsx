@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import SectionHeader from '@/components/common/SectionHeader';
-import PDFViewer from '@/components/PDFViewer';
+import React, { useEffect, useState ,lazy,Suspense} from 'react';
+
 import { getArchiveFiles } from '@/services/api/archives';
 import { toast } from 'sonner';
 import { FolderKanban, FolderOpenDot, ChevronsDown, ChevronsLeft, FileText } from 'lucide-react';
 import API_CONFIG from '@/config/config';
 import { ArchiveSection } from '@/assets/icons';
 
+const SectionHeader = lazy(() => import('@/components/common/SectionHeader'));
+const PDFViewer = lazy(() => import('@/components/PDFViewer'));
 export default function ArchivePage() {
   const [archives, setArchives] = useState({});
   const [openFolders, setOpenFolders] = useState({});
@@ -45,7 +46,10 @@ export default function ArchivePage() {
 
   return (
     <div className="p-6 space-y-8 overflow-y-auto max-h-screen">
-      <SectionHeader icon={ArchiveSection} listName="الأرشيف" />
+     <Suspense fallback={<div className="text-center text-sm">تحميل العنوان...</div>}>
+        <SectionHeader icon={ArchiveSection} listName="الأرشيف" />
+      </Suspense>
+
       {Object.keys(archives).length === 0 ? (
         <p className="text-center text-gray-500">لا توجد ملفات حالياً.</p>
       ) : (
@@ -89,7 +93,9 @@ export default function ArchivePage() {
             <h3 className="text-lg font-semibold">معاينة الملف</h3>
             <button onClick={() => setPreviewFile(null)} className="text-red-500 hover:underline">إغلاق</button>
           </div>
-          <PDFViewer fileUrl={previewFile} />
+            <Suspense fallback={<div className="text-center text-sm">تحميل عارض PDF...</div>}>
+            <PDFViewer fileUrl={previewFile} />
+          </Suspense>
         </div>
       )}
     </div>

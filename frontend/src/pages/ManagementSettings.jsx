@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import  React,{ useState, lazy, Suspense } from 'react';
 import { Plus, Trash, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
-import { motion, AnimatePresence } from 'framer-motion';
-import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteModal';
-import SectionHeader from '@/components/common/SectionHeader';
+import { motion, AnimatePresence } from 'framer-motion';  
 import { useAuth } from '@/components/auth/AuthContext';
 import { MainProcedures } from '@/assets/icons';
 import { useContractCategories, useAdviceTypes, useActionTypes } from '@/hooks/dataHooks';
-
+import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import {
   deleteContractCategory,
   createContractCategory,
@@ -29,6 +27,8 @@ import {
   updateAdviceType,
 } from '@/services/api/legalAdvices';
 import { useQueryClient } from '@tanstack/react-query';
+const GlobalConfirmDeleteModal = lazy(() => import('@/components/common/GlobalConfirmDeleteModal'));
+const SectionHeader = lazy(() => import('@/components/common/SectionHeader'));
 
 const ITEMS_PER_PAGE = 5;
 
@@ -235,10 +235,12 @@ queryClient.invalidateQueries({ queryKey: ['adviceTypes'] });
 
   return (
     <motion.div className="p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 60, damping: 14 }}>
-        <SectionHeader listName="قوائم البيانات" icon={MainProcedures} />
-      </motion.div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 mt-8">
+         <Suspense fallback={<AuthSpinner/>}>
+        <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 60, damping: 14 }}>
+          <SectionHeader listName="قوائم البيانات" icon={MainProcedures} />
+        </motion.div>
+      </Suspense>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 mt-8">
         {renderTable('إجراءات التقاضي', litigationTypes, 'litigation', 0.1)}
         {renderTable('إجراءات التحقيق', investigationTypes, 'investigation', 0.2)}
         {renderTable('فئات العقود', contractCategories, 'contract', 0.3)}
@@ -263,12 +265,16 @@ queryClient.invalidateQueries({ queryKey: ['adviceTypes'] });
           </motion.div>
         )}
       </AnimatePresence>
-      <GlobalConfirmDeleteModal
-        isOpen={confirmDelete.isOpen}
-        onClose={() => setConfirmDelete({ isOpen: false, id: null, name: '', type: '' })}
-        onConfirm={handleDelete}
-        itemName={confirmDelete.name}
-      />
+      <Suspense fallback={null}>
+        {confirmDelete.isOpen && (
+          <GlobalConfirmDeleteModal
+            isOpen={confirmDelete.isOpen}
+            onClose={() => setConfirmDelete({ isOpen: false, id: null, name: '', type: '' })}
+            onConfirm={handleDelete}
+            itemName={confirmDelete.name}
+          />
+        )}
+      </Suspense>
     </motion.div>
   );
 }

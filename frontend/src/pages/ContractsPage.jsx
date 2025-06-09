@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ContractsTable from '../components/Contracts/ContractsTable';
-import SectionHeader from '../components/common/SectionHeader';
 import { getContractCategories } from '../services/api/contracts';
 import { LocalIcon, InternationalIcon } from '../assets/icons';
 import { useNavigate } from 'react-router-dom';
 import { useContracts } from '@/hooks/dataHooks'; // ✅ استخدم الهُوك المُخصص
+const SectionHeader = lazy(() => import('../components/common/SectionHeader'));
+const ContractsTable = lazy(() => import('../components/Contracts/ContractsTable'));
 
 export default function Contracts() {
   const [activeTab, setActiveTab] = useState('local');
@@ -46,10 +46,12 @@ export default function Contracts() {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: 'spring', stiffness: 70, damping: 14 }}
       >
-        <SectionHeader
-          icon={activeTab === 'local' ? LocalIcon : InternationalIcon}
-          listName={activeTab === 'local' ? 'العقود المحلية' : 'العقود الدولية'}
-        />
+        <Suspense fallback={<div className="text-center text-sm">تحميل العنوان...</div>}>
+          <SectionHeader
+            icon={activeTab === 'local' ? LocalIcon : InternationalIcon}
+            listName={activeTab === 'local' ? 'العقود المحلية' : 'العقود الدولية'}
+          />
+        </Suspense>
       </motion.div>
 
       <div className="flex justify-center gap-4">
@@ -78,13 +80,15 @@ export default function Contracts() {
             transition={{ type: 'spring', stiffness: 60, damping: 14, delay: 0.1 }}
             className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
           >
-            <ContractsTable
-              contracts={contracts}
-              categories={categories}
-              reloadContracts={refetch}
-              scope={activeTab}
-              loading={isLoading}
-            />
+            <Suspense fallback={<div className="text-center text-sm">جاري تحميل الجدول...</div>}>
+              <ContractsTable
+                contracts={contracts}
+                categories={categories}
+                reloadContracts={refetch}
+                scope={activeTab}
+                loading={isLoading}
+              />
+            </Suspense> 
           </motion.div>
         </AnimatePresence>
       </div>

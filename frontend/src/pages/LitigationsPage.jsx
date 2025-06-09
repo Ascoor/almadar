@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import SectionHeader from "@/components/common/SectionHeader";
-import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
-import UnifiedLitigationsTable from "@/components/Litigations/UnifiedLitigationsTable"; 
+import SectionHeader from "@/components/common/SectionHeader"; 
 import { deleteLitigation } from "@/services/api/litigations";
 import { CaseIcon } from "@/assets/icons";
 import { useLitigations } from "@/hooks/dataHooks"; // ✅ hook من React Query
+const UnifiedLitigationsTable = lazy(() => import("@/components/Litigations/UnifiedLitigationsTable"));
+const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalConfirmDeleteModal"));
 
 export default function LitigationsPage() {
   const [activeTab, setActiveTab] = useState("against");
@@ -98,25 +98,32 @@ export default function LitigationsPage() {
               delay: 0.1
             }}
           >
-            <Card className="p-4 sm:p-6 rounded-xl shadow-md border overflow-x-auto bg-card text-card-foreground">
-              <UnifiedLitigationsTable
-                litigations={filteredLitigations}
-                reloadLitigations={refetch}
-                scope={activeTab}
-                onDelete={setLitigationToDelete}
-                loading={isLoading}
-              />
+               <Card className="p-4 sm:p-6 rounded-xl shadow-md border overflow-x-auto bg-card text-card-foreground">
+              <Suspense fallback={<div>تحميل الجدول...</div>}>
+                <UnifiedLitigationsTable
+                  litigations={filteredLitigations}
+                  reloadLitigations={refetch}
+                  scope={activeTab}
+                  onDelete={setLitigationToDelete}
+                  loading={isLoading}
+                />
+              </Suspense>
             </Card>
           </motion.div>
         </AnimatePresence>
       </motion.div>
 
-      <GlobalConfirmDeleteModal
-        isOpen={!!litigationToDelete}
-        onClose={() => setLitigationToDelete(null)}
-        onConfirm={handleConfirmDelete}
-        itemName={litigationToDelete?.case_number || "الدعوى"}
-      />
+
+      <Suspense fallback={null}>
+        {litigationToDelete && (
+          <GlobalConfirmDeleteModal
+            isOpen={!!litigationToDelete}
+            onClose={() => setLitigationToDelete(null)}
+            onConfirm={handleConfirmDelete}
+            itemName={litigationToDelete?.case_number || "الدعوى"}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

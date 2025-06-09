@@ -1,8 +1,9 @@
-import React from 'react';
-import DashboardStats from './DashboardStats';
-import RecentItems from './RecentItems';
-import { motion } from 'framer-motion';
-import { Separator } from '@/components/ui/separator'; // استيراد مكون Separator
+import React, { Suspense, lazy } from 'react';
+ import { motion } from 'framer-motion';
+ import { Separator } from '@/components/ui/separator'; // استيراد مكون Separator
+ 
+ const DashboardStats = lazy(() => import('./DashboardStats'));
+ const RecentItems = lazy(() => import('./RecentItems'));
 
 // Variants للتحكم في الرسوم المتحركة للعناوين
 const titleVariants = {
@@ -66,7 +67,9 @@ const Dashboard = () => {
         initial="hidden"
         animate="show"
       >
-        <RecentItems />
+     <Suspense fallback={<div className="text-center text-sm">تحميل العناصر الحديثة...</div>}>
+          <RecentItems />
+        </Suspense>
       </motion.div>
     </>
   );

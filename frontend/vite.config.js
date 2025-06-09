@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
 import { componentTagger } from 'lovable-tagger';
-
+import { splitVendorChunkPlugin } from 'vite';
 export default defineConfig(({ mode }) => ({
   server: {
     proxy: {
@@ -21,15 +21,15 @@ export default defineConfig(({ mode }) => ({
     include: ['socket.io-client', 'laravel-echo'],
   },
 
-  plugins: [
+   plugins: [
     react(),
-    mode === 'development' && componentTagger(),
+    splitVendorChunkPlugin(),
+
     VitePWA({
       registerType: 'autoUpdate',
-      devOptions: {
-        enabled: true,
-        type: 'module',
-      },
+      injectRegister: 'auto',
+      devOptions: { enabled: mode === 'development' },
+
       manifest: {
         short_name: 'Almadar',
         name: 'نظام إدارة مكاتب المحاماة',
@@ -46,36 +46,85 @@ export default defineConfig(({ mode }) => ({
           { src: 'splash-image.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
           { src: 'splash-image.png', sizes: '512x512', type: 'image/png' },
         ],
-      },workbox: {
-  globDirectory: 'dist', // المجلد الذي يحتوي على الملفات لتخزينها مؤقتاً
-  globPatterns: [
-    '**/*.{js,css,html}', // تحديد أنواع الملفات التي سيتم تخزينها مؤقتاً
-  ],
-  globIgnores: [
-    '**/node_modules/**/*', // تجاهل ملفات node_modules
-    'sw.js',                // تجاهل ملف service worker نفسه
-    'workbox-*.js',         // تجاهل ملفات workbox الخاصة
-  ],
-  runtimeCaching: [
-    {
-      urlPattern: /^https:\/\/your-api-domain\.com\/.*$/, // تحديد نمط URL للـ API
-      handler: 'NetworkFirst', // محاولة أولاً للحصول على البيانات من الشبكة
-      options: {
-        cacheName: 'api-cache', // اسم الذاكرة المؤقتة
       },
-    },
-    {
-      urlPattern: /\.(?:js|css|html)$/, // تحديد أنواع الملفات الثابتة مثل JS و CSS و HTML
-      handler: 'StaleWhileRevalidate', // تقديم النسخة المخزنة مؤقتاً أولاً ثم إعادة التحديث في الخلفية
-      options: {
-        cacheName: 'static-assets', // اسم الذاكرة المؤقتة للملفات الثابتة
-      },
-    },
-  ],
-},
+       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
+        globDirectory: 'dist',
+        globPatterns: ['**/*.{js,css,html,png,jpg,svg,ico,webp}'],
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//],
 
+        runtimeCaching: [
+          {
+            urlPattern: new RegExp(`^${process.env.VITE_API_BASE_URL}/.*`),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              networkTimeoutSeconds: 10,
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 5 * 60,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: /\.(?:js|css|html|png|jpg|svg|ico|webp)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'static-assets',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 7 * 24 * 60 * 60,
+              },
+            },
+          },
+        ],
+      },
     }),
   ].filter(Boolean),
+
+    build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            // PDF.js & react-pdf & react-pdf-viewer
+            if (/node_modules[\\/](pdfjs-dist|react-pdf|@react-pdf-viewer)/.test(id)) {
+              return 'vendor_pdf';
+            }
+            // Office & docx & xlsx
+            if (/node_modules[\\/](docx|xlsx)/.test(id)) {
+              return 'vendor_office';
+            }
+            // Radix UI و lucide-react
+            if (/node_modules[\\/](?:@radix-ui[\\/]react-(?:dialog|label|select|separator|slot|tooltip)|lucide-react)/.test(id)) {
+              return 'vendor_ui';
+            }
+            // React Query & axios & tesseract.js
+            if (/node_modules[\\/](?:@tanstack[\\/]react-query|axios|tesseract\.js)/.test(id)) {
+              return 'vendor_data';
+            }
+            // Workbox & PWA
+            if (/node_modules[\\/](?:workbox-build|workbox-window|vite-plugin-pwa)/.test(id)) {
+              return 'vendor_pwa';
+            }
+            // Sonner (notifications)
+            if (/node_modules[\\/]sonner/.test(id)) {
+              return 'vendor_toast';
+            }
+            // أيّ حزم أخرى تجمعها في ملف واحد خفيف
+            return 'vendor';
+          }
+}
+
+      },
+    },
+  },
 
   resolve: {
     alias: {
