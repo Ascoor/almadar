@@ -1,5 +1,5 @@
  
-import React from 'react';
+import React ,{useState,useEffect,useRef  }from 'react';
 import { ToggleLeft, ToggleRight } from 'lucide-react';
 import { toast } from "sonner";
 
@@ -37,89 +37,128 @@ const translateSection = (section) => {
   return map[section] || section;
 };
 
-const groupPermissionsBySection = (allPermissions = [], userPermissions = []) => {
-  const userPermissionNames = new Set(userPermissions.map(p => p.name.toLowerCase()));
-  return allPermissions.reduce((acc, perm) => {
-    const [action, ...sectionParts] = perm.name.toLowerCase().split(' ');
-    const section = sectionParts.join(' ');
-    if (!section) return acc; // تجاهل أي صلاحية ليس فيها قسم
-
-    if (!acc[section]) acc[section] = [];
+const groupPermissionsBySection = (all = [], user = []) => {
+  const have = new Set(user.map(p => p.name.toLowerCase()));
+  return all.reduce((acc, perm) => {
+    let [action, ...parts] = perm.name.toLowerCase().split(' ');
+    if (action === 'update') action = 'edit';
+    const section = parts.join(' ');
+    if (!section) return acc;
+    acc[section] = acc[section]||[];
     acc[section].push({
-      ...perm,
+      id:      perm.id,
+      name:    perm.name.toLowerCase(),
       action,
-      enabled: userPermissionNames.has(perm.name.toLowerCase()),
+      enabled: have.has(perm.name.toLowerCase()),
     });
     return acc;
   }, {});
 };
-const PermissionRow = ({ action, enabled, onChange, canChange }) => (
-  <div className="flex items-center justify-between w-full p-2 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md transition-transform transform hover:scale-105 mb-2">
-    <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 flex-1">
-      {translatePermission(action)}
-    </label>
+
+const PermissionRow = ({ label, enabled, disabled, onToggle }) => (
+  <div className="flex items-center justify-between p-2 bg-gray-100 dark:bg-gray-700 rounded mb-2">
+    <span className="font-medium">{label}</span>
     <button
+      className={`text-2xl ${disabled ? 'opacity-50' : 'cursor-pointer'}`}
+      disabled={disabled}
       onClick={() => {
-        if (!canChange) {
-          toast('لا يمكن منح الصلاحية. يرجى تفعيل صلاحية العرض أولاً.');
+        if (disabled) {
+          toast('يجب تفعيل "عرض" أولاً.');
           return;
         }
-        onChange();
+        onToggle(!enabled);
       }}
-      className="focus:outline-none cursor-pointer text-2xl"
-      title={!canChange ? 'الصلاحية مقيدة بدون "عرض"' : ''}
     >
-      {enabled ? (
-        <ToggleRight className="text-green-500" />
-      ) : (
-        <ToggleLeft className="text-red-500" />
-      )}
+      {enabled
+        ? <ToggleRight className="text-green-500"/>
+        : <ToggleLeft  className="text-red-500"/>
+      }
     </button>
   </div>
 );
 
-const PermissionsSection = ({ allPermissions, userPermissions, handlePermissionChange, loading }) => {
-  const { hasPermission } = useAuth(); // ⬅️ Get it from context
+export default function PermissionsSection({
+  allPermissions,
+  userPermissions,
+  handlePermissionChange,
+  loading
+}) {
+  const { hasPermission } = useAuth();
+  const [local, setLocal] = useState({});
+  const isInitialized = useRef(false);
 
-  const grouped = groupPermissionsBySection(allPermissions, userPermissions);
-  const sections = Object.entries(grouped);
+  useEffect(() => {
+    if (!isInitialized.current) {
+      setLocal(groupPermissionsBySection(allPermissions, userPermissions));
+      isInitialized.current = true;
+    }
+  }, [allPermissions, userPermissions]);
 
+  const toggleLocal = (permName, val) => {
+    setLocal(prev => {
+      const out = {};
+      for (const [sec, perms] of Object.entries(prev)) {
+        out[sec] = perms.map(p =>
+          p.name === permName ? { ...p, enabled: val } : p
+        );
+      }
+      return out;
+    });
+    handlePermissionChange(permName, val);
+  };
   return (
-    <div className="permissions-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {sections.map(([section, perms]) => {
-        const viewPermission = perms.find(p => p.action === 'view');
-        const isViewEnabled = viewPermission?.enabled ?? false;
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {Object.entries(local).map(([section, perms]) => {
+        const viewPerm = perms.find(p => p.action === 'view');
+        const isViewOn  = viewPerm?.enabled ?? false;
+
+        // Special handler for view toggle
+        const onViewToggle = (val) => {
+          if (!hasPermission('edit permissions')) {
+            toast.error('ليست لديك صلاحية تعديل الصلاحيات');
+            return;
+          }
+          // Toggle view itself
+          toggleLocal(viewPerm.name, val);
+          // If turning off view, also turn off all others
+          if (!val) {
+            perms
+              .filter(p => p.action !== 'view' && p.enabled)
+              .forEach(p => toggleLocal(p.name, false));
+          }
+        };
 
         return (
-          <div key={section} className="p-4 bg-white dark:bg-gray-800 rounded shadow flex flex-col">
-            <h3 className="text-lg font-bold mb-3 text-center text-green-800 dark:text-white">
+          <div key={section} className="p-4 bg-white dark:bg-gray-800 rounded shadow">
+            <h3 className="text-center font-bold mb-4">
               {translateSection(section)}
             </h3>
 
-            {['view', 'create', 'edit', 'delete'].map((actionType) => {
-              const permission = perms.find(p => p.action === actionType);
-              if (!permission) return null;
+            {['view','create','edit','delete'].map(actionType => {
+              const perm = perms.find(p => p.action === actionType);
+              if (!perm) return null;
 
-              const canChange = isViewEnabled || actionType === 'view';
+              const disabled = loading
+                ? true
+                : (actionType !== 'view' && !isViewOn);
+
+              const onToggle = actionType === 'view'
+                ? onViewToggle
+                : (val) => {
+                    if (!hasPermission('edit permissions')) {
+                      toast.error('ليست لديك صلاحية تعديل الصلاحيات');
+                      return;
+                    }
+                    toggleLocal(perm.name, val);
+                  };
 
               return (
                 <PermissionRow
-                  key={permission.id}
-                  action={permission.action}
-                  enabled={permission.enabled}
-                  canChange={canChange && !loading}
-                  onChange={() => {
-if (
-  hasPermission('edit permissions') ||
-  hasPermission('create permissions') ||
-  hasPermission('delete permissions')
-) {
-
-                      handlePermissionChange(permission.name, !permission.enabled);
-                    } else {
-                      toast.error('ليست لديك صلاحية تعديل الصلاحيات');
-                    }
-                  }}
+                  key={perm.id}
+                  label={translatePermission(actionType)}
+                  enabled={perm.enabled}
+                  disabled={disabled}
+                  onToggle={onToggle}
                 />
               );
             })}
@@ -128,7 +167,4 @@ if (
       })}
     </div>
   );
-};
-
-
-export default PermissionsSection;
+}

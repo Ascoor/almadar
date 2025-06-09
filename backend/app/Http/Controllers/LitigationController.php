@@ -5,40 +5,62 @@ namespace App\Http\Controllers;
 use App\Models\Litigation;
 use Illuminate\Http\Request;
 use App\Helpers\AdminNotifier;
+use Spatie\Permission\Models\Permission;
 
 class LitigationController extends Controller
 {
     public function __construct()
-{
-    foreach ($this->getModulePermissions() as $module => $actions) {
-        foreach ($actions as $action) {
-            $methods = $this->getPermissionMethodMap()[$action] ?? [];
-            if (!empty($methods)) {
-                $this->middleware("permission:{$action} {$module}")->only($methods);
-            }
+    {
+        // build your permission-to-method map
+        $map = [
+            'view'   => ['index', 'show'],
+            'create' => ['store'],
+            'edit'   => ['update'],
+            'delete' => ['destroy'],
+        ];
+
+        // list all of your "modules" here
+        $modules = [
+            'litigations',
+            'litigation-from',
+            'litigation-from-actions',
+            'litigation-against',
+            'litigation-against-actions',
+        ];
+
+        foreach ($map as $action => $methods) {
+            // build a pipe-separated list: "view litigations|view litigation-from|…"
+            $perms = array_map(
+                fn($mod) => "$action $mod",
+                $modules
+            );
+
+            // apply ONE middleware with OR-logic for all modules
+            $this
+                ->middleware('permission:' . implode('|', $perms))
+                ->only($methods);
         }
     }
-}
 
-/**
- * Permissions assigned to each module.
- *
- * @return array<string, string[]>
- */
-protected function getModulePermissions(): array
-{
-    return [
-        'litigations' => ['view', 'create', 'edit', 'delete'],
-        'litigation-from' => ['view', 'create', 'edit', 'delete'],
-        'litigation-from-actions' => ['view', 'create', 'edit', 'delete'],
-        'litigation-against' => ['view', 'create', 'edit', 'delete'],
-        'litigation-against-actions' => ['view', 'create', 'edit', 'delete'],
-    ];
-}
-    public function index()
+    // ------------------------------------------------------------
+    // now your routes truly have a 'show' to protect as well
+    // ------------------------------------------------------------
+    public function index(Request $request)
     {
-        $litigations = Litigation::with('actions.actionType')->latest()->paginate(15);
+        // optionally you can still gate by scope if you like:
+        // $this->authorize("view litigation-{$request->scope}");
+
+        $litigations = Litigation::with('actions.actionType')
+                            ->latest()
+                            ->paginate(15);
+
         return response()->json($litigations);
+    }
+
+    public function show(Litigation $litigation)
+    {
+        // again, you could do: $this->authorize("view litigation-{$litigation->scope}");
+        return response()->json($litigation->load('actions.actionType'));
     }
 
     public function store(Request $request)
@@ -46,18 +68,21 @@ protected function getModulePermissions(): array
         $validated = $this->validateLitigation($request);
         $validated['created_by'] = auth()->id();
 
-        $litigation = Litigation::create($validated);
+        // scope‐specific gate, if you want:
+        // $this->authorize("create litigation-{$validated['scope']}");
+
+        $lit = Litigation::create($validated);
 
         AdminNotifier::notifyAll(
             '📄 قضية جديدة',
-            'تمت إضافة قضية برقم: ' . $litigation->case_number,
-            '/litigations/' . $litigation->id,
-     auth()->id()
+            'تمت إضافة قضية برقم: ' . $lit->case_number,
+            "/litigations/{$lit->id}",
+            auth()->id()
         );
 
         return response()->json([
             'message' => 'تم إنشاء القضية بنجاح.',
-            'data'    => $litigation,
+            'data'    => $lit,
         ], 201);
     }
 
@@ -66,13 +91,15 @@ protected function getModulePermissions(): array
         $validated = $this->validateLitigation($request);
         $validated['updated_by'] = auth()->id();
 
+        // $this->authorize("edit litigation-{$litigation->scope}");
+
         $litigation->update($validated);
 
         AdminNotifier::notifyAll(
             '✏️ تعديل قضية',
             'تم تعديل القضية رقم: ' . $litigation->case_number,
-            '/litigations/' . $litigation->id,
-     auth()->id()
+            "/litigations/{$litigation->id}",
+            auth()->id()
         );
 
         return response()->json([
@@ -83,12 +110,14 @@ protected function getModulePermissions(): array
 
     public function destroy(Litigation $litigation)
     {
+        // $this->authorize("delete litigation-{$litigation->scope}");
+
         try {
             $litigation->actions()->delete();
             $litigation->delete();
 
             return response()->json([
-                'message' => 'تم حذف الدعوى القضائية وجميع الإجراءات التابعة لها بنجاح.'
+                'message' => 'تم حذف الدعوى وجميع الإجراءات التابعة لها بنجاح.'
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -112,19 +141,4 @@ protected function getModulePermissions(): array
             'notes'        => 'nullable|string|max:1000',
         ]);
     }
-    
-/**
- * Maps permission actions to controller methods.
- *
- * @return array<string, string[]>
- */
-protected function getPermissionMethodMap(): array
-{
-    return [
-        'view' => ['index', 'show'],
-        'create' => ['store'],
-        'edit' => ['update'],
-        'delete' => ['destroy'],
-    ];
-}
 }
