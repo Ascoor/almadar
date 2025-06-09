@@ -30,36 +30,28 @@ const RecentItems = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      <div className="flex justify-center">
-        <DataCard
-          title="أحدث العقود المضافة"
-          items={latestAddedContracts}
-          type="contracts"
-          icon={<ReceiptText />}
-        />
-      </div>
-      <div className="flex justify-center">
-        <DataCard
-          title="أحدث العقود المحدثة"
-          items={latestUpdatedContracts}
-          type="contracts"
-        />
-      </div>
-      <div className="flex justify-center">
-        <DataCard
-          title="أحدث إجراءات التحقيقات"
-          items={latestInvestigationActions}
-          type="investigation_actions"
-        />
-      </div>
-      <div className="flex justify-center">
-        <DataCard
-          title="أحدث إجراءات القضايا"
-          items={latestLitigationActions}
-          type="litigation_actions"
-        />
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <DataCard
+        title="أحدث العقود المضافة"
+        items={latestAddedContracts}
+        type="contracts"
+        icon={<ReceiptText />}
+      />
+      <DataCard
+        title="أحدث العقود المحدثة"
+        items={latestUpdatedContracts}
+        type="contracts"
+      />
+      <DataCard
+        title="أحدث إجراءات التحقيقات"
+        items={latestInvestigationActions}
+        type="investigation_actions"
+      />
+      <DataCard
+        title="أحدث إجراءات القضايا"
+        items={latestLitigationActions}
+        type="litigation_actions"
+      />
     </div>
   );
 };
