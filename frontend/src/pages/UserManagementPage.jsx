@@ -92,7 +92,7 @@ const { data: rolesData = [], isLoading: rolesLoading } = useRoles();
     }
   };  
 
-const handlePermChange = async (permName, shouldEnable) => {
+const handlePermChange = async (permName, shouldEnable, options = {}) => {
   setLoading(true);
   try {
     await changeUserPermission(
@@ -101,22 +101,20 @@ const handlePermChange = async (permName, shouldEnable) => {
       shouldEnable ? 'add' : 'remove'
     );
 
-    toast( 'تم تحديث الصلاحية');
+    if (!options?.batch) {
+      toast('تم تحديث الصلاحية');
+    }
 
-    // استخراج القسم
     const [action, ...sectionParts] = permName.toLowerCase().split(' ');
     const sectionPrefix = sectionParts.join(' ');
 
-    // تعديل الصلاحيات محليًا
     let updatedPermissions;
 
     if (action === 'view' && !shouldEnable) {
-      // عند إلغاء "عرض" → إزالة كل صلاحيات نفس القسم
       updatedPermissions = selectedUser.permissions.filter(
         p => !p.name.toLowerCase().includes(sectionPrefix)
       );
     } else {
-      // تعديل صلاحية واحدة فقط
       const index = selectedUser.permissions.findIndex(p => p.name === permName);
       if (index > -1) {
         updatedPermissions = selectedUser.permissions.map(p =>
@@ -132,9 +130,9 @@ const handlePermChange = async (permName, shouldEnable) => {
       permissions: updatedPermissions,
     }));
 
-    await refetchUsers(); // احتياطيًا
+    await refetchUsers();
   } catch (error) {
-    toast(  'فشل في تحديث الصلاحية');
+    toast('فشل في تحديث الصلاحية');
   } finally {
     setLoading(false);
   }
