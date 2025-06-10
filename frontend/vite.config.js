@@ -1,12 +1,11 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
-
+import { VitePWA } from 'vite-plugin-pwa';
+import { componentTagger } from 'lovable-tagger';
+import { splitVendorChunkPlugin } from 'vite';
 export default defineConfig(({ mode }) => ({
   server: {
-    host: '::',
-    port: 3000,
     proxy: {
       '/broadcasting': 'http://127.0.0.1:8000',
       '/socket.io': {
@@ -14,29 +13,20 @@ export default defineConfig(({ mode }) => ({
         ws: true,
       },
     },
+    host: '::',
+    port: 3000,
   },
-
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-  },
-
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'socket.io-client', 'laravel-echo'],
-  },
-
-  plugins: [
+optimizeDeps: {
+  include: ['react', 'react-dom', 'socket.io-client', 'laravel-echo'],
+},
+   plugins: [
     react(),
-    splitVendorChunkPlugin(),
 
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      devOptions: {
-        enabled: mode === 'development',
-      },
+      devOptions: { enabled: mode === 'development' },
+
       manifest: {
         short_name: 'Almadar',
         name: 'نظام إدارة مكاتب المحاماة',
@@ -54,13 +44,14 @@ export default defineConfig(({ mode }) => ({
           { src: 'splash-image.png', sizes: '512x512', type: 'image/png' },
         ],
       },
-      workbox: {
+       workbox: {
         skipWaiting: true,
         clientsClaim: true,
         globDirectory: 'dist',
         globPatterns: ['**/*.{js,css,html,png,jpg,svg,ico,webp}'],
         navigateFallback: '/index.html',
-navigateFallbackDenylist: [/^\/api\//],
+        navigateFallbackDenylist: [/^\/api\//],
+
         runtimeCaching: [
           {
             urlPattern: new RegExp(`^${process.env.VITE_API_BASE_URL}/.*`),
@@ -70,7 +61,7 @@ navigateFallbackDenylist: [/^\/api\//],
               networkTimeoutSeconds: 10,
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 300, // 5 minutes
+                maxAgeSeconds: 5 * 60,
               },
               cacheableResponse: {
                 statuses: [0, 200],
@@ -84,23 +75,29 @@ navigateFallbackDenylist: [/^\/api\//],
               cacheName: 'static-assets',
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+                maxAgeSeconds: 7 * 24 * 60 * 60,
               },
             },
           },
         ],
       },
     }),
-  ],
+  ].filter(Boolean),
 
-  build: {
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+  },
+      build: {
     chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         manualChunks: {
           react: ['react', 'react-dom'],
           pdf: ['pdfjs-dist', '@/components/PDFViewer'],
-          ui: ['lucide-react', '@headlessui/react'],
+          ui: ['lucide-react'],
           vendor: ['socket.io-client', 'laravel-echo'],
         },
       },
