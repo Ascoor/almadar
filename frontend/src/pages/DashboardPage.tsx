@@ -10,26 +10,53 @@ import {
   AlertCircle,
   CheckCircle,
   BarChart3,
-  Calendar
+  Calendar,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import SectionHeader from '@/components/common/SectionHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
+
+interface Stat {
+  title: string;
+  value: string;
+  change: string;
+  icon: LucideIcon;
+  color: string;
+  bgColor: string;
+}
+
+interface Activity {
+  id: number;
+  type: string;
+  title: string;
+  time: string;
+  status: 'success' | 'warning' | 'info';
+}
+
+interface Task {
+  id: number;
+  title: string;
+  deadline: string;
+  priority: 'urgent' | 'high' | 'medium' | string;
+}
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const { isRTL } = useLanguage();
 
-  const stats = [
+  const stats: Stat[] = [
     {
       title: 'إجمالي العقود',
       value: '1,247',
       change: '+12%',
       icon: FileText,
       color: 'text-blue-600',
-      bgColor: 'bg-blue-100'
+      bgColor: 'bg-blue-100',
     },
     {
       title: 'الاستشارات القانونية',
@@ -37,7 +64,7 @@ const DashboardPage: React.FC = () => {
       change: '+8%',
       icon: Scale,
       color: 'text-green-600',
-      bgColor: 'bg-green-100'
+      bgColor: 'bg-green-100',
     },
     {
       title: 'التحقيقات الجارية',
@@ -45,7 +72,7 @@ const DashboardPage: React.FC = () => {
       change: '-3%',
       icon: Search,
       color: 'text-orange-600',
-      bgColor: 'bg-orange-100'
+      bgColor: 'bg-orange-100',
     },
     {
       title: 'القضايا النشطة',
@@ -53,60 +80,60 @@ const DashboardPage: React.FC = () => {
       change: '+5%',
       icon: Gavel,
       color: 'text-red-600',
-      bgColor: 'bg-red-100'
-    }
+      bgColor: 'bg-red-100',
+    },
   ];
 
-  const recentActivities = [
+  const recentActivities: Activity[] = [
     {
       id: 1,
       type: 'contract',
       title: 'تم إنشاء عقد جديد - شركة النور للتطوير',
       time: 'منذ ساعتين',
-      status: 'success'
+      status: 'success',
     },
     {
       id: 2,
       type: 'litigation',
       title: 'تحديث في القضية رقم 2024/123',
       time: 'منذ 4 ساعات',
-      status: 'warning'
+      status: 'warning',
     },
     {
       id: 3,
       type: 'advice',
       title: 'طلب استشارة جديد من العميل أحمد محمد',
       time: 'منذ 6 ساعات',
-      status: 'info'
+      status: 'info',
     },
     {
       id: 4,
       type: 'investigation',
       title: 'انتهاء التحقيق في قضية التزوير',
       time: 'أمس',
-      status: 'success'
-    }
+      status: 'success',
+    },
   ];
 
-  const upcomingTasks = [
+  const upcomingTasks: Task[] = [
     {
       id: 1,
       title: 'مراجعة عقد شركة المستقبل',
       deadline: '2024-12-20',
-      priority: 'high'
+      priority: 'high',
     },
     {
       id: 2,
       title: 'جلسة محكمة - القضية 2024/089',
       deadline: '2024-12-22',
-      priority: 'urgent'
+      priority: 'urgent',
     },
     {
       id: 3,
       title: 'تسليم التقرير القانوني النهائي',
       deadline: '2024-12-25',
-      priority: 'medium'
-    }
+      priority: 'medium',
+    },
   ];
 
   const getPriorityColor = (priority: string) => {
@@ -156,7 +183,7 @@ const DashboardPage: React.FC = () => {
                       <p className="text-sm font-medium text-muted-foreground mb-1">
                         {stat.title}
                       </p>
-                      <div className="flex items-center space-x-2 space-x-reverse">
+                      <div className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
                         <h3 className="text-2xl font-bold text-card-foreground">
                           {stat.value}
                         </h3>
@@ -188,7 +215,7 @@ const DashboardPage: React.FC = () => {
           >
             <Card className="professional-card">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 space-x-reverse">
+                <CardTitle className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
                   <Clock className="w-5 h-5 text-primary" />
                   <span>الأنشطة الأخيرة</span>
                 </CardTitle>
@@ -199,7 +226,7 @@ const DashboardPage: React.FC = () => {
                     key={activity.id}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="flex items-start space-x-3 space-x-reverse p-3 rounded-lg hover:bg-accent/50 transition-colors"
+                    className={`flex items-start space-x-3 ${isRTL ? 'space-x-reverse' : ''} p-3 rounded-lg hover:bg-accent/50 transition-colors`}
                   >
                     <div className="flex-shrink-0">
                       {activity.status === 'success' && (
@@ -239,7 +266,7 @@ const DashboardPage: React.FC = () => {
           >
             <Card className="professional-card">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 space-x-reverse">
+                <CardTitle className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
                   <Calendar className="w-5 h-5 text-primary" />
                   <span>المهام القادمة</span>
                 </CardTitle>

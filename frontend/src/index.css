@@ -20,13 +20,13 @@
     --popover-foreground: 218 25% 15%;
 
     /* Primary Brand Colors - Deep Navy */
-    --primary: 218 35% 25%;
+    --primary: 221 39% 18%;
     --primary-foreground: 0 0% 98%;
     --primary-hover: 218 40% 20%;
     --primary-light: 218 25% 35%;
 
     /* Secondary Colors - Professional Blue */
-    --secondary: 210 20% 94%;
+    --secondary: 190 65% 45%;
     --secondary-foreground: 218 25% 25%;
     --secondary-hover: 210 25% 90%;
 
@@ -35,7 +35,7 @@
     --muted-foreground: 218 15% 45%;
 
     /* Accent Colors - Sophisticated Blue */
-    --accent: 214 25% 88%;
+    --accent: 43 96% 56%;
     --accent-foreground: 218 30% 20%;
     --accent-hover: 214 30% 82%;
 
@@ -99,12 +99,12 @@
     --popover: 218 25% 12%;
     --popover-foreground: 210 15% 90%;
 
-    --primary: 214 85% 65%;
+    --primary: 221 39% 15%;
     --primary-foreground: 218 30% 8%;
     --primary-hover: 214 90% 70%;
     --primary-light: 214 80% 75%;
 
-    --secondary: 218 20% 18%;
+    --secondary: 190 65% 38%;
     --secondary-foreground: 210 15% 85%;
     --secondary-hover: 218 25% 22%;
 
