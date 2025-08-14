@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronRight, LogOut, User } from 'lucide-react';
+import {
+  LayoutDashboard,
+  FileText,
+  Scale,
+  Search,
+  Users,
+  Settings,
+  Gavel,
+  Archive,
+  ChevronRight,
+  LogOut,
+  User,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/context/LanguageContext';
 import {
@@ -13,13 +26,83 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/components/auth/AuthContext';
-import { navigationItems, adminItems } from './sidebar';
+
+interface NavItem {
+  titleKey: string;
+  url?: string;
+  icon: LucideIcon;
+  permission?: string;
+  children?: NavItem[];
+}
+
+const navigationItems: NavItem[] = [
+  {
+    titleKey: 'navigation.dashboard',
+    url: '/',
+    icon: LayoutDashboard,
+    permission: 'dashboard',
+  },
+  {
+    titleKey: 'navigation.contracts',
+    url: '/contracts',
+    icon: FileText,
+    permission: 'contracts',
+  },
+  {
+    titleKey: 'navigation.legal',
+    icon: Scale,
+    children: [
+      {
+        titleKey: 'navigation.legalAdvice',
+        url: '/legal/legal-advices',
+        icon: Scale,
+        permission: 'legal-advice',
+      },
+      {
+        titleKey: 'navigation.investigations',
+        url: '/legal/investigations',
+        icon: Search,
+        permission: 'investigations',
+      },
+      {
+        titleKey: 'navigation.litigations',
+        url: '/legal/litigations',
+        icon: Gavel,
+        permission: 'litigations',
+      },
+    ],
+  },
+  {
+    titleKey: 'navigation.archive',
+    url: '/archive',
+    icon: Archive,
+    permission: 'archive',
+  },
+];
+
+const adminItems: NavItem[] = [
+  {
+    titleKey: 'navigation.users',
+    url: '/users',
+    icon: Users,
+    permission: 'users',
+  },
+  {
+    titleKey: 'navigation.settings',
+    url: '/settings',
+    icon: Settings,
+    permission: 'settings',
+  },
+];
 
 export function AppSidebar() {
   const { open } = useSidebar();
@@ -29,6 +112,7 @@ export function AppSidebar() {
   const { isRTL } = useLanguage();
   const currentPath = location.pathname;
   const collapsed = !open;
+  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   const isActive = (path: string) => currentPath === path;
   
@@ -37,13 +121,18 @@ export function AppSidebar() {
       ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
       : "hover:bg-sidebar-accent/50 text-sidebar-foreground hover:text-sidebar-accent-foreground";
 
-  const hasPermission = (permission: string) => {
+  const hasPermission = (permission?: string) => {
+    if (!permission) return false;
     return user?.permissions.includes(permission) || user?.role === 'Admin';
   };
 
+  const toggleItem = (key: string) =>
+    setOpenItems((prev) => ({ ...prev, [key]: !prev[key] }));
+
   return (
     <Sidebar
-      className={`${collapsed ? "w-16" : "w-64"} sidebar-transition border-r border-sidebar-border`}
+      side={isRTL ? 'right' : 'left'}
+      className={`${collapsed ? "w-16" : "w-64"} sidebar-transition ${isRTL ? 'border-l' : 'border-r'} border-sidebar-border`}
       collapsible="icon"
     >
       <SidebarContent className="bg-sidebar">
@@ -84,25 +173,72 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => (
-                hasPermission(item.permission) && (
+              {navigationItems.map((item) => {
+                const showItem = item.children
+                  ? item.children.some((child) => hasPermission(child.permission))
+                  : hasPermission(item.permission);
+                if (!showItem) return null;
+                const isOpen = openItems[item.titleKey];
+                return (
                   <SidebarMenuItem key={item.titleKey}>
-                    <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavCls}>
-                        <item.icon className={`h-5 w-5 ${collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'}`} />
-                        {!collapsed && (
-                          <>
-                            <span className="flex-1">{t(item.titleKey)}</span>
-                            {isActive(item.url) && (
-                              <ChevronRight className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} />
+                    {item.children ? (
+                      <>
+                        <SidebarMenuButton asChild>
+                          <button
+                            onClick={() => toggleItem(item.titleKey)}
+                            className={getNavCls({ isActive: isOpen })}
+                          >
+                            <item.icon className={`h-5 w-5 ${collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'}`} />
+                            {!collapsed && (
+                              <>
+                                <span className="flex-1">{t(item.titleKey)}</span>
+                                <ChevronRight
+                                  className={`h-4 w-4 transition-transform ${
+                                    isRTL ? 'rotate-180' : ''
+                                  } ${isOpen ? (isRTL ? '-rotate-90' : 'rotate-90') : ''}`}
+                                />
+                              </>
                             )}
-                          </>
+                          </button>
+                        </SidebarMenuButton>
+                        {isOpen && (
+                          <SidebarMenuSub>
+                            {item.children.map((child) =>
+                                hasPermission(child.permission) ? (
+                                <SidebarMenuSubItem key={child.titleKey}>
+                                  <SidebarMenuSubButton
+                                    asChild
+                                    isActive={isActive(child.url)}
+                                  >
+                                    <NavLink to={child.url}>
+                                      <child.icon className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                      <span>{t(child.titleKey)}</span>
+                                    </NavLink>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ) : null
+                            )}
+                          </SidebarMenuSub>
                         )}
-                      </NavLink>
-                    </SidebarMenuButton>
+                      </>
+                    ) : (
+                      <SidebarMenuButton asChild>
+                        <NavLink to={item.url} className={getNavCls}>
+                          <item.icon className={`h-5 w-5 ${collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'}`} />
+                          {!collapsed && (
+                            <>
+                              <span className="flex-1">{t(item.titleKey)}</span>
+                              {isActive(item.url) && (
+                                <ChevronRight className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} />
+                              )}
+                            </>
+                          )}
+                        </NavLink>
+                      </SidebarMenuButton>
+                    )}
                   </SidebarMenuItem>
-                )
-              ))}
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
