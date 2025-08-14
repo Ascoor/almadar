@@ -4,6 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from '@/components/ui/tooltip';
+import {
   LayoutDashboard,
   FileText,
   Search,
@@ -20,7 +26,7 @@ import {
 import { useContext, useState } from 'react';
 import { AuthContext } from '@/components/auth/AuthContext';
 
-const menuItems = [
+export const menuItems = [
   {
     title: 'الرئيسية',
     href: '/',
@@ -119,65 +125,89 @@ export function Sidebar() {
 
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.includes(item.href);
+    const active = isActive(item.href);
 
     if (hasChildren) {
-      return (
-        <div key={item.href}>
-          <Button
-            variant="ghost"
-            className={cn(
-              'w-full justify-between h-11 px-3',
-              level > 0 && 'mr-4',
-              collapsed && 'justify-center px-2'
-            )}
-            onClick={() => toggleExpanded(item.href)}
-          >
-            <div className="flex items-center gap-3">
-              <item.icon className="h-5 w-5 flex-shrink-0" />
-              {!collapsed && (
-                <span className="text-sm font-medium">{item.title}</span>
-              )}
-            </div>
-            {!collapsed && (
-              <ChevronLeft
-                className={cn(
-                  'h-4 w-4 transition-transform',
-                  isExpanded && 'rotate-90'
-                )}
-              />
-            )}
-          </Button>
-
-          {!collapsed && isExpanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="space-y-1 mr-6 mt-1">
-                {item.children?.map((child) => renderMenuItem(child, level + 1))}
-              </div>
-            </motion.div>
+      const content = (
+        <Button
+          variant="ghost"
+          className={cn(
+            'w-full justify-between h-11 px-3',
+            level > 0 && 'mr-4',
+            collapsed && 'justify-center px-2'
           )}
+          onClick={() => !collapsed && toggleExpanded(item.href)}
+        >
+          <div className="flex items-center gap-3">
+            <item.icon
+              className={cn(
+                'h-5 w-5 flex-shrink-0',
+                active ? 'text-accent-foreground' : 'text-muted-foreground'
+              )}
+            />
+            {!collapsed && (
+              <span className="text-sm font-medium">{item.title}</span>
+            )}
+          </div>
+          {!collapsed && (
+            <ChevronLeft
+              className={cn(
+                'h-4 w-4 transition-transform',
+                isExpanded && 'rotate-90'
+              )}
+            />
+          )}
+        </Button>
+      );
+
+      const children =
+        !collapsed && isExpanded ? (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-1 mr-6 mt-1">
+              {item.children?.map((child) => renderMenuItem(child, level + 1))}
+            </div>
+          </motion.div>
+        ) : null;
+
+      if (collapsed) {
+        return (
+          <Tooltip key={`${item.href}-${level}`}>
+            <TooltipTrigger asChild>{content}</TooltipTrigger>
+            <TooltipContent side="right">{item.title}</TooltipContent>
+          </Tooltip>
+        );
+      }
+
+      return (
+        <div key={`${item.href}-${level}`}>
+          {content}
+          {children}
         </div>
       );
     }
 
-    return (
+    const link = (
       <NavLink
-        key={item.href}
+        key={`${item.href}-${level}`}
         to={item.href}
-        className={({ isActive }) =>
-          cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-            level > 0 && 'mr-4',
-            collapsed && 'justify-center px-2',
-            isActive && 'bg-accent text-accent-foreground'
-          )
-        }
+        className={cn(
+          'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+          level > 0 && 'mr-4',
+          collapsed && 'justify-center px-2',
+          active && 'bg-accent text-accent-foreground'
+        )}
       >
-        <item.icon className="h-5 w-5 flex-shrink-0" />
+        <item.icon
+          className={cn(
+            'h-5 w-5 flex-shrink-0',
+            active ? 'text-accent-foreground' : 'text-muted-foreground'
+          )}
+        />
         {!collapsed && (
           <>
             <span className="flex-1">{item.title}</span>
@@ -190,17 +220,29 @@ export function Sidebar() {
         )}
       </NavLink>
     );
+
+    if (collapsed) {
+      return (
+        <Tooltip key={`${item.href}-${level}`}>
+          <TooltipTrigger asChild>{link}</TooltipTrigger>
+          <TooltipContent side="right">{item.title}</TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return link;
   };
 
   return (
-    <motion.aside
-      initial={{ x: -280 }}
-      animate={{ x: 0 }}
-      className={cn(
-        'flex flex-col border-l bg-card transition-all duration-300',
-        collapsed ? 'w-16' : 'w-64'
-      )}
-    >
+    <TooltipProvider>
+      <motion.aside
+        initial={{ x: -280 }}
+        animate={{ x: 0 }}
+        className={cn(
+          'hidden md:flex flex-col border-l bg-card transition-all duration-300 overflow-hidden',
+          collapsed ? 'w-16' : 'w-64'
+        )}
+      >
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-4">
         {collapsed ? (
@@ -240,6 +282,7 @@ export function Sidebar() {
         </Button>
       </div>
     </motion.aside>
+    </TooltipProvider>
   );
 }
 
