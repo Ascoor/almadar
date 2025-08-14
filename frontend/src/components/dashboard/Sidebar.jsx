@@ -1,210 +1,246 @@
-import React, { useState, useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
-import { LogoArt, LogoPatren } from '../../assets/images';
-import {  
-  ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
-  ArchiveIcon, CourtHouseIcon, LawBookIcon, LegalBriefcaseIcon
-} from '@/components/ui/Icons';
-import { UsersRound, UserCheck, ChevronRight } from 'lucide-react';
-import { useMobileTheme } from '../MobileThemeProvider';
+import { motion } from 'framer-motion';
+import { NavLink, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import {
+  LayoutDashboard,
+  FileText,
+  Search,
+  Scale,
+  Users,
+  Archive,
+  Settings,
+  ChevronLeft,
+  Building2,
+  MessageSquare,
+  List,
+  User,
+} from 'lucide-react';
+import { useContext, useState } from 'react';
+import { AuthContext } from '@/components/auth/AuthContext';
 
-const Sidebar = ({ isOpen, onToggle, onLinkClick }) => {
-  const [activeSection, setActiveSection] = useState(null);
-  const [showMiniSidebar, setShowMiniSidebar] = useState(false);  // Track mini sidebar state
-  const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
+const menuItems = [
+  {
+    title: 'الرئيسية',
+    href: '/',
+    icon: LayoutDashboard,
+  },
+  {
+    title: 'التعاقدات',
+    href: '/contracts',
+    icon: FileText,
+    permission: 'view contracts',
+  },
+  {
+    title: 'الرأي والفتوى',
+    href: '#',
+    icon: Scale,
+    children: [
+      {
+        title: 'التحقيقات',
+        href: '/legal/investigations',
+        icon: Search,
+        permission: 'view investigations',
+      },
+      {
+        title: 'المشورة القانونية',
+        href: '/legal/legal-advices',
+        icon: MessageSquare,
+        permission: 'view legaladvices',
+      },
+      {
+        title: 'التقاضي',
+        href: '/legal/litigations',
+        icon: Building2,
+        permission: 'view litigations',
+      },
+    ],
+  },
+  {
+    title: 'إدارة التطبيق',
+    href: '#',
+    icon: Settings,
+    children: [
+      {
+        title: 'القوائم',
+        href: '/managment-lists',
+        icon: List,
+        permission: 'view managment-lists',
+      },
+    ],
+  },
+  {
+    title: 'إدارة المستخدمين',
+    href: '#',
+    icon: Users,
+    children: [
+      {
+        title: 'المستخدمين',
+        href: '/users',
+        icon: User,
+        permission: 'view users',
+      },
+    ],
+  },
+  {
+    title: 'الأرشيف',
+    href: '/archive',
+    icon: Archive,
+  },
+];
 
-  const logoSrc = isOpen ? LogoPatren : LogoArt;
+export function Sidebar() {
+  const { user } = useContext(AuthContext);
+  const location = useLocation();
+  const [collapsed, setCollapsed] = useState(false);
+  const [expandedItems, setExpandedItems] = useState([]);
 
-  const navConfig = useMemo(() => [
-    { id: 'home', label: 'الرئيسية', to: '/', icon: <DashboardIcon size={20} /> },
-    { id: 'contracts', label: 'التعاقدات', to: '/contracts', icon: <ContractsIcon size={20} /> },
-    {
-      id: 'fatwa', label: 'الرأي والفتوى', icon: <ConsultationsIcon size={20} />, children: [
-        { id: 'investigations', label: 'التحقيقات', to: '/legal/investigations', icon: <LawsuitsIcon size={16} /> },
-        { id: 'legal-advices', label: 'المشورة القانونية', to: '/legal/legal-advices', icon: <LawBookIcon size={16} /> },
-        { id: 'litigations', label: 'التقاضي', to: '/legal/litigations', icon: <CourtHouseIcon size={16} /> },
-      ]
-    },
-    {
-      id: 'management', label: 'إدارة التطبيق', icon: <LegalBriefcaseIcon size={20} />, children: [
-        { id: 'lists', label: 'القوائم', to: '/managment-lists', icon: <LegalBriefcaseIcon size={16} /> },
-      ]
-    },
-    {
-      id: 'users', label: 'إدارة المستخدمين', icon: <UsersRound size={20} />, children: [
-        { id: 'users-list', label: 'المستخدمين', to: '/users', icon: <UserCheck size={16} /> },
-      ]
-    },
-    { id: 'archive', label: 'الأرشيف', to: '/archive', icon: <ArchiveIcon size={20} /> },
-  ], []);
-
-  const handleSectionClick = (id, hasChildren) => {
-    if (isMobile && !isOpen) onToggle();
-    if (hasChildren) setActiveSection(prev => (prev === id ? null : id));
+  const hasPermission = (permission) => {
+    if (!permission) return true;
+    return user?.permissions?.includes(permission) || false;
   };
 
-  const sidebarStyles = {
-    paddingTop: isStandalone && isMobile ? `${safeAreaInsets.top + 16}px` : undefined,
-    paddingBottom: isStandalone && isMobile ? `${safeAreaInsets.bottom + 16}px` : undefined
+  const isActive = (href) => {
+    if (href === '/') return location.pathname === '/';
+    return location.pathname.startsWith(href);
   };
 
-  const handleToggleSidebar = () => {
-    setShowMiniSidebar(prev => !prev);  // Toggle mini sidebar visibility
+  const toggleExpanded = (href) => {
+    setExpandedItems((prev) =>
+      prev.includes(href) ? prev.filter((item) => item !== href) : [...prev, href]
+    );
+  };
+
+  const renderMenuItem = (item, level = 0) => {
+    if (item.permission && !hasPermission(item.permission)) {
+      return null;
+    }
+
+    const hasChildren = item.children && item.children.length > 0;
+    const isExpanded = expandedItems.includes(item.href);
+
+    if (hasChildren) {
+      return (
+        <div key={item.href}>
+          <Button
+            variant="ghost"
+            className={cn(
+              'w-full justify-between h-11 px-3',
+              level > 0 && 'mr-4',
+              collapsed && 'justify-center px-2'
+            )}
+            onClick={() => toggleExpanded(item.href)}
+          >
+            <div className="flex items-center gap-3">
+              <item.icon className="h-5 w-5 flex-shrink-0" />
+              {!collapsed && (
+                <span className="text-sm font-medium">{item.title}</span>
+              )}
+            </div>
+            {!collapsed && (
+              <ChevronLeft
+                className={cn(
+                  'h-4 w-4 transition-transform',
+                  isExpanded && 'rotate-90'
+                )}
+              />
+            )}
+          </Button>
+
+          {!collapsed && isExpanded && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="space-y-1 mr-6 mt-1">
+                {item.children?.map((child) => renderMenuItem(child, level + 1))}
+              </div>
+            </motion.div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <NavLink
+        key={item.href}
+        to={item.href}
+        className={({ isActive }) =>
+          cn(
+            'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+            level > 0 && 'mr-4',
+            collapsed && 'justify-center px-2',
+            isActive && 'bg-accent text-accent-foreground'
+          )
+        }
+      >
+        <item.icon className="h-5 w-5 flex-shrink-0" />
+        {!collapsed && (
+          <>
+            <span className="flex-1">{item.title}</span>
+            {item.badge && (
+              <Badge variant="secondary" className="text-xs">
+                {item.badge}
+              </Badge>
+            )}
+          </>
+        )}
+      </NavLink>
+    );
   };
 
   return (
-    <aside
-      dir="rtl"
-      className={`
-        fixed top-0 z-20 h-full bg-navy-light dark:bg-navy-dark 
-        bg-gradient-to-b from-gold via-greenic-dark/50 to-royal/80
-        dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/40
-        transition-all duration-300
-        ${isMobile ? 
-          (isOpen ? 'w-full mt-12' : 'translate-x-full') : 
-          (isOpen ? 'w-64' : showMiniSidebar ? 'w-16' : 'w-0')  // Handle mini sidebar
-        }
-        ${isStandalone ? 'standalone-sidebar' : ''}
-      `}
-      style={sidebarStyles}
+    <motion.aside
+      initial={{ x: -280 }}
+      animate={{ x: 0 }}
+      className={cn(
+        'flex flex-col border-l bg-card transition-all duration-300',
+        collapsed ? 'w-16' : 'w-64'
+      )}
     >
-      <div className={`flex items-center justify-center p-0 mt-6`}>
-        <img
-          src={logoSrc}
-          alt="Logo"
-          className={`transition-all duration-300 ${isOpen ? (isMobile ? 'w-32' : 'w-36') : 'w-10'}`}
-        />
-        {isOpen && isMobile && (
-          <button 
-            onClick={onToggle} 
-            className="absolute top-4 left-4 text-white text-2xl"
-          >
-            ×
-          </button>
+      {/* Logo */}
+      <div className="flex h-16 items-center border-b px-4">
+        {collapsed ? (
+          <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
+            <Scale className="h-5 w-5 text-accent-foreground" />
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
+              <Scale className="h-5 w-5 text-accent-foreground" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold">مدار</h1>
+              <p className="text-xs text-muted-foreground">الإدارة القانونية</p>
+            </div>
+          </div>
         )}
       </div>
-      
-      {/* Toggle button for mini sidebar */}
-      {!isMobile && (
-        <button 
-          onClick={handleToggleSidebar} 
-          className="absolute top-4 right-4 text-white text-xl"
-        >
-          {showMiniSidebar ? '☰' : '×'}
-        </button>
-      )}
 
-      <nav className={`px-4 space-y-4 overflow-y-auto h-full pb-20`}>
-        {(isOpen || !isMobile || showMiniSidebar) ? navConfig.map(item => (
-          <div key={item.id}>
-            {item.to ? (
-              <NavLink
-                to={item.to}
-                onClick={onLinkClick}
-                className={({ isActive }) =>
-                  `group flex items-center gap-3 p-2 rounded-md text-sm font-semibold tracking-tight transition-all duration-300
-                   ${isActive
-                    ? 'bg-greenic-dark text-gold-light dark:bg-greenic-light/80 dark:text-royal-dark'
-                    : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/50 dark:hover:text-white'}`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    {React.cloneElement(item.icon, {
-                      className: `transition-colors duration-200
-                        ${isActive
-                          ? 'text-gold-light dark:text-royal-darker'
-                          : 'text-white group-hover:text-greenic-dark dark:group-hover:text-white'}`
-                    })}
-                    <span className="flex-1 text-right">{item.label}</span>
-                  </>
-                )}
-              </NavLink>
-            ) : (
-              <button
-                onClick={() => handleSectionClick(item.id, !!item.children)}
-                className={`flex items-center gap-3 p-2 w-full rounded-md text-sm font-semibold tracking-tight transition-colors duration-200
-                  ${activeSection === item.id
-                    ? 'bg-gold-light text-greenic dark:bg-greenic-light/40 dark:text-gold'
-                    : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/30 dark:hover:text-white'}`}
-              >
-                {React.cloneElement(item.icon, {
-                  className: `transition-colors duration-200
-                    ${activeSection === item.id
-                      ? 'text-gold-light dark:text-gold'
-                      : 'text-white group-hover:text-greenic-dark dark:group-hover:text-gold'}`}
-                )}
-                <span className="flex-1 text-right">{item.label}</span>
-                {item.children && (
-                  <ChevronRight
-                    className={`w-4 h-4 transform transition-transform duration-200
-                      ${activeSection === item.id ? 'rotate-90' : ''}`}
-                  />
-                )}
-              </button>
-            )}
-
-            {item.children && activeSection === item.id && isOpen && (
-              <div className="mr-4 pl-4 border-r border-gray-600 space-y-1">
-                {item.children.map(ch => (
-                  <NavLink
-                    key={ch.id}
-                    to={ch.to}
-                    onClick={onLinkClick}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-300
-                       ${isActive
-                        ? 'bg-gold-light/90 text-greenic-dark dark:bg-greenic-light/60 dark:text-white'
-                        : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/50 dark:hover:text-gold'}`}
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {React.cloneElement(ch.icon, {
-                          className: `transition duration-200
-                            ${isActive
-                              ? 'text-greenic-dark dark:text-white'
-                              : 'group-hover:text-greenic-dark dark:group-hover:text-white'}`,
-                        })}
-                        <span>{ch.label}</span>
-                      </>
-                    )}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
-        )) : (
-          <div className="flex flex-col items-center space-y-4 pt-4">
-            {navConfig.flatMap(item => [
-              ...(item.to ? [item] : []),
-              ...(item.children ? item.children : [])
-            ]).map(it => (
-              <NavLink
-                key={it.id}
-                to={it.to}
-                onClick={onLinkClick}
-                title={it.label}
-                className={({ isActive }) =>
-                  `px-4 py-2 rounded-md transition-all duration-200 font-semibold tracking-tight flex items-center gap-2 group
-                   ${isActive
-                    ? 'bg-greenic-dark text-gold-light shadow-md dark:bg-greenic-light/60 dark:text-gold-light'
-                    : 'text-white hover:bg-gold-light/70 hover:text-greenic dark:hover:bg-greenic/50 dark:text-gold-light'}`}
-              >
-                {({ isActive }) =>
-                  React.cloneElement(it.icon, {
-                    className: `transition duration-200
-                      ${isActive
-                        ? 'text-gold-light dark:text-gold-light'
-                        : 'dark:text-gold-light group-hover:text-greenic-dark dark:group-hover:text-white'}`
-                  })
-                }
-              </NavLink>
-            ))}
-          </div>
-        )}
+      {/* Navigation */}
+      <nav className="flex-1 space-y-2 p-4">
+        {menuItems.map((item) => renderMenuItem(item))}
       </nav>
-    </aside>
+
+      {/* Collapse Toggle */}
+      <div className="border-t p-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setCollapsed(!collapsed)}
+          className={cn('w-full', collapsed && 'px-2')}
+        >
+          <ChevronLeft
+            className={cn('h-4 w-4 transition-transform', collapsed && 'rotate-180')}
+          />
+          {!collapsed && <span className="mr-2">طي الشريط</span>}
+        </Button>
+      </div>
+    </motion.aside>
   );
-};
+}
 
 export default Sidebar;

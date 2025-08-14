@@ -1,50 +1,90 @@
-import Notifications from '../common/DropdownNotifications';
-import UserMenu from '../common/DropdownProfile';
-import ThemeToggle from '../common/ThemeToggle';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Menu } from 'lucide-react';
-import { useMobileTheme } from '../MobileThemeProvider';
+import DropdownNotifications from '@/components/common/DropdownNotifications';
+import DropdownProfile from '@/components/common/DropdownProfile';
+import { Sun, Moon, Menu, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+import { useThemeProvider } from '@/utils/ThemeContext';
 
-export default function Header({ isOpen, user, onToggleSidebar }) {
-  const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
-  
+export function Header() {
+  const { currentTheme, changeCurrentTheme } = useThemeProvider();
+  const toggleTheme = () =>
+    changeCurrentTheme(currentTheme === 'dark' ? 'light' : 'dark');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   return (
-    <nav
-      dir="rtl"
-      className={`
-        fixed top-0 left-0 right-0
-        transition-all duration-300
-        ${isOpen && !isMobile ? 'sm:mr-64' : !isMobile ? 'sm:mr-16' : ''}
-        ${isMobile ? 'px-4 py-2' : 'px-6 py-3'} 
-        flex justify-between items-center
-        bg-navy-light dark:bg-navy-dark 
-        bg-gradient-to-l from-gold via-greenic/80 to-royal/80 
-        dark:bg-gradient-to-l dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/60
-        text-gray-900 dark:text-white
-        border-b border-gray-200 dark:border-navy-dark
-        shadow-md dark:shadow-[0_01px_#16b8f640]
-        z-20
-        ${isStandalone ? 'standalone-header' : ''}
-      `}
-      style={{
-        paddingTop: isStandalone && isMobile ? `max(${safeAreaInsets.top + 8}px, 1rem)` : undefined
-      }}
+    <motion.header
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60"
     >
-      <Button 
-        variant="ghost" 
-        size={isMobile ? "sm" : "icon"} 
-        onClick={onToggleSidebar}
-        className={`${isMobile ? 'px-2 py-1' : ''}`}
-      >
-        <Menu className={`text-white dark:text-greenic hover:text-greenic-light ${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
-      </Button>
- 
-      <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-3'}`}>
-        <Notifications userId={user.id} align="right" />
-        <ThemeToggle />
-        {!isMobile && <div className="hidden sm:block w-px h-6 bg-border" />}
-        <UserMenu align="left" />
+      <div className="flex h-16 items-center justify-between px-6">
+        {/* Right Side - Mobile Menu & Search */}
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="md:hidden">
+            <Menu className="h-5 w-5" />
+          </Button>
+
+          {/* Global Search */}
+          <div className="hidden md:flex relative">
+            {isSearchOpen ? (
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: 300 }}
+                className="relative"
+              >
+                <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="البحث في النظام..."
+                  className="pr-10 pl-4"
+                  onBlur={() => setIsSearchOpen(false)}
+                  autoFocus
+                />
+              </motion.div>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsSearchOpen(true)}
+                className="gap-2"
+              >
+                <Search className="h-4 w-4" />
+                البحث
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Center - Breadcrumb (could be added later) */}
+        <div className="flex-1" />
+
+        {/* Left Side - Actions */}
+        <div className="flex items-center gap-3">
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            className="h-9 w-9 p-0"
+          >
+            {currentTheme === 'dark' ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </Button>
+
+          {/* Notifications */}
+          <DropdownNotifications />
+
+          {/* Profile */}
+          <DropdownProfile />
+        </div>
       </div>
-    </nav>
+    </motion.header>
   );
 }
+
+export default Header;
+
