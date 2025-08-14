@@ -274,7 +274,7 @@ export function Sidebar() {
           )}
         </div>
 
-        {/* Navigation */}
+        {/* Navigation */}my-changes.patch 
         <nav className="flex-1 space-y-2 p-4">
           {menuItems.map((item) => renderMenuItem(item))}
         </nav>
