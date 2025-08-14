@@ -1,11 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { Bell, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/context/LanguageContext';
@@ -17,9 +25,17 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
+
+  const initials = user?.name
+    ? user.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+    : 'U';
 
   return (
     <SidebarProvider>
@@ -35,6 +51,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           >
             <div className="flex items-center justify-between px-6 h-full">
               <div className={`flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-4'}`}>
+                <SidebarTrigger className="md:hidden" />
                 <h1 className="text-xl font-semibold text-foreground">
                   {t('app.name')}
                 </h1>
@@ -71,11 +88,24 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   </Badge>
                 </Button>
 
-                {/* User Info */}
-                <div className={`hidden sm:flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-2'} text-sm`}>
-                  <span className="text-muted-foreground">{t('auth.welcome')}،</span>
-                  <span className="font-medium text-foreground">{user?.name}</span>
-                </div>
+                {/* User Menu */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 rounded-full p-0">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>{initials}</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-40 bg-popover border border-border">
+                    <DropdownMenuItem asChild>
+                      <NavLink to="/profile">{t('navigation.profile')}</NavLink>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                      {t('auth.logout')}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </motion.header>

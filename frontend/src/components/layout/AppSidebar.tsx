@@ -1,21 +1,8 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  LayoutDashboard,
-  FileText,
-  Scale,
-  Search,
-  Users,
-  Settings,
-  Gavel,
-  Archive,
-  ChevronRight,
-  LogOut,
-  User
-} from 'lucide-react';
+import { ChevronRight, LogOut, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { TFunction } from 'i18next';
 import { useLanguage } from '@/context/LanguageContext';
 import {
   Sidebar,
@@ -32,60 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/components/auth/AuthContext';
-
-const getNavigationItems = (t: TFunction) => [
-  {
-    titleKey: 'navigation.dashboard',
-    url: '/',
-    icon: LayoutDashboard,
-    permission: 'dashboard'
-  },
-  {
-    titleKey: 'navigation.contracts',
-    url: '/contracts',
-    icon: FileText,
-    permission: 'contracts'
-  },
-  {
-    titleKey: 'navigation.legalAdvice',
-    url: '/legal/legal-advices',
-    icon: Scale,
-    permission: 'legal-advice'
-  },
-  {
-    titleKey: 'navigation.investigations',
-    url: '/legal/investigations',
-    icon: Search,
-    permission: 'investigations'
-  },
-  {
-    titleKey: 'navigation.litigations',
-    url: '/legal/litigations',
-    icon: Gavel,
-    permission: 'litigations'
-  },
-  {
-    titleKey: 'navigation.archive',
-    url: '/archive',
-    icon: Archive,
-    permission: 'archive'
-  },
-];
-
-const getAdminItems = (t: TFunction) => [
-  {
-    titleKey: 'navigation.users',
-    url: '/users',
-    icon: Users,
-    permission: 'users'
-  },
-  {
-    titleKey: 'navigation.settings',
-    url: '/managment-lists',
-    icon: Settings,
-    permission: 'settings'
-  },
-];
+import { navigationItems, adminItems } from './sidebar';
 
 export function AppSidebar() {
   const { open } = useSidebar();
@@ -106,9 +40,6 @@ export function AppSidebar() {
   const hasPermission = (permission: string) => {
     return user?.permissions.includes(permission) || user?.role === 'Admin';
   };
-
-  const navigationItems = getNavigationItems(t);
-  const adminItems = getAdminItems(t);
 
   return (
     <Sidebar
