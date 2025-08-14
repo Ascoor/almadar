@@ -20,7 +20,7 @@ import {
 import { useContext, useState } from 'react';
 import { AuthContext } from '@/components/auth/AuthContext';
 
-const menuItems = [
+export const menuItems = [
   {
     title: 'الرئيسية',
     href: '/',
@@ -122,7 +122,7 @@ export function Sidebar() {
 
     if (hasChildren) {
       return (
-        <div key={item.href}>
+        <div key={`${item.href}-${level}`}>
           <Button
             variant="ghost"
             className={cn(
@@ -166,7 +166,7 @@ export function Sidebar() {
 
     return (
       <NavLink
-        key={item.href}
+        key={`${item.href}-${level}`}
         to={item.href}
         className={({ isActive }) =>
           cn(
@@ -197,7 +197,7 @@ export function Sidebar() {
       initial={{ x: -280 }}
       animate={{ x: 0 }}
       className={cn(
-        'flex flex-col border-l bg-card transition-all duration-300',
+        'hidden md:flex flex-col border-l bg-card transition-all duration-300',
         collapsed ? 'w-16' : 'w-64'
       )}
     >

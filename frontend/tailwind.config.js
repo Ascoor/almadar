@@ -33,59 +33,21 @@ export default {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
         },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-
-        // Custom palettes
-        reded: {
-          light: '#FCA5A5',
-          DEFAULT: '#EF4444',
-          dark: '#7F1D1D',
-        },
-        greenic: {
-          light: '#81C784',
-          DEFAULT: '#4CAF50',
-          dark: '#388E3C',
-          darker: '#05140f',
-        },
-        navy: {
-           light: '#1A5DAD',
-          DEFAULT: '#0F3460',
-          dark: '#020f23',
-
-          darker: '#020c1a',
-        },
-    royal: {
-          light: '#A3BFFA',       // أزرق ملكي فاتح
-          DEFAULT: '#3B82F6',     // الأزرق الملكي الأساسي
-          dark: '#1E3A8A',        // الأزرق الملكي الداكن
-          darker: '#1E293B',      // الأزرق الملكي الأكثر عمقًا
-          ultraDark: '#0D1720',   // الأزرق الملكي العميق جدًا
-          electric: '#6C7DFF',    // الأزرق الملكي الكهربائي
-        },
-        gold: {
-          light: '#F5DA81',
-          DEFAULT: '#D4AF37',
-          dark: '#A67C00',
-        },
-        specialist: {
-          1: '#5C85FF',
-          2: '#3A5BBC',
-          3: '#203670',
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
       },
 

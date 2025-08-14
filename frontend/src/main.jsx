@@ -1,7 +1,7 @@
 // src/index.jsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom'; 
+import { BrowserRouter } from 'react-router-dom';
 import { registerSW } from 'virtual:pwa-register';
 import { SpinnerProvider } from './context/SpinnerContext';
 import App from './App';
@@ -23,12 +23,15 @@ registerSW({
   onOfflineReady() {
     console.log('App ready to work offline');
   },
+  onRegisterError(error) {
+    console.error('SW registration failed', error);
+  },
 });
 
 root.render(
   <React.StrictMode>
     <ThemeProvider>
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AuthProvider>
           <SpinnerProvider>
             <Toaster 
