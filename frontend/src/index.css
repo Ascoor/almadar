@@ -1,75 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Madar Design System - Arabic RTL Legal Management App */
+
 @layer base {
   :root {
+    /* Madar Brand Colors */
+    --primary: 218 100% 8%; /* Deep navy #0B132B */
+    --primary-foreground: 0 0% 98%;
+    --primary-muted: 218 50% 15%;
+    
+    --accent: 177 69% 55%; /* Teal #5BC0BE */
+    --accent-foreground: 218 100% 8%;
+    --accent-light: 177 69% 85%;
+    
+    --success: 134 61% 41%;
+    --success-foreground: 0 0% 98%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 218 100% 8%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Surface Colors */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    --foreground: 218 100% 8%;
+    
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 218 100% 8%;
+    
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    
+    --secondary: 177 69% 95%;
+    --secondary-foreground: 218 100% 8%;
+    
+    /* Interactive Elements */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 177 69% 55%;
+    
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 220 60% 31%; /* Navy blue */
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 44 65% 53%; /* Gold */
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    /* Mobile-specific CSS variables */
-    --vh: 1vh;
-    --safe-area-inset-top: 0px;
-    --safe-area-inset-bottom: 0px;
-    --safe-area-inset-left: 0px;
-    --safe-area-inset-right: 0px;
+    --popover-foreground: 218 100% 8%;
+    
+    /* Sidebar */
+    --sidebar-background: 218 100% 8%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 177 69% 55%;
+    --sidebar-primary-foreground: 218 100% 8%;
+    --sidebar-accent: 218 50% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 218 50% 15%;
+    --sidebar-ring: 177 69% 55%;
+    
+    /* Design tokens */
+    --radius: 12px;
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.1);
+    --shadow-card: 0 4px 12px -2px hsl(var(--primary) / 0.08);
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-muted)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-light)));
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Typography */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --background: 218 100% 6%;
+    --foreground: 0 0% 98%;
+    
+    --card: 218 50% 8%;
+    --card-foreground: 0 0% 98%;
+    
+    --muted: 218 50% 12%;
+    --muted-foreground: 215 20% 65%;
+    
+    --secondary: 218 50% 10%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --border: 218 50% 15%;
+    --input: 218 50% 15%;
+    
+    --popover: 218 50% 8%;
+    --popover-foreground: 0 0% 98%;
+    
+    --sidebar-background: 218 100% 4%;
+    --sidebar-accent: 218 50% 10%;
   }
 }
 
@@ -77,114 +104,104 @@
   * {
     @apply border-border;
   }
+
+  html {
+    font-family: 'Cairo', system-ui, sans-serif;
+    direction: rtl;
+    lang: ar;
+  }
+
   body {
     @apply bg-background text-foreground;
-    font-family: 'Tajawal', sans-serif;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
-  /* Add RTL support */
-  html[dir="rtl"] .rtl-flip {
-    transform: scaleX(-1);
+  /* RTL-specific adjustments */
+  [dir="rtl"] {
+    text-align: right;
   }
-  
-  /* Specific adjustments for RTL layout */
-  html[dir="rtl"] .mr-auto {
-    margin-right: 0;
-    margin-left: auto;
-  }
-  
-  html[dir="rtl"] .ml-auto {
-    margin-left: 0;
-    margin-right: auto;
+
+  [dir="rtl"] .ltr {
+    direction: ltr;
+    text-align: left;
   }
 }
 
-/* Mobile-specific styles */
 @layer components {
-  .mobile-layout {
-    @apply text-sm;
+  /* Custom scrollbar */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
 
-  .desktop-layout {
-    @apply text-base;
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-muted;
   }
 
-  .standalone-mode {
-    /* Add safe area support for standalone PWA */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
   }
 
-  .standalone-header {
-    padding-top: calc(env(safe-area-inset-top) + 1rem);
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground;
   }
 
-  .standalone-sidebar {
-    padding-top: calc(env(safe-area-inset-top) + 1rem);
-    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  /* Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
   }
 
-  .standalone-main {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 2rem);
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
   }
 
-  .mobile-main {
-    @apply px-3;
+  .animate-slide-down {
+    animation: slideDown 0.3s ease-out;
   }
 
-  .desktop-main {
-    @apply px-6 lg:px-8;
-  }
-
-  /* Responsive navigation adjustments */
-  @media (max-width: 768px) {
-    .mobile-nav {
-      @apply fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 z-50;
-      padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
-    }
-  }
-
-  /* Touch-friendly sizing for mobile */
-  @media (max-width: 768px) {
-    .touch-target {
-      @apply min-h-[44px] min-w-[44px];
-    }
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
   }
 }
 
-/* For Collapsible Sidebar Animation */
-.sidebar-expanded {
-  width: 280px;
-  transition: width 0.3s ease;
-}
-
-.sidebar-collapsed {
-  width: 80px;
-  transition: width 0.3s ease;
-}
-
-.content-expanded {
-  margin-right: 280px;
-  transition: margin-right 0.3s ease;
-}
-
-.content-collapsed {
-  margin-right: 80px;
-  transition: margin-right 0.3s ease;
-}
-
-/* Prevent zoom on iOS */
-@media screen and (max-width: 768px) {
-  input, select, textarea {
-    font-size: 16px !important;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
-/* Fix viewport height issues on mobile browsers */
-@supports (-webkit-touch-callout: none) {
-  .min-h-screen {
-    min-height: calc(var(--vh, 1vh) * 100);
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
