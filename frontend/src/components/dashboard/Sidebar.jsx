@@ -27,40 +27,16 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '@/components/auth/AuthContext';
 
 export const menuItems = [
-  {
-    title: 'الرئيسية',
-    href: '/',
-    icon: LayoutDashboard,
-  },
-  {
-    title: 'التعاقدات',
-    href: '/contracts',
-    icon: FileText,
-    permission: 'view contracts',
-  },
+  { title: 'الرئيسية', href: '/', icon: LayoutDashboard },
+  { title: 'التعاقدات', href: '/contracts', icon: FileText, permission: 'view contracts' },
   {
     title: 'الرأي والفتوى',
     href: '#',
     icon: Scale,
     children: [
-      {
-        title: 'التحقيقات',
-        href: '/legal/investigations',
-        icon: Search,
-        permission: 'view investigations',
-      },
-      {
-        title: 'المشورة القانونية',
-        href: '/legal/legal-advices',
-        icon: MessageSquare,
-        permission: 'view legaladvices',
-      },
-      {
-        title: 'التقاضي',
-        href: '/legal/litigations',
-        icon: Building2,
-        permission: 'view litigations',
-      },
+      { title: 'التحقيقات', href: '/legal/investigations', icon: Search, permission: 'view investigations' },
+      { title: 'المشورة القانونية', href: '/legal/legal-advices', icon: MessageSquare, permission: 'view legaladvices' },
+      { title: 'التقاضي', href: '/legal/litigations', icon: Building2, permission: 'view litigations' },
     ],
   },
   {
@@ -68,12 +44,7 @@ export const menuItems = [
     href: '#',
     icon: Settings,
     children: [
-      {
-        title: 'القوائم',
-        href: '/managment-lists',
-        icon: List,
-        permission: 'view managment-lists',
-      },
+      { title: 'القوائم', href: '/managment-lists', icon: List, permission: 'view managment-lists' },
     ],
   },
   {
@@ -81,19 +52,10 @@ export const menuItems = [
     href: '#',
     icon: Users,
     children: [
-      {
-        title: 'المستخدمين',
-        href: '/users',
-        icon: User,
-        permission: 'view users',
-      },
+      { title: 'المستخدمين', href: '/users', icon: User, permission: 'view users' },
     ],
   },
-  {
-    title: 'الأرشيف',
-    href: '/archive',
-    icon: Archive,
-  },
+  { title: 'الأرشيف', href: '/archive', icon: Archive },
 ];
 
 export function Sidebar() {
@@ -119,9 +81,7 @@ export function Sidebar() {
   };
 
   const renderMenuItem = (item, level = 0) => {
-    if (item.permission && !hasPermission(item.permission)) {
-      return null;
-    }
+    if (item.permission && !hasPermission(item.permission)) return null;
 
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.includes(item.href);
@@ -145,16 +105,11 @@ export function Sidebar() {
                 active ? 'text-accent-foreground' : 'text-muted-foreground'
               )}
             />
-            {!collapsed && (
-              <span className="text-sm font-medium">{item.title}</span>
-            )}
+            {!collapsed && <span className="text-sm font-medium">{item.title}</span>}
           </div>
           {!collapsed && (
             <ChevronLeft
-              className={cn(
-                'h-4 w-4 transition-transform',
-                isExpanded && 'rotate-90'
-              )}
+              className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90')}
             />
           )}
         </Button>
@@ -243,45 +198,45 @@ export function Sidebar() {
           collapsed ? 'w-16' : 'w-64'
         )}
       >
-      {/* Logo */}
-      <div className="flex h-16 items-center border-b px-4">
-        {collapsed ? (
-          <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
-            <Scale className="h-5 w-5 text-accent-foreground" />
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
+        {/* Logo */}
+        <div className="flex h-16 items-center border-b px-4">
+          {collapsed ? (
             <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
               <Scale className="h-5 w-5 text-accent-foreground" />
             </div>
-            <div>
-              <h1 className="text-lg font-bold">مدار</h1>
-              <p className="text-xs text-muted-foreground">الإدارة القانونية</p>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
+                <Scale className="h-5 w-5 text-accent-foreground" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold">مدار</h1>
+                <p className="text-xs text-muted-foreground">الإدارة القانونية</p>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-2 p-4">
-        {menuItems.map((item) => renderMenuItem(item))}
-      </nav>
+        {/* Navigation */}
+        <nav className="flex-1 space-y-2 p-4">
+          {menuItems.map((item) => renderMenuItem(item))}
+        </nav>
 
-      {/* Collapse Toggle */}
-      <div className="border-t p-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setCollapsed(!collapsed)}
-          className={cn('w-full', collapsed && 'px-2')}
-        >
-          <ChevronLeft
-            className={cn('h-4 w-4 transition-transform', collapsed && 'rotate-180')}
-          />
-          {!collapsed && <span className="mr-2">طي الشريط</span>}
-        </Button>
-      </div>
-    </motion.aside>
+        {/* Collapse Toggle */}
+        <div className="border-t p-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCollapsed(!collapsed)}
+            className={cn('w-full', collapsed && 'px-2')}
+          >
+            <ChevronLeft
+              className={cn('h-4 w-4 transition-transform', collapsed && 'rotate-180')}
+            />
+            {!collapsed && <span className="mr-2">طي الشريط</span>}
+          </Button>
+        </div>
+      </motion.aside>
     </TooltipProvider>
   );
 }
