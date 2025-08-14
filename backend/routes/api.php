@@ -32,20 +32,16 @@ use App\Http\Controllers\LitigationActionTypeController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::options('/{any}', function () {
-    return response()->json([], 204);
-})->where('any', '.*'); 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return response()->json([
-        'user' => $request->user(),
-        'roles' => $request->user()->getRoleNames(),
-        'permissions' => $request->user()->getAllPermissions()->pluck('name'),
-    ]);
-});
+Route::middleware('auth:api')->group(function () {
 
-// Protected routes (requires authentication)
-Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return response()->json([
+            'user' => $request->user(),
+            'roles' => $request->user()->getRoleNames(),
+            'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+        ]);
+    });
 
     Route::post('/logout', [AuthController::class, 'logout']);
     
@@ -71,7 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
 Route::post('/users/{id}/first-login-password', [UserController::class, 'firstLoginPassword']);
 
-    Route::get('/notifications', [NotificationController::class, 'getUserNotifications'])->middleware('auth');
+      Route::get('/notifications', [NotificationController::class, 'getUserNotifications']);
   Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
 Route::post('/notifications/mark-all-read', function (Request $request) {

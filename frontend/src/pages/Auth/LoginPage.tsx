@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, Navigate } from 'react-router-dom';
+import { useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ export default function LoginPage() {
   
   const { user, login } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   
   const from = (location.state as { from?: string })?.from || '/';
@@ -35,7 +36,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      // Navigation will be handled by the auth context or password change modal
+      navigate(from, { replace: true });
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
       setError(err.response?.data?.message || 'فشل في تسجيل الدخول');

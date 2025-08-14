@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { getSocket } from '@/services/realtime/initSocket';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import api from '@/lib/axios';
+import api from '@/lib/api';
 
 export type Notification = {
   id: string;
