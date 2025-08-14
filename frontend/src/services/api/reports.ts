@@ -1,4 +1,4 @@
-import { api } from './client';
+import api from '@/lib/axios';
 
 export interface ReportData {
   id: string;
@@ -22,17 +22,17 @@ export interface ReportFilters {
 
 export const reportsApi = {
   getReports: async (filters: ReportFilters = {}): Promise<ReportData[]> => {
-    const { data } = await api.get('/reports', { params: filters });
+    const { data } = await api.get('/api/reports', { params: filters });
     return data;
   },
 
   generateReport: async (type: string, filters: ReportFilters): Promise<ReportData> => {
-    const { data } = await api.post('/reports/generate', { type, filters });
+    const { data } = await api.post('/api/reports/generate', { type, filters });
     return data;
   },
 
   exportReport: async (reportId: string, format: 'csv' | 'pdf' = 'csv'): Promise<Blob> => {
-    const response = await api.get(`/reports/${reportId}/export`, {
+    const response = await api.get(`/api/reports/${reportId}/export`, {
       params: { format },
       responseType: 'blob',
     });

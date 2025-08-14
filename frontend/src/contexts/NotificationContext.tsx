@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { getSocket } from '@/services/realtime/initSocket';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { api } from '@/services/api/client';
+import api from '@/lib/axios';
 
 export type Notification = {
   id: string;
@@ -71,7 +71,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
 
   const loadNotifications = async () => {
     try {
-      const { data } = await api.get<Notification[]>('/notifications');
+      const { data } = await api.get<Notification[]>('/api/notifications');
       setNotifications(data);
     } catch (error) {
       console.error('Failed to load notifications:', error);

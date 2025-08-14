@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -11,14 +11,13 @@ import { Loader2, Eye, EyeOff, Scale } from 'lucide-react';
 import ForcePasswordChangeModal from './ForcePasswordChangeModal';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
   const { user, login } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
   
@@ -35,7 +34,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(username, password);
+      await login(email, password);
       // Navigation will be handled by the auth context or password change modal
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -76,17 +75,17 @@ export default function LoginPage() {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="username">اسم المستخدم</Label>
+              <Label htmlFor="email">البريد الإلكتروني</Label>
               <Input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
                 required
-                autoComplete="username"
+                autoComplete="email"
                 className="text-right"
-                placeholder="أدخل اسم المستخدم"
+                placeholder="أدخل البريد الإلكتروني"
               />
             </div>
             
@@ -124,7 +123,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={isLoading || !username.trim() || !password.trim()}
+              disabled={isLoading || !email.trim() || !password.trim()}
             >
               {isLoading ? (
                 <>
