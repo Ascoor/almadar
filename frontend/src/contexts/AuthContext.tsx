@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import api from '@/lib/axios';
+import api from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { login as loginService, logout as logoutService, getMe } from '@/services/auth';
 
 export type User = { 
   id: string; 
@@ -14,11 +15,11 @@ export type User = {
 type AuthContextType = { 
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
-  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
-  updateProfile: (data: Partial<User>) => Promise<void>;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
+    register: (name: string, email: string, password: string) => Promise<void>;
+    changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+    updateProfile: (data: Partial<User>) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -36,82 +37,73 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuthStatus();
   }, []);
 
-  const checkAuthStatus = async () => {
-    try {
-      const { data } = await api.get('/api/user');
-      setUser(data);
-    } catch (error) {
-      // User not authenticated
+    const checkAuthStatus = async () => {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const data = await getMe();
+        setUser(data);
+      } catch {
+        localStorage.removeItem('access_token');
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const login = async (email: string, password: string) => {
+      try {
+        const userData = await loginService(email, password);
+        setUser(userData);
+        toast({
+          title: 'تم تسجيل الدخول بنجاح',
+          description: `أهلاً بك ${userData.name}`,
+        });
+      } catch (error: unknown) {
+        const err = error as { response?: { data?: { message?: string } } };
+        const message = err.response?.data?.message || 'فشل في تسجيل الدخول';
+        toast({
+          title: 'خطأ في تسجيل الدخول',
+          description: message,
+          variant: 'destructive',
+        });
+        throw err;
+      }
+    };
+
+    const register = async (name: string, email: string, password: string) => {
+      try {
+        const { data } = await api.post('/api/register', { name, email, password });
+        localStorage.setItem('access_token', data.access_token);
+        setUser(data.user);
+        toast({
+          title: 'تم إنشاء الحساب بنجاح',
+          description: `أهلاً بك ${data.user.name}`,
+        });
+      } catch (error: unknown) {
+        const err = error as { response?: { data?: { message?: string } } };
+        const message = err.response?.data?.message || 'فشل في إنشاء الحساب';
+        toast({
+          title: 'خطأ في التسجيل',
+          description: message,
+          variant: 'destructive',
+        });
+        throw err;
+      }
+    };
+
+    const logout = async () => {
+      await logoutService();
       setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const login = async (email: string, password: string) => {
-    try {
-      await api.get('/sanctum/csrf-cookie');
-      await api.post('/login', { email, password });
-      const { data } = await api.get('/api/user');
-      setUser(data);
-      
       toast({
-        title: "تم تسجيل الدخول بنجاح",
-        description: `أهلاً بك ${data.name}`,
+        title: 'تم تسجيل الخروج',
+        description: 'تم تسجيل خروجك بنجاح',
       });
-    } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
-      const message = err.response?.data?.message || 'فشل في تسجيل الدخول';
-      toast({
-        title: "خطأ في تسجيل الدخول",
-        description: message,
-        variant: "destructive",
-      });
-      throw err;
-    }
-  };
-
-  const register = async (name: string, email: string, password: string) => {
-    try {
-      await api.get('/sanctum/csrf-cookie');
-      await api.post('/register', { name, email, password });
-      const { data } = await api.get('/api/user');
-      setUser(data);
-
-      toast({
-        title: "تم إنشاء الحساب بنجاح",
-        description: `أهلاً بك ${data.name}`,
-      });
-    } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
-      const message = err.response?.data?.message || 'فشل في إنشاء الحساب';
-      toast({
-        title: "خطأ في التسجيل",
-        description: message,
-        variant: "destructive",
-      });
-      throw err;
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await api.post('/logout');
-      setUser(null);
-      
-      toast({
-        title: "تم تسجيل الخروج",
-        description: "تم تسجيل خروجك بنجاح",
-      });
-      
-      // Redirect to login
       window.location.href = '/login';
-    } catch (error) {
-      // Even if logout fails, clear user state
-      setUser(null);
-      window.location.href = '/login';
-    }
-  };
+    };
 
   const changePassword = async (currentPassword: string, newPassword: string) => {
     try {

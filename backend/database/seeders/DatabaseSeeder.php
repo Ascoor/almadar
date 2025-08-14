@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
 
 
         $this->call([
- 
+
             UsersRolesPermissionsSeeder::class,
             ContractCategoriesSeeder::class,
             ContractsSeeder::class,
@@ -31,7 +31,8 @@ class DatabaseSeeder extends Seeder
             InvestigationActionSeeder::class,
             LegalAdviceSeeder::class,
             LitigationSeeder::class,
-            LitigationActionsSeeder::class
+            LitigationActionsSeeder::class,
+            PassportClientSeeder::class,
         ]);
     }
 }

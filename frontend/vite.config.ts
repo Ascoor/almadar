@@ -4,18 +4,17 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 import { componentTagger } from "lovable-tagger";
 
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-    proxy: {
-      "/broadcasting": "http://127.0.0.1:8000",
-      "/socket.io": {
-        target: "http://localhost:8080",
-        ws: true,
+  export default defineConfig(({ mode }) => ({
+    server: {
+      host: '127.0.0.1',
+      port: 5173,
+      proxy: {
+        '/api': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+        '/oauth': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+        '/broadcasting': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+        '/socket.io': { target: 'http://127.0.0.1:5173', ws: true },
       },
     },
-  },
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
