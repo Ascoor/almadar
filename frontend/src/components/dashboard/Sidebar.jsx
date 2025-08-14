@@ -23,7 +23,7 @@ import {
   List,
   User,
 } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '@/components/auth/AuthContext';
 
 export const menuItems = [
@@ -111,6 +111,25 @@ export function Sidebar() {
     }
     return isRouteActive(item.href);
   };
+
+  const getActiveParentIds = (items, parents = []) => {
+    for (const item of items) {
+      const newParents = [...parents, item.id];
+      if (item.href && isRouteActive(item.href)) {
+        return parents;
+      }
+      if (item.children) {
+        const result = getActiveParentIds(item.children, newParents);
+        if (result) return result;
+      }
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    const activeParents = getActiveParentIds(menuItems) || [];
+    setExpandedItems(activeParents);
+  }, [location.pathname]);
 
   const toggleExpanded = (id) => {
     setExpandedItems((prev) =>
