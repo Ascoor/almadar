@@ -19,10 +19,10 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const isRTL = i18n.language === 'ar';
 
   return (
-    <LanguageContext.Provider value={{
-      language: i18n.language,
-      setLanguage,
-      isRTL
+    <LanguageContext.Provider value={{ 
+      language: i18n.language, 
+      setLanguage, 
+      isRTL 
     }}>
       {children}
     </LanguageContext.Provider>
