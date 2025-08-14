@@ -1,83 +1,94 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import path from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
-import { componentTagger } from 'lovable-tagger';
+import path from 'path';
+import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
   server: {
-    proxy: {
-      '/broadcasting': 'http://127.0.0.1:8000',
-      '/socket.io': {
-        target: 'http://localhost:8080',
-        ws: true,
-      },
-    },
-    host: '::',
-    port: 3000,
+    host: "::",
+    port: 8080,
   },
-
-  optimizeDeps: {
-    include: ['socket.io-client', 'laravel-echo'],
-  },
-
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
     VitePWA({
-      strategies: 'generateSW',
-      srcDir: 'src',
-      filename: 'sw.js',
-      // Only scan the build folder in production
-      globDirectory: mode === 'production' ? 'dist' : undefined,
-      globPatterns: ['**/*.{js,css,html}'],
-      globIgnores: [
-        '**/node_modules/**/*',
-        'sw.js',
-        'workbox-*.js',
-      ],
+      registerType: 'prompt',
+      includeAssets: ['icons/*'],
       manifest: {
-        short_name: 'Almadar',
-        name: 'نظام إدارة مكاتب المحاماة',
-        description: 'Comprehensive Law Firm Management System',
-        lang: 'ar',
-        dir: 'rtl',
-        start_url: '.',
+        name: 'مدار - نظام إدارة الشؤون القانونية',
+        short_name: 'مدار',
+        description: 'نظام شامل لإدارة العقود والاستشارات القانونية والتحقيقات',
+        start_url: '/',
         display: 'standalone',
-        orientation: 'portrait',
-        theme_color: '#0d3346',
-        background_color: '#0d3346',
+        background_color: '#0B132B',
+        theme_color: '#0B132B',
+        dir: 'rtl',
+        lang: 'ar',
         icons: [
-          { src: 'favicon.ico', sizes: '64x64 32x32 24x24 16x16', type: 'image/x-icon' },
-          { src: 'splash-image.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
-          { src: 'splash-image.png', sizes: '512x512', type: 'image/png' },
-        ],
+          {
+            src: '/icons/icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/icons/icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
       },
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/your-api-domain\.com\/.*$/,
+            // DO NOT cache auth endpoints
+            urlPattern: ({ url }) => !/\/auth\//.test(url.pathname) && /\/api\//.test(url.pathname),
             handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-            },
+            options: { 
+              cacheName: 'api-cache', 
+              networkTimeoutSeconds: 3
+            }
           },
           {
-            urlPattern: /\.(?:js|css|html)$/,
-            handler: 'StaleWhileRevalidate',
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            handler: 'CacheFirst',
             options: {
-              cacheName: 'static-assets',
-            },
-          },
-        ],
-      },
-    }),
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+              }
+            }
+          }
+        ]
+      }
+    })
   ].filter(Boolean),
-
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
     },
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', '@tanstack/react-query'],
+          router: ['react-router-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
+          icons: ['lucide-react'],
+          i18n: ['react-i18next', 'i18next']
+        }
+      }
+    },
+    target: 'es2022'
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', '@tanstack/react-query']
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/tests/setup.ts']
+  }
 }));
