@@ -3,6 +3,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import GlobalSpinner from '@/components/layout/GlobalSpinner';
 import { useEffect } from 'react';
 
+// Redirects unauthenticated users to the login page
+
 interface RequireAuthProps {
   children?: React.ReactNode;
 }

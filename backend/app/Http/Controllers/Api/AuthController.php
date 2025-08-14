@@ -23,11 +23,14 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('api_token')->plainTextToken;
+        $tokenResult = $user->createToken('api_token');
+        $token = $tokenResult->accessToken;
 
         return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => $tokenResult->token->expires_at->diffInSeconds(now()),
             'user' => $user,
-            'token' => $token,
         ]);
     }
 
@@ -44,25 +47,24 @@ public function login(Request $request)
         return response()->json(['message' => 'Bad credentials'], 401);
     }
 
-    // إنشاء التوكن
-    $token = $user->createToken('api_token')->plainTextToken;
+      $tokenResult = $user->createToken('api_token');
+      $token = $tokenResult->accessToken;
+      $roles = $user->getRoleNames();
+      $permissions = $user->getAllPermissions()->pluck('name');
 
-    // جلب الأدوار والصلاحيات
-    $roles       = $user->getRoleNames();            // يعيد Collection من أسماء الأدوار
-    $permissions = $user->getAllPermissions()        // يعيد Collection من Permission models
-                        ->pluck('name');             // نأخذ فقط الأسماء
-
-    return response()->json([
-        'user'        => $user,
-        'token'       => $token,
-        'roles'       => $roles,
-        'permissions' => $permissions,
-    ]);
+      return response()->json([
+          'access_token' => $token,
+          'token_type' => 'Bearer',
+          'expires_in' => $tokenResult->token->expires_at->diffInSeconds(now()),
+          'user' => $user,
+          'roles' => $roles,
+          'permissions' => $permissions,
+      ]);
 }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->token()->revoke();
 
         return response()->json(['message' => 'Logged out']);
     }

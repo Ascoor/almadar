@@ -4,9 +4,8 @@ let socket: Socket | null = null;
 
 export function getSocket(): Socket {
   if (!socket) {
-    socket = io(import.meta.env.VITE_SOCKET_URL || 'ws://localhost:3001', {
-      withCredentials: true,
-      transports: ['websocket', 'polling'],
+      socket = io(import.meta.env.VITE_SOCKET_URL || 'ws://localhost:3001', {
+        transports: ['websocket', 'polling'],
       timeout: 20000,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,

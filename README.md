@@ -8,7 +8,7 @@ almadar-master/
 │  ├─ resources/     ← views (Blade)، ترجمة، assets
 │  ├─ routes/        ← web.php, api.php
 │  ├─ tests/         ← PHPUnit tests
-│  ├─ composer.json  ← يعتمد على laravel/framework, sanctum, spatie/permission, phpword, pdf-to-text
+│  ├─ composer.json  ← يعتمد على laravel/framework, passport, spatie/permission, phpword, pdf-to-text
 │  └─ README.md, artisan, phpunit.xml, إلخ.
 ├─ frontend/         ← React + Vite + Tailwind + PWA
 │  ├─ public/        ← ملفات ثابتة
@@ -18,7 +18,23 @@ almadar-master/
 │  └─ tailwind.config.js, tsconfig.json, yarn.lock، إلخ.
 └─ start.sh          ← سكريبت تشغيل كلِّ الخدمات محلياً
 
+## Quickstart
 
+```bash
+# Backend
+cd backend
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate --seed
+php artisan passport:install
+php artisan serve --host=127.0.0.1 --port=8000
+
+# Frontend
+cd ../frontend
+npm install
+npm run dev
+```
 
 # تطبيق المدار
 
