@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   DropdownMenu,
@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNotifications } from '@/contexts/NotificationContext';
+import { useNotifications, Notification } from '@/contexts/NotificationContext';
 import { Bell, Check, CheckCheck, Trash2, AlertCircle, Info, CheckCircle, AlertTriangle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -29,6 +29,15 @@ export function DropdownNotifications() {
   } = useNotifications();
   
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleNotificationClick = useCallback((notification: Notification) => {
+    if (!notification.read) {
+      markAsRead(notification.id);
+    }
+    if (notification.actionUrl) {
+      window.location.href = notification.actionUrl;
+    }
+  }, [markAsRead]);
 
   // Play notification sound
   const playNotificationSound = () => {
@@ -54,16 +63,7 @@ export function DropdownNotifications() {
         });
       }
     }
-  }, [notifications]);
-
-  const handleNotificationClick = (notification: any) => {
-    if (!notification.read) {
-      markAsRead(notification.id);
-    }
-    if (notification.actionUrl) {
-      window.location.href = notification.actionUrl;
-    }
-  };
+  }, [notifications, handleNotificationClick]);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {

@@ -29,7 +29,7 @@ export interface Column<T> {
   title: string;
   sortable?: boolean;
   filterable?: boolean;
-  render?: (value: any, row: T) => React.ReactNode;
+  render?: (value: unknown, row: T) => React.ReactNode;
   width?: string;
 }
 
@@ -53,7 +53,7 @@ export interface TableProps<T> {
 
 type SortDirection = 'asc' | 'desc' | null;
 
-export function Table<T extends Record<string, any>>({
+export function Table<T extends Record<string, unknown>>({
   data,
   columns,
   loading = false,
@@ -95,7 +95,7 @@ export function Table<T extends Record<string, any>>({
   };
 
   const getStatusBadge = (status: string) => {
-    const statusMap: Record<string, { variant: any; label: string }> = {
+    const statusMap: Record<string, { variant: string; label: string }> = {
       active: { variant: 'default', label: 'نشط' },
       inactive: { variant: 'secondary', label: 'غير نشط' },
       pending: { variant: 'outline', label: 'معلق' },

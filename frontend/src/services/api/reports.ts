@@ -4,10 +4,10 @@ export interface ReportData {
   id: string;
   title: string;
   type: 'contracts' | 'investigations' | 'litigations' | 'financial';
-  data: any[];
+  data: unknown[];
   metadata: {
     total: number;
-    filters: Record<string, any>;
+    filters: Record<string, unknown>;
     generatedAt: string;
   };
 }

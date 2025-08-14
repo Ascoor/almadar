@@ -22,7 +22,7 @@ export default function LoginPage() {
   const location = useLocation();
   const { t } = useTranslation();
   
-  const from = (location.state as any)?.from || '/';
+  const from = (location.state as { from?: string })?.from || '/';
 
   // Redirect if already authenticated
   if (user && !user.mustChangePassword) {
@@ -37,8 +37,9 @@ export default function LoginPage() {
     try {
       await login(username, password);
       // Navigation will be handled by the auth context or password change modal
-    } catch (error: any) {
-      setError(error?.response?.data?.message || 'فشل في تسجيل الدخول');
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      setError(err.response?.data?.message || 'فشل في تسجيل الدخول');
     } finally {
       setIsLoading(false);
     }

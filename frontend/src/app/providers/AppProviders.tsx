@@ -13,9 +13,10 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: (failureCount, error: any) => {
+      retry: (failureCount, error: unknown) => {
+        const err = error as { response?: { status?: number } };
         // Don't retry on 401, 403, or 404 errors
-        if (error?.response?.status && [401, 403, 404].includes(error.response.status)) {
+        if (err.response?.status && [401, 403, 404].includes(err.response.status)) {
           return false;
         }
         return failureCount < 3;

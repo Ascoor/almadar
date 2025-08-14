@@ -22,7 +22,7 @@ interface PDFViewerProps {
   className?: string;
   showControls?: boolean;
   initialPage?: number;
-  onLoadSuccess?: (pdf: any) => void;
+  onLoadSuccess?: (pdf: { numPages: number }) => void;
   onLoadError?: (error: Error) => void;
 }
 

@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { getSocket } from '@/services/realtime/initSocket';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { api } from '@/services/api/client';
 
 export type Notification = {
   id: string;
@@ -70,30 +71,8 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
 
   const loadNotifications = async () => {
     try {
-      // This would typically fetch from an API
-      // For now, we'll use mock data
-      const mockNotifications: Notification[] = [
-        {
-          id: '1',
-          title: 'عقد جديد',
-          message: 'تم إضافة عقد جديد يتطلب مراجعتك',
-          type: 'info',
-          read: false,
-          createdAt: new Date().toISOString(),
-          actionUrl: '/contracts/new-contract-id'
-        },
-        {
-          id: '2',
-          title: 'موعد جلسة قريب',
-          message: 'لديك جلسة محكمة غداً في تمام الساعة 10:00 صباحاً',
-          type: 'warning',
-          read: false,
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          actionUrl: '/legal/litigations/litigation-id'
-        }
-      ];
-      
-      setNotifications(mockNotifications);
+      const { data } = await api.get<Notification[]>('/notifications');
+      setNotifications(data);
     } catch (error) {
       console.error('Failed to load notifications:', error);
     }
