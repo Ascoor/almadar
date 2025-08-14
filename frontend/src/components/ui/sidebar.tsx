@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { PanelLeft, PanelRight } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -164,7 +164,7 @@ const Sidebar = React.forwardRef<
 >(
   (
     {
-      side = "left",
+      side: sideProp,
       variant = "sidebar",
       collapsible = "offcanvas",
       className,
@@ -173,6 +173,9 @@ const Sidebar = React.forwardRef<
     },
     ref
   ) => {
+    const dir =
+      typeof document !== "undefined" ? document.documentElement.dir : "ltr"
+    const side = sideProp ?? (dir === "rtl" ? "right" : "left")
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
 
     if (collapsible === "none") {
@@ -183,6 +186,7 @@ const Sidebar = React.forwardRef<
             className
           )}
           ref={ref}
+          dir={dir}
           {...props}
         >
           {children}
@@ -204,7 +208,9 @@ const Sidebar = React.forwardRef<
             }
             side={side}
           >
-            <div className="flex h-full w-full flex-col">{children}</div>
+            <div dir={dir} className="flex h-full w-full flex-col">
+              {children}
+            </div>
           </SheetContent>
         </Sheet>
       )
@@ -213,6 +219,7 @@ const Sidebar = React.forwardRef<
     return (
       <div
         ref={ref}
+        dir={dir}
         className="group peer hidden md:block text-sidebar-foreground"
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
@@ -262,6 +269,9 @@ const SidebarTrigger = React.forwardRef<
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
   const { toggleSidebar } = useSidebar()
+  const dir =
+    typeof document !== "undefined" ? document.documentElement.dir : "ltr"
+  const Icon = dir === "rtl" ? PanelRight : PanelLeft
 
   return (
     <Button
@@ -276,7 +286,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <PanelLeft />
+      <Icon className="h-4 w-4 text-foreground" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
