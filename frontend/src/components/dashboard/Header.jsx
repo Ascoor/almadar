@@ -19,7 +19,7 @@ export function Header() {
   const renderMobileItem = (item, level = 0) => {
     if (item.children) {
       return (
-        <div key={`${item.href}-mobile-${level}`} className="mt-2">
+        <div key={`${item.id}-mobile-${level}`} className="mt-2">
           <div className="px-2 py-1 font-medium text-sm text-muted-foreground">
             {item.title}
           </div>

@@ -27,35 +27,66 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '@/components/auth/AuthContext';
 
 export const menuItems = [
-  { title: 'الرئيسية', href: '/', icon: LayoutDashboard },
-  { title: 'التعاقدات', href: '/contracts', icon: FileText, permission: 'view contracts' },
+  { id: 'dashboard', title: 'الرئيسية', href: '/', icon: LayoutDashboard },
   {
+    id: 'contracts',
+    title: 'التعاقدات',
+    href: '/contracts',
+    icon: FileText,
+    permission: 'view contracts',
+  },
+  {
+    id: 'legal',
     title: 'الرأي والفتوى',
-    href: '#',
     icon: Scale,
     children: [
-      { title: 'التحقيقات', href: '/legal/investigations', icon: Search, permission: 'view investigations' },
-      { title: 'المشورة القانونية', href: '/legal/legal-advices', icon: MessageSquare, permission: 'view legaladvices' },
-      { title: 'التقاضي', href: '/legal/litigations', icon: Building2, permission: 'view litigations' },
+      {
+        title: 'التحقيقات',
+        href: '/legal/investigations',
+        icon: Search,
+        permission: 'view investigations',
+      },
+      {
+        title: 'المشورة القانونية',
+        href: '/legal/legal-advices',
+        icon: MessageSquare,
+        permission: 'view legaladvices',
+      },
+      {
+        title: 'التقاضي',
+        href: '/legal/litigations',
+        icon: Building2,
+        permission: 'view litigations',
+      },
     ],
   },
   {
+    id: 'app-management',
     title: 'إدارة التطبيق',
-    href: '#',
     icon: Settings,
     children: [
-      { title: 'القوائم', href: '/managment-lists', icon: List, permission: 'view managment-lists' },
+      {
+        title: 'القوائم',
+        href: '/managment-lists',
+        icon: List,
+        permission: 'view managment-lists',
+      },
     ],
   },
   {
+    id: 'user-management',
     title: 'إدارة المستخدمين',
-    href: '#',
     icon: Users,
     children: [
-      { title: 'المستخدمين', href: '/users', icon: User, permission: 'view users' },
+      {
+        title: 'المستخدمين',
+        href: '/users',
+        icon: User,
+        permission: 'view users',
+      },
     ],
   },
-  { title: 'الأرشيف', href: '/archive', icon: Archive },
+  { id: 'archive', title: 'الأرشيف', href: '/archive', icon: Archive },
 ];
 
 export function Sidebar() {
@@ -69,14 +100,21 @@ export function Sidebar() {
     return user?.permissions?.includes(permission) || false;
   };
 
-  const isActive = (href) => {
+  const isRouteActive = (href) => {
     if (href === '/') return location.pathname === '/';
     return location.pathname.startsWith(href);
   };
 
-  const toggleExpanded = (href) => {
+  const isActive = (item) => {
+    if (item.children) {
+      return item.children.some((child) => isActive(child));
+    }
+    return isRouteActive(item.href);
+  };
+
+  const toggleExpanded = (id) => {
     setExpandedItems((prev) =>
-      prev.includes(href) ? prev.filter((item) => item !== href) : [...prev, href]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
@@ -84,8 +122,8 @@ export function Sidebar() {
     if (item.permission && !hasPermission(item.permission)) return null;
 
     const hasChildren = item.children && item.children.length > 0;
-    const isExpanded = expandedItems.includes(item.href);
-    const active = isActive(item.href);
+    const isExpanded = expandedItems.includes(item.id);
+    const active = isActive(item);
 
     if (hasChildren) {
       const content = (
@@ -96,7 +134,7 @@ export function Sidebar() {
             level > 0 && 'mr-4',
             collapsed && 'justify-center px-2'
           )}
-          onClick={() => !collapsed && toggleExpanded(item.href)}
+          onClick={() => !collapsed && toggleExpanded(item.id)}
         >
           <div className="flex items-center gap-3">
             <item.icon
@@ -131,7 +169,7 @@ export function Sidebar() {
 
       if (collapsed) {
         return (
-          <Tooltip key={`${item.href}-${level}`}>
+          <Tooltip key={`${item.id}-${level}`}>
             <TooltipTrigger asChild>{content}</TooltipTrigger>
             <TooltipContent side="right">{item.title}</TooltipContent>
           </Tooltip>
@@ -139,7 +177,7 @@ export function Sidebar() {
       }
 
       return (
-        <div key={`${item.href}-${level}`}>
+        <div key={`${item.id}-${level}`}>
           {content}
           {children}
         </div>
