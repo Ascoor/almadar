@@ -1,4 +1,4 @@
-import { api } from './client';
+import api from '@/lib/axios';
 
 export interface Contract {
   id: string;
@@ -29,26 +29,26 @@ export const contractsApi = {
     search?: string;
     status?: string;
   }): Promise<ContractsResponse> => {
-    const { data } = await api.get('/contracts', { params });
+    const { data } = await api.get('/api/contracts', { params });
     return data;
   },
 
   getContract: async (id: string): Promise<Contract> => {
-    const { data } = await api.get(`/contracts/${id}`);
+    const { data } = await api.get(`/api/contracts/${id}`);
     return data;
   },
 
   createContract: async (contract: Omit<Contract, 'id' | 'createdAt' | 'updatedAt'>): Promise<Contract> => {
-    const { data } = await api.post('/contracts', contract);
+    const { data } = await api.post('/api/contracts', contract);
     return data;
   },
 
   updateContract: async (id: string, contract: Partial<Contract>): Promise<Contract> => {
-    const { data } = await api.put(`/contracts/${id}`, contract);
+    const { data } = await api.put(`/api/contracts/${id}`, contract);
     return data;
   },
 
   deleteContract: async (id: string): Promise<void> => {
-    await api.delete(`/contracts/${id}`);
+    await api.delete(`/api/contracts/${id}`);
   },
 };

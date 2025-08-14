@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { api } from '@/services/api/client';
+import api from '@/lib/axios';
 import { useToast } from '@/hooks/use-toast';
 
 export type User = { 
@@ -12,10 +12,11 @@ export type User = {
 };
 
 type AuthContextType = { 
-  user: User | null; 
-  loading: boolean; 
-  login: (username: string, password: string) => Promise<void>; 
+  user: User | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
 };
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const checkAuthStatus = async () => {
     try {
-      const { data } = await api.get('/auth/me');
+      const { data } = await api.get('/api/user');
       setUser(data);
     } catch (error) {
       // User not authenticated
@@ -47,10 +48,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const login = async (username: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      await api.post('/auth/login', { username, password }); // sets HttpOnly cookie
-      const { data } = await api.get('/auth/me');
+      await api.get('/sanctum/csrf-cookie');
+      await api.post('/login', { email, password });
+      const { data } = await api.get('/api/user');
       setUser(data);
       
       toast({
@@ -69,9 +71,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const register = async (name: string, email: string, password: string) => {
+    try {
+      await api.get('/sanctum/csrf-cookie');
+      await api.post('/register', { name, email, password });
+      const { data } = await api.get('/api/user');
+      setUser(data);
+
+      toast({
+        title: "تم إنشاء الحساب بنجاح",
+        description: `أهلاً بك ${data.name}`,
+      });
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 'فشل في إنشاء الحساب';
+      toast({
+        title: "خطأ في التسجيل",
+        description: message,
+        variant: "destructive",
+      });
+      throw err;
+    }
+  };
+
   const logout = async () => {
     try {
-      await api.post('/auth/logout');
+      await api.post('/logout');
       setUser(null);
       
       toast({
@@ -90,7 +115,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const changePassword = async (currentPassword: string, newPassword: string) => {
     try {
-      await api.post('/auth/change-password', {
+      await api.post('/api/change-password', {
         currentPassword,
         newPassword
       });
@@ -118,7 +143,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const updateProfile = async (data: Partial<User>) => {
     try {
-      const { data: updatedUser } = await api.put('/auth/profile', data);
+      const { data: updatedUser } = await api.put('/api/profile', data);
       setUser(updatedUser);
       
       toast({
@@ -141,10 +166,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider value={{ 
       user, 
       loading, 
-      login, 
-      logout, 
+      login,
+      logout,
+      register,
       changePassword,
-      updateProfile 
+      updateProfile
     }}>
       {children}
     </AuthContext.Provider>
