@@ -1,5 +1,4 @@
 import plugin from "tailwindcss/plugin";
-// Tailwind configuration merged from new-front
 
 export default {
   darkMode: ["class"],

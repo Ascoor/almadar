@@ -15,7 +15,6 @@ import {
   User
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { TFunction } from 'i18next';
 import { useLanguage } from '@/context/LanguageContext';
 import {
   Sidebar,
@@ -97,10 +96,10 @@ export function AppSidebar() {
   const collapsed = !open;
 
   const isActive = (path: string) => currentPath === path;
-  
+
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive 
-      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
+    isActive
+      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
       : "hover:bg-sidebar-accent/50 text-sidebar-foreground hover:text-sidebar-accent-foreground";
 
   const hasPermission = (permission: string) => {
@@ -221,7 +220,7 @@ export function AppSidebar() {
               {!collapsed && t('navigation.profile')}
             </NavLink>
           </Button>
-          
+
           <Button
             variant="ghost"
             size={collapsed ? "icon" : "sm"}
