@@ -1,10 +1,10 @@
 export const theme = {
   colors: {
-    primary: '#3B82F6',
-    secondary: '#A855F7',
-    accent: '#F59E0B',
-    background: '#F9FAFB',
-    foreground: '#111827',
+    primary: 'hsl(var(--primary))',
+    secondary: 'hsl(var(--secondary))',
+    accent: 'hsl(var(--accent))',
+    background: 'hsl(var(--background))',
+    foreground: 'hsl(var(--foreground))',
   },
 };
 
