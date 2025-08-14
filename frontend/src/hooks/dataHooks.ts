@@ -38,10 +38,11 @@ export function useCreateContract() {
         description: "تم حفظ العقد الجديد",
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
       toast({
         title: "خطأ في إنشاء العقد",
-        description: error?.response?.data?.message || "حدث خطأ غير متوقع",
+        description: err.response?.data?.message || "حدث خطأ غير متوقع",
         variant: "destructive",
       });
     },
@@ -63,10 +64,11 @@ export function useUpdateContract() {
         description: "تم حفظ التغييرات",
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
       toast({
         title: "خطأ في تحديث العقد",
-        description: error?.response?.data?.message || "حدث خطأ غير متوقع",
+        description: err.response?.data?.message || "حدث خطأ غير متوقع",
         variant: "destructive",
       });
     },
@@ -96,10 +98,11 @@ export function useGenerateReport() {
         description: "التقرير جاهز للعرض",
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
       toast({
         title: "خطأ في إنشاء التقرير",
-        description: error?.response?.data?.message || "حدث خطأ غير متوقع",
+        description: err.response?.data?.message || "حدث خطأ غير متوقع",
         variant: "destructive",
       });
     },
@@ -127,10 +130,11 @@ export function useExportReport() {
         description: "تم تحميل الملف",
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
       toast({
         title: "خطأ في تصدير التقرير",
-        description: error?.response?.data?.message || "حدث خطأ غير متوقع",
+        description: err.response?.data?.message || "حدث خطأ غير متوقع",
         variant: "destructive",
       });
     },

@@ -1,8 +1,8 @@
-import React from 'react';
 import { toast } from '@/hooks/use-toast';
 
-let updateAvailable = false;
-let refreshing = false;
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+}
 
 export async function registerSW() {
   if ('serviceWorker' in navigator) {
@@ -15,7 +15,6 @@ export async function registerSW() {
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              updateAvailable = true;
               showUpdateAvailableNotification();
             }
           });
@@ -33,7 +32,7 @@ export async function registerSW() {
       // Show install prompt for PWA
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
-        showInstallPrompt(e as any);
+        showInstallPrompt(e as BeforeInstallPromptEvent);
       });
 
     } catch (error) {
@@ -50,7 +49,7 @@ function showUpdateAvailableNotification() {
   });
 }
 
-function showInstallPrompt(deferredPrompt: any) {
+function showInstallPrompt(deferredPrompt: BeforeInstallPromptEvent) {
   // Show install notification after a delay
   setTimeout(() => {
     toast({

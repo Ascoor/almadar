@@ -57,14 +57,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         title: "تم تسجيل الدخول بنجاح",
         description: `أهلاً بك ${data.name}`,
       });
-    } catch (error: any) {
-      const message = error?.response?.data?.message || 'فشل في تسجيل الدخول';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 'فشل في تسجيل الدخول';
       toast({
         title: "خطأ في تسجيل الدخول",
         description: message,
         variant: "destructive",
       });
-      throw error;
+      throw err;
     }
   };
 
@@ -103,14 +104,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         title: "تم تغيير كلمة المرور",
         description: "تم تغيير كلمة المرور بنجاح",
       });
-    } catch (error: any) {
-      const message = error?.response?.data?.message || 'فشل في تغيير كلمة المرور';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 'فشل في تغيير كلمة المرور';
       toast({
         title: "خطأ في تغيير كلمة المرور",
         description: message,
         variant: "destructive",
       });
-      throw error;
+      throw err;
     }
   };
 
@@ -123,14 +125,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         title: "تم تحديث الملف الشخصي",
         description: "تم حفظ التغييرات بنجاح",
       });
-    } catch (error: any) {
-      const message = error?.response?.data?.message || 'فشل في تحديث الملف الشخصي';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      const message = err.response?.data?.message || 'فشل في تحديث الملف الشخصي';
       toast({
         title: "خطأ في التحديث",
         description: message,
         variant: "destructive",
       });
-      throw error;
+      throw err;
     }
   };
 

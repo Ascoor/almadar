@@ -12,8 +12,8 @@ export default function RequirePermission({ children, permission }: RequirePermi
   const matches = useMatches();
   
   // Get permission from route handle or props
-  const lastMatch = matches.at(-1);
-  const requiredPermission = permission || (lastMatch?.handle as any)?.permission as string | undefined;
+  const lastMatch = matches.at(-1) as { handle?: { permission?: string } } | undefined;
+  const requiredPermission = permission || lastMatch?.handle?.permission;
 
   // If no permission is required, allow access
   if (!requiredPermission) {

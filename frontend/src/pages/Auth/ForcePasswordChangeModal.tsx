@@ -64,8 +64,9 @@ export default function ForcePasswordChangeModal() {
     try {
       await changePassword(currentPassword, newPassword);
       navigate('/');
-    } catch (error: any) {
-      setError(error?.response?.data?.message || 'فشل في تغيير كلمة المرور');
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      setError(err.response?.data?.message || 'فشل في تغيير كلمة المرور');
     } finally {
       setIsLoading(false);
     }
