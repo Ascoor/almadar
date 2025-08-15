@@ -1,3 +1,4 @@
 /public_html/
-/frontend/src/config/
+/frontend/src/config/*
+!/frontend/src/config/nav.tsx
 /frontend/dev-dist

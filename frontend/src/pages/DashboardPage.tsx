@@ -12,7 +12,7 @@ import {
   BarChart3,
   Calendar
 } from 'lucide-react';
-import AppLayout from '@/components/layout/AppLayout';
+import AppLayout from '@/layouts/AppLayout';
 import SectionHeader from '@/components/common/SectionHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

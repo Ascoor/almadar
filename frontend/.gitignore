@@ -12,7 +12,8 @@ dist
 build
 dist-ssr
 *.local
- /src/config/
+/src/config/*
+!/src/config/nav.tsx
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
