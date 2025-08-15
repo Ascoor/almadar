@@ -60,6 +60,11 @@ public function login(Request $request)
     ]);
 }
 
+    public function me(Request $request)
+    {
+        return response()->json($request->user());
+    }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

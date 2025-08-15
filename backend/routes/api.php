@@ -38,7 +38,7 @@ Route::options('/{any}', function () {
 
 // Protected routes (requires authentication)
 Route::middleware('auth:sanctum')->group(function () {
-
+    Route::get('/me',     [AuthController::class, 'me']);      
     Route::post('/logout', [AuthController::class, 'logout']);
     
     // Contracts
