@@ -22,7 +22,7 @@ export type NavItem = {
 };
 
 export const NAV: NavItem[] = [
-  { id: "home", icon: <DashboardIcon size={20} />, path: "/", labelAr: "الرئيسية", labelEn: "Home" },
+  { id: "home", icon: <DashboardIcon size={20} />, path: "/dashboard", labelAr: "الرئيسية", labelEn: "Home" },
   { id: "contracts", icon: <ContractsIcon size={20} />, path: "/contracts", labelAr: "التعاقدات", labelEn: "Contracts" },
   {
     id: "fatwa", icon: <ConsultationsIcon size={20} />, labelAr: "الرأي والفتوى", labelEn: "Advisory",
