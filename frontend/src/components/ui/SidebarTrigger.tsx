@@ -1,17 +1,18 @@
-import { useSidebar } from './sidebar'; // تأكد أن هذا هو مسار الملف الصحيح
-import { Menu } from 'lucide-react'; // أيقونة القائمة (تستطيع استبدالها)
-import { Button } from '@/components/ui/button'; // زر من مكتبتك أو HTML عادي
+
+import { useSidebar } from './sidebar';
+import { Menu } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const SidebarTrigger = () => {
-  const { isCollapsed, toggle } = useSidebar();
+  const { toggleSidebar } = useSidebar();
 
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={toggle}
+      onClick={toggleSidebar}
       aria-label="Toggle sidebar"
-      className="sm:hidden" // يظهر فقط على الشاشات الصغيرة (إن أردت)
+      className="sm:hidden"
     >
       <Menu className="h-6 w-6" />
     </Button>
