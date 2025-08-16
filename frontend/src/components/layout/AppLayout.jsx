@@ -4,14 +4,21 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import AppSidebar from './AppSidebar';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/context/AuthContext';
+import { LanguageToggle } from '@/components/common/LanguageToggle';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
+import ProfileMenu from '@/components/common/ProfileMenu';
+import { useLanguage } from '@/context/LanguageContext';
 
 const AppLayout = ({ children }) => {
-  const { user } = useAuth();
+  const { isRTL } = useLanguage();
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
+      <div
+        className={`min-h-screen flex w-full bg-background ${
+          isRTL ? 'flex-row-reverse' : ''
+        }`}
+      >
         <AppSidebar />
 
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -23,20 +30,20 @@ const AppLayout = ({ children }) => {
           >
             <div className="flex items-center justify-between px-6 h-full">
               <div className="flex items-center space-x-4 space-x-reverse">
+                <SidebarTrigger className="md:hidden" />
                 <h1 className="text-xl font-semibold text-foreground">
                   منصة المدار
                 </h1>
-              </div>
-
-              <div className="flex items-center space-x-4 space-x-reverse">
-                {/* Toggle Sidebar Button */}
-                <SidebarTrigger className="md:hidden" />
-
-                {/* Search */}
                 <div className="relative hidden md:block">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input placeholder="البحث..." className="pl-10 w-64 focus-ring" />
                 </div>
+              </div>
+
+              <div className="flex items-center space-x-2 space-x-reverse">
+                <LanguageToggle />
+                <ThemeToggle />
+                <ProfileMenu />
               </div>
             </div>
           </motion.header>
