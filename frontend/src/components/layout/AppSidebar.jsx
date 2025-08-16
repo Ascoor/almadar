@@ -1,4 +1,3 @@
-// src/components/layout/AppSidebar.jsx
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -40,7 +39,8 @@ const getInitials = (name) => {
     const parts = name.trim().split(/\s+/).filter(Boolean);
     const first = parts[0]?.[0] || '';
     const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
-    return (first + last).toUpperCase() || 'U';
+    const initials = (first + last).toUpperCase();
+    return initials || 'U';
   } catch {
     return 'U';
   }
@@ -49,10 +49,10 @@ const getInitials = (name) => {
 const hasPermissionFn = (user, permission) => {
   if (!permission) return true;
   if (!user) return false;
-  if (user.role === 'Admin' || user.role === 'admin') return true;
+  const role = (user.role || '').toLowerCase();
+  if (role === 'admin') return true;
 
   const perms = user.permissions || [];
-  // supports ['view x', ...] or [{name:'view x'}, ...]
   return perms.some((p) =>
     typeof p === 'string' ? p === permission : p?.name === permission
   );
@@ -73,7 +73,7 @@ const getAdminItems = (t) => [
 ];
 
 export default function AppSidebar() {
-  const { open } = useSidebar();
+  const { open } = useSidebar(); // from shadcn/ui
   const location = useLocation();
   const { user, logout } = useAuth();
   const { t } = useTranslation();
@@ -105,7 +105,7 @@ export default function AppSidebar() {
             animate={{ opacity: 1, y: 0 }}
             className="p-4 border-b border-sidebar-border"
           >
-            <div className={`flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-3'}`}>
+            <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10">
                 <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground">
                   {getInitials(user?.name)}
@@ -127,7 +127,7 @@ export default function AppSidebar() {
         {/* Main nav */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-sidebar-foreground/70 px-4 py-2">
-            {!collapsed && t('navigation.dashboard')}
+            {!collapsed && t('navigation.main', 'الصفحات الرئيسية')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -137,7 +137,7 @@ export default function AppSidebar() {
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavCls}>
                         <item.icon
-                          className={`h-5 w-5 ${collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'}`}
+                          className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'ltr:mr-3 rtl:ml-3'}`}
                         />
                         {!collapsed && (
                           <>
@@ -157,7 +157,7 @@ export default function AppSidebar() {
         </SidebarGroup>
 
         {/* Admin */}
-        {(user?.role === 'Admin' || user?.role === 'admin') && (
+        {(user?.role?.toLowerCase?.() === 'admin') && (
           <SidebarGroup>
             <SidebarGroupLabel className="text-sidebar-foreground/70 px-4 py-2">
               {!collapsed && t('navigation.admin', 'الإدارة')}
@@ -170,7 +170,7 @@ export default function AppSidebar() {
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavCls}>
                           <item.icon
-                            className={`h-5 w-5 ${collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'}`}
+                            className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'ltr:mr-3 rtl:ml-3'}`}
                           />
                           {!collapsed && (
                             <>
@@ -199,7 +199,7 @@ export default function AppSidebar() {
             asChild
           >
             <NavLink to="/profile">
-              <UserIcon className={`h-4 w-4 ${collapsed ? '' : isRTL ? 'ml-2' : 'mr-2'}`} />
+              <UserIcon className={`h-4 w-4 ${collapsed ? '' : 'ltr:mr-2 rtl:ml-2'}`} />
               {!collapsed && t('navigation.profile')}
             </NavLink>
           </Button>
@@ -210,7 +210,7 @@ export default function AppSidebar() {
             onClick={logout}
             className="w-full justify-start text-sidebar-foreground hover:bg-destructive hover:text-destructive-foreground"
           >
-            <LogOut className={`h-4 w-4 ${collapsed ? '' : isRTL ? 'ml-2' : 'mr-2'}`} />
+            <LogOut className={`h-4 w-4 ${collapsed ? '' : 'ltr:mr-2 rtl:ml-2'}`} />
             {!collapsed && t('auth.logout')}
           </Button>
         </div>

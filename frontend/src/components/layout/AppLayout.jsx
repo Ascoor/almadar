@@ -30,14 +30,14 @@ function AppLayout({ children }) {
             className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40"
           >
             <div className="flex items-center justify-between px-6 h-full">
-              <div className={`flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-4'}`}>
+              <div className="flex items-center gap-4">
                 <HeaderToggle />
                 <h1 className="text-xl font-semibold text-foreground">
                   {t('app.name')}
                 </h1>
               </div>
 
-              <div className={`flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-4'}`}>
+              <div className="flex items-center gap-4">
                 {/* Search */}
                 <div className="relative hidden md:block">
                   <Search
@@ -49,10 +49,7 @@ function AppLayout({ children }) {
                   />
                 </div>
 
-                {/* Theme Toggle */}
                 <ThemeToggle />
-
-                {/* Language Toggle */}
                 <LanguageToggle />
 
                 {/* Notifications */}
@@ -66,7 +63,6 @@ function AppLayout({ children }) {
                   </Badge>
                 </Button>
 
-                {/* Profile Menu */}
                 <ProfileMenu />
               </div>
             </div>
