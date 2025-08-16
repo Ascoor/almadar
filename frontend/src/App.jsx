@@ -1,17 +1,12 @@
-import React, { useContext } from 'react';
-import DashboardPage from './pages/DashboardPage';
-import HomePage from './pages/HomePage';
-import { SpinnerProvider } from './context/SpinnerContext';
-import { AuthContext } from '@/components/auth/AuthContext';
+import React from 'react';
+import Topbar from '@/components/layout/Topbar';
+import Home from '@/pages/Home';
 
-const App = () => {
-  const { user } = useContext(AuthContext);
-
+export default function App() {
   return (
-    <SpinnerProvider>
-      {user ? <DashboardPage /> : <HomePage />}
-    </SpinnerProvider>
+    <>
+      <Topbar />
+      <Home />
+    </>
   );
-};
-
-export default App;
+}
