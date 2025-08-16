@@ -94,6 +94,7 @@ export default function AppSidebar() {
 
   return (
     <Sidebar
+      id="app-sidebar"
       className={`${collapsed ? 'w-16' : 'w-64'} sidebar-transition border-r border-sidebar-border`}
       collapsible="icon"
     >
