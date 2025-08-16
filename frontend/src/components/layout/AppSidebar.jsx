@@ -100,7 +100,7 @@ function AppSidebar() {
       : 'hover:bg-sidebar-accent/50 text-sidebar-foreground hover:text-sidebar-accent-foreground';
 
   const hasPermission = (permission) => {
-    return user?.permissions.includes(permission) || user?.role === 'Admin';
+    return user?.role === 'Admin' || user?.permissions?.includes(permission);
   };
 
   return (
@@ -124,7 +124,13 @@ function AppSidebar() {
             <div className="flex items-center space-x-3 space-x-reverse">
               <Avatar className="h-10 w-10">
                 <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground">
-                  {user?.name.split(' ').map((n) => n[0]).join('').toUpperCase() || 'U'}
+                  {user?.name
+                    ? user.name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
+                        .toUpperCase()
+                    : 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
