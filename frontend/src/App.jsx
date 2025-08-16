@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { Toaster } from '@/components/ui/toaster';
@@ -14,21 +14,19 @@ import { LanguageProvider } from '@/context/LanguageContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import GlobalSpinner from '@/components/common/Spinners/GlobalSpinner';
 
-import './App.css'
-
 // -------- Lazy pages (mirror old routes) --------
-const HomePage             = lazy(() => import('@/pages/HomePage'));
-const DashboardPage        = lazy(() => import('@/pages/DashboardPage'));
-const ProfilePage          = lazy(() => import('@/pages/ProfilePage'));
-const ContractsPage        = lazy(() => import('@/pages/ContractsPage'));
-const InvestigationsPage   = lazy(() => import('@/pages/InvestigationsPage'));
-const LegalAdvicePage      = lazy(() => import('@/pages/LegalAdvicePage'));
-const LitigationsPage      = lazy(() => import('@/pages/LitigationsPage'));
-const UserManagementPage   = lazy(() => import('@/pages/UserManagementPage'));
-const ArchivePage          = lazy(() => import('@/pages/ArchivePage'));
-const ManagementSettings   = lazy(() => import('@/pages/ManagementSettings'));
-const ReportsPage          = lazy(() => import('@/pages/ReportsPage'));
-const Forbidden            = lazy(() => import('@/pages/Forbidden'));
+const HomePage = lazy(() => import('@/pages/HomePage'));
+const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
+const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
+const ContractsPage = lazy(() => import('@/pages/ContractsPage'));
+const InvestigationsPage = lazy(() => import('@/pages/InvestigationsPage'));
+const LegalAdvicePage = lazy(() => import('@/pages/LegalAdvicePage'));
+const LitigationsPage = lazy(() => import('@/pages/LitigationsPage'));
+const UserManagementPage = lazy(() => import('@/pages/UserManagementPage'));
+const ArchivePage = lazy(() => import('@/pages/ArchivePage'));
+const ManagementSettings = lazy(() => import('@/pages/ManagementSettings'));
+const ReportsPage = lazy(() => import('@/pages/ReportsPage'));
+const Forbidden = lazy(() => import('@/pages/Forbidden'));
 
 // Optional: simple 404 page
 const NotFound = () => (
@@ -66,7 +64,6 @@ export default function App() {
               <TooltipProvider>
                 <Toaster />
                 <Sonner />
-
                 <BrowserRouter>
                   <RouteChangeSpinner />
                   <Suspense fallback={<GlobalSpinner />}>

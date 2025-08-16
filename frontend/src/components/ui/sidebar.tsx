@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
@@ -16,9 +16,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useLanguage } from "@/context/LanguageContext"
 
-const SIDEBAR_STORAGE_KEY = "sidebar:collapsed"
+const SIDEBAR_COOKIE_NAME = "sidebar:state"
+const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
@@ -32,8 +32,6 @@ type SidebarContext = {
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
-  isCollapsed: boolean
-  isMobileOpen: boolean
 }
 
 const SidebarContext = React.createContext<SidebarContext | null>(null)
@@ -70,19 +68,9 @@ const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobile()
     const [openMobile, setOpenMobile] = React.useState(false)
 
-    // Internal state of the sidebar. Controlled externally via openProp if provided.
+    // This is the internal state of the sidebar.
+    // We use openProp and setOpenProp for control from outside the component.
     const [_open, _setOpen] = React.useState(defaultOpen)
-
-    // Load persisted state from localStorage on desktop only.
-    React.useEffect(() => {
-      if (typeof window !== "undefined" && window.innerWidth >= 768) {
-        const storedState = localStorage.getItem(SIDEBAR_STORAGE_KEY)
-        if (storedState !== null) {
-          _setOpen(!JSON.parse(storedState))
-        }
-      }
-    }, [])
-
     const open = openProp ?? _open
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
@@ -93,12 +81,8 @@ const SidebarProvider = React.forwardRef<
           _setOpen(openState)
         }
 
-        if (typeof window !== "undefined" && window.innerWidth >= 768) {
-          localStorage.setItem(
-            SIDEBAR_STORAGE_KEY,
-            JSON.stringify(!openState)
-          )
-        }
+        // This sets the cookie to keep the sidebar state.
+        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
       },
       [setOpenProp, open]
     )
@@ -139,8 +123,6 @@ const SidebarProvider = React.forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
-        isCollapsed: state === "collapsed",
-        isMobileOpen: openMobile,
       }),
       [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
     )
@@ -182,7 +164,7 @@ const Sidebar = React.forwardRef<
 >(
   (
     {
-      side,
+      side = "left",
       variant = "sidebar",
       collapsible = "offcanvas",
       className,
@@ -192,8 +174,6 @@ const Sidebar = React.forwardRef<
     ref
   ) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
-    const { isRTL } = useLanguage()
-    const resolvedSide = side ?? (isRTL ? "right" : "left")
 
     if (collapsible === "none") {
       return (
@@ -222,10 +202,8 @@ const Sidebar = React.forwardRef<
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
               } as React.CSSProperties
             }
-            side={resolvedSide}
+            side={side}
           >
-            {/* Hidden title for accessibility requirements */}
-            <SheetTitle className="sr-only">Sidebar Navigation</SheetTitle>
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
         </Sheet>
@@ -239,7 +217,7 @@ const Sidebar = React.forwardRef<
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={variant}
-        data-side={resolvedSide}
+        data-side={side}
       >
         {/* This is what handles the sidebar gap on desktop */}
         <div
@@ -255,7 +233,7 @@ const Sidebar = React.forwardRef<
         <div
           className={cn(
             "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
-            resolvedSide === "left"
+            side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
             // Adjust the padding for floating and inset variants.
@@ -282,7 +260,7 @@ Sidebar.displayName = "Sidebar"
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
->(({ className, onClick, children, ...props }, ref) => {
+>(({ className, onClick, ...props }, ref) => {
   const { toggleSidebar } = useSidebar()
 
   return (
@@ -298,7 +276,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      {children ?? <PanelLeft />}
+      <PanelLeft />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

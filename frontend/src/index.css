@@ -245,6 +245,7 @@
     @apply transition-all duration-500 ease-out;
   }
 
+
   /* Sidebar Transition */
   .sidebar-transition {
     @apply transition-all duration-300 ease-out;

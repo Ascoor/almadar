@@ -1,42 +1,21 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SidebarProvider, SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
-import AppSidebar from './AppSidebar';
-import { Bell, Search, Menu } from 'lucide-react';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from './AppSidebar';
+import { Bell, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useTranslation } from 'react-i18next';
-import { useLanguage } from '@/context/LanguageContext';
-import { ThemeToggle } from '@/components/common/ThemeToggle';
-import { LanguageToggle } from '@/components/common/LanguageToggle';
-import ProfileMenu from '@/components/common/ProfileMenu';
+import { useAuth } from '@/context/AuthContext';
 
-function SidebarToggleButton() {
-  const { open } = useSidebar();
-  return (
-    <SidebarTrigger
-      className="text-white mr-2 hover:text-almadar-sidebar-danger dark:text-almadar-mint-light dark:hover:text-almadar-sand transition-colors duration-300 ease-in-out"
-      aria-controls="app-sidebar"
-      aria-expanded={!!open}
-      aria-label={open ? 'Close sidebar' : 'Open sidebar'}
-    >
-      <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.3 }}>
-        <Menu className="w-6 h-6" />
-      </motion.div>
-    </SidebarTrigger>
-  );
-}
-
-function AppLayout({ children }) {
-  const { t } = useTranslation();
-  const { isRTL } = useLanguage();
+const AppLayout = ({ children }) => {
+  const { user } = useAuth();
 
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-
+        
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
           <motion.header
@@ -45,40 +24,42 @@ function AppLayout({ children }) {
             className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40"
           >
             <div className="flex items-center justify-between px-6 h-full">
-              <div className="flex items-center gap-4">
-                <SidebarToggleButton />
+              <div className="flex items-center space-x-4 space-x-reverse">
                 <h1 className="text-xl font-semibold text-foreground">
-                  {t('app.name')}
+                  منصة المدار
                 </h1>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center space-x-4 space-x-reverse">
                 {/* Search */}
                 <div className="relative hidden md:block">
-                  <Search
-                    className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground`}
-                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder={t('common.search')}
-                    className={`${isRTL ? 'pr-10' : 'pl-10'} w-64 focus-ring`}
+                    placeholder="البحث..."
+                    className="pl-10 w-64 focus-ring"
                   />
                 </div>
 
-                <ThemeToggle />
-                <LanguageToggle />
-
                 {/* Notifications */}
-                <Button variant="ghost" size="icon" className="relative hover-scale">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative hover-scale"
+                >
                   <Bell className="h-5 w-5" />
                   <Badge
                     variant="destructive"
-                    className={`absolute -top-1 ${isRTL ? '-left-1' : '-right-1'} h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs`}
+                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
                   >
                     3
                   </Badge>
                 </Button>
 
-                <ProfileMenu />
+                {/* User Info */}
+                <div className="hidden sm:flex items-center space-x-2 space-x-reverse text-sm">
+                  <span className="text-muted-foreground">مرحباً،</span>
+                  <span className="font-medium text-foreground">{user?.name}</span>
+                </div>
               </div>
             </div>
           </motion.header>
@@ -90,12 +71,14 @@ function AppLayout({ children }) {
             transition={{ delay: 0.1 }}
             className="flex-1 overflow-auto bg-background"
           >
-            <div className="p-6">{children}</div>
+            <div className="p-6">
+              {children}
+            </div>
           </motion.main>
         </div>
       </div>
     </SidebarProvider>
   );
-}
+};
 
 export default AppLayout;
