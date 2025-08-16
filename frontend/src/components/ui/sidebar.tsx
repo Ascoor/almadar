@@ -17,8 +17,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-const SIDEBAR_COOKIE_NAME = "sidebar:state"
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
+const SIDEBAR_STORAGE_KEY = "sidebar:state"
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
@@ -32,6 +31,8 @@ type SidebarContext = {
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
+  isCollapsed: boolean
+  isMobileOpen: boolean
 }
 
 const SidebarContext = React.createContext<SidebarContext | null>(null)
@@ -68,9 +69,19 @@ const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobile()
     const [openMobile, setOpenMobile] = React.useState(false)
 
-    // This is the internal state of the sidebar.
-    // We use openProp and setOpenProp for control from outside the component.
+    // Internal state of the sidebar. Controlled externally via openProp if provided.
     const [_open, _setOpen] = React.useState(defaultOpen)
+
+    // Load persisted state from localStorage on desktop only.
+    React.useEffect(() => {
+      if (typeof window !== "undefined" && window.innerWidth >= 768) {
+        const storedState = localStorage.getItem(SIDEBAR_STORAGE_KEY)
+        if (storedState !== null) {
+          _setOpen(storedState === "true")
+        }
+      }
+    }, [])
+
     const open = openProp ?? _open
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
@@ -81,8 +92,12 @@ const SidebarProvider = React.forwardRef<
           _setOpen(openState)
         }
 
-        // This sets the cookie to keep the sidebar state.
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        if (typeof window !== "undefined" && window.innerWidth >= 768) {
+          localStorage.setItem(
+            SIDEBAR_STORAGE_KEY,
+            JSON.stringify(openState)
+          )
+        }
       },
       [setOpenProp, open]
     )
@@ -123,6 +138,8 @@ const SidebarProvider = React.forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        isCollapsed: state === "collapsed",
+        isMobileOpen: openMobile,
       }),
       [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
     )
