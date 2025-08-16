@@ -2,7 +2,7 @@ import React, { useState, useMemo, useContext } from 'react';
 import { Edit, Eye, Trash, ChevronUp, ChevronDown } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import API_CONFIG from '../../config/config';
-import { AuthContext } from '@/components/auth/AuthContext';
+import { AuthContext } from '@/context/AuthContext';;
 
 export default function TableComponent({
   data = [],

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { getProfile, updateUser, changePassword } from '@/services/api/users';
-import { AuthContext } from '@/components/auth/AuthContext';
+import { AuthContext } from '@/context/AuthContext';;
 import { toast } from 'sonner';
 
 export default function ProfilePage() {

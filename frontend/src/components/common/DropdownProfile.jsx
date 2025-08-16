@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect ,useContext} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Transition from '../../utils/Transition';
-import { AuthContext } from '@/components/auth/AuthContext';
+import { AuthContext } from '@/context/AuthContext';;
 import { useSpinner } from '@/context/SpinnerContext';
 import { toast } from 'sonner';
 import API_CONFIG from '@/config/config';

@@ -7,7 +7,7 @@ import { SpinnerProvider } from './context/SpinnerContext';
 import App from './App';
 import { Suspense } from 'react';
 import ThemeProvider from './utils/ThemeContext';
-import { AuthProvider } from '@/components/auth/AuthContext';
+import { AuthProvider } from '@/context/AuthContext';
 import { Toaster } from 'sonner';
 import './index.css'; 
  

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { initEcho, subscribeToUserChannel } from '@/lib/echo';
-import { useAuth } from '@/components/auth/AuthContext';
+import { useAuth } from '@/context/AuthContext';;
 import { toast } from 'sonner';
 
 const NotificationContext = createContext();

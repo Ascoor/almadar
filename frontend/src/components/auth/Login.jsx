@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Mail, LockKeyhole } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AuthContext } from '@/components/auth/AuthContext';
+import { AuthContext } from '@/context/AuthContext';;
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Input } from '../../components/ui/input';

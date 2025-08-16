@@ -2,7 +2,7 @@ import  React,{ useState, lazy, Suspense } from 'react';
 import { Plus, Trash, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';  
-import { useAuth } from '@/components/auth/AuthContext';
+import { useAuth } from '@/context/AuthContext';;
 import { MainProcedures } from '@/assets/icons';
 import { useContractCategories, useAdviceTypes, useActionTypes } from '@/hooks/dataHooks';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';

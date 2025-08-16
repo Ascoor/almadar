@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '@/components/auth/AuthContext';
+import { useAuth } from '@/context/AuthContext';;
 import { LogoArt, LogoPatren } from '../../assets/images';
 import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,

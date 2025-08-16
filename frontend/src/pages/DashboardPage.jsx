@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, lazy, Suspense } from 'react';
 import { useLocation } from "react-router-dom";
    
 import AuthSpinner  from '@/components/common/Spinners/AuthSpinner';
-import { AuthContext } from '@/components/auth/AuthContext';
+import { AuthContext } from '@/context/AuthContext';;
 import { AnimatePresence } from 'framer-motion'; 
 import { MobileThemeProvider, useMobileTheme } from '@/components/MobileThemeProvider';
 import ResponsiveLayout from '@/components/ResponsiveLayout';
