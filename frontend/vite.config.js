@@ -12,14 +12,10 @@ export default defineConfig(({ mode }) => ({
     host: '::',
     proxy: {
       '/broadcasting': 'http://127.0.0.1:8000',
-      '/socket.io': {
-        target: 'http://localhost:8080',
-        ws: true,
-      },
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'socket.io-client', 'laravel-echo'],
+    include: ['react', 'react-dom'],
   },
   plugins: [
     react(),
@@ -96,7 +92,6 @@ export default defineConfig(({ mode }) => ({
           react: ['react', 'react-dom'],
           pdf: ['pdfjs-dist', '@/components/PDFViewer'],
           ui: ['lucide-react'],
-          vendor: ['socket.io-client', 'laravel-echo'],
         },
       },
     },
