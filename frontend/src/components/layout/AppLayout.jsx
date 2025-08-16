@@ -1,19 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import AppSidebar  from './AppSidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import AppSidebar from './AppSidebar';
 import { Bell, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/context/LanguageContext';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { LanguageToggle } from '@/components/common/LanguageToggle';
+import ProfileMenu from '@/components/common/ProfileMenu';
 
 function AppLayout({ children }) {
-  const { user } = useAuth();
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
 
@@ -31,6 +30,7 @@ function AppLayout({ children }) {
           >
             <div className="flex items-center justify-between px-6 h-full">
               <div className={`flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-4'}`}>
+                <SidebarTrigger className="hover:bg-transparent" />
                 <h1 className="text-xl font-semibold text-foreground">
                   {t('app.name')}
                 </h1>
@@ -65,11 +65,8 @@ function AppLayout({ children }) {
                   </Badge>
                 </Button>
 
-                {/* User Info */}
-                <div className={`hidden sm:flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-2'} text-sm`}>
-                  <span className="text-muted-foreground">{t('auth.welcome')}،</span>
-                  <span className="font-medium text-foreground">{user?.name}</span>
-                </div>
+                {/* Profile Menu */}
+                <ProfileMenu />
               </div>
             </div>
           </motion.header>
