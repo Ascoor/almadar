@@ -204,6 +204,7 @@ const Sidebar = React.forwardRef<
             }
             side={side}
           >
+            {/* Hidden title for accessibility requirements */}
             <SheetTitle className="sr-only">Sidebar Navigation</SheetTitle>
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
