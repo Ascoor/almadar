@@ -1,27 +1,12 @@
-// src/App.jsx
-import  { useContext, useEffect } from 'react';
-import AuthWrapper from './pages/DashboardPage';
-import HomePage from './pages/HomePage';
-import { useThemeProvider } from './utils/ThemeContext';
-import { SpinnerProvider } from './context/SpinnerContext';
-import { AuthContext } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import Topbar from '@/components/layout/Topbar';
+import Home from '@/pages/Home';
 
-const App = () => { 
-  const { user, token } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user || !token) {
-      navigate('/'); // أو navigate('/login') إذا كنت تريد فرض صفحة تسجيل الدخول
-    }
-  }, [user, token]);
-
+export default function App() {
   return (
-    <SpinnerProvider>
-      {user ? <AuthWrapper /> : <HomePage />}
-    </SpinnerProvider>
+    <>
+      <Topbar />
+      <Home />
+    </>
   );
-};
-
-export default App;
+}
