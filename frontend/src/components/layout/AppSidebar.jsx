@@ -29,6 +29,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 const navigationItems = [
   {
@@ -85,9 +86,10 @@ const adminItems = [
 ];
 
 function AppSidebar() {
-  const { open, toggleSidebar } = useSidebar();
+  const { open } = useSidebar();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { isRTL } = useLanguage();
   const currentPath = location.pathname;
   const collapsed = !open;
 
@@ -104,10 +106,17 @@ function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${collapsed ? 'w-16' : 'w-64'} sidebar-transition border-r border-sidebar-border`}
+      side={isRTL ? 'right' : 'left'}
+      className={`${collapsed ? 'w-16' : 'w-64'} sidebar-transition ${
+        isRTL ? 'border-l' : 'border-r'
+      } border-sidebar-border`}
       collapsible="icon"
     >
-      <SidebarContent className="bg-sidebar">
+      <SidebarContent
+        className={`bg-sidebar ${
+          isRTL ? 'animate-slide-in-right' : 'animate-slide-in-left'
+        }`}
+      >
         {/* User Profile Section */}
         {!collapsed && (
           <motion.div
@@ -146,7 +155,11 @@ function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavCls}>
-                        <item.icon className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'mr-3'}`} />
+                        <item.icon
+                          className={`h-5 w-5 ${
+                            collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'
+                          }`}
+                        />
                         {!collapsed && (
                           <>
                             <span className="flex-1">{item.title}</span>
@@ -175,7 +188,11 @@ function AppSidebar() {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavCls}>
-                          <item.icon className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'mr-3'}`} />
+                          <item.icon
+                            className={`h-5 w-5 ${
+                              collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'
+                            }`}
+                          />
                           {!collapsed && (
                             <>
                               <span className="flex-1">{item.title}</span>
@@ -201,7 +218,7 @@ function AppSidebar() {
             asChild
           >
             <NavLink to="/profile">
-              <User className={`h-4 w-4 ${collapsed ? '' : 'mr-2'}`} />
+              <User className={`h-4 w-4 ${collapsed ? '' : isRTL ? 'ml-2' : 'mr-2'}`} />
               {!collapsed && 'الملف الشخصي'}
             </NavLink>
           </Button>
@@ -212,7 +229,7 @@ function AppSidebar() {
             onClick={logout}
             className="w-full justify-start text-sidebar-foreground hover:bg-destructive hover:text-destructive-foreground"
           >
-            <LogOut className={`h-4 w-4 ${collapsed ? '' : 'mr-2'}`} />
+            <LogOut className={`h-4 w-4 ${collapsed ? '' : isRTL ? 'ml-2' : 'mr-2'}`} />
             {!collapsed && 'تسجيل الخروج'}
           </Button>
         </div>
