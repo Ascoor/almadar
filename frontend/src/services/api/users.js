@@ -15,6 +15,14 @@ export const updateUser = (id, formData) =>
 
 // حذف مستخدم
 export const deleteUser = (id) => api.delete(`/api/users/${id}`).then(res => res.data);
+export const changeAvatar = async (id, file) => {
+  const fd = new FormData();
+  fd.append('image', file);
+  const res = await api.post(`/api/users/${id}/change-avatar`, fd, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data;
+};
 
 // كلمة المرور
 export const firstLoginPassword = (id, data) =>

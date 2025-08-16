@@ -1,15 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { getProfile, updateUser, changePassword } from '@/services/api/users';
 import { AuthContext } from '@/components/auth/AuthContext';
 import { toast } from 'sonner';
-import API_CONFIG from '../config/config';
 
 export default function ProfilePage() {
-  const { user, updateUserContext } = useContext(AuthContext);  // جلب دالة updateUserContext من السياق
+  const { user, updateUserContext } = useContext(AuthContext);
 
   const [profileData, setProfileData] = useState(null);
   const [form, setForm] = useState({ name: '', email: '', image: null });
   const [preview, setPreview] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [pwdSaving, setPwdSaving] = useState(false);
+  const blobUrlRef = useRef(null);
+
   const [passwordForm, setPasswordForm] = useState({
     old_password: '',
     new_password: '',
@@ -19,61 +22,114 @@ export default function ProfilePage() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const res = await getProfile(user.id); // استخدم user.id
+        const res = await getProfile(user.id);
         setProfileData(res.user);
-        setForm({ name: res.user.name, email: res.user.email, image: null });
-        if (res.user.image) {
-          setPreview(`${API_CONFIG.baseURL}/${res.user.image}`);
-        }
-      } catch {
+        setForm({ name: res.user.name ?? '', email: res.user.email ?? '', image: null });
+        if (res.image_url) setPreview(res.image_url);
+      } catch (err) {
         toast.error('فشل تحميل الملف الشخصي');
       }
     };
     if (user?.id) loadUser();
-  }, [user]);
+
+    // تنظيف أي blob URL عند الخروج
+    return () => {
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = null;
+      }
+    };
+  }, [user?.id]);
 
   const handleFormChange = (e) => {
     const { name, value, files } = e.target;
+
     if (name === 'image') {
-      const file = files[0];
+      const file = files?.[0];
+      if (!file) return;
+
+      // تحقق من النوع والحجم
+      if (!/^image\/(png|jpe?g|gif)$/i.test(file.type)) {
+        toast.error('صيغة الصورة غير مدعومة (png/jpg/jpeg/gif فقط)');
+        return;
+      }
+      const MAX = 2 * 1024 * 1024; // 2MB
+      if (file.size > MAX) {
+        toast.error('الحد الأقصى للصورة 2MB');
+        return;
+      }
+
       setForm((prev) => ({ ...prev, image: file }));
-      setPreview(URL.createObjectURL(file));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
+
+      // ألغِ الرابط القديم لتفادي التسريب
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = null;
+      }
+      const url = URL.createObjectURL(file);
+      blobUrlRef.current = url;
+      setPreview(url);
+      return;
     }
+
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
+    if (!user?.id) return;
+
     const data = new FormData();
-    data.append('name', form.name);
-    data.append('email', form.email);
+    data.append('name', form.name ?? '');
+    data.append('email', form.email ?? '');
     if (form.image) data.append('image', form.image);
 
     try {
-      await updateUser(user.id, data);  // استخدم user.id
+      setSaving(true);
+      await updateUser(user.id, data);
       toast.success('✅ تم تحديث البيانات بنجاح');
-      
-      // بعد التحديث بنجاح، قم بإعادة تحميل البيانات من الخادم
-      const res = await getProfile(user.id); // إعادة تحميل البيانات
-      updateUserContext(res.user);  // تحديث المستخدم في السياق المحلي
-    } catch {
-      toast.error('حدث خطأ أثناء التحديث');
+
+      const res = await getProfile(user.id);
+      updateUserContext(res.user);
+      setProfileData(res.user);
+      if (res.image_url) setPreview(res.image_url);
+
+      // صفِّر اختيار الصورة
+      setForm((prev) => ({ ...prev, image: null }));
+
+      // لو كان في blob URL، الغِه
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = null;
+      }
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message ||
+        Object.values(err?.response?.data?.errors || {})[0]?.[0] ||
+        'حدث خطأ أثناء التحديث';
+      toast.error(msg);
+    } finally {
+      setSaving(false);
     }
   };
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
+    if (!user?.id) return;
+
     try {
-      await changePassword(user.id, passwordForm); // استخدم user.id
+      setPwdSaving(true);
+      await changePassword(user.id, passwordForm);
       toast.success('✅ تم تغيير كلمة المرور');
-      setPasswordForm({
-        old_password: '',
-        new_password: '',
-        new_password_confirmation: '',
-      });
+      setPasswordForm({ old_password: '', new_password: '', new_password_confirmation: '' });
     } catch (err) {
-      toast.error(err.response?.data?.message || 'فشل تغيير كلمة المرور');
+      const msg =
+        err?.response?.data?.message ||
+        Object.values(err?.response?.data?.errors || {})[0]?.[0] ||
+        'فشل تغيير كلمة المرور';
+      toast.error(msg);
+    } finally {
+      setPwdSaving(false);
     }
   };
 
@@ -92,6 +148,8 @@ export default function ProfilePage() {
               value={form.name}
               onChange={handleFormChange}
               className="w-full rounded border px-3 py-2"
+              autoComplete="name"
+              required
             />
           </div>
           <div>
@@ -102,20 +160,35 @@ export default function ProfilePage() {
               value={form.email}
               onChange={handleFormChange}
               className="w-full rounded border px-3 py-2"
+              autoComplete="email"
+              required
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">الصورة الشخصية</label>
-            <input type="file" name="image" onChange={handleFormChange} className="w-full" />
+            <input
+              type="file"
+              name="image"
+              accept="image/png,image/jpeg,image/jpg,image/gif"
+              onChange={handleFormChange}
+              className="w-full"
+            />
             {preview && (
-              <img src={preview} alt="صورة المستخدم" className="w-24 h-24 mt-2 rounded-full object-cover" />
+              <img
+                src={preview}
+                alt="صورة المستخدم"
+                className="w-24 h-24 mt-2 rounded-full object-cover"
+              />
             )}
           </div>
           <button
             type="submit"
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+            disabled={saving}
+            className={`px-4 py-2 rounded text-white transition ${
+              saving ? 'bg-green-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+            }`}
           >
-            حفظ التغييرات
+            {saving ? 'جارٍ الحفظ...' : 'حفظ التغييرات'}
           </button>
         </form>
       </div>
@@ -131,6 +204,8 @@ export default function ProfilePage() {
               value={passwordForm.old_password}
               onChange={(e) => setPasswordForm({ ...passwordForm, old_password: e.target.value })}
               className="w-full rounded border px-3 py-2"
+              autoComplete="current-password"
+              required
             />
           </div>
           <div>
@@ -141,6 +216,9 @@ export default function ProfilePage() {
               value={passwordForm.new_password}
               onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
               className="w-full rounded border px-3 py-2"
+              autoComplete="new-password"
+              required
+              minLength={8}
             />
           </div>
           <div>
@@ -153,13 +231,19 @@ export default function ProfilePage() {
                 setPasswordForm({ ...passwordForm, new_password_confirmation: e.target.value })
               }
               className="w-full rounded border px-3 py-2"
+              autoComplete="new-password"
+              required
+              minLength={8}
             />
           </div>
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            disabled={pwdSaving}
+            className={`px-4 py-2 rounded text-white transition ${
+              pwdSaving ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
           >
-            تغيير كلمة المرور
+            {pwdSaving ? 'جارٍ التغيير...' : 'تغيير كلمة المرور'}
           </button>
         </form>
       </div>

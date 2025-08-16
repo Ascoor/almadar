@@ -68,9 +68,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('legal-advices', LegalAdviceController::class);
     Route::apiResource('advice-types', AdviceTypeController::class);
     Route::apiResource('litigations', LitigationController::class);
-Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
-Route::post('/users/{id}/first-login-password', [UserController::class, 'firstLoginPassword']);
 
+//Profile Settings
+    Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
+    Route::post('/users/{id}/first-login-password', [UserController::class, 'firstLoginPassword']);
+
+Route::post('/users/{id}/change-avatar', [UserController::class, 'changeAvatar']);
     Route::get('/notifications', [NotificationController::class, 'getUserNotifications'])->middleware('auth');
   Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 

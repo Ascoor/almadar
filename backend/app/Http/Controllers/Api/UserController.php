@@ -134,6 +134,35 @@ event(new  UserDataUpdated($user));
             'image_url' => $user->image ? asset('storage/' . $user->image) : null,
         ]);
     }
+public function changeAvatar(Request $request, $id)
+{
+    $user = User::findOrFail($id);
+
+    $request->validate([
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    // لو في صورة قديمة، امسحها
+    if ($user->image && file_exists(public_path($user->image))) {
+        unlink(public_path($user->image));
+    }
+
+    // احفظ الصورة الجديدة
+    $file = $request->file('image');
+    $filename = "user-{$user->id}." . $file->getClientOriginalExtension();
+    $file->move(public_path('users_images'), $filename);
+
+    $user->image = "users_images/{$filename}";
+    $user->save();
+
+    // ابعت event للتحديث
+    event(new UserDataUpdated($user));
+
+    return response()->json([
+        'message' => 'تم تغيير الصورة الشخصية بنجاح',
+        'image_url' => asset($user->image),
+    ]);
+}
 
     public function destroy($id)
     {
