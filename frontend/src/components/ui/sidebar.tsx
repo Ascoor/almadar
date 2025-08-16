@@ -16,8 +16,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useLanguage } from "@/context/LanguageContext"
 
-const SIDEBAR_STORAGE_KEY = "sidebar:state"
+const SIDEBAR_STORAGE_KEY = "sidebar:collapsed"
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
@@ -77,7 +78,7 @@ const SidebarProvider = React.forwardRef<
       if (typeof window !== "undefined" && window.innerWidth >= 768) {
         const storedState = localStorage.getItem(SIDEBAR_STORAGE_KEY)
         if (storedState !== null) {
-          _setOpen(storedState === "true")
+          _setOpen(!JSON.parse(storedState))
         }
       }
     }, [])
@@ -95,7 +96,7 @@ const SidebarProvider = React.forwardRef<
         if (typeof window !== "undefined" && window.innerWidth >= 768) {
           localStorage.setItem(
             SIDEBAR_STORAGE_KEY,
-            JSON.stringify(openState)
+            JSON.stringify(!openState)
           )
         }
       },
@@ -181,7 +182,7 @@ const Sidebar = React.forwardRef<
 >(
   (
     {
-      side = "left",
+      side,
       variant = "sidebar",
       collapsible = "offcanvas",
       className,
@@ -191,6 +192,8 @@ const Sidebar = React.forwardRef<
     ref
   ) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const { isRTL } = useLanguage()
+    const resolvedSide = side ?? (isRTL ? "right" : "left")
 
     if (collapsible === "none") {
       return (
@@ -219,7 +222,7 @@ const Sidebar = React.forwardRef<
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
               } as React.CSSProperties
             }
-            side={side}
+            side={resolvedSide}
           >
             {/* Hidden title for accessibility requirements */}
             <SheetTitle className="sr-only">Sidebar Navigation</SheetTitle>
@@ -236,7 +239,7 @@ const Sidebar = React.forwardRef<
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={variant}
-        data-side={side}
+        data-side={resolvedSide}
       >
         {/* This is what handles the sidebar gap on desktop */}
         <div
@@ -252,7 +255,7 @@ const Sidebar = React.forwardRef<
         <div
           className={cn(
             "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
-            side === "left"
+            resolvedSide === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
             // Adjust the padding for floating and inset variants.
