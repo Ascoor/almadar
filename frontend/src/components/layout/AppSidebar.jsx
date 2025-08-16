@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -73,13 +73,27 @@ const getAdminItems = (t) => [
 ];
 
 export default function AppSidebar() {
-  const { open } = useSidebar(); // from shadcn/ui
+  const { open, setOpen, isCollapsed } = useSidebar(); // from shadcn/ui
   const location = useLocation();
   const { user, logout } = useAuth();
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
 
-  const collapsed = !open;
+  const collapsed = isCollapsed;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('sidebar:collapsed');
+      if (stored !== null) {
+        setOpen(!JSON.parse(stored));
+      }
+    }
+  }, [setOpen]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sidebar:collapsed', JSON.stringify(collapsed));
+    }
+  }, [collapsed]);
   const currentPath = location.pathname;
 
   const isActivePath = (path) => currentPath === path;
