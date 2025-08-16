@@ -33,8 +33,8 @@ cd ..
 # Start the front-end dev server
 echo "🌐 Starting Vite frontend on http://localhost:3000"
 cd frontend
-rm -rf node_modules
-npm install --frozen-lockfile
+# rm -rf node_modules
+# npm i --legacy-peer-deps
 npm run dev > /dev/null 2>&1 &
 FRONTEND_PID=$!
 cd ..

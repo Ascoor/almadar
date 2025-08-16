@@ -2,13 +2,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
-import { VitePWA } from 'vite-plugin-pwa';
-import { componentTagger } from 'lovable-tagger';
-import { splitVendorChunkPlugin } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';  
 
 export default defineConfig(({ mode }) => ({
   server: {
-    port: 8080,
+    port: 3000,
     host: '::',
     proxy: {
       '/broadcasting': 'http://127.0.0.1:8000',
