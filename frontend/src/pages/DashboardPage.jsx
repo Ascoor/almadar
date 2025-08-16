@@ -1,100 +1,222 @@
-import React, { useState, useEffect, useContext, lazy, Suspense } from 'react';
-import { useLocation } from "react-router-dom";
-   
-import AuthSpinner  from '@/components/common/Spinners/AuthSpinner';
-import { AuthContext } from '@/context/AuthContext';;
-import { AnimatePresence } from 'framer-motion'; 
-import { MobileThemeProvider, useMobileTheme } from '@/components/MobileThemeProvider';
-import ResponsiveLayout from '@/components/ResponsiveLayout';
-import { NotificationProvider } from '@/components/Notifications/NotificationContext';
-import { AppWithQuery } from '@/hooks/dataHooks';
+import React from 'react';
+import { motion } from 'framer-motion';
+import {
+  FileText,
+  Scale,
+  Search,
+  Gavel,
+  TrendingUp,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+  BarChart3,
+  Calendar,
+} from 'lucide-react';
+import AppLayout from '@/components/layout/AppLayout';
+import SectionHeader from '@/components/common/SectionHeader';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 
-const Header = lazy(() => import('@/components/dashboard/Header'));
-const AppSidebar = lazy(() => import('@/components/dashboard/AppSidebar'));
-const AuthRoutes = lazy(() => import('@/components/layout/AuthRoutes'));
-const ForcePasswordChangeModal = lazy(() => import('@/components/auth/ForcePasswordChangeModal'));
+const DashboardPage = () => {
+  const { user } = useAuth();
 
-const DashboardContent = () => {
-  const { user } = useContext(AuthContext);
-  const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
+  const stats = [
+    { title: 'إجمالي العقود', value: '1,247', change: '+12%', icon: FileText, color: 'text-blue-600', bgColor: 'bg-blue-100' },
+    { title: 'الاستشارات القانونية', value: '856', change: '+8%', icon: Scale, color: 'text-green-600', bgColor: 'bg-green-100' },
+    { title: 'التحقيقات الجارية', value: '24', change: '-3%', icon: Search, color: 'text-orange-600', bgColor: 'bg-orange-100' },
+    { title: 'القضايا النشطة', value: '18', change: '+5%', icon: Gavel, color: 'text-red-600', bgColor: 'bg-red-100' },
+  ];
 
-  const [forcePasswordModal, setForcePasswordModal] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation(); 
+  const recentActivities = [
+    { id: 1, type: 'contract',      title: 'تم إنشاء عقد جديد - شركة النور للتطوير', time: 'منذ ساعتين', status: 'success' },
+    { id: 2, type: 'litigation',    title: 'تحديث في القضية رقم 2024/123',            time: 'منذ 4 ساعات', status: 'warning' },
+    { id: 3, type: 'advice',        title: 'طلب استشارة جديد من العميل أحمد محمد',    time: 'منذ 6 ساعات', status: 'info' },
+    { id: 4, type: 'investigation', title: 'انتهاء التحقيق في قضية التزوير',          time: 'أمس',         status: 'success' },
+  ];
 
-  useEffect(() => {
-    if (user && user.password_changed === 0) setForcePasswordModal(true);
-  }, [user]);
+  const upcomingTasks = [
+    { id: 1, title: 'مراجعة عقد شركة المستقبل',      deadline: '2024-12-20', priority: 'high' },
+    { id: 2, title: 'جلسة محكمة - القضية 2024/089',  deadline: '2024-12-22', priority: 'urgent' },
+    { id: 3, title: 'تسليم التقرير القانوني النهائي', deadline: '2024-12-25', priority: 'medium' },
+  ];
 
-  useEffect(() => {
-    if (isMobile) setSidebarOpen(false);
-  }, [location.pathname, isMobile]);
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'urgent': return 'destructive';
+      case 'high':   return 'default';
+      case 'medium': return 'secondary';
+      default:       return 'outline';
+    }
+  };
 
-  const toggleSidebar = () => setSidebarOpen(prev => !prev);
-
-  const mainStyles = {
-    paddingTop: isMobile ? (isStandalone ? `${safeAreaInsets.top + 80}px` : '80px') : '112px',
-    paddingBottom: isStandalone && isMobile ? `${safeAreaInsets.bottom + 32}px` : '32px',
-    marginRight: !isMobile ? (sidebarOpen ? '260px' : '64px') : '0',
-    minHeight: isMobile ? 'calc(var(--vh, 1vh) * 100)' : '100vh'
+  const getPriorityText = (priority) => {
+    switch (priority) {
+      case 'urgent': return 'عاجل';
+      case 'high':   return 'مهم';
+      case 'medium': return 'متوسط';
+      default:       return 'عادي';
+    }
   };
 
   return (
-    <ResponsiveLayout className="min-h-screen flex flex-col sm:flex-row relative">
-       <Suspense fallback={<div className="text-center p-4">جاري تحميل القائمة الجانبية...</div>}>
-     <AppSidebar
-        isOpen={sidebarOpen}
-        onToggle={toggleSidebar}
-        onLinkClick={() => isMobile && setSidebarOpen(false)}
-        userPermissions={user.permissions.map(p => p.name)}
-      />
-
-      {isMobile && sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-10" 
-          onClick={() => setSidebarOpen(false)} 
+    <AppLayout>
+      <div className="space-y-8">
+        <SectionHeader
+          title={`مرحباً، ${user?.name || ''}`}
+          subtitle="نظرة عامة على أنشطة المنصة والإحصائيات"
+          icon={BarChart3}
         />
-      )}
-      </Suspense>
-      <div className="flex-1 flex flex-col transition-all duration-300">
-        <Suspense fallback={<AuthSpinner />}>
-          <Header user={user?.id} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
-        </Suspense>
-  <main 
-          className={`
-            flex-1 px-4 sm:px-6 lg:px-8 
-            bg-greenic-light/10 dark:bg-greenic-darker/20 
-            transition-all duration-500
-            ${isMobile ? 'mobile-main' : 'desktop-main'}
-            ${isStandalone ? 'standalone-main' : ''}
-          `}
-          style={mainStyles}
-        >
-      <Suspense fallback={<AuthSpinner/>}>
-            <AuthRoutes />
-          </Suspense>
-        </main>
-      </div>
 
-      <AnimatePresence>
-        {forcePasswordModal && (
-          <Suspense fallback={<div className="text-center mt-16 p-4"><AuthSpinner />تحميل نافذة تغيير كلمة المرور...</div>}>
-            <ForcePasswordChangeModal onClose={() => setForcePasswordModal(false)} />
-          </Suspense>
-       )}
-      </AnimatePresence>
-    </ResponsiveLayout>
+        {/* Statistics */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card className="professional-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
+                      <div className="flex items-center space-x-2 space-x-reverse">
+                        <h3 className="text-2xl font-bold text-card-foreground">{stat.value}</h3>
+                        <Badge
+                          variant={stat.change.startsWith('+') ? 'default' : 'destructive'}
+                          className="text-xs"
+                        >
+                          {stat.change}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className={`w-12 h-12 rounded-xl ${stat.bgColor} flex items-center justify-center`}>
+                      <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Recent Activities */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="lg:col-span-2"
+          >
+            <Card className="professional-card">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 space-x-reverse">
+                  <Clock className="w-5 h-5 text-primary" />
+                  <span>الأنشطة الأخيرة</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {recentActivities.map((activity) => (
+                  <motion.div
+                    key={activity.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-start space-x-3 space-x-reverse p-3 rounded-lg hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex-shrink-0">
+                      {activity.status === 'success' && <CheckCircle className="w-5 h-5 text-success" />}
+                      {activity.status === 'warning' && <AlertCircle className="w-5 h-5 text-warning" />}
+                      {activity.status === 'info' && <TrendingUp className="w-5 h-5 text-primary" />}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-card-foreground">{activity.title}</p>
+                      <p className="text-xs text-muted-foreground">{activity.time}</p>
+                    </div>
+                  </motion.div>
+                ))}
+                <div className="pt-4 border-t">
+                  <Button variant="outline" className="w-full">عرض جميع الأنشطة</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Upcoming Tasks */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="professional-card">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 space-x-reverse">
+                  <Calendar className="w-5 h-5 text-primary" />
+                  <span>المهام القادمة</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {upcomingTasks.map((task) => (
+                  <motion.div
+                    key={task.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="text-sm font-medium text-card-foreground">{task.title}</h4>
+                      <Badge variant={getPriorityColor(task.priority)} className="text-xs">
+                        {getPriorityText(task.priority)}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">الموعد النهائي: {task.deadline}</p>
+                  </motion.div>
+                ))}
+                <div className="pt-4 border-t">
+                  <Button variant="outline" size="sm" className="w-full">عرض جميع المهام</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Quick Actions */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <Card className="professional-card">
+            <CardHeader>
+              <CardTitle>إجراءات سريعة</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
+                  <FileText className="w-6 h-6" />
+                  <span className="text-sm">عقد جديد</span>
+                </Button>
+                <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
+                  <Scale className="w-6 h-6" />
+                  <span className="text-sm">استشارة جديدة</span>
+                </Button>
+                <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
+                  <Search className="w-6 h-6" />
+                  <span className="text-sm">تحقيق جديد</span>
+                </Button>
+                <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
+                  <Gavel className="w-6 h-6" />
+                  <span className="text-sm">قضية جديدة</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    </AppLayout>
   );
 };
 
-const AuthWrapper = () => (
-  <MobileThemeProvider>
-    <AppWithQuery>
-      <NotificationProvider>
-        <DashboardContent />
-      </NotificationProvider>
-    </AppWithQuery>
-  </MobileThemeProvider>
-);
-
-export default AuthWrapper;
+export default DashboardPage;

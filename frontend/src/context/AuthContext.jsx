@@ -1,240 +1,113 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useMemo,
-  useContext,
-} from 'react';
-import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'sonner';
-import API_CONFIG from '../config/config';
-import api, { setOnUnauthorized } from '@/services/api/axiosConfig';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
-// إنشاء السياق الافتراضي
-export const AuthContext = createContext({
-  user: null,
-  token: null,
-  roles: [],
-  permissions: [],
-  login: async () => false,
-  logout: () => {},
-  hasRole: () => false,
-  hasPermission: () => false,
-  updateUserContext: () => {},
-  updatePermissions: () => {},
-  http: api,
-});
+const AuthContext = createContext(undefined);
 
-export function AuthProvider({ children }) {
-  const navigate = useNavigate();
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
-  // الحالة الأولية من sessionStorage
-  const [token, setToken] = useState(() => {
-    const t = sessionStorage.getItem('token');
-    return t ? JSON.parse(t) : null;
-  });
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
-  const [user, setUser] = useState(() => {
-    const u = sessionStorage.getItem('user');
-    return u ? JSON.parse(u) : null;
-  });
-
-  const [roles, setRoles] = useState(() => {
-    const r = sessionStorage.getItem('roles');
-    return r ? JSON.parse(r) : [];
-  });
-
-  const [permissions, setPermissions] = useState(() => {
-    const p = sessionStorage.getItem('permissions');
-    return p ? JSON.parse(p) : [];
-  });
-
-  const [loading, setLoading] = useState(true);
-
-  /**
-   * دالة حفظ بيانات الجلسة والتحديث في السياق
-   */
-  const saveAuth = ({ user: u, token: t, roles: rl, permissions: pr }) => {
-    sessionStorage.setItem('token', JSON.stringify(t));
-    sessionStorage.setItem('user', JSON.stringify(u));
-    sessionStorage.setItem('roles', JSON.stringify(rl));
-    sessionStorage.setItem('permissions', JSON.stringify(pr));
-
-    setToken(t);
-    setUser(u);
-    setRoles(rl);
-    setPermissions(pr);
-
-    navigate('/');
-  };
-
-  /**
-   * دالة تسجيل الدخول
-   */
+  // Mock authentication - replace with real API calls
   const login = async (email, password) => {
+    setIsLoading(true);
     try {
-      // استدعاء CSRF
-      await axios.get(`${API_CONFIG.baseURL}/sanctum/csrf-cookie`, {
-        withCredentials: true,
-      });
-
-      // إرسال بيانات الدخول
-      const resp = await axios.post(
-        `${API_CONFIG.baseURL}/api/login`,
-        { email, password },
-        {
-          withCredentials: true,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
-
-      const {
-        user: u,
-        token: t,
-        roles: rl = [],
-        permissions: pr = [],
-      } = resp.data;
-
-      if (u && t) {
-        saveAuth({ user: u, token: t, roles: rl, permissions: pr });
-        return {
-          success: true,
-          requirePasswordChange: u.password_changed === false,
-          user: u,
-        };
-      }
-    } catch (err) {
-      return {
-        success: false,
-        message: err.response?.data?.message || 'فشل الاتصال بالخادم',
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock user data - replace with real API response
+      const mockUser = {
+        id: '1',
+        name: 'Ahmed Al-Mansouri',
+        email: email,
+        role: 'Admin',
+        permissions: [
+          'contracts',
+          'investigations',
+          'legal-advice',
+          'litigations',
+          'users',
+          'settings'
+        ],
+        avatar: undefined
       };
+      
+      setUser(mockUser);
+      localStorage.setItem('auth_token', 'mock_token_123');
+      
+      toast({
+        title: "تم تسجيل الدخول بنجاح",
+        description: `مرحباً ${mockUser.name}`,
+      });
+      
+      return true;
+    } catch (error) {
+      toast({
+        title: "خطأ في تسجيل الدخول",
+        description: "تحقق من بيانات الدخول وحاول مرة أخرى",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  /**
-   * دالة تسجيل الخروج
-   */
-  const logout = async (showToast = false) => {
-    const token = sessionStorage.getItem('token');
-
-    if (token) {
-      try {
-        await api.post('/api/logout');
-      } catch (error) {
-        console.error('Logout error:', error);
-      }
-    }
-
-    sessionStorage.clear();
+  const logout = () => {
     setUser(null);
-    setToken(null);
-    setRoles([]);
-    setPermissions([]);
+    localStorage.removeItem('auth_token');
+    toast({
+      title: "تم تسجيل الخروج",
+      description: "شكراً لاستخدام منصة المدار",
+    });
+  };
 
-    if (showToast) {
-      toast.warning('تم تسجيل الخروج بسبب انتهاء الجلسة');
+  const updateUser = (userData) => {
+    if (user) {
+      setUser({ ...user, ...userData });
     }
-
-    navigate('/');
   };
 
-  /**
-   * مراقبة الاستجابة لـ 401 Unauthorized وتسجيل الخروج تلقائيًا
-   */
+  // Check for existing token on app start
   useEffect(() => {
-    setOnUnauthorized(() => () => logout(true));
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      // Mock token validation - replace with real API call
+      const mockUser = {
+        id: '1',
+        name: 'Ahmed Al-Mansouri',
+        email: 'ahmed@almadar.com',
+        role: 'Admin',
+        permissions: [
+          'contracts',
+          'investigations',
+          'legal-advice',
+          'litigations',
+          'users',
+          'settings'
+        ],
+      };
+      setUser(mockUser);
+    }
+    setIsLoading(false);
   }, []);
 
-  /**
-   * تحميل المستخدم عند بداية تشغيل التطبيق إذا كان هناك توكن
-   */
-  useEffect(() => {
-    const fetchUser = async () => {
-      const tokenString = sessionStorage.getItem('token');
-      let token;
-
-      try {
-        token = JSON.parse(tokenString);
-      } catch {
-        token = null;
-      }
-
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await api.get('/api/user');
-        const { user: u, roles: rl = [], permissions: pr = [] } = res.data;
-
-        setUser(u);
-        setRoles(rl);
-        setPermissions(pr);
-      } catch (err) {
-        console.error('Error fetching user:', err);
-        await logout(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  /**
-   * تحديث بيانات المستخدم
-   */
-  const updateUserContext = (updatedUser) => {
-    setUser(updatedUser);
-    sessionStorage.setItem('user', JSON.stringify(updatedUser));
+  const value = {
+    user,
+    isAuthenticated: !!user,
+    isLoading,
+    login,
+    logout,
+    updateUser,
   };
 
-  /**
-   * تحديث الصلاحيات
-   */
-  const updatePermissions = (newPermissions) => {
-    setPermissions(newPermissions);
-    sessionStorage.setItem('permissions', JSON.stringify(newPermissions));
-  };
-
-  /**
-   * التحقق من امتلاك دور
-   */
-  const hasRole = (roleName) => roles.includes(roleName);
-
-  /**
-   * التحقق من امتلاك صلاحية
-   */
-  const hasPermission = (permName) => permissions.includes(permName);
-
-  const authContextValue = useMemo(
-    () => ({
-      user,
-      token,
-      roles,
-      permissions,
-      login,
-      logout,
-      hasRole,
-      hasPermission,
-      updateUserContext,
-      updatePermissions,
-      http: api,
-    }),
-    [user, token, roles, permissions]
-  );
-
-  if (loading) return <div><AuthSpinner/></div>;
-
-  return (
-    <AuthContext.Provider value={authContextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-// مهوية استخدام السياق بسهولة
-export const useAuth = () => useContext(AuthContext);
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
