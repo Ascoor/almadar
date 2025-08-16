@@ -84,14 +84,13 @@ const adminItems = [
     permission: 'settings',
   },
 ];
-
 function AppSidebar() {
-  const { open } = useSidebar();
+  const { state } = useSidebar();
   const location = useLocation();
   const { user, logout } = useAuth();
   const { isRTL } = useLanguage();
   const currentPath = location.pathname;
-  const collapsed = !open;
+  const collapsed = state === 'collapsed';
 
   const isActive = (path) => currentPath === path;
 
@@ -107,13 +106,11 @@ function AppSidebar() {
   return (
     <Sidebar
       side={isRTL ? 'right' : 'left'}
-      className={`${collapsed ? 'w-16' : 'w-64'} sidebar-transition ${
-        isRTL ? 'border-l' : 'border-r'
-      } border-sidebar-border`}
+      className={`${isRTL ? 'border-l' : 'border-r'} border-sidebar-border`}
       collapsible="icon"
     >
       <SidebarContent
-        className={`bg-sidebar ${
+        className={`bg-sidebar transition-all duration-300 ${
           isRTL ? 'animate-slide-in-right' : 'animate-slide-in-left'
         }`}
       >
