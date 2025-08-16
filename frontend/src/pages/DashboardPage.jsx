@@ -10,7 +10,7 @@ import { NotificationProvider } from '@/components/Notifications/NotificationCon
 import { AppWithQuery } from '@/hooks/dataHooks';
 
 const Header = lazy(() => import('@/components/dashboard/Header'));
-const Sidebar = lazy(() => import('@/components/dashboard/Sidebar'));
+const AppSidebar = lazy(() => import('@/components/dashboard/AppSidebar'));
 const AuthRoutes = lazy(() => import('@/components/layout/AuthRoutes'));
 const ForcePasswordChangeModal = lazy(() => import('@/components/auth/ForcePasswordChangeModal'));
 
@@ -42,7 +42,7 @@ const DashboardContent = () => {
   return (
     <ResponsiveLayout className="min-h-screen flex flex-col sm:flex-row relative">
        <Suspense fallback={<div className="text-center p-4">جاري تحميل القائمة الجانبية...</div>}>
-     <Sidebar
+     <AppSidebar
         isOpen={sidebarOpen}
         onToggle={toggleSidebar}
         onLinkClick={() => isMobile && setSidebarOpen(false)}
