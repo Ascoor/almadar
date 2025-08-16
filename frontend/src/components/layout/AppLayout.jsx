@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import AppSidebar from './AppSidebar';
 import { Bell, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,14 +11,16 @@ import { useLanguage } from '@/context/LanguageContext';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { LanguageToggle } from '@/components/common/LanguageToggle';
 import ProfileMenu from '@/components/common/ProfileMenu';
+import HeaderToggle from '@/components/common/HeaderToggle';
 
 function AppLayout({ children }) {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
 
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
@@ -29,13 +31,12 @@ function AppLayout({ children }) {
           >
             <div className="flex items-center justify-between px-6 h-full">
               <div className={`flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-4'}`}>
-                <SidebarTrigger className="hover:bg-transparent" />
+                <HeaderToggle />
                 <h1 className="text-xl font-semibold text-foreground">
                   {t('app.name')}
                 </h1>
               </div>
 
-        <AppSidebar />
               <div className={`flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-4'}`}>
                 {/* Search */}
                 <div className="relative hidden md:block">
