@@ -8,10 +8,10 @@ import {
   TrendingUp,
   Clock,
   AlertCircle,
-  CheckCircle,
-  BarChart3,
+  CheckCircle, 
   Calendar,
 } from 'lucide-react';
+import barChartIcon from '@/assets/icons/bar-chart.svg';
 import AppLayout from '@/components/layout/AppLayout';
 import SectionHeader from '@/components/common/SectionHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,11 +63,12 @@ const DashboardPage = () => {
   return (
     <AppLayout>
       <div className="space-y-8">
-        <SectionHeader
-          title={`مرحباً، ${user?.name || ''}`}
-          subtitle="نظرة عامة على أنشطة المنصة والإحصائيات"
-          icon={BarChart3}
-        />
+<SectionHeader
+  listName={`مرحباً، ${user?.name || ''}`}
+  subtitle="نظرة عامة على أنشطة المنصة والإحصائيات"
+  icon={barChartIcon}
+/>
+
 
         {/* Statistics */}
         <motion.div

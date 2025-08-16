@@ -20,7 +20,6 @@ function AppLayout({ children }) {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
 
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
@@ -36,6 +35,7 @@ function AppLayout({ children }) {
                 </h1>
               </div>
 
+        <AppSidebar />
               <div className={`flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-4'}`}>
                 {/* Search */}
                 <div className="relative hidden md:block">
