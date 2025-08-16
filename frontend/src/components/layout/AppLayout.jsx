@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 import AppSidebar from './AppSidebar';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +11,22 @@ import { useLanguage } from '@/context/LanguageContext';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { LanguageToggle } from '@/components/common/LanguageToggle';
 import ProfileMenu from '@/components/common/ProfileMenu';
-import HeaderToggle from '@/components/common/HeaderToggle';
+
+function SidebarToggleButton() {
+  const { open } = useSidebar();
+  return (
+    <SidebarTrigger
+      className="text-white mr-2 hover:text-almadar-sidebar-danger dark:text-almadar-mint-light dark:hover:text-almadar-sand transition-colors duration-300 ease-in-out"
+      aria-controls="app-sidebar"
+      aria-expanded={!!open}
+      aria-label={open ? 'Close sidebar' : 'Open sidebar'}
+    >
+      <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.3 }}>
+        <Menu className="w-6 h-6" />
+      </motion.div>
+    </SidebarTrigger>
+  );
+}
 
 function AppLayout({ children }) {
   const { t } = useTranslation();
@@ -31,7 +46,7 @@ function AppLayout({ children }) {
           >
             <div className="flex items-center justify-between px-6 h-full">
               <div className="flex items-center gap-4">
-                <HeaderToggle />
+                <SidebarToggleButton />
                 <h1 className="text-xl font-semibold text-foreground">
                   {t('app.name')}
                 </h1>
