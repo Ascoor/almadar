@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface LanguageContextType {
@@ -17,6 +17,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const isRTL = i18n.language === 'ar';
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    }
+  }, [isRTL]);
 
   return (
     <LanguageContext.Provider value={{ 
