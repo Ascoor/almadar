@@ -84,7 +84,7 @@ const adminItems = [
   },
 ];
 
-export function AppSidebar() {
+function AppSidebar() {
   const { open, toggleSidebar } = useSidebar();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -220,3 +220,5 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
+export default AppSidebar;
