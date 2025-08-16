@@ -12,7 +12,7 @@ import {
   Archive,
   ChevronRight,
   LogOut,
-  User
+  User,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -35,37 +35,37 @@ const navigationItems = [
     title: 'لوحة التحكم',
     url: '/dashboard',
     icon: LayoutDashboard,
-    permission: 'dashboard'
+    permission: 'dashboard',
   },
   {
     title: 'العقود',
     url: '/contracts',
     icon: FileText,
-    permission: 'contracts'
+    permission: 'contracts',
   },
   {
     title: 'الاستشارات القانونية',
     url: '/legal-advice',
     icon: Scale,
-    permission: 'legal-advice'
+    permission: 'legal-advice',
   },
   {
     title: 'التحقيقات',
     url: '/investigations',
     icon: Search,
-    permission: 'investigations'
+    permission: 'investigations',
   },
   {
     title: 'القضايا',
     url: '/litigations',
     icon: Gavel,
-    permission: 'litigations'
+    permission: 'litigations',
   },
   {
     title: 'الأرشيف',
     url: '/archive',
     icon: Archive,
-    permission: 'archive'
+    permission: 'archive',
   },
 ];
 
@@ -74,29 +74,29 @@ const adminItems = [
     title: 'إدارة المستخدمين',
     url: '/users',
     icon: Users,
-    permission: 'users'
+    permission: 'users',
   },
   {
     title: 'الإعدادات',
     url: '/settings',
     icon: Settings,
-    permission: 'settings'
+    permission: 'settings',
   },
 ];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, toggleSidebar } = useSidebar();
   const location = useLocation();
   const { user, logout } = useAuth();
   const currentPath = location.pathname;
   const collapsed = !open;
 
   const isActive = (path) => currentPath === path;
-  
+
   const getNavCls = ({ isActive }) =>
-    isActive 
-      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
-      : "hover:bg-sidebar-accent/50 text-sidebar-foreground hover:text-sidebar-accent-foreground";
+    isActive
+      ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+      : 'hover:bg-sidebar-accent/50 text-sidebar-foreground hover:text-sidebar-accent-foreground';
 
   const hasPermission = (permission) => {
     return user?.permissions.includes(permission) || user?.role === 'Admin';
@@ -104,7 +104,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${collapsed ? "w-16" : "w-64"} sidebar-transition border-r border-sidebar-border`}
+      className={`${collapsed ? 'w-16' : 'w-64'} sidebar-transition border-r border-sidebar-border`}
       collapsible="icon"
     >
       <SidebarContent className="bg-sidebar">
@@ -118,16 +118,12 @@ export function AppSidebar() {
             <div className="flex items-center space-x-3 space-x-reverse">
               <Avatar className="h-10 w-10">
                 <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground">
-                  {user?.name.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                  {user?.name.split(' ').map((n) => n[0]).join('').toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-sidebar-foreground truncate">
-                  {user?.name}
-                </p>
-                <p className="text-xs text-sidebar-foreground/70 truncate">
-                  {user?.role}
-                </p>
+                <p className="text-sm font-medium text-sidebar-foreground truncate">{user?.name}</p>
+                <p className="text-xs text-sidebar-foreground/70 truncate">{user?.role}</p>
               </div>
             </div>
           </motion.div>
@@ -145,8 +141,8 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => (
-                hasPermission(item.permission) && (
+              {navigationItems.map((item) =>
+                hasPermission(item.permission) ? (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavCls}>
@@ -154,16 +150,14 @@ export function AppSidebar() {
                         {!collapsed && (
                           <>
                             <span className="flex-1">{item.title}</span>
-                            {isActive(item.url) && (
-                              <ChevronRight className="h-4 w-4" />
-                            )}
+                            {isActive(item.url) && <ChevronRight className="h-4 w-4" />}
                           </>
                         )}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
-              ))}
+                ) : null
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -176,8 +170,8 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {adminItems.map((item) => (
-                  hasPermission(item.permission) && (
+                {adminItems.map((item) =>
+                  hasPermission(item.permission) ? (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavCls}>
@@ -185,16 +179,14 @@ export function AppSidebar() {
                           {!collapsed && (
                             <>
                               <span className="flex-1">{item.title}</span>
-                              {isActive(item.url) && (
-                                <ChevronRight className="h-4 w-4" />
-                              )}
+                              {isActive(item.url) && <ChevronRight className="h-4 w-4" />}
                             </>
                           )}
                         </NavLink>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  )
-                ))}
+                  ) : null
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -204,7 +196,7 @@ export function AppSidebar() {
         <div className="mt-auto p-4 border-t border-sidebar-border space-y-2">
           <Button
             variant="ghost"
-            size={collapsed ? "icon" : "sm"}
+            size={collapsed ? 'icon' : 'sm'}
             className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             asChild
           >
@@ -213,10 +205,10 @@ export function AppSidebar() {
               {!collapsed && 'الملف الشخصي'}
             </NavLink>
           </Button>
-          
+
           <Button
             variant="ghost"
-            size={collapsed ? "icon" : "sm"}
+            size={collapsed ? 'icon' : 'sm'}
             onClick={logout}
             className="w-full justify-start text-sidebar-foreground hover:bg-destructive hover:text-destructive-foreground"
           >

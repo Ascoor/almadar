@@ -1,21 +1,23 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { AppSidebar } from './AppSidebar';
+import { SidebarProvider, useSidebar } from '@/components/ui/sidebar';
+import AppSidebar from './AppSidebar';
 import { Bell, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
+import { PanelLeft } from 'lucide-react';
 
 const AppLayout = ({ children }) => {
   const { user } = useAuth();
+  const { toggleSidebar } = useSidebar();  // Ensure useSidebar is used here
 
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-        
+
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
           <motion.header
@@ -31,34 +33,20 @@ const AppLayout = ({ children }) => {
               </div>
 
               <div className="flex items-center space-x-4 space-x-reverse">
-                {/* Search */}
-                <div className="relative hidden md:block">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="البحث..."
-                    className="pl-10 w-64 focus-ring"
-                  />
-                </div>
-
-                {/* Notifications */}
+                {/* Toggle Sidebar Button */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative hover-scale"
+                  className="md:hidden"
+                  onClick={() => toggleSidebar()}  // Toggle the sidebar state
                 >
-                  <Bell className="h-5 w-5" />
-                  <Badge
-                    variant="destructive"
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-                  >
-                    3
-                  </Badge>
+                  <PanelLeft className="h-5 w-5" />
                 </Button>
 
-                {/* User Info */}
-                <div className="hidden sm:flex items-center space-x-2 space-x-reverse text-sm">
-                  <span className="text-muted-foreground">مرحباً،</span>
-                  <span className="font-medium text-foreground">{user?.name}</span>
+                {/* Search */}
+                <div className="relative hidden md:block">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input placeholder="البحث..." className="pl-10 w-64 focus-ring" />
                 </div>
               </div>
             </div>
