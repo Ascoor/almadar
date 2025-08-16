@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========
+   Theme Tokens
+   ========== */
+:root {
+  /* Base */
+  --bg: 210 20% 99%;
+  --fg: 210 15% 12%;
+  --muted: 210 12% 45%;
+  --card: 0 0% 100%;
+  --border: 210 16% 92%;
+
+  /* Brand (Emerald ↔ Cyan) */
+  --primary: 160 84% 35%;     /* Emerald 600 */
+  --primary-fg: 160 100% 98%; /* Very light emerald */
+  --accent: 197 92% 50%;      /* Cyan 500 */
+  --accent-fg: 197 100% 98%;
+
+  /* States */
+  --success: 147 85% 34%;
+  --warning: 40 95% 45%;
+  --danger: 0 84% 58%;
+}
+
+[data-theme="dark"] {
+  --bg: 210 15% 9%;
+  --fg: 210 20% 96%;
+  --muted: 210 10% 70%;
+  --card: 210 15% 12%;
+  --border: 210 12% 22%;
+
+  --primary: 160 84% 42%;
+  --primary-fg: 160 100% 10%;
+  --accent: 197 92% 54%;
+  --accent-fg: 197 100% 10%;
+}
+
+/* =========
+   Base Layer
+   ========== */
+@layer base {
+  html { color-scheme: light dark; }
+  body {
+    @apply bg-bg text-fg antialiased;
+    background-image: theme('backgroundImage.gradient-hero');
+  }
+
+  ::selection { @apply bg-accent text-accentFg; }
+}
+
+/* =========
+   Components
+   ========== */
+@layer components {
+  .card {
+    @apply bg-card rounded-2xl shadow-card border border-border;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-medium transition-all duration-200 ease-ease-soft focus:outline-none focus:ring-0;
+  }
+  .btn-primary {
+    @apply btn text-primaryFg bg-primary hover:opacity-95 active:opacity-90 shadow-soft;
+  }
+  .btn-outline {
+    @apply btn border border-border text-fg hover:bg-border/40;
+  }
+  .btn-ghost {
+    @apply btn text-fg hover:bg-border/50;
+  }
+  .input {
+    @apply w-full rounded-xl border border-border bg-card px-3 py-2 text-fg placeholder:opacity-70 focus:ring-0 focus:border-accent focus:shadow-focus;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs border border-border bg-card;
+  }
+  .pill {
+    @apply inline-flex rounded-full bg-gradient-brand text-primaryFg px-3 py-1 text-xs font-semibold shadow-soft;
+  }
+}
+
+/* =========
+   Utilities
+   ========== */
+@layer utilities {
+  .glass {
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+  }
+}
