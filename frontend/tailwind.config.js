@@ -12,19 +12,19 @@ module.exports = {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
-				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))',
-					hover: 'hsl(var(--primary-hover))',
-					light: 'hsl(var(--primary-light))'
-				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))',
-					hover: 'hsl(var(--secondary-hover))'
-				},
+                                background: 'var(--background-color)',
+                                foreground: 'hsl(var(--foreground))',
+                                primary: {
+                                        DEFAULT: 'var(--primary-color)',
+                                        foreground: 'hsl(var(--primary-foreground))',
+                                        hover: 'hsl(var(--primary-hover))',
+                                        light: 'hsl(var(--primary-light))'
+                                },
+                                secondary: {
+                                        DEFAULT: 'var(--secondary-color)',
+                                        foreground: 'hsl(var(--secondary-foreground))',
+                                        hover: 'hsl(var(--secondary-hover))'
+                                },
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
@@ -41,11 +41,11 @@ module.exports = {
 					DEFAULT: 'hsl(var(--muted))',
 					foreground: 'hsl(var(--muted-foreground))'
 				},
-				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))',
-					hover: 'hsl(var(--accent-hover))'
-				},
+                                accent: {
+                                        DEFAULT: 'var(--accent-color)',
+                                        foreground: 'hsl(var(--accent-foreground))',
+                                        hover: 'hsl(var(--accent-hover))'
+                                },
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
 					foreground: 'hsl(var(--popover-foreground))'
