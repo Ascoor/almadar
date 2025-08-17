@@ -11,7 +11,8 @@ import { useState, lazy, Suspense } from "react";
   import SectionHeader from "@/components/common/SectionHeader"; 
   import { Button } from "@/components/ui/button"; 
   import { InvestigationSection } from "@/assets/icons"; 
-  import { useInvestigations } from "../hooks/dataHooks";
+import { useInvestigations } from "../hooks/dataHooks";
+import AppLayout from '@/components/layout/AppLayout';
 const InvestigationModal = lazy(() => import("@/components/Investigations/InvestigationModal"));
 const InvestigationActionsTable = lazy(() => import("@/components/Investigations/InvestigationActionsTable"));
 const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalConfirmDeleteModal"));
@@ -88,6 +89,7 @@ const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalCo
     };
 
     return (
+      <AppLayout>
       <div className="p-6 min-h-screen">
         <motion.div
           key="header"
@@ -165,5 +167,6 @@ const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalCo
         )}
       </Suspense>
       </div>
+      </AppLayout>
     );
   }

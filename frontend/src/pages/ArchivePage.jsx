@@ -1,4 +1,5 @@
 import React, { useEffect, useState ,lazy,Suspense} from 'react';
+import AppLayout from '@/components/layout/AppLayout';
 
 import { getArchiveFiles } from '@/services/api/archives';
 import { toast } from 'sonner';
@@ -45,6 +46,7 @@ export default function ArchivePage() {
   };
 
   return (
+    <AppLayout>
     <div className="p-6 space-y-8 overflow-y-auto max-h-screen">
      <Suspense fallback={<div className="text-center text-sm">تحميل العنوان...</div>}>
         <SectionHeader icon={ArchiveSection} listName="الأرشيف" />
@@ -99,6 +101,7 @@ export default function ArchivePage() {
         </div>
       )}
     </div>
+    </AppLayout>
   );
 }
 

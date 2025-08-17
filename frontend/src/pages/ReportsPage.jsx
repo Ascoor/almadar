@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getActionReports } from '@/services/api/reports'; // استيراد دالة الحصول على البيانات من API
 import { toast } from 'sonner';
+import AppLayout from '@/components/layout/AppLayout';
 
 const ReportsPage = () => {
   const [reports, setReports] = useState([]);
@@ -60,6 +61,7 @@ const ReportsPage = () => {
   const handleCaseStatusChange = (e) => setCaseStatus(e.target.value);
 
   return (
+    <AppLayout>
     <div className="max-w-3xl mx-auto p-6 space-y-10">
       <h2 className="text-2xl font-bold mb-4">التقارير والإجراءات</h2>
 
@@ -187,6 +189,7 @@ const ReportsPage = () => {
         </table>
       </div>
     </div>
+    </AppLayout>
   );
 };
 

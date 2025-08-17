@@ -6,8 +6,9 @@ import TableComponent from "../components/common/TableComponent";
 import SectionHeader from "../components/common/SectionHeader";
 import { Button } from "../components/ui/button";
 import { LegalAdviceIcon } from "../assets/icons";
-import { AuthContext } from "@/components/auth/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 import { motion } from 'framer-motion';
+import AppLayout from '@/components/layout/AppLayout';
 
 import { useLegalAdvices } from "@/hooks/dataHooks"; // ✅ من React Query
 import { useQuery } from "@tanstack/react-query"; // لاستدعاء أنواع المشورة
@@ -55,6 +56,7 @@ export default function LegalAdvicePage() {
   };
 
   return (
+    <AppLayout>
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen transition-colors">
       <motion.div
         key="header"
@@ -148,5 +150,6 @@ export default function LegalAdvicePage() {
         )}
       </Suspense>
     </div>
+    </AppLayout>
   );
 }
