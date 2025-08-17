@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import {
   DashboardIcon,
   ContractsIcon,
@@ -20,7 +21,7 @@ export default function AppSidebar({
   isRTL,
 }) {
   const [activeSection, setActiveSection] = useState(null);
-
+  const { user, roles, hasPermission, logout } = useAuth();
   const navConfig = useMemo(
     () => [
       { id: 'home', label: 'الرئيسية', to: '/', icon: <DashboardIcon size={20} /> },
@@ -77,7 +78,7 @@ export default function AppSidebar({
   return (
     <aside
       dir={isRTL ? 'rtl' : 'ltr'}
-      className={`fixed top-0 z-40 h-full ${side} ${width} ${translate} flex flex-col bg-sidebar text-sidebar-foreground transition-all duration-300`}
+      className={`fixed top-0 z-40 h-full ${side} ${width} ${translate} flex flex-col bg- text-sidebar-foreground transition-all duration-300`}
     >
       <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} p-4`}>
         {isOpen && <span className="font-bold">Almadar</span>}

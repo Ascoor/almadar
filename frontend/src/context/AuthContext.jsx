@@ -25,7 +25,7 @@ export const AuthContext = createContext({
   hasPermission: () => false,
   updateUserContext: () => {},
   updatePermissions: () => {},
-  http: api,
+ 
 });
 
 export function AuthProvider({ children }) {
@@ -194,51 +194,45 @@ export function AuthProvider({ children }) {
     setUser(updatedUser);
     sessionStorage.setItem('user', JSON.stringify(updatedUser));
   };
-
-  /**
-   * تحديث الصلاحيات
-   */
-  const updatePermissions = (newPermissions) => {
-    setPermissions(newPermissions);
-    sessionStorage.setItem('permissions', JSON.stringify(newPermissions));
-  };
+ 
 
   /**
    * التحقق من امتلاك دور
    */
+
   const hasRole = (roleName) => roles.includes(roleName);
-
-  /**
-   * التحقق من امتلاك صلاحية
-   */
-  const hasPermission = (permName) => permissions.includes(permName);
-
-  const authContextValue = useMemo(
-    () => ({
-      user,
-      token,
-      roles,
-      permissions,
-      isAuthenticated,
-      login,
-      logout,
-      hasRole,
-      hasPermission,
-      updateUserContext,
-      updatePermissions,
-      http: api,
-    }),
-    [user, token, roles, permissions, isAuthenticated]
-  );
-
-  if (loading) return <div><AuthSpinner/></div>;
+  const hasPermission = (permName) => {
+    if (!permName) return roles.includes('Admin');
+    return (
+      roles.includes('Admin') ||
+      permissions.includes(permName) ||
+      permissions.some((p) => p.endsWith(permName))
+    );
+  };
+ const updatePermissions = (newPermissions) => {
+  setPermissions(newPermissions);
+  sessionStorage.setItem('permissions', JSON.stringify(newPermissions));
+};
 
   return (
-    <AuthContext.Provider value={authContextValue}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        roles,
+        permissions,
+        login,
+        logout,
+        hasRole,
+        hasPermission,
+        updateUserContext,
+        updatePermissions,
+     
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
+} 
 // مهوية استخدام السياق بسهولة
 export const useAuth = () => useContext(AuthContext);
