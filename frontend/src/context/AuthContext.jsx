@@ -18,6 +18,7 @@ export const AuthContext = createContext({
   token: null,
   roles: [],
   permissions: [],
+  isAuthenticated: false,
   login: async () => false,
   logout: () => {},
   hasRole: () => false,
@@ -53,6 +54,8 @@ export function AuthProvider({ children }) {
 
   const [loading, setLoading] = useState(true);
 
+  const isAuthenticated = !!token;
+
   /**
    * دالة حفظ بيانات الجلسة والتحديث في السياق
    */
@@ -67,7 +70,7 @@ export function AuthProvider({ children }) {
     setRoles(rl);
     setPermissions(pr);
 
-    navigate('/');
+    navigate('/dashboard');
   };
 
   /**
@@ -216,6 +219,7 @@ export function AuthProvider({ children }) {
       token,
       roles,
       permissions,
+      isAuthenticated,
       login,
       logout,
       hasRole,
@@ -224,7 +228,7 @@ export function AuthProvider({ children }) {
       updatePermissions,
       http: api,
     }),
-    [user, token, roles, permissions]
+    [user, token, roles, permissions, isAuthenticated]
   );
 
   if (loading) return <div><AuthSpinner/></div>;
