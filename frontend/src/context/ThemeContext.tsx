@@ -31,8 +31,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     const applyTheme = (themeToApply: 'light' | 'dark') => {
+      root.classList.add('theme-transition');
       root.classList.remove('light', 'dark');
       root.classList.add(themeToApply);
+      window.setTimeout(() => root.classList.remove('theme-transition'), 300);
       setActualTheme(themeToApply);
     };
 
