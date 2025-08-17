@@ -17,7 +17,7 @@ const AppLayout = ({ children }) => {
   const { isRTL } = useLanguage();
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <AppSidebar />
       <SidebarInset dir={isRTL ? 'rtl' : 'ltr'} className="flex flex-col">
         {/* Header */}
@@ -28,7 +28,7 @@ const AppLayout = ({ children }) => {
         >
           <div className="flex items-center justify-between px-6 h-full">
             <div className="flex items-center space-x-4 space-x-reverse">
-              <SidebarTrigger />
+              <SidebarTrigger className="md:hidden" />
               <h1 className="text-xl font-semibold text-foreground">
                 منصة المدار
               </h1>

@@ -85,7 +85,7 @@ const adminItems = [
   },
 ];
 function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const location = useLocation();
   const { user, logout } = useAuth();
   const { isRTL } = useLanguage();
@@ -101,6 +101,10 @@ function AppSidebar() {
 
   const hasPermission = (permission) => {
     return user?.role === 'Admin' || user?.permissions?.includes(permission);
+  };
+
+  const handleLinkClick = () => {
+    if (isMobile) setOpenMobile(false);
   };
 
   return (
@@ -142,7 +146,7 @@ function AppSidebar() {
         )}
 
         {/* Toggle Button */}
-        <div className="p-2">
+        <div className="p-2 hidden md:block">
           <SidebarTrigger className="w-full justify-center hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
         </div>
 
@@ -157,7 +161,11 @@ function AppSidebar() {
                 hasPermission(item.permission) ? (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavCls}>
+                      <NavLink
+                        to={item.url}
+                        className={getNavCls}
+                        onClick={handleLinkClick}
+                      >
                         <item.icon
                           className={`h-5 w-5 ${
                             collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'
@@ -190,7 +198,11 @@ function AppSidebar() {
                   hasPermission(item.permission) ? (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
-                        <NavLink to={item.url} className={getNavCls}>
+                        <NavLink
+                          to={item.url}
+                          className={getNavCls}
+                          onClick={handleLinkClick}
+                        >
                           <item.icon
                             className={`h-5 w-5 ${
                               collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'
@@ -220,7 +232,7 @@ function AppSidebar() {
             className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             asChild
           >
-            <NavLink to="/profile">
+            <NavLink to="/profile" onClick={handleLinkClick}>
               <User className={`h-4 w-4 ${collapsed ? '' : isRTL ? 'ml-2' : 'mr-2'}`} />
               {!collapsed && 'الملف الشخصي'}
             </NavLink>
@@ -229,7 +241,10 @@ function AppSidebar() {
           <Button
             variant="ghost"
             size={collapsed ? 'icon' : 'sm'}
-            onClick={logout}
+            onClick={() => {
+              if (isMobile) setOpenMobile(false);
+              logout();
+            }}
             className="w-full justify-start text-sidebar-foreground hover:bg-destructive hover:text-destructive-foreground"
           >
             <LogOut className={`h-4 w-4 ${collapsed ? '' : isRTL ? 'ml-2' : 'mr-2'}`} />
