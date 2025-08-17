@@ -24,6 +24,12 @@
     --primary-foreground: 0 0% 98%;
     --primary-hover: 218 40% 20%;
     --primary-light: 218 25% 35%;
+
+    /* CSS color tokens for Tailwind config */
+    --primary-color: hsl(var(--primary));
+    --secondary-color: hsl(var(--secondary));
+    --accent-color: hsl(var(--accent));
+    --background-color: hsl(var(--background));
     
     /* Secondary Colors - Professional Blue */
     --secondary: 210 20% 94%;
@@ -103,6 +109,12 @@
     --primary-foreground: 218 30% 8%;
     --primary-hover: 214 90% 70%;
     --primary-light: 214 80% 75%;
+
+    /* CSS color tokens for Tailwind config */
+    --primary-color: hsl(var(--primary));
+    --secondary-color: hsl(var(--secondary));
+    --accent-color: hsl(var(--accent));
+    --background-color: hsl(var(--background));
     
     --secondary: 218 20% 18%;
     --secondary-foreground: 210 15% 85%;
