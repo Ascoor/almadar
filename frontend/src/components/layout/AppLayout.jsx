@@ -1,12 +1,10 @@
-import React from 'react';
++62
+-29
+
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset,
-} from '@/components/ui/sidebar';
+import { Search, Menu } from 'lucide-react';
 import AppSidebar from './AppSidebar';
-import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { LanguageToggle } from '@/components/common/LanguageToggle';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
@@ -17,34 +15,70 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const AppLayout = ({ children }) => {
   const { isRTL } = useLanguage();
   const isMobile = useIsMobile();
+  const [isSidebarOpen, setSidebarOpen] = useState(!isMobile);
+
+  useEffect(() => {
+    setSidebarOpen(!isMobile);
+  }, [isMobile]);
+
+  const toggleSidebar = () => setSidebarOpen((o) => !o);
+  const closeSidebar = () => setSidebarOpen(false);
+
+  const marginClass = !isMobile
+    ? isSidebarOpen
+      ? isRTL
+        ? 'mr-64'
+        : 'ml-64'
+      : isRTL
+      ? 'mr-16'
+      : 'ml-16'
+    : '';
 
   return (
-    <SidebarProvider defaultOpen={!isMobile}>
-      <AppSidebar />
-      <SidebarInset dir={isRTL ? 'rtl' : 'ltr'} className="flex flex-col">
+    <div dir={isRTL ? 'rtl' : 'ltr'}>
+      {!isSidebarOpen && isMobile && (
+        <button
+          onClick={toggleSidebar}
+          className={`fixed top-1/2 -translate-y-1/2 z-40 p-2 rounded bg-primary text-primary-foreground ${
+            isRTL ? 'right-0' : 'left-0'
+          }`}
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      )}
+
+      <AppSidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        closeSidebar={closeSidebar}
+        isMobile={isMobile}
+        isRTL={isRTL}
+      />
+
+      <div className={`flex flex-col min-h-screen transition-all duration-300 ${marginClass}`}>
         {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40"
+          className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30 flex items-center justify-between px-6"
         >
-          <div className="flex items-center justify-between px-6 h-full">
-            <div className="flex items-center space-x-4 space-x-reverse">
-              <SidebarTrigger className="md:hidden" />
-              <h1 className="text-xl font-semibold text-foreground">
-                منصة المدار
-              </h1>
-              <div className="relative hidden md:block">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="البحث..." className="pl-10 w-64 focus-ring" />
-              </div>
+          <div className="flex items-center space-x-4 space-x-reverse">
+            {!isMobile && (
+              <button onClick={toggleSidebar} className="p-2 rounded hover:bg-muted">
+                <Menu className="h-5 w-5" />
+              </button>
+            )}
+            <h1 className="text-xl font-semibold text-foreground">منصة المدار</h1>
+            <div className="relative hidden md:block">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="البحث..." className="pl-10 w-64 focus-ring" />
             </div>
+          </div>
 
-            <div className="flex items-center space-x-2 space-x-reverse">
-              <LanguageToggle />
-              <ThemeToggle />
-              <ProfileMenu />
-            </div>
+          <div className="flex items-center space-x-2 space-x-reverse">
+            <LanguageToggle />
+            <ThemeToggle />
+            <ProfileMenu />
           </div>
         </motion.header>
 
@@ -57,8 +91,8 @@ const AppLayout = ({ children }) => {
         >
           <div className="p-6">{children}</div>
         </motion.div>
-      </SidebarInset>
-    </SidebarProvider>
+      </div>
+    </div>
   );
 };
 

@@ -1,259 +1,122 @@
-import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import {
-  LayoutDashboard,
-  FileText,
-  Scale,
-  Search,
-  Users,
-  Settings,
-  Gavel,
-  Archive,
-  ChevronRight,
-  LogOut,
-  User,
-} from 'lucide-react';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
-  useSidebar,
-} from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useAuth } from '@/context/AuthContext';
-import { useLanguage } from '@/context/LanguageContext';
+import React, { useState, useEffect, useMemo } from 'react';
+import { NavLink } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
+import { DashboardIcon, ContractsIcon, ConsultationsIcon, LawsuitsIcon, ArchiveIcon, CourtHouseIcon, LawBookIcon, LegalBriefcaseIcon } from '@/components/ui/Icons';
 
-const navigationItems = [
-  {
-    title: 'لوحة التحكم',
-    url: '/dashboard',
-    icon: LayoutDashboard,
-    permission: 'dashboard',
-  },
-  {
-    title: 'العقود',
-    url: '/contracts',
-    icon: FileText,
-    permission: 'contracts',
-  },
-  {
-    title: 'الاستشارات القانونية',
-    url: '/legal-advice',
-    icon: Scale,
-    permission: 'legal-advice',
-  },
-  {
-    title: 'التحقيقات',
-    url: '/investigations',
-    icon: Search,
-    permission: 'investigations',
-  },
-  {
-    title: 'القضايا',
-    url: '/litigations',
-    icon: Gavel,
-    permission: 'litigations',
-  },
-  {
-    title: 'الأرشيف',
-    url: '/archive',
-    icon: Archive,
-    permission: 'archive',
-  },
-];
+export default function AppSidebar({ isOpen, onToggle, onLinkClick, isRTL }) {
+  const [activeSection, setActiveSection] = useState(null);
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
 
-const adminItems = [
-  {
-    title: 'إدارة المستخدمين',
-    url: '/users',
-    icon: Users,
-    permission: 'users',
-  },
-  {
-    title: 'الإعدادات',
-    url: '/settings',
-    icon: Settings,
-    permission: 'settings',
-  },
-];
-function AppSidebar() {
-  const { state, isMobile, setOpenMobile } = useSidebar();
-  const location = useLocation();
-  const { user, logout } = useAuth();
-  const { isRTL } = useLanguage();
-  const currentPath = location.pathname;
-  const collapsed = state === 'collapsed';
+  useEffect(() => {
+    const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const isActive = (path) => currentPath === path;
+  const logoSrc = isOpen ? '/path-to-logo-open' : '/path-to-logo-closed';
 
-  const getNavCls = ({ isActive }) =>
-    isActive
-      ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
-      : 'hover:bg-sidebar-accent/50 text-sidebar-foreground hover:text-sidebar-accent-foreground';
+  const navConfig = useMemo(() => [
+    { id: 'home', label: 'الرئيسية', to: '/', icon: <DashboardIcon size={20} /> },
+    { id: 'contracts', label: 'التعاقدات', to: '/contracts', icon: <ContractsIcon size={20} /> },
+    {
+      id: 'fatwa', label: 'الرأي والفتوى', icon: <ConsultationsIcon size={20} />, children: [
+        { id: 'investigations', label: 'التحقيقات', to: '/legal/investigations', icon: <LawsuitsIcon size={16} /> },
+        { id: 'legal-advices', label: 'المشورة القانونية', to: '/legal/legal-advices', icon: <LawBookIcon size={16} /> },
+        { id: 'litigations', label: 'التقاضي', to: '/legal/litigations', icon: <CourtHouseIcon size={16} /> },
+      ]
+    },
+    {
+      id: 'management', label: 'إدارة التطبيق', icon: <LegalBriefcaseIcon size={20} />, children: [
+        { id: 'lists', label: 'القوائم', to: '/managment-lists', icon: <LegalBriefcaseIcon size={16} /> },
+      ]
+    },
+    {
+      id: 'users', label: 'إدارة المستخدمين', icon: <LegalBriefcaseIcon size={20} />, children: [
+        { id: 'users-list', label: 'المستخدمين', to: '/users', icon: <LegalBriefcaseIcon size={16} /> },
+      ]
+    },
+    { id: 'archive', label: 'الأرشيف', to: '/archive', icon: <ArchiveIcon size={20} /> },
+  ], []);
 
-  const hasPermission = (permission) => {
-    return user?.role === 'Admin' || user?.permissions?.includes(permission);
+  const handleSectionClick = (id, hasChildren) => {
+    if (!isLargeScreen && !isOpen) onToggle();
+    if (hasChildren) setActiveSection(prev => (prev === id ? null : id));
   };
 
-  const handleLinkClick = () => {
-    if (isMobile) setOpenMobile(false);
-  };
+  const getNavCls = (isActive) =>
+    isActive 
+      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
+      : "hover:bg-sidebar-accent/50 text-sidebar-foreground hover:text-sidebar-accent-foreground";
 
   return (
-    <Sidebar
-      side={isRTL ? 'right' : 'left'}
-      className={`${isRTL ? 'border-l' : 'border-r'} border-sidebar-border`}
-      collapsible="icon"
+    <aside
+      dir={isRTL ? 'rtl' : 'ltr'}
+      className={`fixed top-0 z-20 h-full bg-gradient-to-b from-gold via-greenic-dark/50 to-royal/80 transition-all duration-300
+        ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-16' : 'translate-x-full')}`}
     >
-      <SidebarContent
-        className={`bg-sidebar transition-all duration-300 ${
-          isRTL ? 'animate-slide-in-right' : 'animate-slide-in-left'
-        }`}
-      >
-        {/* User Profile Section */}
-        {!collapsed && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 border-b border-sidebar-border"
-          >
-            <div className="flex items-center space-x-3 space-x-reverse">
-              <Avatar className="h-10 w-10">
-                <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground">
-                  {user?.name
-                    ? user.name
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')
-                        .toUpperCase()
-                    : 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-sidebar-foreground truncate">{user?.name}</p>
-                <p className="text-xs text-sidebar-foreground/70 truncate">{user?.role}</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
+      <div className="flex items-center justify-center p-0 mt-6">
+        <img
+          src={logoSrc}
+          alt="Logo"
+          className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
+        />
+        {isOpen && <button onClick={onToggle} className="absolute top-4 left-4">×</button>}
+      </div>
 
-        {/* Toggle Button */}
-        <div className="p-2 hidden md:block">
-          <SidebarTrigger className="w-full justify-center hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
-        </div>
-
-        {/* Main Navigation */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/70 px-4 py-2">
-            {!collapsed && 'الصفحات الرئيسية'}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navigationItems.map((item) =>
-                hasPermission(item.permission) ? (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink
-                        to={item.url}
-                        className={getNavCls}
-                        onClick={handleLinkClick}
-                      >
-                        <item.icon
-                          className={`h-5 w-5 ${
-                            collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'
-                          }`}
-                        />
-                        {!collapsed && (
-                          <>
-                            <span className="flex-1">{item.title}</span>
-                            {isActive(item.url) && <ChevronRight className="h-4 w-4" />}
-                          </>
-                        )}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ) : null
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Admin Section */}
-        {user?.role === 'Admin' && (
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-sidebar-foreground/70 px-4 py-2">
-              {!collapsed && 'الإدارة'}
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {adminItems.map((item) =>
-                  hasPermission(item.permission) ? (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <NavLink
-                          to={item.url}
-                          className={getNavCls}
-                          onClick={handleLinkClick}
-                        >
-                          <item.icon
-                            className={`h-5 w-5 ${
-                              collapsed ? 'mx-auto' : isRTL ? 'ml-3' : 'mr-3'
-                            }`}
-                          />
-                          {!collapsed && (
-                            <>
-                              <span className="flex-1">{item.title}</span>
-                              {isActive(item.url) && <ChevronRight className="h-4 w-4" />}
-                            </>
-                          )}
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ) : null
+      <nav className={`${isOpen ? 'px-4 space-y-4 mt-6' : 'px-2 space-y-2 mt-8'} overflow-y-auto h-full`}>
+        {navConfig.map(item => (
+          <div key={item.id}>
+            {item.to ? (
+              <NavLink
+                to={item.to}
+                onClick={onLinkClick}
+                className={({ isActive }) => `${getNavCls(isActive)} flex items-center gap-3 p-2 rounded-md text-sm font-semibold tracking-tight transition-all duration-300`}
+              >
+                {({ isActive }) => (
+                  <>
+                    {React.cloneElement(item.icon, { className: `transition-colors duration-200 ${isActive ? 'text-gold-light' : 'text-white'}` })}
+                    <span className="flex-1 text-right">{item.label}</span>
+                  </>
                 )}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
+              </NavLink>
+            ) : (
+              <button
+                onClick={() => handleSectionClick(item.id, !!item.children)}
+                className={`flex items-center gap-3 p-2 w-full rounded-md text-sm font-semibold tracking-tight transition-colors duration-200
+                  ${activeSection === item.id ? 'bg-gold-light text-greenic' : 'text-white hover:bg-gold-light'}`}
+              >
+                {React.cloneElement(item.icon, {
+                  className: `transition-colors duration-200 ${activeSection === item.id ? 'text-gold-light' : 'text-white'}`,
+                })}
+                <span className="flex-1 text-right">{item.label}</span>
+                {item.children && <ChevronRight className={`w-4 h-4 transform transition-transform duration-200 ${activeSection === item.id ? 'rotate-90' : ''}`} />}
+              </button>
+            )}
 
-        {/* Footer Actions */}
-        <div className="mt-auto p-4 border-t border-sidebar-border space-y-2">
-          <Button
-            variant="ghost"
-            size={collapsed ? 'icon' : 'sm'}
-            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            asChild
-          >
-            <NavLink to="/profile" onClick={handleLinkClick}>
-              <User className={`h-4 w-4 ${collapsed ? '' : isRTL ? 'ml-2' : 'mr-2'}`} />
-              {!collapsed && 'الملف الشخصي'}
-            </NavLink>
-          </Button>
-
-          <Button
-            variant="ghost"
-            size={collapsed ? 'icon' : 'sm'}
-            onClick={() => {
-              if (isMobile) setOpenMobile(false);
-              logout();
-            }}
-            className="w-full justify-start text-sidebar-foreground hover:bg-destructive hover:text-destructive-foreground"
-          >
-            <LogOut className={`h-4 w-4 ${collapsed ? '' : isRTL ? 'ml-2' : 'mr-2'}`} />
-            {!collapsed && 'تسجيل الخروج'}
-          </Button>
-        </div>
-      </SidebarContent>
-    </Sidebar>
+            {item.children && activeSection === item.id && isOpen && (
+              <div className="mr-4 pl-4 border-r border-gray-600 space-y-1">
+                {item.children.map(child => (
+                  <NavLink
+                    key={child.id}
+                    to={child.to}
+                    onClick={onLinkClick}
+                    className={({ isActive }) => `${getNavCls(isActive)} flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-300`}
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {React.cloneElement(child.icon, {
+                          className: `transition duration-200 ${isActive ? 'text-greenic-dark' : 'text-white'}`,
+                        })}
+                        <span>{child.label}</span>
+                      </>
+                    )}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </nav>
+    </aside>
   );
 }
-
-export default AppSidebar;
