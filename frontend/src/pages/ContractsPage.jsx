@@ -4,6 +4,7 @@ import { getContractCategories } from '../services/api/contracts';
 import { LocalIcon, InternationalIcon } from '../assets/icons';
 import { useNavigate } from 'react-router-dom';
 import { useContracts } from '@/hooks/dataHooks'; // ✅ استخدم الهُوك المُخصص
+import AppLayout from '@/components/layout/AppLayout';
 const SectionHeader = lazy(() => import('../components/common/SectionHeader'));
 const ContractsTable = lazy(() => import('../components/Contracts/ContractsTable'));
 
@@ -37,6 +38,7 @@ export default function Contracts() {
   }, [data, navigate]);
 
   return (
+    <AppLayout>
     <div className="p-4 md:p-6 lg:p-8 space-y-6">
 
       <motion.div
@@ -93,5 +95,6 @@ export default function Contracts() {
         </AnimatePresence>
       </div>
     </div>
+    </AppLayout>
   );
 }

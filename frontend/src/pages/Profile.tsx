@@ -26,6 +26,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
+import AppLayout from '@/components/layout/AppLayout';
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -58,6 +59,7 @@ export default function Profile() {
   const recentOrders = userOrders.slice(0, 5);
 
   return (
+    <AppLayout>
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Profile</h1>
@@ -300,5 +302,6 @@ export default function Profile() {
         </TabsContent>
       </Tabs>
     </div>
+    </AppLayout>
   );
 }

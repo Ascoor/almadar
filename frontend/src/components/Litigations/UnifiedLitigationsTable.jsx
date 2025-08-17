@@ -7,7 +7,7 @@ import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteMod
 import {Button} from "@/components/ui/button";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import LitigationActionsTable from "@/components/Litigations/LitigationActionsTable";
-import { AuthContext } from "@/components/auth/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 
 export default function UnifiedLitigationsTable({ litigations, scope, reloadLitigations }) {
   const [expandedId, setExpandedId] = useState(null);
