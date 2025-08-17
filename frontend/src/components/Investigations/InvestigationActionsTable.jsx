@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { Pencil, Trash2, BookmarkPlus } from "lucide-react";
 import { toast } from "sonner";
-import { AuthContext } from "@/components/auth/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 
 import InvestigationActionModal from "./InvestigationActionModal";
 import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";

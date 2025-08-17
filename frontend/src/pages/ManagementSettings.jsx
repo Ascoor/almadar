@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';;
 import { MainProcedures } from '@/assets/icons';
 import { useContractCategories, useAdviceTypes, useActionTypes } from '@/hooks/dataHooks';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
+import AppLayout from '@/components/layout/AppLayout';
 import {
   deleteContractCategory,
   createContractCategory,
@@ -234,6 +235,7 @@ queryClient.invalidateQueries({ queryKey: ['adviceTypes'] });
   };
 
   return (
+    <AppLayout>
     <motion.div className="p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
          <Suspense fallback={<AuthSpinner/>}>
         <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 60, damping: 14 }}>
@@ -276,5 +278,6 @@ queryClient.invalidateQueries({ queryKey: ['adviceTypes'] });
         )}
       </Suspense>
     </motion.div>
+    </AppLayout>
   );
 }

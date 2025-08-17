@@ -11,6 +11,7 @@ import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteMod
 import { UsersIcon } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import API_CONFIG from '@/config/config';
+import AppLayout from '@/components/layout/AppLayout';
 
 import {
   createUser,
@@ -206,6 +207,7 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
   };
 
   return (
+    <AppLayout>
     <div className="p-6 sm:p-4 lg:p-6 bg-white dark:bg-royal-darker/10">
       <motion.div
         key="section-header"
@@ -324,5 +326,6 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
         />
       )}
     </div>
+    </AppLayout>
   );
 }

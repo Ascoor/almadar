@@ -2,10 +2,11 @@ import { useState, lazy, Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import SectionHeader from "@/components/common/SectionHeader"; 
+import SectionHeader from "@/components/common/SectionHeader";
 import { deleteLitigation } from "@/services/api/litigations";
 import { CaseIcon } from "@/assets/icons";
 import { useLitigations } from "@/hooks/dataHooks"; // ✅ hook من React Query
+import AppLayout from '@/components/layout/AppLayout';
 const UnifiedLitigationsTable = lazy(() => import("@/components/Litigations/UnifiedLitigationsTable"));
 const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalConfirmDeleteModal"));
 
@@ -36,6 +37,7 @@ export default function LitigationsPage() {
   };
 
   return (
+    <AppLayout>
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen space-y-8 transition-colors">
       <motion.div
         key="header"
@@ -125,5 +127,6 @@ export default function LitigationsPage() {
         )}
       </Suspense>
     </div>
+    </AppLayout>
   );
 }

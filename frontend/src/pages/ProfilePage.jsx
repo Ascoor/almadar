@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { getProfile, updateUser, changePassword } from '@/services/api/users';
 import { AuthContext } from '@/context/AuthContext';;
 import { toast } from 'sonner';
+import AppLayout from '@/components/layout/AppLayout';
 
 export default function ProfilePage() {
   const { user, updateUserContext } = useContext(AuthContext);
@@ -136,6 +137,7 @@ export default function ProfilePage() {
   if (!user) return <div className="text-center mt-10 text-gray-500">تحميل البيانات...</div>;
 
   return (
+    <AppLayout>
     <div className="max-w-3xl mx-auto p-6 space-y-10">
       <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow space-y-6">
         <h2 className="text-2xl font-bold">الملف الشخصي</h2>
@@ -248,5 +250,6 @@ export default function ProfilePage() {
         </form>
       </div>
     </div>
+    </AppLayout>
   );
 }
