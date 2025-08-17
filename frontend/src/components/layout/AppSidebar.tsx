@@ -107,7 +107,7 @@ const adminItems: NavItem[] = [
 export function AppSidebar() {
   const { open } = useSidebar();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, roles, hasPermission, logout } = useAuth();
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
   const currentPath = location.pathname;
@@ -120,11 +120,6 @@ export function AppSidebar() {
     isActive 
       ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
       : "hover:bg-sidebar-accent/50 text-sidebar-foreground hover:text-sidebar-accent-foreground";
-
-  const hasPermission = (permission?: string) => {
-    if (!permission) return false;
-    return user?.permissions.includes(permission) || user?.role === 'Admin';
-  };
 
   const toggleItem = (key: string) =>
     setOpenItems((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -154,7 +149,7 @@ export function AppSidebar() {
                   {user?.name}
                 </p>
                 <p className="text-xs text-sidebar-foreground/70 truncate">
-                  {user?.role}
+                  {roles[0]}
                 </p>
               </div>
             </div>
@@ -244,7 +239,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Admin Section */}
-        {user?.role === 'Admin' && (
+        {roles.includes('Admin') && (
           <SidebarGroup>
             <SidebarGroupLabel className="text-sidebar-foreground/70 px-4 py-2">
               {!collapsed && 'الإدارة'}

@@ -122,7 +122,14 @@ const updateUserContext = (updatedUser) => {
   };
 
   const hasRole = (roleName) => roles.includes(roleName);
-  const hasPermission = (permName) => permissions.includes(permName);
+  const hasPermission = (permName) => {
+    if (!permName) return roles.includes('Admin');
+    return (
+      roles.includes('Admin') ||
+      permissions.includes(permName) ||
+      permissions.some((p) => p.endsWith(permName))
+    );
+  };
  const updatePermissions = (newPermissions) => {
   setPermissions(newPermissions);
   sessionStorage.setItem('permissions', JSON.stringify(newPermissions));
