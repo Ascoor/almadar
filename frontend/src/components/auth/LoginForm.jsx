@@ -18,8 +18,8 @@ const LoginForm = ({ onSuccess }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const success = await login(email, password);
-      if (success && typeof onSuccess === 'function') onSuccess();
+      const result = await login(email, password);
+      if (result?.success && typeof onSuccess === 'function') onSuccess();
     } finally {
       setIsLoading(false);
     }
