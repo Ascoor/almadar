@@ -56,7 +56,7 @@ const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+ <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LanguageProvider>
           <AuthProvider>
@@ -64,10 +64,9 @@ export default function App() {
               <TooltipProvider>
                 <Toaster />
                 <Sonner />
-                <BrowserRouter>
-                  <RouteChangeSpinner />
-                  <Suspense fallback={<GlobalSpinner />}>
-                    <Routes>
+                <Suspense fallback={<GlobalSpinner />}>
+                  <Routes>
+              
                       {/* Public */}
                       <Route path="/" element={<HomePage />} />
 
@@ -169,8 +168,7 @@ export default function App() {
                       {/* 404 */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
-                  </Suspense>
-                </BrowserRouter>
+         </Suspense>
               </TooltipProvider>
             </SpinnerProvider>
           </AuthProvider>
