@@ -12,12 +12,14 @@ import { LanguageToggle } from '@/components/common/LanguageToggle';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import ProfileMenu from '@/components/common/ProfileMenu';
 import { useLanguage } from '@/context/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const AppLayout = ({ children }) => {
   const { isRTL } = useLanguage();
+  const isMobile = useIsMobile();
 
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider defaultOpen={!isMobile}>
       <AppSidebar />
       <SidebarInset dir={isRTL ? 'rtl' : 'ltr'} className="flex flex-col">
         {/* Header */}
