@@ -57,17 +57,16 @@ const AppLayout = ({ children }) => {
   <motion.header
   initial={{ opacity: 0, y: -20 }}
   animate={{ opacity: 1, y: 0 }}
-  className="w-full h-16 border-b border-border 
-             bg-gradient-to-l 
-             from-[#69a52b] 
-             via-blue-400
-             to-blue-200
-             dark:bg-gradient-to-l 
-             dark:from-[#131b2a] 
+  className="w-full h-16 border-b border-border
+             bg-gradient-to-l
+             from-[#69a52b]
+             via-[#3aa8a0]
+             to-[#3b82f6]
+             dark:from-[#131b2a]
              dark:via-[#1b2f56]
              dark:to-[#171f37]
-             backdrop-blur-sm sticky top-0 z-30 
-             flex items-center justify-between px-6"
+             backdrop-blur-sm sticky top-0 z-30
+             flex items-center justify-between px-6 animate-gradient"
 >
 
             <div className="flex items-center">

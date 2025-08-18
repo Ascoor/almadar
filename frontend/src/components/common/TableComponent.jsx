@@ -2,7 +2,7 @@ import React, { useState, useMemo, useContext } from 'react';
 import { Edit, Eye, Trash, ChevronUp, ChevronDown } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import API_CONFIG from '../../config/config';
-import { AuthContext } from '@/context/AuthContext';;
+import { AuthContext } from '@/context/AuthContext';
 
 export default function TableComponent({
   data = [],
@@ -78,6 +78,9 @@ export default function TableComponent({
     }
   };
 
+  const showActions =
+    (onView && can('view')) || (onEdit && can('edit')) || (onDelete && can('delete'));
+
   return (
     <div className="bg-white dark:bg-zinc-900 p-4 rounded-xl shadow-lg border dark:border-zinc-700 transition-all">
       {/* Toolbar */}
@@ -126,14 +129,14 @@ export default function TableComponent({
                   </div>
                 </th>
               ))}
-              {(onView || onEdit || onDelete) && <th className="p-3">إجراءات</th>}
+              {showActions && <th className="p-3">إجراءات</th>}
             </tr>
           </thead>
           <tbody className="divide-y dark:divide-zinc-800">
             {paginatedData.map((row) => (
               <React.Fragment key={row.id}>
                 <tr
-                  className="hover:bg-gold-light/30 dark:hover:bg-greenic-light/10 transition cursor-pointer"
+                  className="hover:bg-gold-light/30 dark:hover:bg-greenic-light/10 transition cursor-pointer animate-fade-in-up"
                   onClick={() => onRowClick?.(row)}
                 >
                   <td className="p-2 text-center">
@@ -164,23 +167,25 @@ export default function TableComponent({
                       )}
                     </td>
                   ))}
-                  <td className="p-2 space-x-1 text-center">
-                    {onView && (
-                      <button onClick={() => onView(row)} className="text-blue-600 hover:text-blue-800">
-                        <Eye size={16} />
-                      </button>
-                    )}
-                    {onEdit && (
-                      <button onClick={() => onEdit(row)} className="text-purple-600 hover:text-purple-800">
-                        <Edit size={16} />
-                      </button>
-                    )}
-                    {onDelete && (
-                      <button onClick={() => onDelete(row)} className="text-red-600 hover:text-red-800">
-                        <Trash size={16} />
-                      </button>
-                    )}
-                  </td>
+                  {showActions && (
+                    <td className="p-2 space-x-1 text-center">
+                      {onView && can('view') && (
+                        <button onClick={() => onView(row)} className="text-blue-600 hover:text-blue-800">
+                          <Eye size={16} />
+                        </button>
+                      )}
+                      {onEdit && can('edit') && (
+                        <button onClick={() => onEdit(row)} className="text-purple-600 hover:text-purple-800">
+                          <Edit size={16} />
+                        </button>
+                      )}
+                      {onDelete && can('delete') && (
+                        <button onClick={() => onDelete(row)} className="text-red-600 hover:text-red-800">
+                          <Trash size={16} />
+                        </button>
+                      )}
+                    </td>
+                  )}
                 </tr>
                 {expandedRowRenderer?.(row)}
               </React.Fragment>
