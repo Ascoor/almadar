@@ -2,7 +2,6 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
-// Make Pusher available globally for laravel-echo
 declare global {
   interface Window {
     Pusher: typeof Pusher;
@@ -10,7 +9,6 @@ declare global {
 }
 window.Pusher = Pusher;
 
-// Minimal config shape we care about
 type EchoOverrides = Partial<{
   broadcaster: 'reverb' | 'pusher';
   key: string;
@@ -23,16 +21,11 @@ type EchoOverrides = Partial<{
   withCredentials: boolean;
   authEndpoint: string;
   auth: { headers: Record<string, string> };
-  // Any other laravel-echo options:
   [k: string]: unknown;
 }>;
 
 let echoInstance: Echo | null = null;
 
-/**
- * Initialize (or reuse) a singleton Echo instance.
- * Uses REVERB_* envs. No secrets or IDs are exposed on the client.
- */
 export function initEcho(overrides: EchoOverrides = {}): Echo {
   if (echoInstance) return echoInstance;
 
@@ -43,24 +36,21 @@ export function initEcho(overrides: EchoOverrides = {}): Echo {
 
   const scheme = (import.meta.env.VITE_REVERB_SCHEME || 'http').toLowerCase();
   const isTLS = scheme === 'https';
-
   const host = import.meta.env.VITE_REVERB_HOST || '127.0.0.1';
-  const portEnv = Number(import.meta.env.VITE_REVERB_PORT || (isTLS ? 443 : 6001));
+  const port = Number(import.meta.env.VITE_REVERB_PORT || (isTLS ? 443 : 8080));
   const key = import.meta.env.VITE_REVERB_APP_KEY;
 
   if (!key) {
-    // Fail fast with a clear message in dev
-    // (This prevents silent “app key missing” socket errors.)
     throw new Error('VITE_REVERB_APP_KEY is missing in frontend .env');
   }
 
-  const base: EchoOverrides = {
+  const config: EchoOverrides = {
     broadcaster: 'reverb',
     key,
     wsHost: host,
-    wsPort: isTLS ? null : portEnv,    // plain WS when scheme=http
-    wssPort: isTLS ? portEnv : null,   // WSS when scheme=https
-    forceTLS: isTLS,                   // false locally (http)
+    wsPort: isTLS ? null : port,
+    wssPort: isTLS ? port : null,
+    forceTLS: isTLS,
     enabledTransports: isTLS ? ['wss'] : ['ws'],
     disableStats: true,
     withCredentials: false,
@@ -70,33 +60,31 @@ export function initEcho(overrides: EchoOverrides = {}): Echo {
         ? { Authorization: `Bearer ${token}`, Accept: 'application/json' }
         : { Accept: 'application/json' },
     },
+    ...overrides, // يسمح بالكتابة فوق أي إعدادات إذا أرسلها المستخدم
   };
 
-  echoInstance = new Echo({ ...base, ...overrides }) as Echo;
+  echoInstance = new Echo(config as any);
   return echoInstance;
 }
 
-/** Get the current Echo instance (throws if not initialized). */
 export function getEcho(): Echo {
   if (!echoInstance) throw new Error('Echo not initialized. Call initEcho() first.');
   return echoInstance;
 }
 
-/** Subscribe to the authenticated user’s private channel. */
 export function subscribeToUserChannel(userId: string | number) {
   const echo = getEcho();
   return echo.private(`user.${userId}`);
 }
 
-/** Cleanly disconnect & reset (e.g., on logout). */
 export function disconnectEcho() {
   if (!echoInstance) return;
   try {
-    // Leave all known channels
-    // @ts-ignore — leave() exists on Echo
+    // Leave all channels
+    // @ts-ignore
     echoInstance.leaveAllChannels?.();
   } catch {}
-  // @ts-ignore — disconnect exists on Echo connector
+  // @ts-ignore
   echoInstance.connector?.disconnect?.();
   echoInstance = null;
 }
