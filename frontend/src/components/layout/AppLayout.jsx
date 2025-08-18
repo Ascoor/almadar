@@ -13,7 +13,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import EchoListener from '@/context/EchoListener';
 import AdminListener from '@/context/AdminListener';
 import { NotificationProvider } from '@/context/NotificationContext';
-import logoLight from '@/assets/images/logo-green.png';
+import logoLight from '@/assets/images/logo-1.png';
 import logoDark from '@/assets/images/logo-white.png';
 
 const AppLayout = ({ children }) => {
@@ -57,11 +57,11 @@ const AppLayout = ({ children }) => {
           animate={{ opacity: 1, y: 0 }}
           className="w-full h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30 flex items-center justify-between px-6"
         >
-          <div className="flex items-center gap-4">
             <div className="flex items-center">
-              <img src={logoLight} alt="logo" className="h-8 dark:hidden" />
+              <img src={logoLight} alt="logo" className="w-18  dark:hidden" />
               <img src={logoDark} alt="logo" className="h-8 hidden dark:block" />
             </div>
+          <div className="flex items-center gap-4">
             {isMobile && (
               <button onClick={toggleSidebar} className="p-2 rounded md:hidden hover:bg-muted">
                 <Menu className="h-5 w-5" />
