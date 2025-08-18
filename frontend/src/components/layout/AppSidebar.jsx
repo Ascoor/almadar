@@ -81,14 +81,13 @@ export default function AppSidebar({
   return (
     <aside
       dir={isRTL ? 'rtl' : 'ltr'}
-      className={`fixed top-16 z-40 h-full ${side} ${width} ${translate} flex flex-col   bg-gradient-to-b 
-             from-[#69a52b] 
-             via-blue-[#69a52b]
-             to-blue-300
-             dark:bg-gradient-to-b 
-             dark:from-[#131b2a] 
+      className={`fixed top-16 z-40 h-full ${side} ${width} ${translate} flex flex-col bg-gradient-to-b
+             from-[#69a52b]
+             via-[#3aa8a0]
+             to-[#3b82f6]
+             dark:from-[#131b2a]
              dark:via-[#1b2f56]
-             dark:to-[#171f37] text-sidebar-foreground shadow-lg transition-all duration-300`}
+             dark:to-[#171f37] text-sidebar-foreground shadow-lg transition-all duration-300 animate-gradient`}
     >
       <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} p-4`}>
         {isOpen && <span className="font-bold">Almadar</span>}
