@@ -73,10 +73,15 @@ export default function AppSidebar({
     : 'translate-x-0';
   const width = isMobile ? 'w-64' : isOpen ? 'w-64' : 'w-16';
 
+  const renderIcon = (icon) =>
+    React.cloneElement(icon, {
+      className: 'transition-transform group-hover:scale-110',
+    });
+
   return (
     <aside
       dir={isRTL ? 'rtl' : 'ltr'}
-      className={`fixed top-0 z-40 h-full ${side} ${width} ${translate} flex flex-col bg-text-sidebar-foreground transition-all duration-300`}
+      className={`fixed top-0 z-40 h-full ${side} ${width} ${translate} flex flex-col bg-sidebar text-sidebar-foreground shadow-lg transition-all duration-300`}
     >
       <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} p-4`}>
         {isOpen && <span className="font-bold">Almadar</span>}
@@ -97,27 +102,29 @@ export default function AppSidebar({
               <NavLink
                 to={item.to}
                 onClick={isMobile ? closeSidebar : undefined}
+                title={item.label}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-md p-2 transition-colors ${
+                  `group flex items-center gap-3 rounded-md p-2 transition-all ${
                     isActive
                       ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
                       : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                   } ${!isOpen && !isMobile ? 'justify-center' : ''}`
                 }
               >
-                {item.icon}
+                {renderIcon(item.icon)}
                 {(isOpen || isMobile) && <span className="flex-1 truncate">{item.label}</span>}
               </NavLink>
             ) : (
               <button
                 onClick={() => handleSectionClick(item.id, !!item.children)}
-                className={`flex w-full items-center gap-3 rounded-md p-2 transition-colors ${
+                title={item.label}
+                className={`group flex w-full items-center gap-3 rounded-md p-2 transition-all ${
                   activeSection === item.id
                     ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
                     : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 } ${!isOpen && !isMobile ? 'justify-center' : ''}`}
               >
-                {item.icon}
+                {renderIcon(item.icon)}
                 {(isOpen || isMobile) && <span className="flex-1 truncate">{item.label}</span>}
                 {item.children && (isOpen || isMobile) && (
                   <ChevronRight
@@ -136,15 +143,16 @@ export default function AppSidebar({
                     key={child.id}
                     to={child.to}
                     onClick={isMobile ? closeSidebar : undefined}
+                    title={child.label}
                     className={({ isActive }) =>
-                      `flex items-center gap-2 rounded-md px-4 py-2 text-sm transition-colors ${
+                      `group flex items-center gap-2 rounded-md px-4 py-2 text-sm transition-all ${
                         isActive
                           ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                           : 'hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground'
                       }`
                     }
                   >
-                    {child.icon}
+                    {renderIcon(child.icon)}
                     <span className="truncate">{child.label}</span>
                   </NavLink>
                 ))}
