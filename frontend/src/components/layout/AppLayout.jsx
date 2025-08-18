@@ -40,7 +40,9 @@ const AppLayout = ({ children }) => {
     : '';
 
   return (
-      <NotificationProvider>  
+     <NotificationProvider>
+        <AdminListener />
+        <EchoListener />
   
     <div dir={isRTL ? 'rtl' : 'ltr'}>
       <AppSidebar
@@ -101,8 +103,7 @@ const AppLayout = ({ children }) => {
           transition={{ delay: 0.1 }}
           className={`flex-1 overflow-auto bg-background transition-all duration-300 ${contentMargin}`}
         >
-          <AdminListener />
-          <EchoListener />
+         
           <div className="p-6">{children}</div>
         </motion.div>
       </div>

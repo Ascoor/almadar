@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
-import { toast } from 'sonner';
+
 import { initEcho } from '@/lib/echo';
 
 export default function AdminEchoListener() {
