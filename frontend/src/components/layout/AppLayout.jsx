@@ -13,7 +13,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import EchoListener from '@/context/EchoListener';
 import AdminListener from '@/context/AdminListener';
 import { NotificationProvider } from '@/context/NotificationContext';
-import logoLight from '@/assets/images/logo-green.png';
+import logoLight from '@/assets/images/logo-art.png';
 import logoDark from '@/assets/images/logo-art-text.png';
 
 const AppLayout = ({ children }) => {
@@ -52,14 +52,25 @@ const AppLayout = ({ children }) => {
       />
       <div className="flex flex-col min-h-screen">
         {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30 flex items-center justify-between px-6"
-        >
+  <motion.header
+  initial={{ opacity: 0, y: -20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="w-full h-16 border-b border-border 
+             bg-gradient-to-l 
+             from-[#69a52b] 
+             via-blue-400
+             to-blue-200
+             dark:bg-gradient-to-l 
+             dark:from-[#131b2a] 
+             dark:via-[#1b2f56]
+             dark:to-[#171f37]
+             backdrop-blur-sm sticky top-0 z-30 
+             flex items-center justify-between px-6"
+>
+
             <div className="flex items-center">
-              <img src={logoLight} alt="logo" className="h-16   dark:hidden" />
-              <img src={logoDark} alt="logo" className="h-8 hidden dark:block" />
+              <img src={logoLight} alt="logo" className="h-14   dark:hidden" />
+              <img src={logoDark} alt="logo" className="h-16 hidden dark:block" />
             </div>
           <div className="flex items-center gap-4">
             {isMobile && (
