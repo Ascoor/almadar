@@ -6,17 +6,13 @@ export default function AddButton({ label = "عنصر", onClick }) {
   return (
     <Button
       onClick={onClick}
-      className="w-fit sm:w-auto p-2 rounded-full 
-                bg-gold-light text-navy 
-                dark:hover:bg-greenic-dark dark:hover:text-white
-                hover:bg-greenic-dark/70   hover:text-white dark:bg-gold-light/90
-                focus:ring-4 focus:ring-gold-light transition-all duration-300" 
-      variant="default"
+      variant="accent"
       size="sm"
+      className="w-fit sm:w-auto rounded-full"
     >
       <PlusCircle className="w-4 h-4" />
-      <span className="ml-1 sm:hidden">إضافة {label}</span> {/* Show label on small screens only */}
-      <span className="hidden sm:inline-block">إضافة {label}</span> {/* Hide label on small screens */}
+      <span className="ml-1 sm:hidden">إضافة {label}</span>
+      <span className="hidden sm:inline-block">إضافة {label}</span>
     </Button>
   );
 }

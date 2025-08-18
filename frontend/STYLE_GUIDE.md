@@ -45,12 +45,16 @@ The following utility classes are available and adapt automatically to the
 current color mode:
 
 | Class | Purpose |
-|-------|---------|
-| `.btn` | Base button styles |
-| `.btn-primary` | Primary button variant |
-| `.btn-secondary` | Secondary button variant |
-| `.btn-accent` | Accent button variant |
-| `.btn-outline` | Outline button variant |
+|-------|---------| 
+| `Button` (variant="default") | Primary action button |
+| `Button` (variant="secondary") | Secondary action button |
+| `Button` (variant="accent") | Accent button |
+| `Button` (variant="destructive") | Danger/destructive action |
+| `Button` (variant="outline") | Outline button |
+| `Button` (variant="ghost") | Subtle button |
+| `Button` (variant="link") | Link-style button |
+| `.btn-hero` | Gradient hero button |
+ 
 | `.input` | Text input fields |
 | `.card` | Card and container surfaces |
 | `.navbar` | Application navigation bar |
