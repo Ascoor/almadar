@@ -22,7 +22,7 @@ src/components/ui — مكوّنات UI ذكية
 
 src/components/layout — عناصر تخطيط (TopBar ...)
 
-src/pages/HomePage.jsx — مثال صفحة رئيسية
+src/pages/LandingPage.jsx — الصفحة الرئيسية
 
 🎨 Theming
 

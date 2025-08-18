@@ -15,7 +15,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import GlobalSpinner from '@/components/common/Spinners/GlobalSpinner';
 
 // -------- Lazy pages (mirror old routes) --------
-const HomePage = lazy(() => import('@/pages/HomePage'));
+const LandingPage = lazy(() => import('@/pages/LandingPage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const ContractsPage = lazy(() => import('@/pages/ContractsPage'));
@@ -68,7 +68,7 @@ export default function App() {
                   <Routes>
               
                       {/* Public */}
-                      <Route path="/" element={<HomePage />} />
+                      <Route path="/" element={<LandingPage />} />
 
                       {/* Old-style profile route that used :userId */}
                       <Route
