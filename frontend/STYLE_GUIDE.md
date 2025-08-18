@@ -45,7 +45,7 @@ The following utility classes are available and adapt automatically to the
 current color mode:
 
 | Class | Purpose |
-|-------|---------|
+|-------|---------| 
 | `Button` (variant="default") | Primary action button |
 | `Button` (variant="secondary") | Secondary action button |
 | `Button` (variant="accent") | Accent button |
@@ -54,6 +54,7 @@ current color mode:
 | `Button` (variant="ghost") | Subtle button |
 | `Button` (variant="link") | Link-style button |
 | `.btn-hero` | Gradient hero button |
+ 
 | `.input` | Text input fields |
 | `.card` | Card and container surfaces |
 | `.navbar` | Application navigation bar |
