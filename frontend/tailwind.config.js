@@ -11,9 +11,11 @@ module.exports = {
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
+                                ring: 'hsl(var(--ring))',
                                 background: 'var(--background-color)',
                                 foreground: 'hsl(var(--foreground))',
+                                title: 'hsl(var(--text-title))',
+                                body: 'hsl(var(--text-body))',
                                 primary: {
                                         DEFAULT: 'var(--primary-color)',
                                         foreground: 'hsl(var(--primary-foreground))',
@@ -33,14 +35,18 @@ module.exports = {
 					DEFAULT: 'hsl(var(--success))',
 					foreground: 'hsl(var(--success-foreground))'
 				},
-				warning: {
-					DEFAULT: 'hsl(var(--warning))',
-					foreground: 'hsl(var(--warning-foreground))'
-				},
-				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
-				},
+                                warning: {
+                                        DEFAULT: 'hsl(var(--warning))',
+                                        foreground: 'hsl(var(--warning-foreground))'
+                                },
+                                info: {
+                                        DEFAULT: 'hsl(var(--info))',
+                                        foreground: 'hsl(var(--info-foreground))'
+                                },
+                                muted: {
+                                        DEFAULT: 'hsl(var(--muted))',
+                                        foreground: 'hsl(var(--muted-foreground))'
+                                },
                                 accent: {
                                         DEFAULT: 'var(--accent-color)',
                                         foreground: 'hsl(var(--accent-foreground))',

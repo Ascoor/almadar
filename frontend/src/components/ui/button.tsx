@@ -4,28 +4,19 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-// ✅ زر Tailwind مع دعم ألوان custom و theme متقدم
+// Unified button component using design-system color tokens
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors ring-offset-background focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
   {
     variants: {
       variant: {
-        default:
-          "bg-greenic text-white hover:bg-greenic-dark dark:bg-greenic-dark dark:hover:bg-greenic text-white",
-        royal:
-          "bg-royal hover:bg-royal-dark text-white dark:bg-royal-dark dark:hover:bg-royal-ultraDark",
-        gold:
-          "bg-gold text-white hover:bg-gold-dark dark:bg-gold-dark dark:hover:bg-gold-light",
-        outline:
-          "border border-border bg-white text-gray-800 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700",
-        ghost:
-          "bg-transparent text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700",
-        link:
-          "bg-transparent text-royal underline hover:text-royal-dark dark:text-royal-electric dark:hover:text-royal-ultraDark",
-        destructive:
-          "bg-red-500 text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700",
-        secondary:
-          "bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700",
+        default: "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary-hover active:bg-secondary-active",
+        accent: "bg-accent text-accent-foreground hover:bg-accent-hover active:bg-accent-active",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-border bg-background text-body hover:bg-muted hover:text-title",
+        ghost: "bg-transparent text-body hover:bg-muted",
+        link: "bg-transparent text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -61,13 +52,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-// ✅ مثال تطبيقي للاستخدام
+// Example button showcase
 const ButtonCollection = () => {
   return (
     <div className="flex flex-wrap gap-4 p-4 bg-background text-foreground rounded-lg shadow-md">
-      <Button variant="default">الافتراضي</Button>
-      <Button variant="royal">ملكي</Button>
-      <Button variant="gold">ذهبي</Button>
+      <Button variant="default">افتراضي</Button>
+      <Button variant="secondary">ثانوي</Button>
+      <Button variant="accent">مميز</Button>
+      <Button variant="destructive">تحذير</Button>
       <Button variant="outline">حدود</Button>
       <Button variant="ghost">شفاف</Button>
       <Button variant="link">رابط</Button>
