@@ -1,6 +1,4 @@
-+62
--29
-
+ 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Menu } from 'lucide-react';
@@ -11,6 +9,9 @@ import { ThemeToggle } from '@/components/common/ThemeToggle';
 import ProfileMenu from '@/components/common/ProfileMenu';
 import { useLanguage } from '@/context/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import EchoListener from '@/context/EchoListener';
+import AdminListener from '@/context/AdminListener';
+import { NotificationProvider } from '@/context/NotificationContext'; // Import NotificationProvider
 
 const AppLayout = ({ children }) => {
   const { isRTL } = useLanguage();
@@ -35,6 +36,8 @@ const AppLayout = ({ children }) => {
     : '';
 
   return (
+      <NotificationProvider>  
+  
     <div dir={isRTL ? 'rtl' : 'ltr'}>
       {!isSidebarOpen && isMobile && (
         <button
@@ -89,10 +92,13 @@ const AppLayout = ({ children }) => {
           transition={{ delay: 0.1 }}
           className="flex-1 overflow-auto bg-background"
         >
+                 <AdminListener />
+        <EchoListener />
           <div className="p-6">{children}</div>
         </motion.div>
       </div>
     </div>
+    </NotificationProvider>
   );
 };
 
