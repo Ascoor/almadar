@@ -42,7 +42,7 @@ return [
         ],
     
         'api' => [
-            'driver' => 'sanctum', // أو 'token' لو مش شغال sanctum
+            'driver' => 'passport',
             'provider' => 'users',
         ],
 
