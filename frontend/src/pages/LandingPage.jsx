@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import LoginForm from '@/components/auth/LoginForm';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import logoLight from '@/assets/images/logo-art-text.png';
+import logoLight from '@/assets/images/logo-1.png';
 import logoDark from '@/assets/images/logo-art-text.png';
 
 // Simple modal used for login
@@ -117,7 +117,7 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-32 space-y-8">
         <div className="flex items-center justify-center">
-          <img src={logoLight} alt="logo" className="h-32 dark:hidden" />
+          <img src={logoLight} alt="logo" className="h-4avocat-web6 dark:hidden" />
           <img src={logoDark} alt="logo" className="h-32 hidden dark:block" />
         </div>
         <motion.h1
