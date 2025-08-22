@@ -1,3 +1,76 @@
-/public_html/
-/frontend/src/config/
-/frontend/dev-dist
+# ==========================
+# Laravel (backend - public_html)
+# ==========================
+/public_html/vendor/
+/public_html/node_modules/
+/public_html/storage/*.key
+/public_html/storage/app/public
+/public_html/storage/framework/cache/*
+/public_html/storage/framework/sessions/*
+/public_html/storage/framework/views/*
+/public_html/storage/logs/*
+/public_html/bootstrap/cache/*.php
+
+# Laravel env & cache
+/public_html/.env
+/public_html/.env.*
+/public_html/.phpunit.result.cache
+
+# Laravel IDE helpers
+/_ide_helper.php
+/_ide_helper_models.php
+
+# ==========================
+# React (frontend)
+# ==========================
+/frontend/node_modules/
+/frontend/dist/
+/frontend/build/
+/frontend/dev-dist/
+
+# React env
+/frontend/.env*
+/frontend/npm-debug.log*
+/frontend/yarn-*.log*
+/frontend/pnpm-debug.log*
+
+# ==========================
+# Backend (لو في نسخة تانية backend/)
+# ==========================
+/backend/node_modules/
+/backend/vendor/
+/backend/storage/
+/backend/public/build/
+/backend/public/hot/
+/backend/public/storage/
+/backend/.env*
+/backend/*.log
+/backend/.DS_Store
+/backend/.idea/
+/backend/.vscode/
+/backend/.fleet/
+/backend/.nova/
+/backend/.zed/
+/backend/.phpunit*
+/backend/.phpactor.json
+/backend/Homestead.json
+/backend/Homestead.yaml
+/backend/Thumbs.db
+
+# ==========================
+# Common
+# ==========================
+.DS_Store
+Thumbs.db
+*.log
+*.cache
+*.tmp
+*.pid
+*.seed
+*.tgz
+*.swp
+*.swo
+
+# Editor settings
+.vscode/
+.idea/

@@ -33,14 +33,29 @@ export default function LegalAdviceDetails({ selected, onClose }) {
       </div>
 
       {/* Details Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <Detail icon={<FolderOpen />} label="نوع المشورة" value={selected.advice_type?.type_name} />
-        <Detail icon={<FileText />} label="الموضوع" value={selected.topic} />
-        <Detail icon={<User />} label="الجهة الطالبة" value={selected.requester || "—"} />
-        <Detail icon={<Building2 />} label="الجهة المصدرة" value={selected.issuer || "—"} />
-        <Detail icon={<CalendarDays />} label="تاريخ المشورة" value={selected.advice_date} />
-        <Detail icon={<Hash />} label="رقم المشورة" value={selected.advice_number} />
+   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+  <Detail icon={<FolderOpen />} label="نوع المشورة" value={selected.advice_type?.type_name} />
+  <Detail icon={<FileText />} label="الموضوع" value={selected.topic} />
+  <Detail icon={<User />} label="الجهة الطالبة" value={selected.requester || "—"} />
+  <Detail icon={<Building2 />} label="الجهة المصدرة" value={selected.issuer || "—"} />
+  <Detail icon={<CalendarDays />} label="تاريخ المشورة" value={formatDateTime(selected.advice_date)} />
+  <Detail icon={<Hash />} label="رقم المشورة" value={selected.advice_number} />
 
+  {/* تاريخ الإنشاء والتحديث */}
+  {selected.created_at && (
+    <Detail icon={<CalendarDays />} label="تاريخ الإنشاء" value={formatDateTime(selected.created_at)} />
+  )}
+  {selected.updated_at && (
+    <Detail icon={<CalendarDays />} label="آخر تحديث" value={formatDateTime(selected.updated_at)} />
+  )}
+
+  {/* منشئ السجل والمحدث */}
+  {selected.creator?.name && (
+    <Detail icon={<User />} label="منشئ السجل" value={selected.creator?.name} />
+  )}
+  {selected.updater?.name && (
+    <Detail icon={<User />} label="آخر من عدّل" value={selected.updater?.name} />
+  )} 
         {/* Attachment */}
         <div className="sm:col-span-2 flex items-center gap-2">
           <Paperclip className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -73,14 +88,32 @@ export default function LegalAdviceDetails({ selected, onClose }) {
   );
 }
 
+// ✅ مكون عنصر تفصيل
 function Detail({ icon, label, value }) {
   return (
-    <div className="flex items-start gap-2">
-      <div className="mt-1 text-greenic dark:text-gold">{icon}</div>
+    <div className="flex items-start gap-2 text-gray-800 dark:text-gray-100">
+      <div className="pt-1 text-greenic dark:text-gold shrink-0">{icon}</div>
       <div>
-        <span className="font-semibold text-gray-800 dark:text-gray-100">{label}:</span>{" "}
-        <span className="text-gray-600 dark:text-gray-300">{value}</span>
+        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</div>
+        <div className={`font-semibold ${!value ? 'text-gray-400 dark:text-zinc-500' : ''}`}>
+          {value || '—'}
+        </div>
       </div>
     </div>
   );
+}
+
+// ✅ تنسيق التاريخ بالتقويم العربي و 12 ساعة
+function formatDateTime(value) {
+  if (!value) return '—';
+  const date = new Date(value);
+  return date.toLocaleString('ar-EG', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
 }

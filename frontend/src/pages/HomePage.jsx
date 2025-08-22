@@ -1,57 +1,64 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Login from '../components/auth/Login';
-import { WelcomeLogoWhite, LoginBg } from '../assets/images'; 
- 
+import { WelcomeLogoWhite, LoginBg } from '../assets/images';
 import AuthSpinner from '../components/common/Spinners/AuthSpinner';
- 
 
 const HomePage = () => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
- 
+
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full min-h-screen overflow-hidden font-['Tajawal']">
       <img
         src={LoginBg}
-        alt="Login Background"
-        className="absolute inset-0 object-cover w-full h-full"
+        alt="خلفية"
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        loading="lazy"
       />
-      <div className="absolute inset-0 bg-black/70" />
+      <div className="absolute inset-0 bg-black/70 z-10" />
 
-      <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 text-white">
-        {!showLoginForm && !isLoading && (
-          <>
-            <motion.img
-              src={WelcomeLogoWhite}
-              alt="Welcome Logo"
-              className="w-32 md:w-48 mb-8 drop-shadow-2xl"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-            />
-
-            <motion.h1
-              className="text-3xl   md:text-6xl font-['Tajawal'] font-extrabold text-center bg-gradient-to-tr from-emerald-300 via-lime-300 to-cyan-300 bg-clip-text text-transparent p-0 drop-shadow-md"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              تطبيق إدارة الشؤون القانونية
-            </motion.h1>
-
-            <motion.button
-              onClick={() => setShowLoginForm(true)}
-              className="mt-10 px-8 py-3 bg-emerald-600 hover:bg-emerald-900 rounded-full text-white font-bold shadow-lg transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              🚀 تسجيل الدخول
-            </motion.button>
-          </>
-        )}
-
+      <div className="relative z-20 flex items-center justify-center h-screen px-4 sm:px-6">
         {isLoading && <AuthSpinner />}
+
+        <AnimatePresence>
+          {!showLoginForm && !isLoading && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 30 }}
+              transition={{ duration: 0.5 }}
+              className="w-full max-w-xl text-center backdrop-blur-2xl bg-white/10 border border-white/20 rounded-3xl shadow-xl p-8 sm:p-10 space-y-6"
+            >
+              <motion.img
+                src={WelcomeLogoWhite}
+                alt="شعار"
+                className="w-24 sm:w-32 mx-auto drop-shadow-2xl"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+              />
+
+              <motion.h1
+                className="text-2xl sm:text-4xl md:text-5xl font-bold text-white drop-shadow-xl"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                إدارة الشؤون القانونية
+              </motion.h1>
+
+              <motion.button
+                onClick={() => setShowLoginForm(true)}
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-emerald-500 via-cyan-500 to-emerald-600 text-white font-bold shadow-lg hover:scale-105 transition"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                🚀 تسجيل الدخول
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence>
           {showLoginForm && (
@@ -66,11 +73,7 @@ const HomePage = () => {
                 handleFormClose={() => setShowLoginForm(false)}
                 onAuthComplete={(success) => {
                   setIsLoading(false);
-                  // رسالة التوستر تظهر فقط عند نجاح التسجيل
-                  if (success) {
-            
-                    setShowLoginForm(false);
-                  }
+                  if (success) setShowLoginForm(false);
                 }}
               />
             </motion.div>

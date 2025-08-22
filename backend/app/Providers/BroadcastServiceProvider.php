@@ -7,12 +7,10 @@ use Illuminate\Support\ServiceProvider;
 
 class BroadcastServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        Broadcast::routes();
+        // مهم: نخلي المصادقة ب passport (auth:api)
+Broadcast::routes(['middleware' => ['auth:api']]);
 
         require base_path('routes/channels.php');
     }

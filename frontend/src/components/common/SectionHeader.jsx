@@ -1,32 +1,20 @@
 import { ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const SectionHeader = ({ listName, icon, showBackButton }) => {
   return (
-    <motion.div
-      key={listName}
-      initial={{ opacity: 0, y: -80 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -40 }}
-      transition={{
-        duration: 1.2,       // زمن أطول للحركة
-        delay: 0.3,          // تأخير بسيط قبل البداية
-        type: 'spring',
-        stiffness: 60,       // مرونة أقل لنزول أبطأ
-        damping: 12
-      }}
-      className="
-        flex flex-col items-center text-center space-y-4 
-        p-4 sm:p-6 md:p-8 shadow-2xl transition-all
-        bg-white bg-gradient-to-tr from-royal/10 via-gold/10 to-royal/10
-        border border-greenic/20 rounded-full mb-6
-        dark:bg-black
-       
-        dark:bg-gradient-to-r dark:from-royal/20 dark:via-royal-dark/70 dark:to-royal-dark/20
-        dark:text-greenic dark:ring-2 dark:ring-greenic/30 
-        dark:shadow-greenic/40
-      "
-    >
+<div
+  className="
+    relative z-10 flex flex-col items-center justify-center text-center space-y-4
+    px-6 py-8 sm:py-10 rounded-3xl shadow-xl transition-all border border-greenic/30 backdrop-blur-md
+
+    bg-gradient-to-br from-[#fdf6e3]/60 via-[#f0f9ff]/50 to-[#dbeafe]/80
+    text-navy-dark font-bold text-xl sm:text-2xl tracking-wide
+
+    dark:bg-gradient-to-br dark:from-[#1a1a2e]/70 dark:via-[#16213e]/60 dark:to-[#0f3460]/50
+    dark:text-green-200 dark:shadow-lg dark:shadow-greenic/10
+  "
+>
+  
       {icon && (
         <img
           src={icon}
@@ -35,8 +23,8 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
         />
       )}
 
-      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-blue-900 dark:text-white">
-        {listName}
+
+  <h2 className="text-shadow text-balance leading-relaxed">   {listName}
       </h2>
 
       {showBackButton && (
@@ -53,9 +41,8 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
           <span className="text-sm sm:text-base">رجوع</span>
         </button>
       )}
-    </motion.div>
+    </div>
   );
 };
 
 export default SectionHeader;
-

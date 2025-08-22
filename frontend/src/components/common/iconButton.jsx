@@ -1,15 +1,25 @@
-// components/common/IconButton.jsx
-export default function IconButton({ onClick, children, active }) {
+import { motion } from "framer-motion";
+import clsx from "clsx";
+
+export default function IconButton({ onClick, active, children, className = "", ...props }) {
   return (
-    <button
+    <motion.button
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 300 }}
       onClick={onClick}
-      className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors duration-200 shadow-md border
-        ${active
-          ? 'bg-gold text-white border-gold'
-          : 'bg-background text-muted-foreground border-gray-300 dark:border-gray-700 hover:bg-accent hover:text-accent-foreground'}
-      `}
+      {...props}
+      className={clsx(
+        `relative inline-flex items-center justify-center p-2 rounded-full 
+        transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2
+        bg-gold-dark text-white hover:bg-yellow-700
+        dark:bg-emerald-600 dark:text-white dark:hover:bg-greenic-dark
+        shadow-md`,
+        active && "ring-2 ring-gold dark:ring-greenic-dark",
+        className
+      )}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }

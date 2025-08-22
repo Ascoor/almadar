@@ -96,7 +96,7 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
   const expandedRowRenderer = (row) =>
     expandedId === row.id ? (
       <tr key={`expanded-${row.id}`}>
-        <td colSpan={headers.length + 2} className="bg-gray-50 dark:bg-gray-800 p-4">
+        <td colSpan={headers.length + 2} className="bg-gray-50 dark:bg-navy-darker p-4">
           <LitigationActionsTable
             litigationId={row.id}
             scope={scope}

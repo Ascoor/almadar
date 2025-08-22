@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { User } from 'lucide-react';
 import API_CONFIG from '@/config/config';
+import { getRoles } from '@/services/api/users';
 
-const roleTranslations = { 1: 'أدمن', 2: 'موظف', 3: 'مستخدم' };
+const roleLabels = {
+  admin: 'أدمن',
+  staff: 'موظف',
+  user: 'مستخدم',
+};
 
-const translateRoleToEnglish = (arabic) =>
-  Object.keys(roleTranslations).find((k) => roleTranslations[k] === arabic) || '';
+const translateToArabic = (role) => roleLabels[role] || role;
 
 export default function UserModalForm({
   isOpen,
@@ -20,7 +24,7 @@ export default function UserModalForm({
 
   const [formData, setFormData] = useState({
     name: '',
-    role_id: '',
+    role: '',
     emailPrefix: '',
     image: null,
   });
@@ -28,26 +32,44 @@ export default function UserModalForm({
   const [imageFile, setImageFile] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availableRoles, setAvailableRoles] = useState([]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (isOpen) {
+      fetchRoles();
+      initializeForm();
+    }
+  }, [isOpen, selectedUser]);
 
+  const fetchRoles = async () => {
+    try {
+      const res = await getRoles();
+      const rolesArray = Array.isArray(res) ? res : res.roles || [];
+      setAvailableRoles(rolesArray);
+    } catch (err) {
+      console.error(err);
+      toast.error('فشل تحميل الأدوار');
+    }
+  };
+
+  const initializeForm = () => {
     if (isEdit) {
       const [prefix] = selectedUser.email?.split('@') || [''];
+      const roleName = selectedUser.roles?.[0]?.name || '';
       setFormData({
         name: selectedUser.name || '',
-        role_id: selectedUser.roles?.[0]?.name || '',
+        role: roleName, // استخدم اسم الدور الحقيقي
         emailPrefix: prefix,
         image: selectedUser.image ? `${API_CONFIG.baseURL}/${selectedUser.image}` : null,
       });
     } else {
-      setFormData({ name: '', role_id: '', emailPrefix: '', image: null });
+      setFormData({ name: '', role: '', emailPrefix: '', image: null });
     }
 
     setImageFile(null);
     setValidationErrors({});
     setIsSubmitting(false);
-  }, [isOpen, selectedUser]);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,7 +87,7 @@ export default function UserModalForm({
   const validate = () => {
     const errors = {};
     if (!formData.name) errors.name = true;
-    if (!formData.role_id) errors.role_id = true;
+    if (!formData.role) errors.role = true;
     if (!formData.emailPrefix) errors.emailPrefix = true;
     return errors;
   };
@@ -84,21 +106,22 @@ export default function UserModalForm({
       const payload = new FormData();
       payload.append('name', formData.name);
       payload.append('email', `${formData.emailPrefix}@almadar.ly`);
-      payload.append('roles[]', translateRoleToEnglish(formData.role_id));
+      payload.append('roles[]', formData.role); // 👈 اسم الدور الفعلي من الـ API
       if (imageFile) payload.append('image', imageFile);
 
       if (isEdit) {
         await updateUser(selectedUser.id, payload);
-        toast.success('✅ تم تعديل المستخدم');
+  
       } else {
         await createUser(payload);
-        toast.success('✅ تم إنشاء المستخدم');
+ 
       }
 
       await refreshUsers();
       onClose();
-    } catch {
-      toast.error('❌ فشل العملية، حاول مرة أخرى');
+    } catch (err) {
+      console.error(err);
+      toast.error('❌ فشل العملية، تحقق من الحقول أو الدور');
     } finally {
       setIsSubmitting(false);
     }
@@ -107,14 +130,13 @@ export default function UserModalForm({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6">
       <div className="bg-white dark:bg-gray-900 w-full max-w-lg p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-auto max-h-[90vh]">
         <h2 className="text-xl font-bold text-center mb-6 text-gray-800 dark:text-white">
           {isEdit ? 'تعديل المستخدم' : 'إضافة مستخدم'}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5 text-sm">
-          {/* الاسم */}
           <FormField
             label="اسم الموظف"
             icon={<User className="ml-2" />}
@@ -125,29 +147,29 @@ export default function UserModalForm({
             disabled={isSubmitting}
           />
 
-          {/* الدور */}
           <div>
             <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">الدور</label>
             <select
-              name="role_id"
-              value={formData.role_id}
+              name="role"
+              value={formData.role}
               onChange={handleChange}
               disabled={isSubmitting}
               className={`w-full p-2 rounded border bg-white dark:bg-zinc-800 text-gray-900 dark:text-white ${
-                validationErrors.role_id ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
+                validationErrors.role ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
               }`}
             >
               <option value="">اختر الدور</option>
-              {Object.values(roleTranslations).map((r) => (
-                <option key={r} value={r}>
-                  {r}
+              {availableRoles.map((r) => (
+                <option key={r.name} value={r.name}>
+                  {translateToArabic(r.name)}
                 </option>
               ))}
             </select>
-            {validationErrors.role_id && <p className="text-red-600 mt-1 text-xs">يرجى اختيار الدور</p>}
+            {validationErrors.role && (
+              <p className="text-red-600 mt-1 text-xs">يرجى اختيار الدور</p>
+            )}
           </div>
 
-          {/* البريد الإلكتروني */}
           <div>
             <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">البريد الإلكتروني</label>
             <div className="flex rounded overflow-hidden border bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-600">
@@ -167,7 +189,6 @@ export default function UserModalForm({
             )}
           </div>
 
-          {/* الصورة */}
           <div>
             <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">الصورة</label>
             <input
@@ -186,7 +207,6 @@ export default function UserModalForm({
             )}
           </div>
 
-          {/* الأزرار */}
           <div className="flex justify-end gap-2 mt-6">
             <button
               type="button"
@@ -213,7 +233,7 @@ export default function UserModalForm({
 function FormField({ label, icon, name, value, onChange, error, disabled }) {
   return (
     <div>
-      <label className="block mb-1 flex items-center font-medium text-gray-800 dark:text-gray-200">
+      <label className="mb-1 flex items-center font-medium text-gray-800 dark:text-gray-200">
         {icon} {label}
       </label>
       <input
@@ -229,4 +249,3 @@ function FormField({ label, icon, name, value, onChange, error, disabled }) {
     </div>
   );
 }
-  

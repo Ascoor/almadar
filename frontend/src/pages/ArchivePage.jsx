@@ -1,108 +1,84 @@
-import { useEffect, useState } from "react";
-import { getArchiveFiles } from "../services/api/archives";
-import { FolderKanban , FolderOpenDot , ChevronsDown, ChevronsLeft , FileText  } from "lucide-react";
- import { toast } from 'sonner';
+import React, { useEffect, useState ,lazy,Suspense} from 'react';
 
-import SectionHeader from "../components/common/SectionHeader";
-import { ArchiveSection } from "../assets/icons";
-import API_CONFIG from "../config/config";
- 
+import { getArchiveFiles } from '@/services/api/archives';
+import { toast } from 'sonner';
+import { FolderKanban, FolderOpenDot, ChevronsDown, ChevronsLeft, FileText } from 'lucide-react';
+import API_CONFIG from '@/config/config';
+import { ArchiveSection } from '@/assets/icons';
+
+const SectionHeader = lazy(() => import('@/components/common/SectionHeader'));
+const PDFViewer = lazy(() => import('@/components/PDFViewer'));
 export default function ArchivePage() {
   const [archives, setArchives] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [openFolders, setOpenFolders] = useState({}); // لتتبع المجلدات المفتوحة
+  const [openFolders, setOpenFolders] = useState({});
+  const [previewFile, setPreviewFile] = useState(null);
 
   useEffect(() => {
-    loadArchives();
+    (async () => {
+      try {
+        const res = await getArchiveFiles();
+        const files = res?.data?.data || [];
+        const grouped = files.reduce((acc, file) => {
+          acc[file.model_type] = acc[file.model_type] || [];
+          acc[file.model_type].push(file);
+          return acc;
+        }, {});
+        setArchives(grouped);
+      } catch {
+        toast.error('فشل تحميل الملفات');
+      }
+    })();
   }, []);
 
-  const loadArchives = async () => {
-    try {
-      const res = await getArchiveFiles();
-      const files = res?.data?.data || [];
+  const toggleFolder = (type) => {
+    setOpenFolders(prev => ({ ...prev, [type]: !prev[type] }));
+  };
 
-      const grouped = files.reduce((acc, file) => {
-        if (!acc[file.model_type]) {
-          acc[file.model_type] = [];
-        }
-        acc[file.model_type].push(file);
-        return acc;
-      }, {});
-
-      setArchives(grouped);
-    } catch (error) {
-      console.error(error);
-      toast.error("فشل تحميل الملفات 😥");
-    } finally {
-      setLoading(false);
+  const handlePdfPreview = (file) => {
+    if (!file?.file_path) {
+      toast.error('المسار غير متوفر للملف');
+      return;
     }
-  };
 
-  const toggleFolder = (modelType) => {
-    setOpenFolders(prev => ({
-      ...prev,
-      [modelType]: !prev[modelType],
-    }));
+    const fileUrl = `${API_CONFIG.baseURL}/open-pdf/${file.file_path}`;
+    setPreviewFile(fileUrl);
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[50vh] text-almadar-blue dark:text-almadar-yellow text-lg font-bold">
-        جاري التحميل...
-      </div>
-    );
-  }
 
   return (
-    <div className="p-6 space-y-8">
-      <SectionHeader icon={ArchiveSection} listName="الأرشيف" showBackButton={false} />
- 
- 
+    <div className="p-6 space-y-8 overflow-y-auto max-h-screen">
+     <Suspense fallback={<div className="text-center text-sm">تحميل العنوان...</div>}>
+        <SectionHeader icon={ArchiveSection} listName="الأرشيف" />
+      </Suspense>
 
       {Object.keys(archives).length === 0 ? (
-        <div className="text-center text-gray-500 dark:text-gray-400">
-          لا توجد ملفات حالياً.
-        </div>
+        <p className="text-center text-gray-500">لا توجد ملفات حالياً.</p>
       ) : (
-        Object.entries(archives).map(([modelType, files]) => (
-          <div key={modelType} className="space-y-4">
-            {/* عنوان المجلد */}
-            <div
-              onClick={() => toggleFolder(modelType)}
-              className="flex items-center gap-2 text-xl font-semibold text-almadar-blue dark:text-almadar-yellow cursor-pointer"
-            >
-              {openFolders[modelType] ? <FolderOpenDot  /> : <FolderKanban  />}
-              {openFolders[modelType] ? (
-                <ChevronsDown className="ml-2" />
-              ) : (
-                <ChevronsLeft  className="ml-2" />
-              )}
-              <span>{getModelTypeLabel(modelType)}</span>
-            </div>
-
-            {/* عرض الملفات داخل المجلد */}
-            {openFolders[modelType] && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pl-6">
+        Object.entries(archives).map(([type, files]) => (
+          <div key={type}>
+            <button onClick={() => toggleFolder(type)} className="flex items-center gap-2 text-xl font-semibold text-blue-700">
+              {openFolders[type] ? <FolderOpenDot /> : <FolderKanban />}
+              {openFolders[type] ? <ChevronsDown /> : <ChevronsLeft />}
+              <span>{getLabel(type)}</span>
+            </button>
+            {openFolders[type] && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                 {files.map((file) => (
-                  <div
-                    key={file.id}
-                    className="p-4 border rounded-lg bg-white dark:bg-gray-800 hover:shadow-lg transition flex items-center gap-4"
-                  >
-                    <FileText  className="text-red-500 text-2xl" />
-                    <div className="flex-1">
-                      <a
-                        href={`${API_CONFIG.baseURL}/storage/${file.file_path}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline block"
-                      >
-                        {file.title || "ملف بدون عنوان"}
+                  <div key={file.id} className="p-4 border rounded bg-white shadow-sm space-y-2">
+                    <div className="flex items-center gap-3">
+                      <FileText className="text-red-500 w-6 h-6" />
+                      <div className="flex-1">
+                        <h3 className="text-blue-600 font-semibold truncate">{file.number || 'بدون رقم'}</h3>
+                        <h4 className="text-blue-600 font-semibold truncate">{file.title || 'بدون عنوان'}</h4>
+                        <p className="text-xs text-gray-500 truncate">{file.extracted_text?.slice(0, 60) || 'لا يوجد نص'}</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <button onClick={() => handlePdfPreview(file)} className="text-green-600 hover:underline">
+                        معاينة
+                      </button>
+                      <a href={`${API_CONFIG.baseURL}/storage/${file.file_path}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+                        تحميل
                       </a>
-                      <p className="text-sm text-gray-400 mt-1 truncate">
-                        {file.extracted_text
-                          ? file.extracted_text.substring(0, 60) + "..."
-                          : "لا يوجد نص مستخرج"}
-                      </p>
                     </div>
                   </div>
                 ))}
@@ -111,20 +87,25 @@ export default function ArchivePage() {
           </div>
         ))
       )}
+      {previewFile && (
+        <div className="mt-10 bg-gray-100 p-4 rounded-lg shadow-md">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-lg font-semibold">معاينة الملف</h3>
+            <button onClick={() => setPreviewFile(null)} className="text-red-500 hover:underline">إغلاق</button>
+          </div>
+            <Suspense fallback={<div className="text-center text-sm">تحميل عارض PDF...</div>}>
+            <PDFViewer fileUrl={previewFile} />
+          </Suspense>
+        </div>
+      )}
     </div>
   );
 }
 
-// ✅ تحويل model_type إلى اسم واضح للمستخدم
-function getModelTypeLabel(modelType) {
-  switch (modelType) {
-    case "Contract":
-      return "عقود";
-    case "Consultation":
-      return "استشارات";
-    case "Case":
-      return "قضايا";
-    default:
-      return modelType;
-  }
+function getLabel(type) {
+  return {
+    Contract: 'عقود',
+    LegalAdvice: 'مشورة أو راي',
+    Case: 'قضايا',
+  }[type] || type;
 }

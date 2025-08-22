@@ -10,17 +10,19 @@ export function initEcho(config = {}) {
   if (echoInstance) return echoInstance;
 
   // ✅ اجلب التوكن من sessionStorage أو localStorage
-  const token = JSON.parse(sessionStorage.getItem('token'));
+const token = sessionStorage.getItem('token');
 
   const defaultConfig = {
     broadcaster: 'reverb',
+
+    id: import.meta.env.VITE_REVERB_APP_ID,
     key: import.meta.env.VITE_REVERB_APP_KEY,
     cluster: import.meta.env.VITE_REVERB_CLUSTER,
     wsHost: import.meta.env.VITE_REVERB_HOST,
     wsPort: import.meta.env.VITE_REVERB_PORT,
-    forceTLS: false,  
-    disableStats: true,
-    enabledTransports: ['ws'],
+   forceTLS: false, // ✅ استخدام TLS (HTTPS/WSS)
+  disableStats: false,
+  enabledTransports: ['ws'], // ✅ السماح بالاتصال الآمن
     authEndpoint: `${import.meta.env.VITE_API_BASE_URL}/broadcasting/auth`,
     auth: {
       headers: {

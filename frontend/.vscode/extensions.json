@@ -1,9 +1,0 @@
-{
-  "recommendations": [ 
-    "formulahendry.auto-close-tag", // لإغلاق العلامات تلقائياً في HTML و JSX
-    "formulahendry.auto-rename-tag", // لإعادة تسمية العلامات تلقائياً
-    "dsznajder.es7-react-js-snippets", // لتقديم شفرات جاهزة لـ React
-  
-    
-  ]
-}

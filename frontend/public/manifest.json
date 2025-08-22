@@ -1,42 +1,38 @@
 {
-  "short_name": "Almadar",
-  "name": "نظام إدارة مكاتب المحاماة",
-  "description": "Comprehensive Law Firm Management System",
-  "lang": "ar",
-  "dir": "rtl",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "splash-image.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "splash-image.jpg",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "splash-image.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
+  "name": "My App",
+  "short_name": "App",
+  "description": "Description of your app",
   "start_url": ".",
   "display": "standalone",
-  "orientation": "portrait",
-  "theme_color": "#0d3346",
-  "background_color": "#0d3346",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "images/logo-green.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
   "splash_pages": [
     {
-      "src": "splash-image.png",
-      "sizes": "1280x720",
-      "type": "image/jpeg"
+      "src": "images/splash-image.jpg",
+      "sizes": "640x1136",
+      "type": "image/jpg"
+    },
+    {
+      "src": "images/splash-image.png",
+      "sizes": "640x1136",
+      "type": "image/png"
     }
   ]
 }
