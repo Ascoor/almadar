@@ -60,7 +60,7 @@ export default {
           foreground: 'var(--card-foreground)',
           hover: 'var(--card-hover)',
         },
-        sidebar: {
+        sidebar: { 
           DEFAULT: 'var(--sidebar)',
           foreground: 'var(--sidebar-foreground)',
           primary: 'var(--sidebar-primary)',
@@ -69,6 +69,7 @@ export default {
           'accent-foreground': 'var(--sidebar-accent-foreground)',
           border: 'var(--sidebar-border)',
           ring: 'var(--sidebar-ring)',
+ 
         },
       },
       backgroundImage: {

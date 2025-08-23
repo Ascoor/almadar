@@ -1,43 +1,63 @@
-# Theme Tokens (Almadar Identity)
+Theme Tokens
 
-The front-end uses a unified design-token system defined in [`src/styles/tokens.css`](src/styles/tokens.css) and wired through [`tailwind.config.js`](tailwind.config.js). Tokens provide a single source of truth for both light (`:root`) and dark (`.dark`) themes.
+The application uses a unified set of CSS variables stored in
+src/styles/tokens.css. These variables define both light and dark themes and
+are consumed through Tailwind in tailwind.config.js.
 
-## Families
-- **Core:** `background`, `foreground`, `border`, `input`, `ring`, `muted`
-- **Brand:** `primary`, `secondary`, `accent` (each exposes `DEFAULT`, `foreground`, `hover`, `light`)
-- **State:** `success`, `warning`, `destructive` (each with `*-foreground`)
-- **Surfaces:** `card`, `popover` (`DEFAULT`, `foreground`, optional `hover`)
-- **Sidebar:** `sidebar` (`DEFAULT`, `foreground`, `accent`, `accent-foreground`, `primary`, `primary-foreground`, `border`, `ring`)
-- **Visuals:** `gradient-primary`, `gradient-secondary`, `gradient-hero`, `gradient-card` and `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-glow`
+Tokens
 
-## Typography
-- `fontFamily.heading` → `var(--font-heading)` (Inter)
-- `fontFamily.body` → `var(--font-body)` (Cairo)
+The default palette follows the new Almadar brand: primary olive drab, secondary
+teal and a medium blue accent.
 
-## Adding a new theme
-Override variables within a scope class and apply that class to `html` or any container:
+background / foreground – base surfaces and text.
 
-```css
+primary – main actions and highlights.
+
+secondary – secondary surfaces or actions.
+
+accent – decorative highlights.
+
+muted – subtle backgrounds and text.
+
+success / warning / destructive – status feedback.
+
+card / popover – generic surfaces.
+
+sidebar – dedicated palette for the navigation sidebar.
+
+gradients – --gradient-primary, --gradient-secondary,
+--gradient-hero, --gradient-card.
+
+shadows – --shadow-sm, --shadow-md, --shadow-lg, --shadow-xl,
+--shadow-glow.
+
+fonts – --font-heading, --font-body.
+
+Adding a new theme
+
+Override the variables under a new class and apply it on the root element:
+
 .theme-ocean {
   --primary: #0D9488;
   --primary-foreground: #062825;
   /* other overrides */
 }
-```
 
-Then wrap your application or subtree:
-
-```html
 <html class="theme-ocean">
   ...
 </html>
-```
 
-## Picking tokens by role
-- **Primary actions** → `bg-primary text-primary-foreground hover:bg-primary-hover`
-- **Decorative highlights or links** → `text-accent` or `bg-accent`
-- **Subtle surfaces** → `bg-secondary` or `bg-muted`
-- **Feedback banners** → `bg-success|warning|destructive` with corresponding `*-foreground`
-- **Cards & popovers** → `bg-card|popover` + `text-card-foreground|popover-foreground`
+Choosing tokens by role
 
-Always pair background tokens with the matching `*-foreground` for accessible contrast. Run `npm run lint` to ensure no legacy color classes remain after edits.
+Primary for prominent call-to-action buttons.
+
+Secondary for muted buttons and panels.
+
+Accent for attention or decorative elements.
+
+Muted for borders or background fillers.
+
+Status colors for success, warning or destructive messages.
+
+Always pair background tokens with their *-foreground text token for
+contrast.

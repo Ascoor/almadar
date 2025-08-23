@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+ 
 
 :root {
   /* Typography */
@@ -134,5 +134,5 @@
   --shadow-md: 0 4px 8px 0 rgb(0 0 0 / 0.45);
   --shadow-lg: 0 12px 20px 0 rgb(0 0 0 / 0.5);
   --shadow-xl: 0 20px 35px 0 rgb(0 0 0 / 0.55);
-  --shadow-glow: 0 0 0 3px #53A3DD55;
+  --shadow-glow: 0 0 0 3px #53A3DD55; 
 }
