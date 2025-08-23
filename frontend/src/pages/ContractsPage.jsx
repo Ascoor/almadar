@@ -5,7 +5,9 @@ import { LocalIcon, InternationalIcon } from '../assets/icons';
 import { useNavigate } from 'react-router-dom';
 import { useContracts } from '@/hooks/dataHooks'; // ✅ استخدم الهُوك المُخصص
 const SectionHeader = lazy(() => import('../components/common/SectionHeader'));
-const ContractsTable = lazy(() => import('../components/Contracts/ContractsTable'));
+const ContractsTable = lazy(
+  () => import('../components/Contracts/ContractsTable'),
+);
 
 export default function Contracts() {
   const [activeTab, setActiveTab] = useState('local');
@@ -21,7 +23,7 @@ export default function Contracts() {
         const res = await getContractCategories();
         setCategories(res?.data?.data || []);
       } catch {
-        console.error("فشل جلب التصنيفات");
+        console.error('فشل جلب التصنيفات');
       }
     })();
   }, []);
@@ -38,7 +40,6 @@ export default function Contracts() {
 
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-6">
-
       <motion.div
         key="header"
         initial={{ opacity: 0, y: -100 }}
@@ -46,10 +47,14 @@ export default function Contracts() {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: 'spring', stiffness: 70, damping: 14 }}
       >
-        <Suspense fallback={<div className="text-center text-sm">تحميل العنوان...</div>}>
+        <Suspense
+          fallback={<div className="text-center text-sm">تحميل العنوان...</div>}
+        >
           <SectionHeader
             icon={activeTab === 'local' ? LocalIcon : InternationalIcon}
-            listName={activeTab === 'local' ? 'العقود المحلية' : 'العقود الدولية'}
+            listName={
+              activeTab === 'local' ? 'العقود المحلية' : 'العقود الدولية'
+            }
           />
         </Suspense>
       </motion.div>
@@ -59,10 +64,10 @@ export default function Contracts() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-2 rounded-full text-sm font-bold transition border ${
+            className={`px-6 py-2 text-sm font-bold transition border rounded-full ${
               activeTab === tab
-                ? 'dark:bg-greenic bg-gold/80 text-black dark:text-white'
-                : 'dark:text-greenic text-gold dark:border-greenic border-gold hover:bg-royal'
+                ? 'bg-primary text-primary-foreground'
+                : 'border-primary text-primary hover:bg-primary/10'
             }`}
           >
             {tab === 'local' ? 'العقود المحلية' : 'العقود الدولية'}
@@ -77,10 +82,19 @@ export default function Contracts() {
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 60 }}
-            transition={{ type: 'spring', stiffness: 60, damping: 14, delay: 0.1 }}
+            transition={{
+              type: 'spring',
+              stiffness: 60,
+              damping: 14,
+              delay: 0.1,
+            }}
             className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
           >
-            <Suspense fallback={<div className="text-center text-sm">جاري تحميل الجدول...</div>}>
+            <Suspense
+              fallback={
+                <div className="text-center text-sm">جاري تحميل الجدول...</div>
+              }
+            >
               <ContractsTable
                 contracts={contracts}
                 categories={categories}
@@ -88,7 +102,7 @@ export default function Contracts() {
                 scope={activeTab}
                 loading={isLoading}
               />
-            </Suspense> 
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </div>

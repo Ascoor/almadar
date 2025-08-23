@@ -1,36 +1,36 @@
 import React, { Suspense, lazy } from 'react';
- import { motion } from 'framer-motion';
- import { Separator } from '@/components/ui/separator'; // استيراد مكون Separator
- 
- const DashboardStats = lazy(() => import('./DashboardStats'));
- const RecentItems = lazy(() => import('./RecentItems'));
+import { motion } from 'framer-motion';
+import { Separator } from '@/components/ui/separator'; // استيراد مكون Separator
+
+const DashboardStats = lazy(() => import('./DashboardStats'));
+const RecentItems = lazy(() => import('./RecentItems'));
 
 // Variants للتحكم في الرسوم المتحركة للعناوين
 const titleVariants = {
-  hidden: { opacity: 0, y: -40 },  // الحالة المخفية
-  show: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { 
-      duration: 0.6, 
-      ease: 'easeOut' 
-    }
-  }
+  hidden: { opacity: 0, y: -40 }, // الحالة المخفية
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: 'easeOut',
+    },
+  },
 };
 
 // Variants للتحكم في الرسوم المتحركة للأقسام
 const sectionVariants = {
-  hidden: { opacity: 0, y: 40 },  // الحالة المخفية
+  hidden: { opacity: 0, y: 40 }, // الحالة المخفية
   show: (delay = 0) => ({
-    opacity: 1, 
-    y: 0, 
-    transition: { 
+    opacity: 1,
+    y: 0,
+    transition: {
       delay,
-      type: 'spring', 
-      stiffness: 80, 
-      damping: 14 
-    }
-  })
+      type: 'spring',
+      stiffness: 80,
+      damping: 14,
+    },
+  }),
 };
 
 const Dashboard = () => {
@@ -38,7 +38,7 @@ const Dashboard = () => {
     <>
       {/* عرض العنوان بشكل متحرك */}
       <motion.h2
-        className="text-xl sm:text-2xl text-center font-bold mb-2 text-royal-dark dark:text-gold"
+        className="text-xl sm:text-2xl text-center font-bold mb-2 text-accent"
         variants={titleVariants}
         initial="hidden"
         animate="show"
@@ -67,7 +67,11 @@ const Dashboard = () => {
         initial="hidden"
         animate="show"
       >
-     <Suspense fallback={<div className="text-center text-sm">تحميل العناصر الحديثة...</div>}>
+        <Suspense
+          fallback={
+            <div className="text-center text-sm">تحميل العناصر الحديثة...</div>
+          }
+        >
           <RecentItems />
         </Suspense>
       </motion.div>
