@@ -9,86 +9,86 @@
 @layer base {
   :root {
     /* Madar Brand Colors */
-    --primary: 218 100% 8%; /* Deep navy #0B132B */
+    --primary: 222 64% 22%;
     --primary-foreground: 0 0% 98%;
-    --primary-muted: 218 50% 15%;
-    
-    --accent: 177 69% 55%; /* Teal #5BC0BE */
-    --accent-foreground: 218 100% 8%;
-    --accent-light: 177 69% 85%;
-    
-    --success: 134 61% 41%;
+    --primary-muted: 222 44% 16%;
+
+    --accent: 188 68% 42%;
+    --accent-foreground: 222 64% 10%;
+    --accent-light: 188 55% 84%;
+
+    --success: 142 45% 36%;
     --success-foreground: 0 0% 98%;
-    
-    --warning: 38 92% 50%;
-    --warning-foreground: 218 100% 8%;
-    
-    --destructive: 0 84% 60%;
+
+    --warning: 38 92% 52%;
+    --warning-foreground: 230 20% 12%;
+
+    --destructive: 0 72% 48%;
     --destructive-foreground: 0 0% 98%;
 
     /* Legacy palette mapped to CSS variables */
     --greenic: 174 62% 40%;
     --greenic-light: 174 62% 55%;
     --greenic-dark: 174 62% 30%;
-    --greenic-darker: 174 62% 25%;
+    --greenic-darker: 174 62% 24%;
 
-    --royal: 220 65% 50%;
-    --royal-light: 220 65% 65%;
-    --royal-dark: 220 65% 35%;
-    --royal-darker: 220 65% 25%;
-    --royal-ultraDark: 220 65% 20%;
-    --royal-electric: 220 80% 60%;
+    --royal: 228 70% 54%;
+    --royal-light: 228 70% 66%;
+    --royal-dark: 228 70% 38%;
+    --royal-darker: 228 70% 28%;
+    --royal-ultraDark: 228 70% 22%;
+    --royal-electric: 228 82% 60%;
 
-    --gold: 45 90% 55%;
-    --gold-light: 45 90% 65%;
-    --gold-dark: 45 90% 45%;
+    --gold: 45 92% 56%;
+    --gold-light: 45 92% 66%;
+    --gold-dark: 45 92% 46%;
 
-    --navy: 210 60% 20%;
-    --navy-light: 210 60% 40%;
-    --navy-dark: 210 60% 15%;
-    --navy-darker: 210 60% 10%;
+    --navy: 220 50% 20%;
+    --navy-light: 220 50% 38%;
+    --navy-dark: 220 50% 14%;
+    --navy-darker: 220 50% 10%;
 
-    --reded: 0 80% 45%;
+    --reded: 0 72% 48%;
     
     /* Surface Colors */
     --background: 0 0% 100%;
-    --foreground: 218 100% 8%;
+    --foreground: 222 22% 12%;
     
     --card: 0 0% 100%;
-    --card-foreground: 218 100% 8%;
-    --card-hover: 0 0% 96%;
-    
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    
-    --secondary: 177 69% 95%;
-    --secondary-foreground: 218 100% 8%;
-    
+    --card-foreground: 222 22% 12%;
+    --card-hover: 0 0% 97%;
+
+    --muted: 215 20% 96%;
+    --muted-foreground: 215 16% 45%;
+
+    --secondary: 188 45% 96%;
+    --secondary-foreground: 222 22% 12%;
+
     /* Interactive Elements */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 177 69% 55%;
-    
+    --border: 215 22% 88%;
+    --input: 215 22% 88%;
+    --ring: 188 68% 44%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 218 100% 8%;
-    
+    --popover-foreground: 222 22% 12%;
+
     /* Sidebar */
-    --sidebar-background: 218 100% 8%;
+    --sidebar-background: 222 40% 10%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 177 69% 55%;
-    --sidebar-primary-foreground: 218 100% 8%;
-    --sidebar-accent: 218 50% 15%;
+    --sidebar-primary: 188 68% 46%;
+    --sidebar-primary-foreground: 222 22% 12%;
+    --sidebar-accent: 222 28% 16%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 218 50% 15%;
-    --sidebar-ring: 177 69% 55%;
+    --sidebar-border: 222 28% 18%;
+    --sidebar-ring: 188 68% 44%;
     
     /* Design tokens */
     --radius: 12px;
-    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.1);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.10);
     --shadow-card: 0 4px 12px -2px hsl(var(--primary) / 0.08);
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-muted)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-light)));
-    --gradient-hero: radial-gradient(circle at center, hsl(var(--accent) / 0.4), transparent 70%);
+    --gradient-hero: radial-gradient(circle at 60% 40%, hsl(var(--accent) / 0.35), transparent 65%);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
     /* Typography */
@@ -103,49 +103,46 @@
   }
 
   .dark {
-    --background: 218 100% 6%;
+    --background: 222 33% 7%;
     --foreground: 0 0% 98%;
 
-    --greenic: 174 62% 45%;
-    --greenic-light: 174 62% 65%;
-    --greenic-dark: 174 62% 35%;
-    --greenic-darker: 174 62% 25%;
+    --primary: 222 65% 46%;
+    --primary-foreground: 0 0% 98%;
+    --primary-muted: 222 50% 36%;
 
-    --royal: 220 65% 45%;
-    --royal-light: 220 65% 60%;
-    --royal-dark: 220 65% 30%;
-    --royal-darker: 220 65% 25%;
-    --royal-ultraDark: 220 65% 20%;
-    --royal-electric: 220 80% 55%;
+    --accent: 188 68% 48%;
+    --accent-foreground: 222 64% 10%;
 
-    --gold: 45 90% 60%;
-    --gold-light: 45 90% 70%;
-    --gold-dark: 45 90% 50%;
+    --success: 142 48% 40%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 95% 56%;
+    --warning-foreground: 230 20% 12%;
+    --destructive: 0 74% 54%;
+    --destructive-foreground: 0 0% 98%;
 
-    --navy: 210 60% 12%;
-    --navy-light: 210 60% 25%;
-    --navy-dark: 210 60% 8%;
-    --navy-darker: 210 60% 6%;
-
-    --reded: 0 80% 55%;
-    
-    --card: 218 50% 8%;
+    --card: 222 28% 10%;
     --card-foreground: 0 0% 98%;
-    
-    --muted: 218 50% 12%;
-    --muted-foreground: 215 20% 65%;
-    
-    --secondary: 218 50% 10%;
+
+    --muted: 222 20% 14%;
+    --muted-foreground: 215 18% 70%;
+
+    --secondary: 222 24% 12%;
     --secondary-foreground: 0 0% 98%;
-    
-    --border: 218 50% 15%;
-    --input: 218 50% 15%;
-    
-    --popover: 218 50% 8%;
+
+    --border: 222 18% 18%;
+    --input: 222 18% 18%;
+
+    --popover: 222 28% 10%;
     --popover-foreground: 0 0% 98%;
-    
-    --sidebar-background: 218 100% 4%;
-    --sidebar-accent: 218 50% 10%;
+
+    --sidebar-background: 222 33% 5%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 188 68% 50%;
+    --sidebar-primary-foreground: 222 22% 12%;
+    --sidebar-accent: 222 26% 12%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 222 24% 14%;
+    --sidebar-ring: 188 68% 50%;
   }
 }
 
