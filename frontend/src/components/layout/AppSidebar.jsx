@@ -16,9 +16,15 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   const { t, dir } = useLanguage();
   const [activeSection, setActiveSection] = useState(null);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
+  const [isTablet, setIsTablet] = useState(
+    window.innerWidth >= 768 && window.innerWidth < 1024
+  );
 
   useEffect(() => {
-    const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -69,8 +75,19 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
       className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0'} top-0 z-20 h-full bg-gold dark:bg-navy-darker
         bg-gradient-to-b from-gold via-greenic-dark/50 to-royal/80
         dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/40
+        text-greenic-dark dark:text-gold-light
         transition-all duration-300
-        ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-12' : `${dir === 'rtl' ? 'translate-x-full' : '-translate-x-full'}`)}
+        ${isLargeScreen
+          ? isOpen
+            ? 'w-64'
+            : 'w-16'
+          : isTablet
+          ? isOpen
+            ? 'w-full'
+            : 'w-16'
+          : isOpen
+          ? 'w-full mt-12'
+          : `${dir === 'rtl' ? 'translate-x-full' : '-translate-x-full'}`}
       `}
     >
       <div className="flex items-center justify-center p-0 mt-6">
