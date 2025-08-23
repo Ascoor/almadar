@@ -2,25 +2,47 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
 import ResponsiveLayout from '@/components/ResponsiveLayout';
 import { useMobileTheme } from '@/components/MobileThemeProvider';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Header = lazy(() => import('@/components/dashboard/Header'));
 const AppSidebar = lazy(() => import('./AppSidebar'));
 
 export default function AppLayout({ children, user }) {
   const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
+  const { dir } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isTablet, setIsTablet] = useState(
+    typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1024
+  );
   const location = useLocation();
 
   useEffect(() => {
     if (isMobile) setSidebarOpen(false);
   }, [location.pathname, isMobile]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const toggleSidebar = () => setSidebarOpen(prev => !prev);
 
+  const marginProp = dir === 'rtl' ? 'marginRight' : 'marginLeft';
   const mainStyles = {
     paddingTop: isMobile ? (isStandalone ? `${safeAreaInsets.top + 80}px` : '80px') : '112px',
     paddingBottom: isStandalone && isMobile ? `${safeAreaInsets.bottom + 32}px` : '32px',
-    marginRight: !isMobile ? (sidebarOpen ? '260px' : '64px') : '0',
+    [marginProp]: !isMobile
+      ? isTablet
+        ? sidebarOpen
+          ? '0'
+          : '64px'
+        : sidebarOpen
+        ? '260px'
+        : '64px'
+      : '0',
     minHeight: isMobile ? 'calc(var(--vh, 1vh) * 100)' : '100vh'
   };
 
@@ -30,9 +52,9 @@ export default function AppLayout({ children, user }) {
         <AppSidebar
           isOpen={sidebarOpen}
           onToggle={toggleSidebar}
-          onLinkClick={() => isMobile && setSidebarOpen(false)}
+          onLinkClick={() => (isMobile || isTablet) && setSidebarOpen(false)}
         />
-        {isMobile && sidebarOpen && (
+        {(isMobile || isTablet) && sidebarOpen && (
           <div
             className="fixed inset-0 bg-black/50 z-10"
             onClick={() => setSidebarOpen(false)}
