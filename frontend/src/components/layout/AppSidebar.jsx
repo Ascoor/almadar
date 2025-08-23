@@ -1,257 +1,244 @@
-// src/components/layout/AppSidebar.jsx
-/**
- * AppSidebar.jsx
- *
- * Collapsible permission-aware sidebar. Includes an orbiting toggle
- * button animated with Framer Motion. Items show icons only when the
- * sidebar is collapsed. Supports nested groups, RTL and mobile drawer
- * behaviour.
- *
- * Props:
- * - isOpen: boolean
- * - onToggle: () => void
- * - nav: Array of { key, label, icon, to, children?, permissionKey? }
- * - hasPermissions: (key: string) => boolean
- */
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import clsx from 'clsx';
-import { motion, useReducedMotion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/components/auth/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { LogoArt, LogoTextArtGreen, LogoTextArtWhite } from '../../assets/images';
+import {
+  ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
+  ArchiveIcon, CourtHouseIcon, LawBookIcon
+} from '@/components/ui/Icons';
+import { Settings2, ListTree, UsersRound, UserCheck, ChevronRight } from 'lucide-react';
 
-export default function AppSidebar({ isOpen, onToggle, nav = [], hasPermissions }) {
-  const { dir } = useLanguage();
-  const location = useLocation();
-  const reduced = useReducedMotion();
-  const navRef = useRef(null);
-  const [activeGroup, setActiveGroup] = useState(null);
-  const [mobile, setMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
+  const { hasPermission } = useAuth();
+  const { t, dir } = useLanguage();
+
+  const [activeSection, setActiveSection] = useState(null);
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
+  const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
+
+  // 🔦 Detect dark mode from either `.dark` class or [data-theme="dark"]
+  const [isDark, setIsDark] = useState(() => {
+    const root = document.documentElement;
+    return root.classList.contains('dark') || root.getAttribute('data-theme') === 'dark';
+  });
 
   useEffect(() => {
-    const onResize = () => setMobile(window.innerWidth < 768);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Watch for theme changes (class or data-theme toggles)
+    const root = document.documentElement;
+    const mo = new MutationObserver(() => {
+      setIsDark(root.classList.contains('dark') || root.getAttribute('data-theme') === 'dark');
+    });
+    mo.observe(root, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+
+    // Also respect system preference if you use it anywhere
+    const mq = window.matchMedia?.('(prefers-color-scheme: dark)');
+    const onMQ = e => setIsDark(e.matches || root.classList.contains('dark') || root.getAttribute('data-theme') === 'dark');
+    mq?.addEventListener?.('change', onMQ);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      mo.disconnect();
+      mq?.removeEventListener?.('change', onMQ);
+    };
   }, []);
 
-  const items = useMemo(
-    () =>
-      nav
-        .filter(it => !it.permissionKey || hasPermissions(it.permissionKey))
-        .map(it =>
-          it.children
-            ? { ...it, children: it.children.filter(ch => !ch.permissionKey || hasPermissions(ch.permissionKey)) }
-            : it
-        ),
-    [nav, hasPermissions]
-  );
+  // ✅ Fix: choose logo by sidebar state + theme
+  const logoSrc = isOpen
+    ? (isDark ? LogoTextArtWhite : LogoTextArtGreen) // open → text logo (white in dark, green in light)
+    : LogoArt;                                       // closed → compact mark
 
-  useEffect(() => {
-    items.forEach(it => {
-      if (it.children && it.children.some(ch => ch.to === location.pathname)) {
-        setActiveGroup(it.key);
-      }
-    });
-  }, [location.pathname, items]);
+  const navConfig = useMemo(() => [
+    { id: 'home', label: t('home'), to: '/', icon: <DashboardIcon size={20} /> },
+    hasPermission('view contracts') && {
+      id: 'contracts', label: t('contracts'), to: '/contracts', icon: <ContractsIcon size={20} />
+    },
+    (hasPermission('view investigations') || hasPermission('view legaladvices') || hasPermission('view litigations')) && {
+      id: 'fatwa', label: t('fatwa'), icon: <ConsultationsIcon size={20} />, children: [
+        hasPermission('view investigations') && {
+          id: 'investigations', label: t('investigations'), to: '/legal/investigations', icon: <LawsuitsIcon size={16} />
+        },
+        hasPermission('view legaladvices') && {
+          id: 'legal-advices', label: t('legalAdvices'), to: '/legal/legal-advices', icon: <LawBookIcon size={16} />
+        },
+        hasPermission('view litigations') && {
+          id: 'litigations', label: t('litigations'), to: '/legal/litigations', icon: <CourtHouseIcon size={16} />
+        },
+      ].filter(Boolean)
+    },
+    hasPermission('view managment-lists') && {
+      id: 'management', label: t('management'), icon: <Settings2 size={20} />, children: [
+        { id: 'lists', label: t('lists'), to: '/managment-lists', icon: <ListTree size={16} /> },
+      ]
+    },
+    hasPermission('view users') && {
+      id: 'users', label: t('users'), icon: <UsersRound size={20} />, children: [
+        { id: 'users-list', label: t('usersList'), to: '/users', icon: <UserCheck size={16} /> },
+      ]
+    },
+    hasPermission('view archive') && {
+      id: 'archive', label: t('archive'), to: '/archive', icon: <ArchiveIcon size={20} />
+    },
+  ].filter(Boolean), [hasPermission, t]);
 
-  const handleKeyDown = e => {
-    const focusable = navRef.current?.querySelectorAll('a,button');
-    const list = Array.from(focusable || []);
-    const idx = list.indexOf(document.activeElement);
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      list[(idx + 1) % list.length]?.focus();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      list[(idx - 1 + list.length) % list.length]?.focus();
-    }
+  const handleSectionClick = (id, hasChildren) => {
+    if (!isLargeScreen && !isOpen) onToggle();
+    if (hasChildren) setActiveSection(prev => (prev === id ? null : id));
   };
 
-  const position = dir === 'rtl' ? 'right-0' : 'left-0';
-  const translateClosed = dir === 'rtl' ? 'translate-x-full' : '-translate-x-full';
-  const container = clsx(
-    'bg-white dark:bg-zinc-950 border-e border-zinc-200/60 dark:border-zinc-800',
-    'transition-[width] duration-300 flex flex-col z-40',
-    mobile
-      ? `fixed top-0 ${position} h-full transform ${isOpen ? 'translate-x-0' : translateClosed} w-64`
-      : `h-screen ${isOpen ? 'w-64' : 'w-16'}`
-  );
-
   return (
-    <>
-      {mobile && isOpen && (
-        <div className="fixed inset-0 bg-black/40 z-30" onClick={onToggle} aria-hidden="true" />
-      )}
-      <aside dir={dir} className={container}>
-        <div className="p-2 flex items-center justify-center">
-          <OrbitToggle isOpen={isOpen} onToggle={onToggle} dir={dir} reduced={reduced} />
-        </div>
-        <nav
-          id="app-sidebar-nav"
-          ref={navRef}
-          role="menu"
-          onKeyDown={handleKeyDown}
-          className="flex-1 overflow-y-auto py-4 space-y-1"
-        >
-          {items.map(item => (
-            <SidebarItem
-              key={item.key}
-              item={item}
-              dir={dir}
-              isOpen={isOpen}
-              activeGroup={activeGroup}
-              setActiveGroup={setActiveGroup}
-              onNavigate={mobile ? onToggle : undefined}
-            />
-          ))}
-        </nav>
-      </aside>
-    </>
-  );
-}
+    <aside
+      dir={dir}
+      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-foreground border-l  border-sidebar-border transition-all duration-300 ${
+        isLargeScreen
+          ? isOpen
+            ? 'w-64'
+            : 'w-16'
+          : isTablet
+          ? isOpen
+            ? 'w-full'
+            : 'w-16'
+          : isOpen
+          ? 'w-full mt-12'
+          : `${dir === 'rtl' ? 'translate-x-full' : '-translate-x-full'}`
+      }`}
+    >
+      <div className="flex items-center justify-center p-0 mt-6">
+        <img
+          src={logoSrc}
+          alt="Almadar Logo"
+          className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
+        />
+        {isOpen && <button onClick={onToggle} className="absolute top-4 left-4">×</button>}
+      </div>
 
-function SidebarItem({ item, dir, isOpen, activeGroup, setActiveGroup, onNavigate }) {
-  const isGroup = item.children && item.children.length > 0;
-  const Caret = dir === 'rtl' ? ChevronLeft : ChevronRight;
 
-  const linkClasses = ({ isActive }) =>
-    clsx(
-      'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium focus:outline-none',
-      isActive
-        ? 'bg-zinc-100 dark:bg-zinc-800'
-        : 'hover:bg-zinc-100 dark:hover:bg-zinc-800'
-    );
-
-  if (!isGroup) {
-    const Icon = item.icon;
-    return (
-      <NavLink to={item.to} end className={linkClasses} onClick={onNavigate}>
-        <Icon className="w-5 h-5" />
-        <span className={clsx(isOpen ? 'ms-2' : 'sr-only')}>{item.label}</span>
-      </NavLink>
-    );
-  }
-
-  const Icon = item.icon;
-  const expanded = activeGroup === item.key;
-
-  return (
-    <div>
-      <button
-        type="button"
-        onClick={() => setActiveGroup(expanded ? null : item.key)}
-        className={clsx(
-          'w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium',
-          expanded
-            ? 'bg-zinc-100 dark:bg-zinc-800'
-            : 'hover:bg-zinc-100 dark:hover:bg-zinc-800'
-        )}
-        aria-expanded={expanded}
-      >
-        <Icon className="w-5 h-5" />
-        <span className={clsx(isOpen ? 'ms-2 flex-1 text-start' : 'sr-only')}>{item.label}</span>
-        {isOpen && (
-          <Caret
-            className={clsx(
-              'w-4 h-4 ms-auto transition-transform',
-              expanded ? (dir === 'rtl' ? '-rotate-90' : 'rotate-90') : ''
-            )}
-          />
-        )}
-      </button>
-      {isOpen && expanded && (
-        <div className="mt-1 ps-7 space-y-1" role="group">
-          {item.children.map(ch => {
-            const ChIcon = ch.icon;
-            return (
+      <nav className={`${isOpen ? 'px-4 space-y-4 mt-6' : 'px-2 space-y-2 mt-8'} overflow-y-auto h-full`}>
+        {(isOpen || !isLargeScreen) ? navConfig.map(item => (
+          <div key={item.id}>
+            {item.to ? (
               <NavLink
-                key={ch.key}
-                to={ch.to}
-                end
+                to={item.to}
+                onClick={onLinkClick}
                 className={({ isActive }) =>
-                  clsx(
-                    'flex items-center gap-2 px-2 py-1.5 rounded-md text-sm',
+                  `group flex items-center gap-3 p-2 rounded-md text-sm font-semibold tracking-tight transition-all duration-300 ${
                     isActive
-                      ? 'bg-zinc-100 dark:bg-zinc-800'
-                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                  )
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                  }`
                 }
-                onClick={onNavigate}
               >
-                <ChIcon className="w-4 h-4" />
-                <span>{ch.label}</span>
+                {({ isActive }) => (
+                  <>
+                    {React.cloneElement(item.icon, {
+                      className: `transition-colors duration-200 ${
+                        isActive
+                          ? 'text-sidebar-accent-foreground'
+                          : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                      }`
+                    })}
+                    <span className="flex-1 text-right">{item.label}</span>
+                  </>
+                )}
               </NavLink>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
+            ) : (
+              <button
+                onClick={() => handleSectionClick(item.id, !!item.children)}
+                className={`flex items-center gap-3 p-2 w-full rounded-md text-sm font-semibold tracking-tight transition-colors duration-200 ${
+                  activeSection === item.id
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                }`}
+              >
+                {React.cloneElement(item.icon, {
+                  className: `transition-colors duration-200 ${
+                    activeSection === item.id
+                      ? 'text-sidebar-accent-foreground'
+                      : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                  }`
+                })}
+                <span className="flex-1 text-right">{item.label}</span>
+                {item.children && (
+                  <ChevronRight
+                    className={`w-4 h-4 transform transition-transform duration-200 ${
+                      activeSection === item.id ? (dir === 'rtl' ? 'rotate-90' : '-rotate-90') : ''
+                    }`}
+                  />
+                )}
+              </button>
+            )}
 
-function OrbitToggle({ isOpen, onToggle, dir, reduced }) {
-  const radius = 14;
-  const satellites = useMemo(
-    () =>
-      Array.from({ length: 4 }).map((_, i) => {
-        const angle = (i * 360) / 4;
-        return {
-          id: i,
-          x: radius * Math.cos((angle * Math.PI) / 180),
-          y: radius * Math.sin((angle * Math.PI) / 180),
-        };
-      }),
-    []
-  );
-
-  const orbitVariants = {
-    closed: { rotate: 0 },
-    open: reduced
-      ? { rotate: 0 }
-      : { rotate: 360, transition: { duration: 8, ease: 'linear', repeat: Infinity } },
-  };
-
-  const dotVariants = {
-    closed: { opacity: 0, scale: 0 },
-    open: { opacity: 1, scale: 1 },
-  };
-
-  const Icon =
-    dir === 'rtl'
-      ? isOpen
-        ? ChevronRight
-        : ChevronLeft
-      : isOpen
-      ? ChevronLeft
-      : ChevronRight;
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        aria-label="Toggle sidebar"
-        aria-controls="app-sidebar-nav"
-        aria-expanded={isOpen}
-        onClick={onToggle}
-        className="relative z-10 p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-primary"
-      >
-        <Icon className="w-4 h-4" />
-      </button>
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        variants={orbitVariants}
-        animate={isOpen ? 'open' : 'closed'}
-        initial={false}
-      >
-        {satellites.map(s => (
-          <motion.span
-            key={s.id}
-            variants={dotVariants}
-            className="absolute w-1.5 h-1.5 bg-primary rounded-full"
-            style={{ x: s.x, y: s.y }}
-          />
-        ))}
-      </motion.div>
-    </div>
+            {item.children && activeSection === item.id && isOpen && (
+              <div className="mr-4 pl-4 border-r border-sidebar-border space-y-1">
+                {item.children.map(ch => (
+                  <NavLink
+                    key={ch.id}
+                    to={ch.to}
+                    onClick={onLinkClick}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                        isActive
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {React.cloneElement(ch.icon, {
+                          className: `transition duration-200 ${
+                            isActive
+                              ? 'text-sidebar-accent-foreground'
+                              : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                          }`
+                        })}
+                        <span>{ch.label}</span>
+                      </>
+                    )}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+        )) : (
+          <div className="flex flex-col items-center space-y-4 pt-4">
+            {navConfig.flatMap(item => [
+              ...(item.to ? [item] : []),
+              ...(item.children ? item.children : [])
+            ]).map(it => (
+              <NavLink
+                key={it.id}
+                to={it.to}
+                onClick={onLinkClick}
+                title={it.label}
+                className={({ isActive }) =>
+                  `px-4 py-2 rounded-md transition-all duration-200 font-semibold tracking-tight flex items-center gap-2 group ${
+                    isActive
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-md'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                  }`
+                }
+              >
+                {({ isActive }) =>
+                  React.cloneElement(it.icon, {
+                    className: `transition duration-200 ${
+                      isActive
+                        ? 'text-sidebar-accent-foreground'
+                        : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                    }`
+                  })
+                }
+              </NavLink>
+            ))}
+          </div>
+        )}
+      </nav>
+    </aside>
   );
 }
