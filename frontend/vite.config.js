@@ -91,7 +91,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           react: ['react', 'react-dom'],
-          pdf: ['pdfjs-dist', '@/components/PDFViewer'],
+          pdf: ['@swapnachalla/document-viewer', '@/components/PDFViewer'],
           ui: ['lucide-react'],
           vendor: ['socket.io-client', 'laravel-echo'],
         },
