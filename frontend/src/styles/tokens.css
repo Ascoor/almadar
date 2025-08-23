@@ -17,9 +17,9 @@
   --ring: #2A8DD4;   /* Accent */
 
   /* Brand families */
-  --primary: #65942D; /* Olive Drab */
+  --primary: #4A6C21; /* deep olive for better contrast */
   --primary-foreground: #FFFFFF;
-  --primary-hover: #4A6C21; /* darker */
+  --primary-hover: #3A5218; /* darker */
   --primary-light: #98CC5A; /* lighter */
 
   --secondary: #188387; /* Teal */
