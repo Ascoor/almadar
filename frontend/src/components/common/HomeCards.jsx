@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import fakeData from '../../Data';
-import { CalendarClock, Clock10, ListChecks  } from 'lucide-react';
+import { CalendarClock, Clock10, ListChecks } from 'lucide-react';
 
 const cardStyle = `
-  bg-gradient-to-br from-almadar-blue-light/20 to-almadar-blue/10 
-  dark:bg-gradient-to-br dark:from-almadar-mint-dark/90 dark:to-almadar-blue-darker/80 
-  p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 
+  p-6 rounded-2xl shadow-lg border border-border bg-card
   transition-all duration-300
 `;
 
@@ -14,21 +12,21 @@ const tableStyle = `
 `;
 
 const theadStyle = `
-  bg-almadar-blue text-white text-sm md:text-base
+  bg-secondary text-secondary-foreground text-sm md:text-base
 `;
 
 const thTdStyle = `
-  px-4 py-3 border-b border-gray-200 dark:border-gray-700 
-  text-gray-700 dark:text-gray-200 text-center font-medium
+  px-4 py-3 border-b border-border
+  text-foreground text-center font-medium
 `;
 
 const rowHoverStyle = `
-  hover:bg-almadar-blue/30 dark:hover:bg-almadar-blue/40 transition-all duration-300
+  hover:bg-secondary/30 transition-all duration-300
 `;
 
 const CardWrapper = ({ title, icon, children }) => (
   <div className={cardStyle}>
-    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-almadar-mint-dark dark:text-yellow-400">
+    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-primary">
       {icon} {title}
     </h3>
     <div className="overflow-x-auto">{children}</div>
@@ -118,7 +116,7 @@ const TasksTable = () => {
   useEffect(() => setTasks(fakeData.tasks), []);
 
   return (
-    <CardWrapper title="المهام اليومية" icon={<ListChecks  />}>
+    <CardWrapper title="المهام اليومية" icon={<ListChecks />}>
       <table className={tableStyle}>
         <thead>
           <tr className={theadStyle}>

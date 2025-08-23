@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import API_CONFIG from '../config/config';
 
 export default function ProfilePage() {
-  const { user, updateUserContext } = useContext(AuthContext);  // جلب دالة updateUserContext من السياق
+  const { user, updateUserContext } = useContext(AuthContext); // جلب دالة updateUserContext من السياق
 
   const [profileData, setProfileData] = useState(null);
   const [form, setForm] = useState({ name: '', email: '', image: null });
@@ -51,12 +51,12 @@ export default function ProfilePage() {
     if (form.image) data.append('image', form.image);
 
     try {
-      await updateUser(user.id, data);  // استخدم user.id
+      await updateUser(user.id, data); // استخدم user.id
       toast.success('✅ تم تحديث البيانات بنجاح');
-      
+
       // بعد التحديث بنجاح، قم بإعادة تحميل البيانات من الخادم
       const res = await getProfile(user.id); // إعادة تحميل البيانات
-      updateUserContext(res.user);  // تحديث المستخدم في السياق المحلي
+      updateUserContext(res.user); // تحديث المستخدم في السياق المحلي
     } catch {
       toast.error('حدث خطأ أثناء التحديث');
     }
@@ -77,11 +77,16 @@ export default function ProfilePage() {
     }
   };
 
-  if (!user) return <div className="text-center mt-10 text-gray-500">تحميل البيانات...</div>;
+  if (!user)
+    return (
+      <div className="mt-10 text-center text-muted-foreground">
+        تحميل البيانات...
+      </div>
+    );
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-10">
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow space-y-6">
+      <div className="p-6 space-y-6 rounded-lg shadow bg-card">
         <h2 className="text-2xl font-bold">الملف الشخصي</h2>
         <form onSubmit={handleProfileSubmit} className="space-y-4">
           <div>
@@ -91,73 +96,105 @@ export default function ProfilePage() {
               name="name"
               value={form.name}
               onChange={handleFormChange}
-              className="w-full rounded border px-3 py-2"
+              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">البريد الإلكتروني</label>
+            <label className="block text-sm font-medium mb-1">
+              البريد الإلكتروني
+            </label>
             <input
               type="email"
               name="email"
               value={form.email}
               onChange={handleFormChange}
-              className="w-full rounded border px-3 py-2"
+              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">الصورة الشخصية</label>
-            <input type="file" name="image" onChange={handleFormChange} className="w-full" />
+            <label className="block text-sm font-medium mb-1">
+              الصورة الشخصية
+            </label>
+            <input
+              type="file"
+              name="image"
+              onChange={handleFormChange}
+              className="w-full"
+            />
             {preview && (
-              <img src={preview} alt="صورة المستخدم" className="w-24 h-24 mt-2 rounded-full object-cover" />
+              <img
+                src={preview}
+                alt="صورة المستخدم"
+                className="w-24 h-24 mt-2 rounded-full object-cover"
+              />
             )}
           </div>
           <button
             type="submit"
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+            className="px-4 py-2 rounded bg-primary text-primary-foreground hover:bg-primary-hover transition"
           >
             حفظ التغييرات
           </button>
         </form>
       </div>
 
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow space-y-6">
+      <div className="p-6 space-y-6 rounded-lg shadow bg-card">
         <h2 className="text-2xl font-bold">تغيير كلمة المرور</h2>
         <form onSubmit={handlePasswordSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">كلمة المرور الحالية</label>
+            <label className="block text-sm font-medium mb-1">
+              كلمة المرور الحالية
+            </label>
             <input
               type="password"
               name="old_password"
               value={passwordForm.old_password}
-              onChange={(e) => setPasswordForm({ ...passwordForm, old_password: e.target.value })}
-              className="w-full rounded border px-3 py-2"
+              onChange={(e) =>
+                setPasswordForm({
+                  ...passwordForm,
+                  old_password: e.target.value,
+                })
+              }
+              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">كلمة المرور الجديدة</label>
+            <label className="block text-sm font-medium mb-1">
+              كلمة المرور الجديدة
+            </label>
             <input
               type="password"
               name="new_password"
               value={passwordForm.new_password}
-              onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
-              className="w-full rounded border px-3 py-2"
+              onChange={(e) =>
+                setPasswordForm({
+                  ...passwordForm,
+                  new_password: e.target.value,
+                })
+              }
+              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">تأكيد كلمة المرور</label>
+            <label className="block text-sm font-medium mb-1">
+              تأكيد كلمة المرور
+            </label>
             <input
               type="password"
               name="new_password_confirmation"
               value={passwordForm.new_password_confirmation}
               onChange={(e) =>
-                setPasswordForm({ ...passwordForm, new_password_confirmation: e.target.value })
+                setPasswordForm({
+                  ...passwordForm,
+                  new_password_confirmation: e.target.value,
+                })
               }
-              className="w-full rounded border px-3 py-2"
+              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
             />
           </div>
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            className="px-4 py-2 rounded bg-accent text-accent-foreground hover:bg-accent-hover transition"
           >
             تغيير كلمة المرور
           </button>
