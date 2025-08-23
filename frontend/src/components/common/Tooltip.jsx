@@ -33,11 +33,11 @@ function Tooltip({ children, className, bg, size, position }) {
   const colorClasses = (bg) => {
     switch (bg) {
       case 'light':
-        return 'bg-white text-gray-600 border-gray-200';
+        return 'bg-card text-muted-foreground border-border';
       case 'dark':
-        return 'bg-gray-800 text-gray-100 border-gray-700/60';
+        return 'bg-popover text-popover-foreground border-border';
       default:
-        return 'text-gray-600 bg-white dark:bg-gray-800 dark:text-gray-100 border-gray-200 dark:border-gray-700/60';
+        return 'bg-card text-muted-foreground border-border';
     }
   };
 
@@ -69,7 +69,7 @@ function Tooltip({ children, className, bg, size, position }) {
         onClick={(e) => e.preventDefault()}
       >
         <svg
-          className="fill-current text-gray-400 dark:text-gray-500"
+          className="fill-current text-muted-foreground"
           width="16"
           height="16"
           viewBox="0 0 16 16"

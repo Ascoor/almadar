@@ -25,6 +25,30 @@
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
+
+    /* Legacy palette mapped to CSS variables */
+    --greenic: 174 62% 40%;
+    --greenic-light: 174 62% 55%;
+    --greenic-dark: 174 62% 30%;
+    --greenic-darker: 174 62% 25%;
+
+    --royal: 220 65% 50%;
+    --royal-light: 220 65% 65%;
+    --royal-dark: 220 65% 35%;
+    --royal-darker: 220 65% 25%;
+    --royal-ultraDark: 220 65% 20%;
+    --royal-electric: 220 80% 60%;
+
+    --gold: 45 90% 55%;
+    --gold-light: 45 90% 65%;
+    --gold-dark: 45 90% 45%;
+
+    --navy: 210 60% 20%;
+    --navy-light: 210 60% 40%;
+    --navy-dark: 210 60% 15%;
+    --navy-darker: 210 60% 10%;
+
+    --reded: 0 80% 45%;
     
     /* Surface Colors */
     --background: 0 0% 100%;
@@ -81,6 +105,29 @@
   .dark {
     --background: 218 100% 6%;
     --foreground: 0 0% 98%;
+
+    --greenic: 174 62% 45%;
+    --greenic-light: 174 62% 65%;
+    --greenic-dark: 174 62% 35%;
+    --greenic-darker: 174 62% 25%;
+
+    --royal: 220 65% 45%;
+    --royal-light: 220 65% 60%;
+    --royal-dark: 220 65% 30%;
+    --royal-darker: 220 65% 25%;
+    --royal-ultraDark: 220 65% 20%;
+    --royal-electric: 220 80% 55%;
+
+    --gold: 45 90% 60%;
+    --gold-light: 45 90% 70%;
+    --gold-dark: 45 90% 50%;
+
+    --navy: 210 60% 12%;
+    --navy-light: 210 60% 25%;
+    --navy-dark: 210 60% 8%;
+    --navy-darker: 210 60% 6%;
+
+    --reded: 0 80% 55%;
     
     --card: 218 50% 8%;
     --card-foreground: 0 0% 98%;

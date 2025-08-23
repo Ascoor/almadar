@@ -62,6 +62,36 @@ export default {
         'sidebar-accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
         'sidebar-border': 'hsl(var(--sidebar-border))',
         'sidebar-ring': 'hsl(var(--sidebar-ring))',
+
+        // Legacy palette
+        greenic: {
+          DEFAULT: 'hsl(var(--greenic))',
+          light: 'hsl(var(--greenic-light))',
+          dark: 'hsl(var(--greenic-dark))',
+          darker: 'hsl(var(--greenic-darker))',
+        },
+        royal: {
+          DEFAULT: 'hsl(var(--royal))',
+          light: 'hsl(var(--royal-light))',
+          dark: 'hsl(var(--royal-dark))',
+          darker: 'hsl(var(--royal-darker))',
+          ultraDark: 'hsl(var(--royal-ultraDark))',
+          electric: 'hsl(var(--royal-electric))',
+        },
+        gold: {
+          DEFAULT: 'hsl(var(--gold))',
+          light: 'hsl(var(--gold-light))',
+          dark: 'hsl(var(--gold-dark))',
+        },
+        navy: {
+          DEFAULT: 'hsl(var(--navy))',
+          light: 'hsl(var(--navy-light))',
+          dark: 'hsl(var(--navy-dark))',
+          darker: 'hsl(var(--navy-darker))',
+        },
+        reded: {
+          DEFAULT: 'hsl(var(--reded))',
+        },
       },
       borderRadius: {
         xl: '0.9rem',
