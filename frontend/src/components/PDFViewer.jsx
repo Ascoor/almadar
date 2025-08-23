@@ -1,7 +1,7 @@
 // src/components/PDFViewer.jsx
 import React, { useState, useEffect } from 'react';
-import { DocumentViewer } from '@swapnachalla/document-viewer';
-import '@swapnachalla/document-viewer/dist/index.css';
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
 import * as XLSX from 'xlsx';
 import { Download } from 'lucide-react';
 
@@ -49,12 +49,9 @@ export default function PDFViewer({ fileUrl, isRtl = true }) {
   return (
     <div dir={isRtl ? 'rtl' : 'ltr'} className="space-y-4">
       <div className="bg-white p-4 border rounded shadow-md overflow-auto">
-        <DocumentViewer
-          key={fileUrl}
-          id="viewer-1"
-          initialUrl={fileUrl}
-          onClose={() => {}}
-        />
+        <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
+          <Viewer fileUrl={fileUrl} />
+        </Worker>
       </div>
     </div>
   );
