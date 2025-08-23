@@ -2,23 +2,26 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { LogoArt, LogoPatren } from '../../assets/images';
+import { LogoArt, LogoTextArtGreen, LogoTextArtWhite } from '../../assets/images';
 import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
   ArchiveIcon, CourtHouseIcon, LawBookIcon
 } from '@/components/ui/Icons';
-import {
-  Settings2, ListTree, UsersRound, UserCheck, ChevronRight
-} from 'lucide-react';
+import { Settings2, ListTree, UsersRound, UserCheck, ChevronRight } from 'lucide-react';
 
 export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   const { hasPermission } = useAuth();
   const { t, dir } = useLanguage();
+
   const [activeSection, setActiveSection] = useState(null);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
-  const [isTablet, setIsTablet] = useState(
-    window.innerWidth >= 768 && window.innerWidth < 1024
-  );
+  const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
+
+  // 🔦 Detect dark mode from either `.dark` class or [data-theme="dark"]
+  const [isDark, setIsDark] = useState(() => {
+    const root = document.documentElement;
+    return root.classList.contains('dark') || root.getAttribute('data-theme') === 'dark';
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -26,10 +29,30 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
       setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    // Watch for theme changes (class or data-theme toggles)
+    const root = document.documentElement;
+    const mo = new MutationObserver(() => {
+      setIsDark(root.classList.contains('dark') || root.getAttribute('data-theme') === 'dark');
+    });
+    mo.observe(root, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+
+    // Also respect system preference if you use it anywhere
+    const mq = window.matchMedia?.('(prefers-color-scheme: dark)');
+    const onMQ = e => setIsDark(e.matches || root.classList.contains('dark') || root.getAttribute('data-theme') === 'dark');
+    mq?.addEventListener?.('change', onMQ);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      mo.disconnect();
+      mq?.removeEventListener?.('change', onMQ);
+    };
   }, []);
 
-  const logoSrc = isOpen ? LogoPatren : LogoArt;
+  // ✅ Fix: choose logo by sidebar state + theme
+  const logoSrc = isOpen
+    ? (isDark ? LogoTextArtWhite : LogoTextArtGreen) // open → text logo (white in dark, green in light)
+    : LogoArt;                                       // closed → compact mark
 
   const navConfig = useMemo(() => [
     { id: 'home', label: t('home'), to: '/', icon: <DashboardIcon size={20} /> },
@@ -72,7 +95,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   return (
     <aside
       dir={dir}
-      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0'} top-0 z-20 h-full bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ${
+      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-foreground border-l  border-sidebar-border transition-all duration-300 ${
         isLargeScreen
           ? isOpen
             ? 'w-64'
@@ -87,9 +110,14 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
       }`}
     >
       <div className="flex items-center justify-center p-0 mt-6">
-        <img src={logoSrc} alt="Logo" className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`} />
+        <img
+          src={logoSrc}
+          alt="Almadar Logo"
+          className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
+        />
         {isOpen && <button onClick={onToggle} className="absolute top-4 left-4">×</button>}
       </div>
+
 
       <nav className={`${isOpen ? 'px-4 space-y-4 mt-6' : 'px-2 space-y-2 mt-8'} overflow-y-auto h-full`}>
         {(isOpen || !isLargeScreen) ? navConfig.map(item => (

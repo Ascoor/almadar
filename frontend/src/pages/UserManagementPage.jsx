@@ -206,7 +206,7 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
   };
 
   return (
-    <div className="p-6 sm:p-4 lg:p-6 bg-white dark:bg-royal-darker/10">
+    <div className="p-6 sm:p-4 lg:p-6 mt-6">
       <motion.div
         key="section-header"
         initial={{ opacity: 0, y: -80 }}
