@@ -1,3 +1,4 @@
+// src/components/layout/AppSidebar.jsx
 /**
  * AppSidebar.jsx
  *
@@ -190,32 +191,39 @@ function SidebarItem({ item, dir, isOpen, activeGroup, setActiveGroup, onNavigat
 
 function OrbitToggle({ isOpen, onToggle, dir, reduced }) {
   const radius = 14;
-  const satellites = useMemo(() =>
-    Array.from({ length: 4 }).map((_, i) => {
-      const angle = (i * 360) / 4;
-      return {
-        id: i,
-        x: radius * Math.cos((angle * Math.PI) / 180),
-        y: radius * Math.sin((angle * Math.PI) / 180)
-      };
-    }),
-  []);
+  const satellites = useMemo(
+    () =>
+      Array.from({ length: 4 }).map((_, i) => {
+        const angle = (i * 360) / 4;
+        return {
+          id: i,
+          x: radius * Math.cos((angle * Math.PI) / 180),
+          y: radius * Math.sin((angle * Math.PI) / 180),
+        };
+      }),
+    []
+  );
 
   const orbitVariants = {
     closed: { rotate: 0 },
     open: reduced
       ? { rotate: 0 }
-      : { rotate: 360, transition: { duration: 8, ease: 'linear', repeat: Infinity } }
+      : { rotate: 360, transition: { duration: 8, ease: 'linear', repeat: Infinity } },
   };
 
   const dotVariants = {
     closed: { opacity: 0, scale: 0 },
-    open: { opacity: 1, scale: 1 }
+    open: { opacity: 1, scale: 1 },
   };
 
-  const Icon = dir === 'rtl'
-    ? (isOpen ? ChevronRight : ChevronLeft)
-    : (isOpen ? ChevronLeft : ChevronRight);
+  const Icon =
+    dir === 'rtl'
+      ? isOpen
+        ? ChevronRight
+        : ChevronLeft
+      : isOpen
+      ? ChevronLeft
+      : ChevronRight;
 
   return (
     <div className="relative">
