@@ -60,6 +60,20 @@ public function login(Request $request)
     ]);
 }
 
+    public function user(Request $request)
+    {
+        $user = $request->user();
+
+        $roles = $user->getRoleNames();
+        $permissions = $user->getAllPermissions()->pluck('name');
+
+        return response()->json([
+            'user' => $user,
+            'roles' => $roles,
+            'permissions' => $permissions,
+        ]);
+    }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
