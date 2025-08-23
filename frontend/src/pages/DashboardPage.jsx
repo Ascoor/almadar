@@ -9,6 +9,8 @@ import ResponsiveLayout from '@/components/ResponsiveLayout';
 import { NotificationProvider } from '@/components/Notifications/NotificationContext';
 import { AppWithQuery } from '@/hooks/dataHooks';
 import AdminEchoListener from '../components/EchoInitializer/AdminListener';
+import AppSidebar from '../components/layout/AppSidebar';
+import AppLayout from '../components/layout/AppLayout';
 
 const Header = lazy(() => import('@/components/dashboard/Header'));
 const Sidebar = lazy(() => import('@/components/dashboard/Sidebar'));
@@ -43,7 +45,7 @@ const DashboardContent = () => {
   return (
     <ResponsiveLayout className="min-h-screen flex flex-col sm:flex-row relative">
        <Suspense fallback={<div className="text-center p-4">جاري تحميل القائمة الجانبية...</div>}>
-     <Sidebar
+     <AppSidebar
         isOpen={sidebarOpen}
         onToggle={toggleSidebar}
         onLinkClick={() => isMobile && setSidebarOpen(false)}
@@ -59,8 +61,13 @@ const DashboardContent = () => {
       </Suspense>
       <div className="flex-1 flex flex-col transition-all duration-300">
         <Suspense fallback={<AuthSpinner />}>
-          <Header user={user?.id} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
-        </Suspense>
+               <AppLayout
+        isOpen={sidebarOpen}
+        onToggle={toggleSidebar}
+        onLinkClick={() => isMobile && setSidebarOpen(false)}
+        userPermissions={user.permissions.map(p => p.name)}
+      />
+              </Suspense>
   <main 
           className={`
             flex-1 px-4 sm:px-6 lg:px-8 
