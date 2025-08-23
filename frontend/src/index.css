@@ -1,150 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import './styles/tokens.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Madar Design System - Arabic RTL Legal Management App */
-
-@layer base {
-  :root {
-    /* Madar Brand Colors */
-    --primary: 222 64% 22%;
-    --primary-foreground: 0 0% 98%;
-    --primary-muted: 222 44% 16%;
-
-    --accent: 188 68% 42%;
-    --accent-foreground: 222 64% 10%;
-    --accent-light: 188 55% 84%;
-
-    --success: 142 45% 36%;
-    --success-foreground: 0 0% 98%;
-
-    --warning: 38 92% 52%;
-    --warning-foreground: 230 20% 12%;
-
-    --destructive: 0 72% 48%;
-    --destructive-foreground: 0 0% 98%;
-
-    /* Legacy palette mapped to CSS variables */
-    --greenic: 174 62% 40%;
-    --greenic-light: 174 62% 55%;
-    --greenic-dark: 174 62% 30%;
-    --greenic-darker: 174 62% 24%;
-
-    --royal: 228 70% 54%;
-    --royal-light: 228 70% 66%;
-    --royal-dark: 228 70% 38%;
-    --royal-darker: 228 70% 28%;
-    --royal-ultraDark: 228 70% 22%;
-    --royal-electric: 228 82% 60%;
-
-    --gold: 45 92% 56%;
-    --gold-light: 45 92% 66%;
-    --gold-dark: 45 92% 46%;
-
-    --navy: 220 50% 20%;
-    --navy-light: 220 50% 38%;
-    --navy-dark: 220 50% 14%;
-    --navy-darker: 220 50% 10%;
-
-    --reded: 0 72% 48%;
-    
-    /* Surface Colors */
-    --background: 0 0% 100%;
-    --foreground: 222 22% 12%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 222 22% 12%;
-    --card-hover: 0 0% 97%;
-
-    --muted: 215 20% 96%;
-    --muted-foreground: 215 16% 45%;
-
-    --secondary: 188 45% 96%;
-    --secondary-foreground: 222 22% 12%;
-
-    /* Interactive Elements */
-    --border: 215 22% 88%;
-    --input: 215 22% 88%;
-    --ring: 188 68% 44%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 22% 12%;
-
-    /* Sidebar */
-    --sidebar-background: 222 40% 10%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 188 68% 46%;
-    --sidebar-primary-foreground: 222 22% 12%;
-    --sidebar-accent: 222 28% 16%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 222 28% 18%;
-    --sidebar-ring: 188 68% 44%;
-    
-    /* Design tokens */
-    --radius: 12px;
-    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.10);
-    --shadow-card: 0 4px 12px -2px hsl(var(--primary) / 0.08);
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-muted)));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-light)));
-    --gradient-hero: radial-gradient(circle at 60% 40%, hsl(var(--accent) / 0.35), transparent 65%);
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    
-    /* Typography */
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
-    --font-size-3xl: 1.875rem;
-    --font-size-4xl: 2.25rem;
-  }
-
-  .dark {
-    --background: 222 33% 7%;
-    --foreground: 0 0% 98%;
-
-    --primary: 222 65% 46%;
-    --primary-foreground: 0 0% 98%;
-    --primary-muted: 222 50% 36%;
-
-    --accent: 188 68% 48%;
-    --accent-foreground: 222 64% 10%;
-
-    --success: 142 48% 40%;
-    --success-foreground: 0 0% 98%;
-    --warning: 38 95% 56%;
-    --warning-foreground: 230 20% 12%;
-    --destructive: 0 74% 54%;
-    --destructive-foreground: 0 0% 98%;
-
-    --card: 222 28% 10%;
-    --card-foreground: 0 0% 98%;
-
-    --muted: 222 20% 14%;
-    --muted-foreground: 215 18% 70%;
-
-    --secondary: 222 24% 12%;
-    --secondary-foreground: 0 0% 98%;
-
-    --border: 222 18% 18%;
-    --input: 222 18% 18%;
-
-    --popover: 222 28% 10%;
-    --popover-foreground: 0 0% 98%;
-
-    --sidebar-background: 222 33% 5%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 188 68% 50%;
-    --sidebar-primary-foreground: 222 22% 12%;
-    --sidebar-accent: 222 26% 12%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 222 24% 14%;
-    --sidebar-ring: 188 68% 50%;
-  }
-}
 
 @layer base {
   * {
@@ -152,7 +12,7 @@
   }
 
   html {
-    font-family: 'Cairo', system-ui, sans-serif;
+    font-family: var(--font-body);
     direction: rtl;
     lang: ar;
   }
@@ -162,7 +22,6 @@
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
-  /* RTL-specific adjustments */
   [dir="rtl"] {
     text-align: right;
   }
@@ -174,7 +33,6 @@
 }
 
 @layer components {
-  /* Custom scrollbar */
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -192,7 +50,6 @@
     @apply bg-muted-foreground;
   }
 
-  /* Animations */
   .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;
   }
@@ -249,15 +106,5 @@
   to {
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
   }
 }
