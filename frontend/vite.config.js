@@ -1,29 +1,30 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
-import { VitePWA } from 'vite-plugin-pwa';
-
+import { VitePWA } from 'vite-plugin-pwa'; 
 export default defineConfig(({ mode }) => ({
   server: {
     proxy: {
-      '/broadcasting': {
-        target: 'http://127.0.0.1:8000',
-        changeOrigin: true,
-        ws: true, // Enable WebSocket proxying
+      '/broadcasting': 'http://127.0.0.1:8000',
+      '/socket.io': {
+        target: 'http://localhost:8080',
+        ws: true,
       },
     },
     host: '::',
     port: 3000,
   },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'laravel-echo'],
-  },
-  plugins: [
+optimizeDeps: {
+  include: ['react', 'react-dom', 'socket.io-client', 'laravel-echo'],
+},
+   plugins: [
     react(),
+
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       devOptions: { enabled: mode === 'development' },
+
       manifest: {
         short_name: 'Almadar',
         name: 'نظام إدارة مكاتب المحاماة',
@@ -41,13 +42,14 @@ export default defineConfig(({ mode }) => ({
           { src: 'splash-image.png', sizes: '512x512', type: 'image/png' },
         ],
       },
-      workbox: {
+       workbox: {
         skipWaiting: true,
         clientsClaim: true,
         globDirectory: 'dist',
         globPatterns: ['**/*.{js,css,html,png,jpg,svg,ico,webp}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
+
         runtimeCaching: [
           {
             urlPattern: new RegExp(`^${process.env.VITE_API_BASE_URL}/.*`),
@@ -79,19 +81,20 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ].filter(Boolean),
+
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
-  build: {
+      build: {
     chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         manualChunks: {
           react: ['react', 'react-dom'],
-          pdf: ['@swapnachalla/document-viewer', '@/components/PDFViewer'],
+          pdf: ['pdfjs-dist', '@/components/PDFViewer'],
           ui: ['lucide-react'],
           vendor: ['socket.io-client', 'laravel-echo'],
         },
