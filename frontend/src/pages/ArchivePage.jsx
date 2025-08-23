@@ -2,9 +2,10 @@ import React, { useEffect, useState ,lazy,Suspense} from 'react';
 
 import { getArchiveFiles } from '@/services/api/archives';
 import { toast } from 'sonner';
-import { FolderKanban, FolderOpenDot, ChevronsDown, ChevronsLeft, FileText } from 'lucide-react';
+import { FolderKanban, FolderOpenDot, ChevronsDown, ChevronsLeft } from 'lucide-react';
 import API_CONFIG from '@/config/config';
 import { ArchiveSection } from '@/assets/icons';
+import ArchiveCard from '@/components/Archives/ArchiveCard';
 
 const SectionHeader = lazy(() => import('@/components/common/SectionHeader'));
 const PDFViewer = lazy(() => import('@/components/PDFViewer'));
@@ -63,24 +64,7 @@ export default function ArchivePage() {
             {openFolders[type] && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                 {files.map((file) => (
-                  <div key={file.id} className="p-4 border rounded bg-white shadow-sm space-y-2">
-                    <div className="flex items-center gap-3">
-                      <FileText className="text-red-500 w-6 h-6" />
-                      <div className="flex-1">
-                        <h3 className="text-blue-600 font-semibold truncate">{file.number || 'بدون رقم'}</h3>
-                        <h4 className="text-blue-600 font-semibold truncate">{file.title || 'بدون عنوان'}</h4>
-                        <p className="text-xs text-gray-500 truncate">{file.extracted_text?.slice(0, 60) || 'لا يوجد نص'}</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <button onClick={() => handlePdfPreview(file)} className="text-green-600 hover:underline">
-                        معاينة
-                      </button>
-                      <a href={`${API_CONFIG.baseURL}/storage/${file.file_path}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
-                        تحميل
-                      </a>
-                    </div>
-                  </div>
+                  <ArchiveCard key={file.id} file={file} onPreview={handlePdfPreview} />
                 ))}
               </div>
             )}
