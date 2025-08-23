@@ -1,16 +1,20 @@
-import { useState, lazy, Suspense } from "react";
-import { Card } from "@/components/ui/card";
-import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
-import SectionHeader from "@/components/common/SectionHeader"; 
-import { deleteLitigation } from "@/services/api/litigations";
-import { CaseIcon } from "@/assets/icons";
-import { useLitigations } from "@/hooks/dataHooks"; // ✅ hook من React Query
-const UnifiedLitigationsTable = lazy(() => import("@/components/Litigations/UnifiedLitigationsTable"));
-const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalConfirmDeleteModal"));
+import { useState, lazy, Suspense } from 'react';
+import { Card } from '@/components/ui/card';
+import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
+import SectionHeader from '@/components/common/SectionHeader';
+import { deleteLitigation } from '@/services/api/litigations';
+import { CaseIcon } from '@/assets/icons';
+import { useLitigations } from '@/hooks/dataHooks'; // ✅ hook من React Query
+const UnifiedLitigationsTable = lazy(
+  () => import('@/components/Litigations/UnifiedLitigationsTable'),
+);
+const GlobalConfirmDeleteModal = lazy(
+  () => import('@/components/common/GlobalConfirmDeleteModal'),
+);
 
 export default function LitigationsPage() {
-  const [activeTab, setActiveTab] = useState("against");
+  const [activeTab, setActiveTab] = useState('against');
   const [litigationToDelete, setLitigationToDelete] = useState(null);
 
   // ✅ استخدام React Query لجلب الدعاوى
@@ -19,19 +23,19 @@ export default function LitigationsPage() {
   const allLitigations = data?.data?.data || [];
 
   const filteredLitigations =
-    activeTab === "against"
-      ? allLitigations.filter((c) => c.scope === "against")
-      : allLitigations.filter((c) => c.scope === "from");
+    activeTab === 'against'
+      ? allLitigations.filter((c) => c.scope === 'against')
+      : allLitigations.filter((c) => c.scope === 'from');
 
   const handleConfirmDelete = async () => {
     if (!litigationToDelete) return;
     try {
       await deleteLitigation(litigationToDelete.id);
-      toast.success("تم الحذف بنجاح");
+      toast.success('تم الحذف بنجاح');
       setLitigationToDelete(null);
       await refetch(); // ✅ تحديث البيانات بعد الحذف
     } catch {
-      toast.error("فشل الحذف");
+      toast.error('فشل الحذف');
     }
   };
 
@@ -42,7 +46,7 @@ export default function LitigationsPage() {
         initial={{ opacity: 0, y: -80 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -40 }}
-        transition={{ type: "spring", stiffness: 70, damping: 14 }}
+        transition={{ type: 'spring', stiffness: 70, damping: 14 }}
       >
         <SectionHeader listName="قسم التقاضي" icon={CaseIcon} />
       </motion.div>
@@ -54,18 +58,18 @@ export default function LitigationsPage() {
         className="flex justify-center gap-4"
       >
         {[
-          { key: "from", label: "من الشركة" },
-          { key: "against", label: "ضد الشركة" },
+          { key: 'from', label: 'من الشركة' },
+          { key: 'against', label: 'ضد الشركة' },
         ].map((tab) => (
           <motion.button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`px-6 py-2 rounded-full text-sm font-bold border transition ${
+            className={`px-6 py-2 text-sm font-bold border rounded-full transition ${
               activeTab === tab.key
-                ? "bg-gold/90 text-black dark:bg-greenic dark:text-white shadow-md"
-                : "bg-white text-gold dark:text-greenic border-gold dark:border-greenic hover:bg-gray-100 dark:hover:bg-zinc-700"
+                ? 'bg-primary text-primary-foreground shadow-md'
+                : 'bg-background text-primary border-primary hover:bg-primary/10'
             }`}
           >
             {tab.label}
@@ -79,10 +83,10 @@ export default function LitigationsPage() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -40 }}
         transition={{
-          type: "spring",
+          type: 'spring',
           stiffness: 60,
           damping: 18,
-          delay: 0.2
+          delay: 0.2,
         }}
       >
         <AnimatePresence mode="wait">
@@ -92,13 +96,13 @@ export default function LitigationsPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 60,
               damping: 18,
-              delay: 0.1
+              delay: 0.1,
             }}
           >
-               <Card className="p-4 sm:p-6 rounded-xl shadow-md border overflow-x-auto bg-card text-card-foreground">
+            <Card className="p-4 sm:p-6 rounded-xl shadow-md border overflow-x-auto bg-card text-card-foreground">
               <Suspense fallback={<div>تحميل الجدول...</div>}>
                 <UnifiedLitigationsTable
                   litigations={filteredLitigations}
@@ -113,14 +117,13 @@ export default function LitigationsPage() {
         </AnimatePresence>
       </motion.div>
 
-
       <Suspense fallback={null}>
         {litigationToDelete && (
           <GlobalConfirmDeleteModal
             isOpen={!!litigationToDelete}
             onClose={() => setLitigationToDelete(null)}
             onConfirm={handleConfirmDelete}
-            itemName={litigationToDelete?.case_number || "الدعوى"}
+            itemName={litigationToDelete?.case_number || 'الدعوى'}
           />
         )}
       </Suspense>
