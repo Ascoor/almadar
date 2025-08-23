@@ -95,7 +95,7 @@ optimizeDeps: {
         manualChunks: {
           react: ['react', 'react-dom'],
  
-          pdf: ['@react-pdf-viewer/core', 'react-pdf', 'pdfjs-dist', '@/components/PDFViewer'],
+          pdf: ['@react-pdf-viewer/core' , 'pdfjs-dist', '@/components/PDFViewer'],
  
           ui: ['lucide-react'],
           vendor: ['socket.io-client', 'laravel-echo'],
