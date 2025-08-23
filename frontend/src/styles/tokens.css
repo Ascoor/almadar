@@ -1,0 +1,126 @@
+:root {
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Cairo', sans-serif;
+
+  --background: 0 0% 100%;
+  --foreground: 222 22% 12%;
+
+  --primary: 222 64% 22%;
+  --primary-foreground: 0 0% 98%;
+  --primary-hover: 222 64% 26%;
+  --primary-light: 222 64% 40%;
+
+  --secondary: 188 45% 96%;
+  --secondary-foreground: 222 22% 12%;
+  --secondary-hover: 188 45% 90%;
+
+  --accent: 188 68% 42%;
+  --accent-foreground: 222 64% 10%;
+  --accent-hover: 188 68% 46%;
+
+  --muted: 215 20% 96%;
+  --muted-foreground: 215 16% 45%;
+
+  --success: 142 45% 36%;
+  --success-foreground: 0 0% 98%;
+
+  --warning: 38 92% 52%;
+  --warning-foreground: 230 20% 12%;
+
+  --destructive: 0 72% 48%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 215 22% 88%;
+  --input: 215 22% 88%;
+  --ring: 188 68% 44%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 22% 12%;
+  --card-hover: 0 0% 97%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 22% 12%;
+
+  --sidebar: 222 40% 10%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 188 68% 46%;
+  --sidebar-primary-foreground: 222 22% 12%;
+  --sidebar-accent: 222 28% 16%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 222 28% 18%;
+  --sidebar-ring: 188 68% 44%;
+
+  --radius: 12px;
+
+  --shadow-sm: 0 1px 2px hsl(var(--foreground) / 0.05);
+  --shadow-md: 0 4px 6px -1px hsl(var(--foreground) / 0.1), 0 2px 4px -2px hsl(var(--foreground) / 0.1);
+  --shadow-lg: 0 10px 15px -3px hsl(var(--foreground) / 0.1), 0 4px 6px -4px hsl(var(--foreground) / 0.1);
+  --shadow-xl: 0 20px 25px -5px hsl(var(--foreground) / 0.1), 0 8px 10px -6px hsl(var(--foreground) / 0.1);
+  --shadow-glow: 0 0 8px 2px hsl(var(--accent) / 0.5);
+
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+  --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
+  --gradient-hero: radial-gradient(circle at 60% 40%, hsl(var(--accent) / 0.35), transparent 65%);
+  --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card-hover)));
+}
+
+.dark {
+  --background: 222 33% 7%;
+  --foreground: 0 0% 98%;
+
+  --primary: 222 65% 46%;
+  --primary-foreground: 0 0% 98%;
+  --primary-hover: 222 65% 52%;
+  --primary-light: 222 65% 60%;
+
+  --secondary: 222 28% 10%;
+  --secondary-foreground: 0 0% 98%;
+  --secondary-hover: 222 28% 14%;
+
+  --accent: 188 68% 48%;
+  --accent-foreground: 222 64% 10%;
+  --accent-hover: 188 68% 54%;
+
+  --muted: 222 28% 18%;
+  --muted-foreground: 215 16% 65%;
+
+  --success: 142 48% 40%;
+  --success-foreground: 0 0% 98%;
+
+  --warning: 38 95% 56%;
+  --warning-foreground: 230 20% 12%;
+
+  --destructive: 0 74% 54%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 222 24% 14%;
+  --input: 222 24% 14%;
+  --ring: 188 68% 50%;
+
+  --card: 222 28% 10%;
+  --card-foreground: 0 0% 98%;
+  --card-hover: 222 28% 14%;
+
+  --popover: 222 28% 10%;
+  --popover-foreground: 0 0% 98%;
+
+  --sidebar: 222 33% 7%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 188 68% 50%;
+  --sidebar-primary-foreground: 222 22% 12%;
+  --sidebar-accent: 222 26% 12%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 222 24% 14%;
+  --sidebar-ring: 188 68% 50%;
+
+  --shadow-sm: 0 1px 2px hsl(var(--foreground) / 0.3);
+  --shadow-md: 0 4px 6px -1px hsl(var(--foreground) / 0.3), 0 2px 4px -2px hsl(var(--foreground) / 0.3);
+  --shadow-lg: 0 10px 15px -3px hsl(var(--foreground) / 0.35), 0 4px 6px -4px hsl(var(--foreground) / 0.35);
+  --shadow-xl: 0 20px 25px -5px hsl(var(--foreground) / 0.4), 0 8px 10px -6px hsl(var(--foreground) / 0.4);
+  --shadow-glow: 0 0 8px 2px hsl(var(--accent) / 0.6);
+
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)));
+  --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
+  --gradient-hero: radial-gradient(circle at 60% 40%, hsl(var(--accent) / 0.25), transparent 65%);
+  --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card-hover)));
+}
