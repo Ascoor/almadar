@@ -1,51 +1,26 @@
-import React, { useState, useEffect, useContext, lazy, Suspense } from 'react';
+import React from 'react';
 
-import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
-import { AuthContext } from '@/components/auth/AuthContext';
-import { AnimatePresence } from 'framer-motion';
-import { MobileThemeProvider } from '@/components/MobileThemeProvider';
-import { NotificationProvider } from '@/components/Notifications/NotificationContext';
-import { AppWithQuery } from '@/hooks/dataHooks';
-import { LanguageProvider } from '@/context/LanguageContext';
-
-const AppLayout = lazy(() => import('@/components/layout/AppLayout'));
-const AuthRoutes = lazy(() => import('@/components/layout/AuthRoutes'));
-const ForcePasswordChangeModal = lazy(() => import('@/components/auth/ForcePasswordChangeModal'));
-
-const DashboardContent = () => {
-  const { user } = useContext(AuthContext);
-
-  const [forcePasswordModal, setForcePasswordModal] = useState(false);
-
-  useEffect(() => {
-    if (user && user.password_changed === 0) setForcePasswordModal(true);
-  }, [user]);
+const DashboardPage = () => {
+  const cards = Array.from({ length: 6 });
   return (
-    <AppLayout user={user}>
-      <Suspense fallback={<AuthSpinner />}>
-        <AuthRoutes />
-      </Suspense>
-      <AnimatePresence>
-        {forcePasswordModal && (
-          <Suspense fallback={<div className="text-center mt-16 p-4"><AuthSpinner />تحميل نافذة تغيير كلمة المرور...</div>}>
-            <ForcePasswordChangeModal onClose={() => setForcePasswordModal(false)} />
-          </Suspense>
-        )}
-      </AnimatePresence>
-    </AppLayout>
+    <div className="space-y-6">
+      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 className="text-2xl font-bold">لوحة التحكم</h1>
+        <div className="flex gap-2">
+          <a href="#" className="rounded-xl bg-primary px-4 py-2 text-sm text-primary-foreground transition hover:bg-primary-muted">إجراء</a>
+          <a href="#" className="rounded-xl bg-secondary px-4 py-2 text-sm text-secondary-foreground transition hover:bg-secondary/80">إجراء</a>
+        </div>
+      </header>
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {cards.map((_, i) => (
+          <div key={i} className="rounded-2xl bg-card text-card-foreground shadow-card p-4 transition hover:bg-card-hover">
+            <h2 className="mb-2 font-semibold">بطاقة {i + 1}</h2>
+            <p className="text-sm text-muted-foreground">محتوى تجريبي للبطاقة.</p>
+          </div>
+        ))}
+      </section>
+    </div>
   );
 };
 
-const AuthWrapper = () => (
-  <MobileThemeProvider>
-    <LanguageProvider>
-      <AppWithQuery>
-        <NotificationProvider>
-          <DashboardContent />
-        </NotificationProvider>
-      </AppWithQuery>
-    </LanguageProvider>
-  </MobileThemeProvider>
-);
-
-export default AuthWrapper;
+export default DashboardPage;
