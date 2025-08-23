@@ -1,27 +1,29 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
-import { VitePWA } from 'vite-plugin-pwa'; 
+import { VitePWA } from 'vite-plugin-pwa';
+
 export default defineConfig(({ mode }) => ({
   server: {
     proxy: {
-      '/broadcasting': 'http://127.0.0.1:8000',
-       
+      '/broadcasting': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+        ws: true, // Enable WebSocket proxying
+      },
     },
     host: '::',
     port: 3000,
   },
-optimizeDeps: {
-  include: ['react', 'react-dom' ,'laravel-echo'],
-},
-   plugins: [
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'laravel-echo'],
+  },
+  plugins: [
     react(),
-
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       devOptions: { enabled: mode === 'development' },
-
       manifest: {
         short_name: 'Almadar',
         name: 'نظام إدارة مكاتب المحاماة',
@@ -39,14 +41,13 @@ optimizeDeps: {
           { src: 'splash-image.png', sizes: '512x512', type: 'image/png' },
         ],
       },
-       workbox: {
+      workbox: {
         skipWaiting: true,
         clientsClaim: true,
         globDirectory: 'dist',
         globPatterns: ['**/*.{js,css,html,png,jpg,svg,ico,webp}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
-
         runtimeCaching: [
           {
             urlPattern: new RegExp(`^${process.env.VITE_API_BASE_URL}/.*`),
@@ -78,14 +79,13 @@ optimizeDeps: {
       },
     }),
   ].filter(Boolean),
-
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
-      build: {
+  build: {
     chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {

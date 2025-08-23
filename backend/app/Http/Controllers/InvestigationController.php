@@ -8,6 +8,14 @@ use App\Helpers\AdminNotifier;
 
 class InvestigationController extends Controller
 {
+    
+             public function __construct()
+        {
+        $this->middleware('permission:view investigations')->only(['index','show']);
+        $this->middleware('permission:create investigations')->only('store');
+        $this->middleware('permission:edit investigations')->only('update');
+        $this->middleware('permission:delete investigations')->only('destroy');
+    }
     public function index()
     {
         $investigations = Investigation::with('actions.actionType')->latest()->paginate(10);
@@ -32,7 +40,8 @@ class InvestigationController extends Controller
         AdminNotifier::notifyAll(
             '🕵️‍♂️ تحقيق جديد',
             'تمت إضافة تحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id
+            '/investigations/' . $investigation->id,
+     auth()->id()
         );
 
         return response()->json([
@@ -65,7 +74,8 @@ class InvestigationController extends Controller
         AdminNotifier::notifyAll(
             '✏️ تعديل تحقيق',
             'تم تعديل التحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id
+            '/investigations/' . $investigation->id,
+     auth()->id()
         );
 
         return response()->json([

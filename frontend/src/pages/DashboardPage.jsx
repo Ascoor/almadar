@@ -8,6 +8,7 @@ import { MobileThemeProvider, useMobileTheme } from '@/components/MobileThemePro
 import ResponsiveLayout from '@/components/ResponsiveLayout';
 import { NotificationProvider } from '@/components/Notifications/NotificationContext';
 import { AppWithQuery } from '@/hooks/dataHooks';
+import AdminEchoListener from '../components/EchoInitializer/AdminListener';
 
 const Header = lazy(() => import('@/components/dashboard/Header'));
 const Sidebar = lazy(() => import('@/components/dashboard/Sidebar'));
@@ -91,6 +92,7 @@ const AuthWrapper = () => (
   <MobileThemeProvider>
     <AppWithQuery>
       <NotificationProvider>
+        <AdminEchoListener/>
         <DashboardContent />
       </NotificationProvider>
     </AppWithQuery>

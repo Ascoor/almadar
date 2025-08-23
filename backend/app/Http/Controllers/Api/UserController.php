@@ -10,7 +10,8 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
+use App\Events\UserDataUpdated;
+ 
 class UserController extends Controller
 {
     public function index()
@@ -30,50 +31,57 @@ class UserController extends Controller
             'image_url' => $user->image ? asset('storage/' . $user->image) : null,
         ]);
     }
+    
+public function store(Request $request)
+{
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|email|unique:users,email',
+        'roles'    => 'array',
+        'roles.*'  => 'exists:roles,name',
+        'permissions' => 'array',
+        'permissions.*' => 'exists:permissions,name',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
-            'roles'    => 'array',
-            'roles.*'  => 'exists:roles,name',
-            'permissions' => 'array',
-            'permissions.*' => 'exists:permissions,name',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+    // تعيين كلمة سر افتراضية للمستخدم
+    $defaultPassword = '12345678';
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    // إنشاء المستخدم
+    $user = User::create([
+        'name'     => $request->name,
+        'email'    => $request->email,
+        'password' => Hash::make($defaultPassword), // كلمة سر افتراضية
+        'password_changed' => false, // لم يقم بتغيير كلمة السر بعد
+    ]);
 
-        if ($request->has('roles')) {
-            $user->syncRoles($request->roles);
-        }
-
-        if ($request->has('permissions')) {
-            $user->syncPermissions($request->permissions);
-        }
-
-        if ($request->hasFile('image')) {
-            $extension = $request->file('image')->getClientOriginalExtension();
-            $filename = "user-{$user->id}." . $extension;
-            $path = $request->file('image')->storeAs('users_images', $filename, 'public');
-            $user->image = $path;
-            $user->save();
-        }
-
-        return response()->json([
-            'message' => 'تم إنشاء المستخدم بنجاح',
-            'user' => $user->load(['roles', 'permissions']),
-            'image_url' => $user->image ? asset('storage/' . $user->image) : null,
-        ], 201);
+    // إضافة الأدوار والصلاحيات للمستخدم
+    if ($request->has('roles')) {
+        $user->syncRoles($request->roles);
     }
 
-    public function update(Request $request, $id)
+    if ($request->has('permissions')) {
+        $user->syncPermissions($request->permissions);
+    }
+
+    // تخزين الصورة إذا كانت موجودة
+    if ($request->hasFile('image')) {
+        $extension = $request->file('image')->getClientOriginalExtension();
+        $filename = "user-{$user->id}." . $extension;
+        $path = $request->file('image')->storeAs('users_images', $filename, 'public');
+        $user->image = $path;
+        $user->save();
+    }
+
+    return response()->json([
+        'message' => 'تم إنشاء المستخدم بنجاح',
+        'user' => $user->load(['roles', 'permissions']),
+        'image_url' => $user->image ? asset('storage/' . $user->image) : null,
+    ], 201);
+}
+
+
+  public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
 
@@ -104,7 +112,10 @@ class UserController extends Controller
     $filename = "user-{$user->id}." . $file->getClientOriginalExtension();
     $file->move(public_path('users_images'), $filename);
     $user->image = "users_images/{$filename}";
-}
+} 
+
+event(new  UserDataUpdated($user));
+
 
 
         $user->save();
@@ -158,7 +169,27 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(['message' => 'تم تغيير كلمة المرور بنجاح']);
+    } 
+public function firstLoginPassword(Request $request)
+{
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
+
+    $request->validate([
+        'password' => ['required', 'min:8', 'string'],
+    ]);
+
+    if ($user->password_changed) {
+        return response()->json(['message' => 'Password already changed'], 403);
     }
+
+    $user->update([
+        'password' => Hash::make($request->password),
+        'password_changed' => true,
+    ]);
+
+    return response()->json(['message' => 'Password updated successfully']);
+}
 
     public function getAllRoles()
     {

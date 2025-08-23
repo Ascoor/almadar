@@ -33,7 +33,8 @@ class InvestigationActionController extends Controller
         AdminNotifier::notifyAll(
             '📌 إجراء جديد',
             'تمت إضافة إجراء بواسطة ' . auth()->user()->name,
-            '/investigations/' . $investigation->id
+            '/investigations/' . $investigation->id,
+     auth()->id()
         );
 
         return response()->json([
@@ -73,7 +74,8 @@ class InvestigationActionController extends Controller
         AdminNotifier::notifyAll(
             '✏️ تعديل إجراء',
             'تم تعديل إجراء  بالتحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id
+            '/investigations/' . $investigation->id,
+     auth()->id()
         );
 
         return response()->json([
@@ -93,7 +95,8 @@ class InvestigationActionController extends Controller
         AdminNotifier::notifyAll(
             '🗑️ حذف إجراء',
             'تم حذف إجراء من التحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id
+            '/investigations/' . $investigation->id,
+     auth()->id()
         );
 
         return response()->json([

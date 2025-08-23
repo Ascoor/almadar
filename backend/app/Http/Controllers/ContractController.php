@@ -19,7 +19,7 @@ class ContractController extends Controller
     }
     public function index()
     {
-        $contracts = Contract::with('category')->latest()->paginate(50);
+        $contracts = Contract::with('category','updater','creator')->latest()->paginate(50);
         return response()->json($contracts);
     }
 
@@ -48,7 +48,8 @@ class ContractController extends Controller
 AdminNotifier::notifyAll(
     '📄 عقد جديد',
     'تمت إضافة عقد رقم: ' . $contract->number . ' بواسطة ' . auth()->user()->name,
-    '/contracts/' . $contract->id
+    '/contracts/' . $contract->id,
+     auth()->id()
 );
         return response()->json([
             'message' => 'تم إنشاء العقد بنجاح.',
@@ -56,39 +57,44 @@ AdminNotifier::notifyAll(
         ], 201);
     }
 
-    public function update(Request $request, Contract $contract)
-    {
-        $validated = $this->validateContract($request, $contract->id);
+public function update(Request $request, Contract $contract)
+{
+    $validated = $this->validateContract($request, $contract->id);
 
-        $validated['value'] = $this->normalizeValue($validated['value']);
+    $validated['value'] = $this->normalizeValue($validated['value']);
 
-        if ($request->hasFile('attachment')) {
-            try {
-                $this->deleteOldAttachment($contract->attachment);
-                $validated['attachment'] = $this->storeAttachment($request->file('attachment'), $validated['scope']);
-            } catch (\Exception $e) {
-                $this->logAttachmentError($e);
-                return $this->attachmentErrorResponse();
-            }
+    if ($request->hasFile('attachment')) {
+        try {
+            $this->deleteOldAttachment($contract->attachment);
+            $validated['attachment'] = $this->storeAttachment($request->file('attachment'), $validated['scope']);
+        } catch (\Exception $e) {
+            $this->logAttachmentError($e);
+            return $this->attachmentErrorResponse();
         }
-
-        $contract->update($validated);
-
-        // ✅ إذا تم رفع مرفق جديد بعد التحديث: أضف للأرشيف
-        if (!empty($validated['attachment'])) {
-            $this->storeArchive($contract);
-        }
-AdminNotifier::notifyAll(
-    '✏️ تعديل عقد',
-    'تم تعديل عقد رقم: ' . $contract->number . ' بواسطة ' . auth()->user()->name,
-    '/contracts/' . $contract->id
-);
-
-        return response()->json([
-            'message' => 'تم تحديث العقد بنجاح.',
-            'contract' => $contract,
-        ]);
     }
+
+    // ✅ سجل من قام بالتعديل
+    $validated['updated_by'] = auth()->id();
+
+    $contract->update($validated);
+
+    if (!empty($validated['attachment'])) {
+        $this->storeArchive($contract);
+    }
+
+    AdminNotifier::notifyAll(
+        '✏️ تعديل عقد',
+        'تم تعديل عقد رقم: ' . $contract->number . ' بواسطة ' . auth()->user()->name,
+        '/contracts/' . $contract->id,
+        auth()->id()
+    );
+
+    return response()->json([
+        'message' => 'تم تحديث العقد بنجاح.',
+        'contract' => $contract,
+    ]);
+}
+
 
     public function destroy(Contract $contract)
     {
@@ -178,6 +184,7 @@ AdminNotifier::notifyAll(
             'model_type' => 'Contract',
             'model_id' => $contract->id,
             'title' => $contract->category?->name . ' - ' . ($contract->scope === 'local' ? 'محلي' : 'دولي'),
+            'number' => $contract->number,
             'file_path' => $contract->attachment,
             'extracted_text' => $contract->contract_parties,
         ]);

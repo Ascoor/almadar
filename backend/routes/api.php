@@ -34,7 +34,15 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::options('/{any}', function () {
     return response()->json([], 204);
-})->where('any', '.*');
+})->where('any', '.*'); 
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return response()->json([
+        'user' => $request->user(),
+        'roles' => $request->user()->getRoleNames(),
+        'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+    ]);
+});
 
 // Protected routes (requires authentication)
 Route::middleware('auth:sanctum')->group(function () {
@@ -53,13 +61,15 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::apiResource('investigation-action-types', InvestigationActionTypeController::class);
     Route::apiResource('litigation-action-types', LitigationActionTypeController::class); 
+    
     Route::get('/dashboard/statistics', [DashboardController::class, 'statistics']);
-
+    Route::get('/dashboard/get-recent-data', [DashboardController::class, 'getAllRecentData']);
     // Legal Advices
     Route::apiResource('legal-advices', LegalAdviceController::class);
     Route::apiResource('advice-types', AdviceTypeController::class);
     Route::apiResource('litigations', LitigationController::class);
 Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
+Route::post('/users/{id}/first-login-password', [UserController::class, 'firstLoginPassword']);
 
     Route::get('/notifications', [NotificationController::class, 'getUserNotifications'])->middleware('auth');
   Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);

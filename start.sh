@@ -19,6 +19,7 @@ trap cleanup SIGINT SIGTERM
 if ! pgrep -f "php artisan serve --host=127.0.0.1 --port=8000"; then
   echo "🚀 Starting Laravel on http://127.0.0.1:8000"
   cd backend
+  composer i
   php artisan optimize:clear
   php artisan serve --host=127.0.0.1 --port=8000 > /dev/null 2>&1 & 
   BACKEND_PID=$!

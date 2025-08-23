@@ -1,7 +1,6 @@
-// src/components/EchoInitializer.jsx
-import React, { useEffect, useContext } from 'react';
-import { AuthContext } from '@/components/auth/AuthContext';
-import { initEcho } from '@/lib/echo';
+import React, { useEffect, useContext } from "react";
+import { AuthContext } from "@/components/auth/AuthContext";
+import { initEcho } from "@/lib/echo";
 
 export default function EchoInitializer({ children }) {
   const { token } = useContext(AuthContext);
@@ -12,10 +11,9 @@ export default function EchoInitializer({ children }) {
     initEcho({
       auth: {
         headers: {
-          // تمرير توكن الBearer
           Authorization: `Bearer ${token}`,
-        }
-      }
+        },
+      },
     });
   }, [token]);
 

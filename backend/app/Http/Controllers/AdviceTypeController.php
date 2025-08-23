@@ -8,6 +8,19 @@ use Illuminate\Http\Request;
 class AdviceTypeController extends Controller
 {
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+             public function __construct()
+    {
+        $this->middleware('permission:view legaladvices')->only(['index','show']);
+        $this->middleware('permission:create legaladvices')->only('store');
+        $this->middleware('permission:edit legaladvices')->only('update');
+        $this->middleware('permission:delete legaladvices')->only('destroy');
+    }
+    /**
      * Display a listing of the legal advice types.
      */
     public function index()
