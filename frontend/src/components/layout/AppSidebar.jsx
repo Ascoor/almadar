@@ -72,12 +72,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   return (
     <aside
       dir={dir}
-      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0'} top-0 z-20 h-full bg-gold dark:bg-navy-darker
-        bg-gradient-to-b from-gold via-greenic-dark/50 to-royal/80
-        dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/40
-        text-greenic-dark dark:text-gold-light
-        transition-all duration-300
-        ${isLargeScreen
+      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0'} top-0 z-20 h-full bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ${
+        isLargeScreen
           ? isOpen
             ? 'w-64'
             : 'w-16'
@@ -87,8 +83,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
             : 'w-16'
           : isOpen
           ? 'w-full mt-12'
-          : `${dir === 'rtl' ? 'translate-x-full' : '-translate-x-full'}`}
-      `}
+          : `${dir === 'rtl' ? 'translate-x-full' : '-translate-x-full'}`
+      }`}
     >
       <div className="flex items-center justify-center p-0 mt-6">
         <img src={logoSrc} alt="Logo" className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`} />
@@ -103,19 +99,21 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                 to={item.to}
                 onClick={onLinkClick}
                 className={({ isActive }) =>
-                  `group flex items-center gap-3 p-2 rounded-md text-sm font-semibold tracking-tight transition-all duration-300
-                   ${isActive
-                     ? 'bg-greenic-dark text-gold-light dark:bg-greenic-light/80 dark:text-royal-dark'
-                     : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/50 dark:hover:text-white'}`
+                  `group flex items-center gap-3 p-2 rounded-md text-sm font-semibold tracking-tight transition-all duration-300 ${
+                    isActive
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                  }`
                 }
               >
                 {({ isActive }) => (
                   <>
                     {React.cloneElement(item.icon, {
-                      className: `transition-colors duration-200
-                        ${isActive
-                          ? 'text-gold-light dark:text-royal-darker'
-                          : 'text-white group-hover:text-greenic-dark dark:group-hover:text-white'}`
+                      className: `transition-colors duration-200 ${
+                        isActive
+                          ? 'text-sidebar-accent-foreground'
+                          : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                      }`
                     })}
                     <span className="flex-1 text-right">{item.label}</span>
                   </>
@@ -124,48 +122,53 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
             ) : (
               <button
                 onClick={() => handleSectionClick(item.id, !!item.children)}
-                className={`flex items-center gap-3 p-2 w-full rounded-md text-sm font-semibold tracking-tight transition-colors duration-200
-                  ${activeSection === item.id
-                    ? 'bg-gold-light text-greenic dark:bg-greenic-light/40 dark:text-gold'
-                    : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/30 dark:hover:text-white'}`}
+                className={`flex items-center gap-3 p-2 w-full rounded-md text-sm font-semibold tracking-tight transition-colors duration-200 ${
+                  activeSection === item.id
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                }`}
               >
                 {React.cloneElement(item.icon, {
-                  className: `transition-colors duration-200
-                    ${activeSection === item.id
-                      ? 'text-gold-light dark:text-gold'
-                      : 'text-white group-hover:text-greenic-dark dark:group-hover:text-gold'}`
+                  className: `transition-colors duration-200 ${
+                    activeSection === item.id
+                      ? 'text-sidebar-accent-foreground'
+                      : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                  }`
                 })}
                 <span className="flex-1 text-right">{item.label}</span>
                 {item.children && (
                   <ChevronRight
-                    className={`w-4 h-4 transform transition-transform duration-200
-                      ${activeSection === item.id ? (dir === 'rtl' ? 'rotate-90' : '-rotate-90') : ''}`}
+                    className={`w-4 h-4 transform transition-transform duration-200 ${
+                      activeSection === item.id ? (dir === 'rtl' ? 'rotate-90' : '-rotate-90') : ''
+                    }`}
                   />
                 )}
               </button>
             )}
 
             {item.children && activeSection === item.id && isOpen && (
-              <div className="mr-4 pl-4 border-r border-gray-600 space-y-1">
+              <div className="mr-4 pl-4 border-r border-sidebar-border space-y-1">
                 {item.children.map(ch => (
                   <NavLink
                     key={ch.id}
                     to={ch.to}
                     onClick={onLinkClick}
                     className={({ isActive }) =>
-                      `flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-300
-                       ${isActive
-                         ? 'bg-gold-light/90 text-greenic-dark dark:bg-greenic-light/60 dark:text-white'
-                         : 'text-white dark:text-greenic-light hover:bg-gold-light hover:text-greenic-dark dark:hover:bg-greenic-light/50 dark:hover:text-gold'}`
+                      `flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                        isActive
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                      }`
                     }
                   >
                     {({ isActive }) => (
                       <>
                         {React.cloneElement(ch.icon, {
-                          className: `transition duration-200
-                            ${isActive
-                              ? 'text-greenic-dark dark:text-white'
-                              : 'group-hover:text-greenic-dark dark:group-hover:text-white'}`
+                          className: `transition duration-200 ${
+                            isActive
+                              ? 'text-sidebar-accent-foreground'
+                              : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                          }`
                         })}
                         <span>{ch.label}</span>
                       </>
@@ -187,18 +190,20 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                 onClick={onLinkClick}
                 title={it.label}
                 className={({ isActive }) =>
-                  `px-4 py-2 rounded-md transition-all duration-200 font-semibold tracking-tight flex items-center gap-2 group
-                   ${isActive
-                     ? 'bg-greenic-dark text-gold-light shadow-md dark:bg-greenic-light/60 dark:text-gold-light'
-                     : 'text-white hover:bg-gold-light/70 hover:text-greenic dark:hover:bg-greenic/50 dark:text-gold-light'}`
+                  `px-4 py-2 rounded-md transition-all duration-200 font-semibold tracking-tight flex items-center gap-2 group ${
+                    isActive
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-md'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                  }`
                 }
               >
                 {({ isActive }) =>
                   React.cloneElement(it.icon, {
-                    className: `transition duration-200
-                      ${isActive
-                        ? 'text-gold-light dark:text-gold-light'
-                        : 'dark:text-gold-light group-hover:text-greenic-dark dark:group-hover:text-white'}`
+                    className: `transition duration-200 ${
+                      isActive
+                        ? 'text-sidebar-accent-foreground'
+                        : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                    }`
                   })
                 }
               </NavLink>

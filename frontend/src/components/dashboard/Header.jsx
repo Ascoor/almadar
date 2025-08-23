@@ -23,17 +23,13 @@ export default function Header({ isOpen, user, onToggleSidebar }) {
           ? 'sm:mr-16'
           : 'sm:ml-16'}
         py-3 px-6 flex justify-between items-center
-        bg-gold-light dark:bg-navy-darker
-        bg-gradient-to-l from-gold via-greenic/80 to-royal/80
-        dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/60
-        text-gray-900 dark:text-gold-light
-        border-b border-gray-200 dark:border-navy-dark
-        shadow-md dark:shadow-[0_01px_#16b8f640]
+        bg-card text-foreground
+        border-b border-border shadow-md
         z-20
       `}
     >
       <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-        <Menu className="text-greenic-dark dark:text-gold-light h-5 w-5 hover:text-greenic-light" />
+        <Menu className="h-5 w-5 text-foreground hover:text-primary" />
       </Button>
 
       <div className="flex items-center gap-3">

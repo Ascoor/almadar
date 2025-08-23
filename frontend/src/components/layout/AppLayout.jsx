@@ -56,7 +56,7 @@ export default function AppLayout({ children, user }) {
         />
         {(isMobile || isTablet) && sidebarOpen && (
           <div
-            className="fixed inset-0 bg-black/50 z-10"
+            className="fixed inset-0 bg-foreground/50 z-10"
             onClick={() => setSidebarOpen(false)}
           />
         )}
@@ -68,7 +68,7 @@ export default function AppLayout({ children, user }) {
         <main
           className={`
             flex-1 px-4 sm:px-6 lg:px-8
-            bg-greenic-light/10 dark:bg-greenic-darker/20
+            bg-background
             transition-all duration-500
             ${isMobile ? 'mobile-main' : 'desktop-main'}
             ${isStandalone ? 'standalone-main' : ''}
