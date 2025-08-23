@@ -7,9 +7,7 @@ import React, {
 } from 'react';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'sonner';
-import API_CONFIG from '../../config/config';
 import api, { setOnUnauthorized } from '@/services/api/axiosConfig';
 
 // إنشاء السياق الافتراضي
@@ -75,17 +73,12 @@ export function AuthProvider({ children }) {
    */
   const login = async (email, password) => {
     try {
-      // استدعاء CSRF
-      await axios.get(`${API_CONFIG.baseURL}/sanctum/csrf-cookie`, {
-        withCredentials: true,
-      });
+      await api.get('/sanctum/csrf-cookie');
 
-      // إرسال بيانات الدخول
-      const resp = await axios.post(
-        `${API_CONFIG.baseURL}/api/login`,
+      const resp = await api.post(
+        '/api/login',
         { email, password },
         {
-          withCredentials: true,
           headers: { 'Content-Type': 'application/json' },
         }
       );
