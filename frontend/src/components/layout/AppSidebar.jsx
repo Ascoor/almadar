@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { LogoArt, LogoPatren } from '../../assets/images';
 import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
@@ -10,8 +11,9 @@ import {
   Settings2, ListTree, UsersRound, UserCheck, ChevronRight
 } from 'lucide-react';
 
-export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
+export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   const { hasPermission } = useAuth();
+  const { t, dir } = useLanguage();
   const [activeSection, setActiveSection] = useState(null);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
 
@@ -24,37 +26,37 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
   const logoSrc = isOpen ? LogoPatren : LogoArt;
 
   const navConfig = useMemo(() => [
-    { id: 'home', label: 'الرئيسية', to: '/', icon: <DashboardIcon size={20} /> },
+    { id: 'home', label: t('home'), to: '/', icon: <DashboardIcon size={20} /> },
     hasPermission('view contracts') && {
-      id: 'contracts', label: 'التعاقدات', to: '/contracts', icon: <ContractsIcon size={20} />
+      id: 'contracts', label: t('contracts'), to: '/contracts', icon: <ContractsIcon size={20} />
     },
     (hasPermission('view investigations') || hasPermission('view legaladvices') || hasPermission('view litigations')) && {
-      id: 'fatwa', label: 'الرأي والفتوى', icon: <ConsultationsIcon size={20} />, children: [
+      id: 'fatwa', label: t('fatwa'), icon: <ConsultationsIcon size={20} />, children: [
         hasPermission('view investigations') && {
-          id: 'investigations', label: 'التحقيقات', to: '/legal/investigations', icon: <LawsuitsIcon size={16} />
+          id: 'investigations', label: t('investigations'), to: '/legal/investigations', icon: <LawsuitsIcon size={16} />
         },
         hasPermission('view legaladvices') && {
-          id: 'legal-advices', label: 'المشورة القانونية', to: '/legal/legal-advices', icon: <LawBookIcon size={16} />
+          id: 'legal-advices', label: t('legalAdvices'), to: '/legal/legal-advices', icon: <LawBookIcon size={16} />
         },
         hasPermission('view litigations') && {
-          id: 'litigations', label: 'التقاضي', to: '/legal/litigations', icon: <CourtHouseIcon size={16} />
+          id: 'litigations', label: t('litigations'), to: '/legal/litigations', icon: <CourtHouseIcon size={16} />
         },
       ].filter(Boolean)
     },
     hasPermission('view managment-lists') && {
-      id: 'management', label: 'إدارة التطبيق', icon: <Settings2 size={20} />, children: [
-        { id: 'lists', label: 'القوائم', to: '/managment-lists', icon: <ListTree size={16} /> },
+      id: 'management', label: t('management'), icon: <Settings2 size={20} />, children: [
+        { id: 'lists', label: t('lists'), to: '/managment-lists', icon: <ListTree size={16} /> },
       ]
     },
     hasPermission('view users') && {
-      id: 'users', label: 'إدارة المستخدمين', icon: <UsersRound size={20} />, children: [
-        { id: 'users-list', label: 'المستخدمين', to: '/users', icon: <UserCheck size={16} /> },
+      id: 'users', label: t('users'), icon: <UsersRound size={20} />, children: [
+        { id: 'users-list', label: t('usersList'), to: '/users', icon: <UserCheck size={16} /> },
       ]
     },
     hasPermission('view archive') && {
-      id: 'archive', label: 'الأرشيف', to: '/archive', icon: <ArchiveIcon size={20} />
+      id: 'archive', label: t('archive'), to: '/archive', icon: <ArchiveIcon size={20} />
     },
-  ].filter(Boolean), [hasPermission]);
+  ].filter(Boolean), [hasPermission, t]);
 
   const handleSectionClick = (id, hasChildren) => {
     if (!isLargeScreen && !isOpen) onToggle();
@@ -63,12 +65,12 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
 
   return (
     <aside
-      dir="rtl"
-      className={`fixed right-0 top-0 z-20 h-full bg-gold dark:bg-navy-darker
+      dir={dir}
+      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0'} top-0 z-20 h-full bg-gold dark:bg-navy-darker
         bg-gradient-to-b from-gold via-greenic-dark/50 to-royal/80
         dark:from-royal-dark/30 dark:via-royal-dark/40 dark:to-greenic-dark/40
         transition-all duration-300
-        ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-12' : 'translate-x-full')}
+        ${isLargeScreen ? (isOpen ? 'w-64' : 'w-16') : (isOpen ? 'w-full mt-12' : `${dir === 'rtl' ? 'translate-x-full' : '-translate-x-full'}`)}
       `}
     >
       <div className="flex items-center justify-center p-0 mt-6">
@@ -120,7 +122,7 @@ export default function Sidebar({ isOpen, onToggle, onLinkClick }) {
                 {item.children && (
                   <ChevronRight
                     className={`w-4 h-4 transform transition-transform duration-200
-                      ${activeSection === item.id ? 'rotate-90' : ''}`}
+                      ${activeSection === item.id ? (dir === 'rtl' ? 'rotate-90' : '-rotate-90') : ''}`}
                   />
                 )}
               </button>
