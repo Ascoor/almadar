@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { Edit, Eye, Trash, ChevronUp, ChevronDown } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import XLSX from 'xlsx-js-style';
 import API_CONFIG from '../../config/config';
 import { AuthContext } from '@/components/auth/AuthContext';
 
@@ -24,7 +24,22 @@ export default function TableComponent({
   const [selectedIds, setSelectedIds] = useState([]);
   const rowsPerPage = 10;
 
-  const can = (action) => hasPermission(`${action} ${moduleName}`);
+  const can = (action) => {
+    if (!moduleName || typeof moduleName !== 'string') return false;
+    const possibilities = [];
+    const parts = moduleName.split('-');
+    if (parts.length >= 3) {
+      possibilities.push(parts.join('-'));
+      possibilities.push(parts.slice(0, 2).join('-'));
+      possibilities.push(parts[0]);
+    } else if (parts.length === 2) {
+      possibilities.push(moduleName);
+      possibilities.push(parts[0]);
+    } else {
+      possibilities.push(moduleName);
+    }
+    return possibilities.some((mod) => hasPermission(`${action} ${mod}`));
+  };
 
   const filteredData = useMemo(() => {
     const keywords = searchQuery.toLowerCase().split(/\s+/);
@@ -126,7 +141,9 @@ export default function TableComponent({
                   </div>
                 </th>
               ))}
-              {(onView || onEdit || onDelete) && <th className="p-3">إجراءات</th>}
+              {(onView && can('view')) || (onEdit && can('edit')) || (onDelete && can('delete')) ? (
+                <th className="p-3">إجراءات</th>
+              ) : null}
             </tr>
           </thead>
           <tbody className="divide-y dark:divide-zinc-800">
@@ -165,17 +182,17 @@ export default function TableComponent({
                     </td>
                   ))}
                   <td className="p-2 space-x-1 text-center">
-                    {onView && (
+                    {onView && can('view') && (
                       <button onClick={() => onView(row)} className="text-blue-600 hover:text-blue-800">
                         <Eye size={16} />
                       </button>
                     )}
-                    {onEdit && (
+                    {onEdit && can('edit') && (
                       <button onClick={() => onEdit(row)} className="text-purple-600 hover:text-purple-800">
                         <Edit size={16} />
                       </button>
                     )}
-                    {onDelete && (
+                    {onDelete && can('delete') && (
                       <button onClick={() => onDelete(row)} className="text-red-600 hover:text-red-800">
                         <Trash size={16} />
                       </button>
