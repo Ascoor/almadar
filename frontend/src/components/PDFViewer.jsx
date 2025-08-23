@@ -1,9 +1,9 @@
 // src/components/PDFViewer.jsx
 import React, { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import XLSX from 'xlsx-js-style';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+import * as XLSX from 'xlsx';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 import {
   ChevronLeft,
   ChevronRight,
