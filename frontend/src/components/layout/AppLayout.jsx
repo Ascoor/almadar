@@ -1,111 +1,83 @@
-/**
- * AppLayout
- * Combines HeaderKit and AppSidebar into a responsive dashboard shell.
- * Usage:
- *   <AppLayout>
- *     <YourPage />
- *   </AppLayout>
- */
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { useLocation } from 'react-router-dom';
+import ResponsiveLayout from '@/components/ResponsiveLayout';
+import { useMobileTheme } from '@/components/MobileThemeProvider';
 import { useLanguage } from '@/context/LanguageContext';
-import HeaderKit from './HeaderKit';
-import AppSidebar from './AppSidebar';
-import useLocalStorage from './useLocalStorage';
-import {
-  LayoutDashboard,
-  Folder,
-  BookOpen,
-  Users,
-  Settings,
-  BarChart3
-} from 'lucide-react';
-import clsx from 'clsx';
 
-export default function AppLayout({ children, dir: propDir }) {
-  const { dir: ctxDir = 'ltr' } = useLanguage?.() || {};
-  const dir = propDir || ctxDir;
-  const [sidebarOpen, setSidebarOpen] = useLocalStorage('ui.sidebarOpen', true);
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+const Header = lazy(() => import('@/components/dashboard/Header'));
+const AppSidebar = lazy(() => import('./AppSidebar'));
+
+export default function AppLayout({ children, user }) {
+  const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
+  const { dir } = useLanguage();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isTablet, setIsTablet] = useState(
+    typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1024
   );
+  const location = useLocation();
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    if (isMobile) setSidebarOpen(false);
+  }, [location.pathname, isMobile]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const toggleSidebar = () => {
-    const next = !sidebarOpen;
-    setSidebarOpen(next);
-    const eventName = next ? 'sidebar_opened' : 'sidebar_closed';
-    window.dispatchEvent(new CustomEvent(eventName));
+  const toggleSidebar = () => setSidebarOpen(prev => !prev);
+
+  const marginProp = dir === 'rtl' ? 'marginRight' : 'marginLeft';
+  const mainStyles = {
+    paddingTop: isMobile ? (isStandalone ? `${safeAreaInsets.top + 80}px` : '80px') : '112px',
+    paddingBottom: isStandalone && isMobile ? `${safeAreaInsets.bottom + 32}px` : '32px',
+    [marginProp]: !isMobile
+      ? isTablet
+        ? sidebarOpen
+          ? '0'
+          : '64px'
+        : sidebarOpen
+        ? '260px'
+        : '64px'
+      : '0',
+    minHeight: isMobile ? 'calc(var(--vh, 1vh) * 100)' : '100vh'
   };
 
-  const hasPermissions = key => key !== 'restricted';
-
-  const nav = useMemo(() => [
-    {
-      key: 'dashboard',
-      label: 'Dashboard',
-      icon: LayoutDashboard,
-      to: '/'
-    },
-    {
-      key: 'library',
-      label: 'Library',
-      icon: Folder,
-      children: [
-        { key: 'books', label: 'Books', icon: BookOpen, to: '/books' },
-        {
-          key: 'clients',
-          label: 'Clients',
-          icon: Users,
-          to: '/clients',
-          permissionKey: 'clients:view'
-        }
-      ]
-    },
-    {
-      key: 'admin',
-      label: 'Admin',
-      icon: Settings,
-      children: [
-        { key: 'users', label: 'Users', icon: Users, to: '/users' },
-        {
-          key: 'reports',
-          label: 'Reports',
-          icon: BarChart3,
-          to: '/reports',
-          permissionKey: 'restricted'
-        }
-      ]
-    }
-  ], []);
-
   return (
-    <div dir={dir} className="min-h-screen flex bg-background text-foreground">
-      <AppSidebar
-        isOpen={sidebarOpen}
-        onToggle={toggleSidebar}
-        nav={nav}
-        hasPermissions={hasPermissions}
-        dir={dir}
-      />
-      {isMobile && sidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/40"
-          onClick={toggleSidebar}
+    <ResponsiveLayout className="min-h-screen flex flex-col sm:flex-row relative">
+      <Suspense fallback={<div className="text-center p-4">جاري تحميل القائمة الجانبية...</div>}>
+        <AppSidebar
+          isOpen={sidebarOpen}
+          onToggle={toggleSidebar}
+          onLinkClick={() => (isMobile || isTablet) && setSidebarOpen(false)}
         />
-      )}
-      <div className={clsx('flex-1 flex flex-col transition-all', sidebarOpen ? 'md:ms-64' : 'md:ms-16')}>
-        <HeaderKit
-          onToggleSidebar={toggleSidebar}
-          isSidebarOpen={sidebarOpen}
-          dir={dir}
-        />
-        <main className="flex-1 p-4">{children}</main>
+        {(isMobile || isTablet) && sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-foreground/50 z-10"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </Suspense>
+      <div className="flex-1 flex flex-col transition-all duration-300">
+        <Suspense fallback={<div className="text-center p-4">جاري تحميل الرأس...</div>}>
+          <Header user={user} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
+        </Suspense>
+        <main
+          className={`
+            flex-1 px-4 sm:px-6 lg:px-8
+            bg-background
+            transition-all duration-500
+            ${isMobile ? 'mobile-main' : 'desktop-main'}
+            ${isStandalone ? 'standalone-main' : ''}
+          `}
+          style={mainStyles}
+        >
+          {children}
+        </main>
       </div>
-    </div>
+    </ResponsiveLayout>
   );
 }
