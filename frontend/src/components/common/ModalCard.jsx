@@ -16,9 +16,8 @@ export default function ModalCard({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div
         className={`relative w-full max-w-3xl max-h-[90vh] overflow-y-auto
-          bg-white text-gray-800
-          dark:bg-[#111827] dark:text-[#FACC15]
-          border border-gray-200 dark:border-[#334155]
+          bg-card text-card-foreground
+          border border-border
           rounded-2xl shadow-2xl p-6 sm:p-8 flex flex-col
           transition-all duration-300 ease-in-out
           hover:shadow-3xl hover:scale-[1.01]
@@ -27,8 +26,8 @@ export default function ModalCard({
       >
         {/* Loading Overlay */}
         {loading && (
-          <div className="absolute inset-0 bg-white/80 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center rounded-2xl z-10">
-            <span className="text-2xl font-bold text-gray-800 dark:text-yellow-400 animate-pulse">
+          <div className="absolute inset-0 bg-card/80 dark:bg-background/60 backdrop-blur-sm flex items-center justify-center rounded-2xl z-10">
+            <span className="text-2xl font-bold text-foreground animate-pulse">
               جاري الحفظ...
             </span>
           </div>
@@ -37,8 +36,7 @@ export default function ModalCard({
         {/* Title */}
         <h2 className="
           text-2xl font-bold text-center mb-6
-          text-gray-900 dark:text-yellow-400
-          border-b border-gray-200 dark:border-gray-600 pb-2
+          text-primary border-b border-border pb-2
         ">
           {title}
         </h2>
@@ -55,8 +53,8 @@ export default function ModalCard({
             onClick={onClose}
             className="
               px-5 py-2.5 rounded-lg font-semibold
-              bg-red-600 text-white
-              hover:bg-red-700 active:scale-95
+              bg-destructive text-destructive-foreground
+              hover:bg-destructive/90 active:scale-95
               transition-all duration-200
             "
           >
@@ -68,8 +66,8 @@ export default function ModalCard({
             disabled={loading}
             className={`
               px-6 py-2.5 rounded-lg font-bold
-              text-white bg-blue-600
-              hover:bg-blue-700 active:scale-95
+              bg-primary text-primary-foreground
+              hover:bg-primary/90 active:scale-95
               disabled:opacity-50 disabled:cursor-not-allowed
               transition-all duration-200
             `}

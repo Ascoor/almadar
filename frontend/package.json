@@ -18,7 +18,8 @@
     "lint-fix": "eslint \"src/**/*.{js,jsx}\" --fix",
     "preview": "vite preview",
     "depcheck": "depcheck",
-    "format": "prettier --write \"src/**/*.{js,jsx}\""
+    "format": "prettier --write \"src/**/*.{js,jsx}\"",
+    "contrast:test": "node scripts/contrast-test.js"
   },
   "keywords": [
     "react",

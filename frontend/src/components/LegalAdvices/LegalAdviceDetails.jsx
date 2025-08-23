@@ -15,7 +15,7 @@ export default function LegalAdviceDetails({ selected, onClose }) {
   if (!selected) return null;
 
   return (
-    <div className="w-full rounded-2xl shadow-xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border border-gray-200 dark:border-gray-700 p-6 space-y-6 text-sm text-right transition-all">
+    <div className="w-full rounded-2xl shadow-xl bg-gradient-primary border border-border p-6 space-y-6 text-sm text-right transition-all">
 
       {/* Header */}
       <div className="flex items-center justify-between border-b pb-4 mb-4 border-dashed">
@@ -76,11 +76,11 @@ export default function LegalAdviceDetails({ selected, onClose }) {
       </div>
 
       {/* Advice Text Section */}
-      <div className="rounded-xl border border-[#ccf1e9] dark:border-gray-600 bg-[#f7fdfc] dark:bg-gray-700 p-4 shadow-inner">
+      <div className="rounded-xl border border-accent-light dark:border-border bg-accent-light/20 dark:bg-muted p-4 shadow-inner">
         <h3 className="font-semibold text-greenic dark:text-gold mb-2 flex items-center gap-2">
           📄 نص المشورة
         </h3>
-        <p className="whitespace-pre-wrap leading-relaxed text-gray-700 dark:text-gray-200">
+        <p className="whitespace-pre-wrap leading-relaxed text-foreground">
           {selected.text || "لا يوجد نص للمشورة."}
         </p>
       </div>
@@ -91,11 +91,11 @@ export default function LegalAdviceDetails({ selected, onClose }) {
 // ✅ مكون عنصر تفصيل
 function Detail({ icon, label, value }) {
   return (
-    <div className="flex items-start gap-2 text-gray-800 dark:text-gray-100">
+    <div className="flex items-start gap-2 text-foreground">
       <div className="pt-1 text-greenic dark:text-gold shrink-0">{icon}</div>
       <div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</div>
-        <div className={`font-semibold ${!value ? 'text-gray-400 dark:text-zinc-500' : ''}`}>
+        <div className="text-xs text-muted-foreground mb-1">{label}</div>
+        <div className={`font-semibold ${!value ? 'text-muted-foreground' : ''}`}>
           {value || '—'}
         </div>
       </div>
