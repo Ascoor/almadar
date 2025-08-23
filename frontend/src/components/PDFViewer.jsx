@@ -27,7 +27,7 @@ export default function PDFViewer({ fileUrl, isRtl = true }) {
             disabled={pageNumber <= 1}
             className="text-gray-700 hover:text-blue-600"
           >
-            <ChevronLeft />
+         <ChevronRight />  
           </button>
           <span className="text-sm px-2">
             {isRtl ? `الصفحة ${pageNumber}` : `Page ${pageNumber}`}
@@ -36,7 +36,7 @@ export default function PDFViewer({ fileUrl, isRtl = true }) {
             onClick={() => setPageNumber((p) => p + 1)}
             className="text-gray-700 hover:text-blue-600"
           >
-            <ChevronRight />
+             <ChevronLeft />
           </button>
         </div>
 
