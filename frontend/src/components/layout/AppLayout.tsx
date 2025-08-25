@@ -47,7 +47,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <motion.header
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40"
+            className="h-16 border-b border-border bg-sidebar text-sidebar-foreground sticky top-0 z-40"
           >
             <div className="flex items-center justify-between px-6 h-full">
               <div className={`flex items-center ${isRTL ? 'space-x-reverse' : 'space-x-4'}`}>
