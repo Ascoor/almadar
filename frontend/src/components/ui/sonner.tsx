@@ -14,8 +14,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
       richColors
       toastOptions={{
         classNames: {
-          toast: "bg-background text-foreground border shadow-lg",
-          description: "text-muted-foreground",
+          toast: "bg-bg text-fg border-border shadow-lg",
+          description: "text-muted",
         },
       }}
       {...props}
