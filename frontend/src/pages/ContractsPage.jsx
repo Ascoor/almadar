@@ -2,7 +2,7 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getContractCategories } from '../services/api/contracts';
 import { LocalIcon, InternationalIcon } from '../assets/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useContracts } from '@/hooks/dataHooks'; // ✅ استخدم الهُوك المُخصص
 const SectionHeader = lazy(() => import('../components/common/SectionHeader'));
 const ContractsTable = lazy(
@@ -13,6 +13,7 @@ export default function Contracts() {
   const [activeTab, setActiveTab] = useState('local');
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // ✅ استدعِ البيانات من hook
   const { data, isLoading, refetch } = useContracts();
@@ -101,6 +102,7 @@ export default function Contracts() {
                 reloadContracts={refetch}
                 scope={activeTab}
                 loading={isLoading}
+                autoOpen={location.state?.openModal}
               />
             </Suspense>
           </motion.div>

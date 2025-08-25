@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { toast } from "sonner";
 import { deleteLitigation } from "@/services/api/litigations";
 import TableComponent from "@/components/common/TableComponent";
@@ -9,7 +9,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import LitigationActionsTable from "@/components/Litigations/LitigationActionsTable";
 import { AuthContext } from "@/components/auth/AuthContext";
 
-export default function UnifiedLitigationsTable({ litigations, scope, reloadLitigations }) {
+export default function UnifiedLitigationsTable({ litigations, scope, reloadLitigations, autoOpen = false }) {
   const [expandedId, setExpandedId] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,6 +36,13 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
     setEditingItem(null);
     setIsModalOpen(true);
   };
+
+  useEffect(() => {
+    if (autoOpen) {
+      setEditingItem(null);
+      setIsModalOpen(true);
+    }
+  }, [autoOpen]);
 
   const handleConfirmDelete = async () => {
     if (!deleteTarget) return;

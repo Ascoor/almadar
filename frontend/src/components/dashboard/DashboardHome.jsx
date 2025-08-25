@@ -13,6 +13,7 @@ import RecentTable from './RecentTable';
 import EmptyState from './EmptyState';
 import { useDashboardData } from './useDashboardData';
 import { useLang } from './useLang';
+import QuickActions from './QuickActions';
 
 const LibyaMap = lazy(() => import('./LibyaMap'));
 const SessionsHeatmap = lazy(() => import('./SessionsHeatmap'));
@@ -43,6 +44,7 @@ export default function DashboardHome() {
 
   return (
     <div className="space-y-4">
+      <QuickActions />
       <FiltersBar filters={filters} onChange={setFilters} />
 
       <div className="grid gap-4 grid-cols-4 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-12">

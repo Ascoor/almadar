@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TableComponent from "@/components/common/TableComponent";
 import {Button} from "@/components/ui/button";
 import ContractModal from "./ContractModal";
@@ -8,13 +8,17 @@ import { deleteContract } from "../../services/api/contracts";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion"; // ✅ إضافة
 
-export default function ContractsTable({ contracts = [], categories = [], reloadContracts, scope }) {
+export default function ContractsTable({ contracts = [], categories = [], reloadContracts, scope, autoOpen = false }) {
   const [editing, setEditing] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [selectedContract, setSelectedContract] = useState(null);
 
   const filteredContracts = contracts.filter((c) => c.scope === scope);
+
+  useEffect(() => {
+    if (autoOpen) setIsModalOpen(true);
+  }, [autoOpen]);
  
   const openEdit = (row) => {
     setEditing(row);
