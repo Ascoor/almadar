@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { LogoArt, LogoTextArtGreen, LogoTextArtWhite } from '../../assets/images';
+import { LogoArtGreen, LogoTextArtGreen, LogoTextArtWhite } from '../../assets/images';
 import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
   ArchiveIcon, CourtHouseIcon, LawBookIcon
@@ -52,7 +52,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   // ✅ Fix: choose logo by sidebar state + theme
   const logoSrc = isOpen
     ? (isDark ? LogoTextArtWhite : LogoTextArtGreen) // open → text logo (white in dark, green in light)
-    : LogoArt;                                       // closed → compact mark
+    : LogoArtGreen;                                       // closed → compact mark
 
   const navConfig = useMemo(() => [
     { id: 'home', label: t('home'), to: '/', icon: <DashboardIcon size={20} /> },
@@ -115,7 +115,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
         <img
           src={logoSrc}
           alt="Almadar Logo"
-          className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
+          className={`transition-all duration-300 ${isOpen ? 'h-12' : 'h-12'}`}
         />
         {isOpen && <button onClick={onToggle} className="absolute top-4 left-4">×</button>}
       </div>

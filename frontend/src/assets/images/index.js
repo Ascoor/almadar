@@ -7,6 +7,7 @@ export { default as LogoGreen } from './logo-green.png';
 export { default as WelcomeLogo } from './welcome-logo.png';
 export { default as LogoPatren } from './logo-art-text.png';
 export { default as LogoText } from './logo-text.png';
+export { default as LogoArtGreen } from './logo-green.png';
 export { default as LogoTextArtGreen } from './logo.png';
 export { default as LogoTextArtWhite } from './logo512.png';
 export { default as WelcomeImage } from './welcome-image.jpg';
