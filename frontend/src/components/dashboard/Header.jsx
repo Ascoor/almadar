@@ -14,7 +14,7 @@ export default function Header({ isOpen,user, onToggleSidebar }) {
   className={`
     fixed top-0 left-0 right-0
     transition-all duration-300
-    ${isOpen ? 'sm:mr-64' : 'sm:mr-16'}
+    ${isOpen ? 'lg:mr-64' : 'lg:mr-16'}
     py-3 px-6 flex justify-between items-center
     bg-navy-light dark:bg-black
     bg-gradient-to-l from-gold via-greenic/80 to-royal/80 
