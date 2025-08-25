@@ -5,6 +5,7 @@ import RequireAuth from "@/app/guards/RequireAuth";
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
+import ProfilePage from "@/pages/ProfilePage";
 import NotFound from "@/pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
             element: <AppLayout />,
             children: [
               { path: "dashboard", element: <Dashboard /> },
+              { path: "profile", element: <ProfilePage /> },
               { path: "*", element: <NotFound /> },
             ],
           },
