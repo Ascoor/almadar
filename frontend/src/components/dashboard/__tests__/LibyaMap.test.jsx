@@ -7,8 +7,6 @@ jest.mock('react-simple-maps', () => ({
   Geography: () => <g />,
 }));
 
-jest.mock('@/assets/geo/libya.json', () => ({ default: { features: [] } }));
-
 import LibyaMap from '../Map/LibyaMap';
 
 test('renders SVG map', () => {

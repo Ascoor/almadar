@@ -1,12 +1,12 @@
 import React from 'react';
 
-export default function Toolbar({ filters, onChange, onReset }) {
+export default function Toolbar({ filters, onChange, onReset, dir = 'ltr' }) {
   const handleChange = e => {
     const { name, value } = e.target;
     onChange({ ...filters, [name]: value });
   };
   return (
-    <div className="flex flex-col sm:flex-row gap-2 mb-4" dir={filters.dir || 'ltr'}>
+    <div className="flex flex-col sm:flex-row gap-2 mb-4" dir={dir}>
       <input
         type="date"
         name="from"

@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import path from 'path';
+import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa'; 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -83,9 +83,9 @@ optimizeDeps: {
   ].filter(Boolean),
 
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+      alias: {
+        '@': resolve(__dirname, 'src'),
+      },
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
       build: {
