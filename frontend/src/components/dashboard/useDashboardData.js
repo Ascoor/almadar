@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import sample from './sample-dashboard.json';
 
 /**
- * Minimal data manager for dashboard widgets.
- * In real app this would fetch from API and handle filters.
+ * Simple data manager for the dashboard widgets.
+ * Loads mock data and exposes memoized selectors.
  */
 export function useDashboardData() {
   const [data, setData] = useState(null);
@@ -13,11 +13,11 @@ export function useDashboardData() {
     dateRange: null,
     regionIds: [],
     risk: [],
-    types: []
+    types: [],
+    contractKind: ['international', 'domestic']
   });
 
   useEffect(() => {
-    // simulate async load
     try {
       setData(sample);
     } catch (e) {
@@ -27,16 +27,43 @@ export function useDashboardData() {
     }
   }, []);
 
+  // restore filters from URL
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    setFilters(f => ({
+      ...f,
+      dateRange: params.get('date') || null,
+      regionIds: params.get('regions')?.split(',') || [],
+      risk: params.get('risk')?.split(',') || [],
+      types: params.get('types')?.split(',') || [],
+      contractKind: params.get('contracts')?.split(',') || ['international', 'domestic']
+    }));
+  }, []);
+
+  // persist filters in URL
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams();
+    if (filters.dateRange) params.set('date', filters.dateRange);
+    if (filters.regionIds.length) params.set('regions', filters.regionIds.join(','));
+    if (filters.risk.length) params.set('risk', filters.risk.join(','));
+    if (filters.types.length) params.set('types', filters.types.join(','));
+    if (filters.contractKind.length) params.set('contracts', filters.contractKind.join(','));
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState(null, '', newUrl);
+  }, [filters]);
+
   const getKpis = useCallback(() => data?.kpis || [], [data]);
-  const getDailyOpenedClosed = useCallback(() => data?.dailyCounts || [], [data]);
+  const getMonthlyForAgainst = useCallback(() => data?.monthlyCases || [], [data]);
+  const getProcedures = useCallback(() => data?.procedureProgress || [], [data]);
+  const getSessionsHeat = useCallback(() => data?.sessionsHeat || [], [data]);
+  const getContractsVolume = useCallback(() => data?.contractsVolume || [], [data]);
+  const getPublicationsPlan = useCallback(() => data?.publicationsPlan || [], [data]);
+  const getRegionMetrics = useCallback(() => data?.regionMetrics || [], [data]);
   const getStageBuckets = useCallback(() => data?.stageBuckets || [], [data]);
   const getRiskBuckets = useCallback(() => data?.riskBuckets || [], [data]);
-  const getSessionsHeat = useCallback(() => data?.sessionsHeat || [], [data]);
-  const getRegionMetrics = useCallback(() => data?.regionMetrics || [], [data]);
-  const getRecent = useCallback(
-    (limit = 10) => (data?.recentItems || []).slice(0, limit),
-    [data]
-  );
+  const getRecent = useCallback((n = 10) => (data?.recentItems || []).slice(0, n), [data]);
 
   return {
     loading,
@@ -44,11 +71,14 @@ export function useDashboardData() {
     filters,
     setFilters,
     getKpis,
-    getDailyOpenedClosed,
+    getMonthlyForAgainst,
+    getProcedures,
+    getSessionsHeat,
+    getContractsVolume,
+    getPublicationsPlan,
+    getRegionMetrics,
     getStageBuckets,
     getRiskBuckets,
-    getSessionsHeat,
-    getRegionMetrics,
     getRecent
   };
 }
