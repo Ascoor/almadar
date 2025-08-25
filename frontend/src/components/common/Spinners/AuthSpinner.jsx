@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogoPatren } from '../../../assets/images';
+import { LogoPLogoNewArtatren } from '../../../assets/images';
 
 const AuthSpinner = ({ onFinish }) => {
   const [visible, setVisible] = useState(true);
@@ -33,7 +33,7 @@ const AuthSpinner = ({ onFinish }) => {
         >
           <div className="w-32 h-32 border-[10px] border-border border-t-primary rounded-full animate-spin relative shadow-inner shadow-primary/20">
             <img
-              src={LogoPatren}
+              src={LogoNewArt}
               alt="Logo Animation"
               className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 transition-opacity duration-1000 ease-in-out ${
                 visible ? 'opacity-100' : 'opacity-0'

@@ -2,6 +2,7 @@ export { default as LoginBg } from './login-bg.png';
 export { default as LogoArt } from './logo-art.png';
 export { default as LogoWhite } from './logo-white.png';
 export { default as WelcomeLogoWhite } from './logo-art-t.png';
+export { default as LogoNewArt } from './logo-art-n.png';
 export { default as Logo1 } from './logo-1.png';
 export { default as LogoGreen } from './logo-green.png';
 export { default as WelcomeLogo } from './welcome-logo.png';
