@@ -5,6 +5,7 @@
 @layer base {
   :root { color-scheme: light dark; }
   html { -webkit-font-smoothing: antialiased; }
-  body { @apply bg-bg text-fg; }
+  body { @apply bg-bg text-fg font-body; }
+  h1,h2,h3,h4,h5,h6 { @apply font-heading; }
   .card { @apply bg-card border border-border rounded-2xl shadow-md; }
 }

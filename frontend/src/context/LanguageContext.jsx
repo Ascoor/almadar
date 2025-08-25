@@ -36,6 +36,7 @@ export const LanguageProvider = ({ children }) => {
 
   useEffect(() => {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
   }, [lang]);
 
   const toggleLanguage = () => setLang(prev => (prev === 'ar' ? 'en' : 'ar'));

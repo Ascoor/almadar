@@ -2,6 +2,9 @@
    Libya Legal Dashboard — Color Tokens (Light + Dark)
    ----------------------------------------------------------- */
 :root {
+  /* Fonts */
+  --font-heading: 'Cairo', sans-serif;
+  --font-body: 'Cairo', sans-serif;
   /* Base surfaces & text */
   --bg:            #f6f7f9;
   --fg:            #0e1521;
@@ -28,8 +31,8 @@
   --ring:          #10b981;
 
   /* Sidebar */
-  --sidebar-bg:    #ffffff;
-  --sidebar-fg:    #111827;
+  --sidebar-bg:    #ecfdf5;
+  --sidebar-fg:    #064e3b;
   --sidebar-muted: #6b7280;
   --sidebar-active:#0ea5a5;
 
@@ -55,6 +58,7 @@
   --shadow-glow: 0 0 0 2px rgba(18,210,176,0.25), 0 12px 40px rgba(18,210,176,0.25);
 }
 /* DARK THEME */
+
 .dark {
   --bg:            #0b1016;
   --fg:            #e7f5f5;
@@ -78,7 +82,7 @@
   --sidebar-bg:    #0c1218;
   --sidebar-fg:    #e7f5f5;
   --sidebar-muted: #8aa0b3;
-  --sidebar-active:#19c6ae;
+  --sidebar-active:#16e1bf;
 
   --chart-1: #19c6ae;
   --chart-2: #22d3ee;
