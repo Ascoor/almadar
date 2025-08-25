@@ -33,24 +33,17 @@ const HomePage = () => {
               <motion.img
                 src={WelcomeLogoWhite}
                 alt="شعار"
-                className="w-24 sm:w-32 mx-auto drop-shadow-2xl"
+                className="h-70 w-73   drop-shadow-2xl"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1 }}
               />
 
-              <motion.h1
-                className="text-2xl sm:text-4xl md:text-5xl font-bold text-white drop-shadow-xl"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                إدارة الشؤون القانونية
-              </motion.h1>
+ 
 
               <motion.button
                 onClick={() => setShowLoginForm(true)}
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-emerald-500 via-cyan-500 to-emerald-600 text-white font-bold shadow-lg hover:scale-105 transition"
+                className="px-8 py-3 rounded-full mt-0 bg-gradient-to-r from-emerald-500 via-cyan-500 to-emerald-600 text-white font-bold shadow-lg hover:scale-105 transition"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

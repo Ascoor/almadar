@@ -38,9 +38,9 @@ root.render(
                 className: 'touch-target'
               }}
             />
-            <Suspense fallback={<div>Loading...</div>}>
-              <App />
-            </Suspense>
+            <Suspense fallback={null}>  
+  <App />
+</Suspense>
           </SpinnerProvider>
         </AuthProvider>
       </BrowserRouter>

@@ -48,7 +48,7 @@ export default function AppLayout({ children, user }) {
 
   return (
     <ResponsiveLayout className="min-h-screen flex flex-col sm:flex-row relative">
-      <Suspense fallback={<div className="text-center p-4">جاري تحميل القائمة الجانبية...</div>}>
+      <Suspense fallback={null}>
         <AppSidebar
           isOpen={sidebarOpen}
           onToggle={toggleSidebar}
@@ -62,7 +62,7 @@ export default function AppLayout({ children, user }) {
         )}
       </Suspense>
       <div className="flex-1 flex flex-col transition-all duration-300">
-        <Suspense fallback={<div className="text-center p-4">جاري تحميل الرأس...</div>}>
+        <Suspense fallback={null}>
           <Header user={user} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
         </Suspense>
         <main
