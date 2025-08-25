@@ -19,7 +19,8 @@
     "preview": "vite preview",
     "depcheck": "depcheck",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
-    "contrast:test": "node scripts/contrast-test.js"
+    "contrast:test": "node scripts/contrast-test.js",
+    "test": "jest"
   },
   "keywords": [
     "react",
@@ -70,16 +71,24 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
     "@eslint/js": "^9.9.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "^22.5.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.9.0",
     "autoprefixer": "^10.4.20",
+    "babel-jest": "^30.0.5",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^16.3.0",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.11",
     "tailwindcss-rtl": "^0.9.0",
