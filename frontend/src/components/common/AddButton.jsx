@@ -6,7 +6,7 @@ export default function AddButton({ label = 'عنصر', onClick }) {
   return (
     <Button
       onClick={onClick}
-      className="w-fit sm:w-auto p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary-hover focus:ring-4 focus:ring-primary-light transition-all duration-300"
+      className="w-fit sm:w-auto rounded-2xl px-4 py-2 bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow transition"
       variant="default"
       size="sm"
     >

@@ -79,7 +79,7 @@ export default function ProfilePage() {
 
   if (!user)
     return (
-      <div className="mt-10 text-center text-muted-foreground">
+      <div className="mt-10 text-center text-muted">
         تحميل البيانات...
       </div>
     );
@@ -96,7 +96,7 @@ export default function ProfilePage() {
               name="name"
               value={form.name}
               onChange={handleFormChange}
-              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
+              className="w-full px-3 py-2 rounded border border-border bg-bg text-fg"
             />
           </div>
           <div>
@@ -108,7 +108,7 @@ export default function ProfilePage() {
               name="email"
               value={form.email}
               onChange={handleFormChange}
-              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
+              className="w-full px-3 py-2 rounded border border-border bg-bg text-fg"
             />
           </div>
           <div>
@@ -131,7 +131,7 @@ export default function ProfilePage() {
           </div>
           <button
             type="submit"
-            className="px-4 py-2 rounded bg-primary text-primary-foreground hover:bg-primary-hover transition"
+            className="rounded-2xl px-4 py-2 bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow transition"
           >
             حفظ التغييرات
           </button>
@@ -155,7 +155,7 @@ export default function ProfilePage() {
                   old_password: e.target.value,
                 })
               }
-              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
+              className="w-full rounded-xl bg-card border border-border text-fg placeholder:text-muted focus:ring-2 focus:ring-ring focus:border-border px-3 py-2"
             />
           </div>
           <div>
@@ -172,7 +172,7 @@ export default function ProfilePage() {
                   new_password: e.target.value,
                 })
               }
-              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
+              className="w-full rounded-xl bg-card border border-border text-fg placeholder:text-muted focus:ring-2 focus:ring-ring focus:border-border px-3 py-2"
             />
           </div>
           <div>
@@ -189,12 +189,12 @@ export default function ProfilePage() {
                   new_password_confirmation: e.target.value,
                 })
               }
-              className="w-full px-3 py-2 rounded border border-border bg-background text-foreground"
+              className="w-full rounded-xl bg-card border border-border text-fg placeholder:text-muted focus:ring-2 focus:ring-ring focus:border-border px-3 py-2"
             />
           </div>
           <button
             type="submit"
-            className="px-4 py-2 rounded bg-accent text-accent-foreground hover:bg-accent-hover transition"
+            className="rounded-2xl px-4 py-2 bg-accent text-fg hover:shadow-glow transition"
           >
             تغيير كلمة المرور
           </button>

@@ -41,12 +41,12 @@ export default function DropdownNotifications() {
     `}
         >
           <div className="flex justify-between px-4 py-3 border-b border-border">
-            <span className="text-sm font-semibold text-foreground">
+            <span className="text-sm font-semibold text-fg">
               الإشعارات
             </span>
             {notifications.length > 0 && (
               <button
-                className="text-xs text-accent hover:text-accent-hover"
+                className="text-xs text-accent hover:text-"
                 onClick={markAllAsRead}
               >
                 تعيين الكل كمقروء
@@ -55,7 +55,7 @@ export default function DropdownNotifications() {
           </div>
           <ul className="max-h-80 overflow-y-auto divide-y divide-border">
             {notifications.length === 0 ? (
-              <li className="p-4 text-center text-sm text-muted-foreground">
+              <li className="p-4 text-center text-sm text-muted">
                 لا توجد إشعارات
               </li>
             ) : (
@@ -65,13 +65,13 @@ export default function DropdownNotifications() {
                   onClick={() => onClickNotif(n)}
                   className={`p-4 cursor-pointer transition hover:bg-muted ${!n.read ? 'bg-primary/10' : ''}`}
                 >
-                  <div className="text-sm font-medium text-foreground">
+                  <div className="text-sm font-medium text-fg">
                     {n.icon} {n.title}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-muted">
                     {n.message}
                   </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
+                  <div className="mt-1 text-xs text-muted">
                     {new Intl.DateTimeFormat('ar-EG', {
                       dateStyle: 'short',
                       timeStyle: 'short',

@@ -17,7 +17,7 @@ export default function RecentSignals({ items }) {
       <ul className="space-y-2">
         {items.map((item) => (
           <li key={item.id} className="flex justify-between border-b border-border pb-1">
-            <span className="text-foreground">{item.message}</span>
+            <span className="text-fg">{item.message}</span>
             <span className="text-muted text-xs">{dayjs(item.date).fromNow()}</span>
           </li>
         ))}

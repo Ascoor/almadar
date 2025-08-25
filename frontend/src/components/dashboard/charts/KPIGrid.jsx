@@ -17,7 +17,7 @@ export default function KPIGrid({ data }) {
       {data.map((kpi) => (
         <Card key={kpi.titleKey} className="p-4" aria-label={kpi.titleKey}>
           <div className="text-sm text-muted mb-1">{t(kpi.titleKey)}</div>
-          <div className="text-2xl font-bold text-foreground">
+          <div className="text-2xl font-bold text-fg">
             {formatNumber(kpi.value, i18n.language)}
             {kpi.deltaPct !== undefined && (
               <span className={`ml-2 text-sm ${kpi.deltaPct >= 0 ? 'text-success' : 'text-destructive'}`}>

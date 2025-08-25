@@ -71,7 +71,7 @@ export default function LegalAdvicePage() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 60 }}
         transition={{ type: 'spring', stiffness: 60, damping: 14, delay: 0.1 }}
-        className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
+        className="rounded-xl bg-card text-fg p-4 shadow-md"
       >
         <TableComponent
           moduleName={moduleName}

@@ -26,7 +26,7 @@ const iconFor = (label) => {
       return <ArrowLeftFromLine className="w-5 h-5 ml-2 text-primary" />;
     default:
       return (
-        <ArrowLeftFromLine className="w-5 h-5 ml-2 text-muted-foreground" />
+        <ArrowLeftFromLine className="w-5 h-5 ml-2 text-muted" />
       );
   }
 };
@@ -40,7 +40,7 @@ const DashCard = ({
 }) => {
   return (
     <motion.div
-      className="flex items-center mb-6 w-full max-w-xs p-4 rounded-xl shadow-lg bg-gradient-secondary transition-transform transform hover:scale-105 mx-auto"
+      className="card p-4 flex items-center mb-6 w-full max-w-xs transition-transform transform hover:scale-105 mx-auto"
       initial={{ opacity: 0, scale: 0.8 }} // بداية من حجم صغير وشفافية منخفضة
       animate={{ opacity: 1, scale: 1 }} // التغيير إلى حجم طبيعي وشفافية 1
       transition={{ delay: delay, duration: 0.5 }}
@@ -54,10 +54,10 @@ const DashCard = ({
       </div>
 
       <div className="flex flex-col w-full">
-        <h2 className="text-center text-lg font-bold text-foreground">
+        <h2 className="text-center text-lg font-bold text-fg">
           {title}
         </h2>
-        <p className="text-center text-sm font-semibold text-muted-foreground">
+        <p className="text-center text-sm font-semibold text-muted">
           إجمالي {count}
         </p>
 
@@ -75,10 +75,10 @@ const DashCard = ({
                   className="flex items-center justify-between px-3 py-2 rounded transition-all hover:bg-secondary/10"
                 >
                   {iconFor(subTitle)}
-                  <span className="ml-2 text-sm font-medium text-foreground">
+                  <span className="ml-2 text-sm font-medium text-fg">
                     {subTitle}
                   </span>
-                  <span className="ml-auto text-sm font-bold text-foreground">
+                  <span className="ml-auto text-sm font-bold text-fg">
                     {subCount}
                   </span>
                 </Link>

@@ -106,13 +106,13 @@ export default function TableComponent({
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => exportTo('xlsx')}
-            className="px-3 py-1 text-sm rounded bg-primary text-primary-foreground hover:bg-primary-hover"
+            className="rounded-2xl px-3 py-1 text-sm bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow transition"
           >
             📁 Excel
           </button>
           <button
             onClick={() => exportTo('csv')}
-            className="px-3 py-1 text-sm rounded bg-secondary text-secondary-foreground hover:bg-secondary-hover"
+            className="rounded-2xl px-3 py-1 text-sm bg-secondary text-fg hover:shadow-glow transition"
           >
             🧾 CSV
           </button>
@@ -120,7 +120,7 @@ export default function TableComponent({
             type="text"
             placeholder="🔍 ابحث..."
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full md:w-64 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none bg-background text-foreground"
+            className="w-full md:w-64 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none bg-bg text-fg"
           />
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function TableComponent({
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full table-auto text-sm border rounded border-border">
-          <thead className="bg-secondary/80 text-foreground">
+          <thead className="bg-secondary/80 text-fg">
             <tr>
               <th className="p-3"></th>
               {headers.map((h) => (
@@ -187,12 +187,12 @@ export default function TableComponent({
                             href={`${API_CONFIG.baseURL}/storage/${row.attachment}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="underline text-accent hover:text-accent-hover"
+                            className="underline text-accent hover:text-"
                           >
                             عرض المرفق
                           </a>
                         ) : (
-                          <span className="text-muted-foreground text-xs">
+                          <span className="text-muted text-xs">
                             لا يوجد
                           </span>
                         )
@@ -205,7 +205,7 @@ export default function TableComponent({
                     {onView && can('view') && (
                       <button
                         onClick={() => onView(row)}
-                        className="text-accent hover:text-accent-hover"
+                        className="text-accent hover:text-"
                       >
                         <Eye size={16} />
                       </button>
@@ -213,7 +213,7 @@ export default function TableComponent({
                     {onEdit && can('edit') && (
                       <button
                         onClick={() => onEdit(row)}
-                        className="text-secondary hover:text-secondary-hover"
+                        className="text-secondary hover:text-"
                       >
                         <Edit size={16} />
                       </button>
@@ -246,7 +246,7 @@ export default function TableComponent({
               className={`px-3 py-1 text-sm rounded font-bold transition-all duration-200 ${
                 currentPage === i + 1
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-background text-primary hover:bg-primary/10'
+                  : 'bg-bg text-primary hover:bg-primary/10'
               }`}
             >
               {i + 1}

@@ -80,7 +80,7 @@ export default function UserMenu({ align = 'right' }) {
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="inline-flex items-center gap-2 focus:outline-none"
       >
-        <span className="hidden md:inline font-bold text-foreground">
+        <span className="hidden md:inline font-bold text-fg">
           {user?.name || 'زائر'}
         </span>
         <img
@@ -89,7 +89,7 @@ export default function UserMenu({ align = 'right' }) {
           alt={user?.name || 'المستخدم'}
           className="w-8 h-8 rounded-full object-cover"
         />
-        <svg className="w-3 h-3 text-muted-foreground" viewBox="0 0 12 12">
+        <svg className="w-3 h-3 text-muted" viewBox="0 0 12 12">
           <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
         </svg>
       </button>
@@ -107,7 +107,7 @@ export default function UserMenu({ align = 'right' }) {
         leaveStart="opacity-100"
         leaveEnd="opacity-0"
       >
-        <ul className="text-sm text-foreground">
+        <ul className="text-sm text-fg">
           <li>
             <Link
               to="/profile"

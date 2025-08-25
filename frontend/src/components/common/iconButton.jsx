@@ -18,8 +18,8 @@ export default function IconButton({
       className={clsx(
         `relative inline-flex items-center justify-center p-2 rounded-full
         transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2
-        bg-secondary text-secondary-foreground hover:bg-secondary-hover shadow-md`,
-        active && 'ring-2 ring-secondary',
+        bg-secondary text-fg hover:brightness-110 hover:shadow-glow shadow-md`,
+        active && 'ring-2 ring-ring',
         className,
       )}
     >

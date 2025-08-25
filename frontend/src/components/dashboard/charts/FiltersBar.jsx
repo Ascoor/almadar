@@ -23,7 +23,7 @@ export default function FiltersBar({ filters, onChange }) {
   };
 
   return (
-    <div dir={dir} className="sticky top-0 z-10 bg-background p-4 shadow">
+    <div dir={dir} className="sticky top-0 z-10 bg-bg p-4 shadow">
       <div className="grid gap-2 md:grid-cols-6" aria-label="dashboard-filters">
         <Input
           type="date"

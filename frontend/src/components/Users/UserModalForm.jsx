@@ -171,18 +171,16 @@ export default function UserModalForm({
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">البريد الإلكتروني</label>
-            <div className="flex rounded overflow-hidden border bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-600">
+            <label className="block mb-1 font-medium text-fg">البريد الإلكتروني</label>
+            <div className="flex rounded-xl overflow-hidden border border-border bg-card">
               <input
                 name="emailPrefix"
                 value={formData.emailPrefix}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="flex-1 p-2 bg-transparent text-gray-900 dark:text-white"
+                className="flex-1 p-2 bg-card text-fg placeholder:text-muted focus:ring-2 focus:ring-ring focus:border-border"
               />
-              <span className="p-2 bg-gray-100 dark:bg-zinc-700 text-gray-500 text-xs select-none">
-                @almadar.ly
-              </span>
+              <span className="p-2 bg-muted text-xs select-none">@almadar.ly</span>
             </div>
             {validationErrors.emailPrefix && (
               <p className="text-red-600 mt-1 text-xs">يرجى إدخال البريد الإلكتروني</p>
@@ -190,13 +188,13 @@ export default function UserModalForm({
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">الصورة</label>
+            <label className="block mb-1 font-medium text-fg">الصورة</label>
             <input
               type="file"
               accept="image/*"
               disabled={isSubmitting}
               onChange={handleFileChange}
-              className="w-full text-sm text-gray-700 dark:text-gray-300"
+              className="w-full rounded-xl bg-card border border-border text-fg placeholder:text-muted focus:ring-2 focus:ring-ring focus:border-border text-sm"
             />
             {formData.image && (
               <img
@@ -219,7 +217,7 @@ export default function UserModalForm({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white shadow"
+              className="rounded-2xl px-4 py-2 bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow transition"
             >
               {isSubmitting ? '...جاري الحفظ' : isEdit ? 'تحديث' : 'إضافة'}
             </button>
@@ -233,7 +231,7 @@ export default function UserModalForm({
 function FormField({ label, icon, name, value, onChange, error, disabled }) {
   return (
     <div>
-      <label className="mb-1 flex items-center font-medium text-gray-800 dark:text-gray-200">
+      <label className="mb-1 flex items-center font-medium text-fg">
         {icon} {label}
       </label>
       <input
@@ -241,8 +239,8 @@ function FormField({ label, icon, name, value, onChange, error, disabled }) {
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`w-full p-2 rounded border bg-white dark:bg-zinc-800 text-gray-900 dark:text-white ${
-          error ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
+        className={`w-full rounded-xl bg-card border border-border text-fg placeholder:text-muted focus:ring-2 focus:ring-ring focus:border-border p-2 ${
+          error ? 'border-red-500' : ''
         }`}
       />
       {error && <p className="text-red-600 mt-1 text-xs">هذا الحقل مطلوب</p>}

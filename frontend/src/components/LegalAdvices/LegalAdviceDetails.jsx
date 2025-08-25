@@ -76,11 +76,11 @@ export default function LegalAdviceDetails({ selected, onClose }) {
       </div>
 
       {/* Advice Text Section */}
-      <div className="rounded-xl border border-accent-light dark:border-border bg-accent-light/20 dark:bg-muted p-4 shadow-inner">
+      <div className="rounded-xl border border- dark:border-border bg-/20 dark:bg-muted p-4 shadow-inner">
         <h3 className="font-semibold text-greenic dark:text-gold mb-2 flex items-center gap-2">
           📄 نص المشورة
         </h3>
-        <p className="whitespace-pre-wrap leading-relaxed text-foreground">
+        <p className="whitespace-pre-wrap leading-relaxed text-fg">
           {selected.text || "لا يوجد نص للمشورة."}
         </p>
       </div>
@@ -91,11 +91,11 @@ export default function LegalAdviceDetails({ selected, onClose }) {
 // ✅ مكون عنصر تفصيل
 function Detail({ icon, label, value }) {
   return (
-    <div className="flex items-start gap-2 text-foreground">
+    <div className="flex items-start gap-2 text-fg">
       <div className="pt-1 text-greenic dark:text-gold shrink-0">{icon}</div>
       <div>
-        <div className="text-xs text-muted-foreground mb-1">{label}</div>
-        <div className={`font-semibold ${!value ? 'text-muted-foreground' : ''}`}>
+        <div className="text-xs text-muted mb-1">{label}</div>
+        <div className={`font-semibold ${!value ? 'text-muted' : ''}`}>
           {value || '—'}
         </div>
       </div>

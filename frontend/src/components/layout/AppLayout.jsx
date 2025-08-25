@@ -68,7 +68,7 @@ export default function AppLayout({ children, user }) {
         <main
           className={`
             flex-1 px-4 sm:px-6 lg:px-8
-            bg-background
+            bg-bg
             transition-all duration-500
             ${isMobile ? 'mobile-main' : 'desktop-main'}
             ${isStandalone ? 'standalone-main' : ''}

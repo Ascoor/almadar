@@ -88,7 +88,7 @@ export default function Contracts() {
               damping: 14,
               delay: 0.1,
             }}
-            className="rounded-xl bg-card text-card-foreground p-4 shadow-md"
+            className="rounded-xl bg-card text-fg p-4 shadow-md"
           >
             <Suspense
               fallback={

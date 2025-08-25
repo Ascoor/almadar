@@ -30,7 +30,7 @@ export default function Legends({ items = [], onToggle }) {
               className="h-3 w-3 rounded-sm"
               style={{ background: getSeriesColor(idx, hidden[item.key] ? 0.2 : 1) }}
             />
-            <span className={hidden[item.key] ? 'text-muted' : 'text-foreground'}>{item.label}</span>
+            <span className={hidden[item.key] ? 'text-muted' : 'text-fg'}>{item.label}</span>
           </button>
         ))}
       </div>

@@ -6,7 +6,7 @@ function HeaderToggle() {
 
   return (
     <button
-      className="mr-2 text-sidebar-foreground hover:text-sidebar-primary transition-colors duration-300 ease-in-out"
+      className="mr-2 text-sidebar-fg hover:text-sidebar-primary transition-colors duration-300 ease-in-out"
       onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       aria-controls="sidebar"
       aria-expanded={isSidebarOpen}

@@ -95,7 +95,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   return (
     <aside
       dir={dir}
-      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-foreground border-l  border-sidebar-border transition-all duration-300 ${
+      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-fg border-l  border-border transition-all duration-300 ${
         isLargeScreen
           ? isOpen
             ? 'w-64'
@@ -129,8 +129,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                 className={({ isActive }) =>
                   `group flex items-center gap-3 p-2 rounded-md text-sm font-semibold tracking-tight transition-all duration-300 ${
                     isActive
-                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                      ? 'text-sidebar-active'
+                      : 'text-sidebar-fg hover:bg-accent/50 hover:text-fg'
                   }`
                 }
               >
@@ -139,8 +139,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                     {React.cloneElement(item.icon, {
                       className: `transition-colors duration-200 ${
                         isActive
-                          ? 'text-sidebar-accent-foreground'
-                          : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                          ? 'text-sidebar-active'
+                          : 'text-sidebar-fg group-hover:text-fg'
                       }`
                     })}
                     <span className="flex-1 text-right">{item.label}</span>
@@ -152,15 +152,15 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                 onClick={() => handleSectionClick(item.id, !!item.children)}
                 className={`flex items-center gap-3 p-2 w-full rounded-md text-sm font-semibold tracking-tight transition-colors duration-200 ${
                   activeSection === item.id
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                    ? 'text-sidebar-active'
+                    : 'text-sidebar-fg hover:bg-accent/50 hover:text-fg'
                 }`}
               >
                 {React.cloneElement(item.icon, {
                   className: `transition-colors duration-200 ${
                     activeSection === item.id
-                      ? 'text-sidebar-accent-foreground'
-                      : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                      ? 'text-sidebar-active'
+                      : 'text-sidebar-fg group-hover:text-fg'
                   }`
                 })}
                 <span className="flex-1 text-right">{item.label}</span>
@@ -175,7 +175,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
             )}
 
             {item.children && activeSection === item.id && isOpen && (
-              <div className="mr-4 pl-4 border-r border-sidebar-border space-y-1">
+              <div className="mr-4 pl-4 border-r border-border space-y-1">
                 {item.children.map(ch => (
                   <NavLink
                     key={ch.id}
@@ -184,8 +184,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                     className={({ isActive }) =>
                       `flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                         isActive
-                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                          : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                          ? 'text-sidebar-active'
+                          : 'text-sidebar-fg hover:bg-accent/50 hover:text-fg'
                       }`
                     }
                   >
@@ -194,8 +194,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                         {React.cloneElement(ch.icon, {
                           className: `transition duration-200 ${
                             isActive
-                              ? 'text-sidebar-accent-foreground'
-                              : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                              ? 'text-sidebar-active'
+                              : 'text-sidebar-fg group-hover:text-fg'
                           }`
                         })}
                         <span>{ch.label}</span>
@@ -220,8 +220,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                 className={({ isActive }) =>
                   `px-4 py-2 rounded-md transition-all duration-200 font-semibold tracking-tight flex items-center gap-2 group ${
                     isActive
-                      ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-md'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                      ? 'text-sidebar-active shadow-md'
+                      : 'text-sidebar-fg hover:bg-accent/50 hover:text-fg'
                   }`
                 }
               >
@@ -229,8 +229,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                   React.cloneElement(it.icon, {
                     className: `transition duration-200 ${
                       isActive
-                        ? 'text-sidebar-accent-foreground'
-                        : 'text-sidebar-foreground group-hover:text-sidebar-accent-foreground'
+                        ? 'text-fg'
+                        : 'text-sidebar-fg group-hover:text-fg'
                     }`
                   })
                 }
