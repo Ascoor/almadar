@@ -6,6 +6,7 @@ import SectionHeader from '@/components/common/SectionHeader';
 import { deleteLitigation } from '@/services/api/litigations';
 import { CaseIcon } from '@/assets/icons';
 import { useLitigations } from '@/hooks/dataHooks'; // ✅ hook من React Query
+import { useLocation } from 'react-router-dom';
 const UnifiedLitigationsTable = lazy(
   () => import('@/components/Litigations/UnifiedLitigationsTable'),
 );
@@ -16,6 +17,7 @@ const GlobalConfirmDeleteModal = lazy(
 export default function LitigationsPage() {
   const [activeTab, setActiveTab] = useState('against');
   const [litigationToDelete, setLitigationToDelete] = useState(null);
+  const location = useLocation();
 
   // ✅ استخدام React Query لجلب الدعاوى
   const { data, isLoading, refetch } = useLitigations();
@@ -110,6 +112,7 @@ export default function LitigationsPage() {
                   scope={activeTab}
                   onDelete={setLitigationToDelete}
                   loading={isLoading}
+                  autoOpen={location.state?.openModal}
                 />
               </Suspense>
             </Card>

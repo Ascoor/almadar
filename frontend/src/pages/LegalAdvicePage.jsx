@@ -12,12 +12,14 @@ import { motion } from 'framer-motion';
 import { useLegalAdvices } from "@/hooks/dataHooks"; // ✅ من React Query
 import { useQuery } from "@tanstack/react-query"; // لاستدعاء أنواع المشورة
 import API_CONFIG  from "@/config/config";
+import { useLocation } from 'react-router-dom';
 const LegalAdviceModal = lazy(() => import("../components/LegalAdvices/LegalAdviceModal"));
 const LegalAdviceDetails = lazy(() => import("../components/LegalAdvices/LegalAdviceDetails"));
 const GlobalConfirmDeleteModal = lazy(() => import("../components/common/GlobalConfirmDeleteModal"));
 
 export default function LegalAdvicePage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const location = useLocation();
+  const [isModalOpen, setIsModalOpen] = useState(location.state?.openModal || false);
   const [editingAdvice, setEditingAdvice] = useState(null);
   const [selectedAdvice, setSelectedAdvice] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
