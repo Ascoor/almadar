@@ -91,10 +91,12 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
     if (!isLargeScreen && !isOpen) onToggle();
     if (hasChildren) setActiveSection(prev => (prev === id ? null : id));
   };
+  const showFullNav = isOpen || (!isLargeScreen && !isTablet);
 
   return (
     <aside
       dir={dir}
+      style={isDark ? { boxShadow: '0 0 15px rgba(34,211,238,0.35)' } : undefined}
       className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-fg border-l  border-border transition-all duration-300 ${
         isLargeScreen
           ? isOpen
@@ -120,7 +122,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
 
 
       <nav className={`${isOpen ? 'px-4 space-y-4 mt-6' : 'px-2 space-y-2 mt-8'} overflow-y-auto h-full`}>
-        {(isOpen || !isLargeScreen) ? navConfig.map(item => (
+        {showFullNav ? navConfig.map(item => (
           <div key={item.id}>
             {item.to ? (
               <NavLink
