@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogoPLogoNewArtatren } from '../../../assets/images';
+import { LogoNewArt } from '../../../assets/images';
 
 const AuthSpinner = ({ onFinish }) => {
   const [visible, setVisible] = useState(true);
