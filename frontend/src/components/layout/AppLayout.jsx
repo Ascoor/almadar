@@ -4,7 +4,7 @@ import ResponsiveLayout from '@/components/ResponsiveLayout';
 import { useMobileTheme } from '@/components/MobileThemeProvider';
 import { useLanguage } from '@/context/LanguageContext';
 
-const Header = lazy(() => import('@/components/dashboard/Header'));
+const Header = lazy(() => import('@/components/layout/DashboardHeader'));
 const AppSidebar = lazy(() => import('./AppSidebar'));
 
 export default function AppLayout({ children, user }) {

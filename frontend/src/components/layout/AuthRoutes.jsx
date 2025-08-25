@@ -7,7 +7,7 @@ import Forbidden from '@/pages/Forbidden';
 import ProtectedRoute from '../auth/ProtectedRoute.jsx';
 import ProfilePage from '../../pages/ProfilePage.jsx'; 
 
-const Home = lazy(() => import('../dashboard/Dashboard'));
+const Home = lazy(() => import('../../pages/Dashboard.jsx'));
 const ProfileUser = lazy(() => import('../Settings/ProfileUser'));
 const Contracts = lazy(() => import('../../pages/ContractsPage.jsx'));
 const Investigations = lazy(() => import('../../pages/InvestigationsPage.jsx'));
