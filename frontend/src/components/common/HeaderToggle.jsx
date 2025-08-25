@@ -1,12 +1,23 @@
 import React from 'react';
 import { useSidebar } from '@/components/ui/sidebar';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 function HeaderToggle() {
   const { open, toggleSidebar } = useSidebar();
+  const { isRTL } = useLanguage();
+
+  const Icon = isRTL
+    ? open
+      ? ChevronRight
+      : ChevronLeft
+    : open
+    ? ChevronLeft
+    : ChevronRight;
 
   return (
     <button
-      className="text-white mr-2 hover:text-almadar-sidebar-danger dark:text-almadar-mint-light dark:hover:text-almadar-sand transition-colors duration-300 ease-in-out"
+      className="mr-2 text-sidebar-foreground hover:text-sidebar-primary transition-colors duration-300 ease-in-out"
       onClick={toggleSidebar}
       aria-controls="sidebar"
       aria-expanded={open}
@@ -14,17 +25,7 @@ function HeaderToggle() {
       <span className="sr-only">
         {open ? 'Close sidebar' : 'Open sidebar'}
       </span>
-      <svg
-        className="w-6 h-6 fill-current"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {open ? (
-          <path d="M13.3 5.3l-1.4 1.4L16.2 11H4v2h12.2l-4.3 4.3 1.4 1.4L20 12z" />
-        ) : (
-          <path d="M10.7 18.7l1.4-1.4L7.8 13H20v-2H7.8l4.3-4.3-1.4-1.4L4 12z" />
-        )}
-      </svg>
+      <Icon className="w-6 h-6" />
     </button>
   );
 }

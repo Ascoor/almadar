@@ -58,7 +58,7 @@ export default function Sidebar({ onLinkClick }: { onLinkClick?: () => void }) {
             exit={{ x: dir === "rtl" ? 300 : -300, opacity: 0 }}
             transition={{ type: "tween", duration: 0.25 }}
             dir={dir}
-            className={`fixed top-0 ${anchor} z-50 h-screen w-72 bg-card border ${railSide} border-border shadow-lg`}
+            className={`fixed top-0 ${anchor} z-50 h-screen w-72 bg-sidebar text-sidebar-foreground border ${railSide} border-border shadow-lg`}
             style={{
               paddingTop: "env(safe-area-inset-top)",
               paddingBottom: "env(safe-area-inset-bottom)"
@@ -155,7 +155,7 @@ export default function Sidebar({ onLinkClick }: { onLinkClick?: () => void }) {
             exit={{ x: dir === "rtl" ? 96 : -96, opacity: 0 }}
             transition={{ type: "tween", duration: 0.2 }}
             dir={dir}
-            className={`fixed top-0 ${anchor} z-40 h-screen w-16 bg-card border ${railSide} border-border`}
+            className={`fixed top-0 ${anchor} z-40 h-screen w-16 bg-sidebar text-sidebar-foreground border ${railSide} border-border`}
             role="navigation"
             aria-label="Mini sidebar"
             style={{
