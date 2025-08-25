@@ -30,6 +30,7 @@
       roles: 'الأدوار',
       profile: 'الملف الشخصي',
       permissions: 'الصلاحيات',
+      archive:'الأرشيف'
     };
     return map[section] || section;
   };
