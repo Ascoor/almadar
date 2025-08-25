@@ -13,6 +13,8 @@ const translations = {
     usersList: 'المستخدمين',
     archive: 'الأرشيف',
     fatwa: 'الرأي والفتوى'
+    add: 'إضافة',
+    item: 'عنصر'
   },
   en: {
     home: 'Home',
@@ -25,7 +27,9 @@ const translations = {
     users: 'Users Management',
     usersList: 'Users',
     archive: 'Archive',
-    fatwa: 'Fatwa'
+    fatwa: 'Fatwa',
+    add: 'Add',
+    item: 'Item'
   }
 };
 
@@ -36,6 +40,7 @@ export const LanguageProvider = ({ children }) => {
 
   useEffect(() => {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
   }, [lang]);
 
   const toggleLanguage = () => setLang(prev => (prev === 'ar' ? 'en' : 'ar'));

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   /* Base */
@@ -28,9 +28,13 @@
   --ring: 60 64 198;
 
   /* Sidebar */
-  --sidebar: 17 24 39;
-  --sidebar-foreground: 229 231 235;
-  --sidebar-muted: 100 116 139;
+  --sidebar: 248 250 252;
+  --sidebar-foreground: 30 41 59;
+  --sidebar-muted: 148 163 184;
+  --sidebar-border: 229 231 235;
+  --sidebar-accent: 60 64 198;
+  --sidebar-accent-foreground: 255 255 255;
+  --sidebar-ring: 60 64 198;
 
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, rgb(60 64 198) 0%, rgb(99 102 241) 100%);
@@ -40,8 +44,8 @@
   --shadow-lg: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
   /* Fonts */
-  --font-heading: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  --font-body: "Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  --font-heading: "Tajawal", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  --font-body: "Tajawal", system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 
 .dark {
@@ -51,7 +55,11 @@
   --card-foreground: 243 244 246;
   --popover: 9 13 28;
   --border: 31 41 55;
-  --sidebar: 3 7 18;
+  --sidebar: 31 41 55;
   --sidebar-foreground: 203 213 225;
   --sidebar-muted: 100 116 139;
+  --sidebar-border: 55 65 81;
+  --sidebar-accent: 99 102 241;
+  --sidebar-accent-foreground: 255 255 255;
+  --sidebar-ring: 99 102 241;
 }

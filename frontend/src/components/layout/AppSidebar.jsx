@@ -95,7 +95,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   return (
     <aside
       dir={dir}
-      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-foreground border-l  border-sidebar-border transition-all duration-300 ${
+      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-foreground border-l  border-sidebar-border shadow-lg transition-all duration-300 ${
         isLargeScreen
           ? isOpen
             ? 'w-64'

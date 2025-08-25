@@ -23,6 +23,11 @@ export default {
         border: 'rgb(var(--border) / <alpha-value>)',
         sidebar: 'rgb(var(--sidebar) / <alpha-value>)',
         'sidebar-foreground': 'rgb(var(--sidebar-foreground) / <alpha-value>)',
+        'sidebar-muted': 'rgb(var(--sidebar-muted) / <alpha-value>)',
+        'sidebar-border': 'rgb(var(--sidebar-border) / <alpha-value>)',
+        'sidebar-accent': 'rgb(var(--sidebar-accent) / <alpha-value>)',
+        'sidebar-accent-foreground': 'rgb(var(--sidebar-accent-foreground) / <alpha-value>)',
+        'sidebar-ring': 'rgb(var(--sidebar-ring) / <alpha-value>)',
       },
       boxShadow: {
         lg: 'var(--shadow-lg)',
