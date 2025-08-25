@@ -35,7 +35,7 @@ const GlobalDashboard = ({ className, dir = 'rtl' }) => {
   return (
     <div
       className={cn(
-        "min-h-screen bg-background text-foreground p-4 space-y-6",
+        "min-h-screen bg-bg text-fg p-4 space-y-6",
         className
       )}
       dir={dir}
@@ -49,7 +49,7 @@ const GlobalDashboard = ({ className, dir = 'rtl' }) => {
         <h1 className="text-3xl font-bold text-primary">
           {dir === 'rtl' ? 'لوحة التحليلات القانونية العالمية' : 'Global Legal Analytics Dashboard'}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted">
           {dir === 'rtl' 
             ? 'رؤى شاملة وتحليلات متقدمة للعمليات القانونية'
             : 'Comprehensive insights and advanced analytics for legal operations'

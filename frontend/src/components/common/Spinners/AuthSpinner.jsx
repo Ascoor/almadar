@@ -21,7 +21,7 @@ const AuthSpinner = ({ onFinish }) => {
   }, [onFinish]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm text-foreground">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg/80 backdrop-blur-sm text-fg">
       <AnimatePresence>
         <motion.div
           key="spinner"
@@ -41,7 +41,7 @@ const AuthSpinner = ({ onFinish }) => {
             />
           </div>
 
-          <p className="text-primary-light text-lg md:text-xl font-bold tracking-widest drop-shadow-md animate-bounce">
+          <p className="text- text-lg md:text-xl font-bold tracking-widest drop-shadow-md animate-bounce">
             جاري التحميل، الرجاء الانتظار...
           </p>
         </motion.div>

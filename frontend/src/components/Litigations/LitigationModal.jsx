@@ -134,14 +134,14 @@ export default function LitigationModal({
           } 
         ].map(({ label, name, type = "text", options }) => (
           <div key={name}>
-            <label className="block mb-1 text-sm text-muted-foreground">{label}</label>
+            <label className="block mb-1 text-sm text-muted">{label}</label>
             {type === "select" ? (
               <select
                 name={name}
                 value={form[name]}
                 onChange={handleChange}
                 required
-                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-background text-foreground`}
+                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-bg text-fg`}
               >
                 {options.map(opt => (
                   <option key={opt.value} value={opt.value}>
@@ -156,7 +156,7 @@ export default function LitigationModal({
                 value={form[name]}
                 onChange={handleChange}
                 required
-                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-background text-foreground`}
+                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-bg text-fg`}
               />
             )}
             {errors[name] && <p className="text-red-600 text-sm mt-1">{errors[name]}</p>}
@@ -165,13 +165,13 @@ export default function LitigationModal({
       </div>
 
       <div className="md:col-span-2 mt-4">
-        <label className="block mb-1 text-sm text-muted-foreground">ملاحظات</label>
+        <label className="block mb-1 text-sm text-muted">ملاحظات</label>
         <textarea
           name="notes"
           value={form.notes}
           onChange={handleChange}
           rows={3}
-          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
+          className="w-full px-3 py-2 rounded-lg border border-border bg-bg text-fg"
         />
       </div>
     </ModalCard>

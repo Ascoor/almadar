@@ -111,7 +111,7 @@ export default function LegalAdviceModal({
               value={form.advice_type_id}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-fg"
             >
               <option value="">-- اختر نوع المشورة --</option>
               {adviceTypes.map(t => (
@@ -136,7 +136,7 @@ export default function LegalAdviceModal({
                 value={form[name]}
                 onChange={handleChange}
                 required={["topic", "advice_number"].includes(name)}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-fg"
               />
             </div>
           ))}
@@ -150,7 +150,7 @@ export default function LegalAdviceModal({
             value={form.text}
             onChange={handleChange}
             rows={4}
-            className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
+            className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-fg"
           />
         </div>
 
@@ -162,7 +162,7 @@ export default function LegalAdviceModal({
             name="attachment"
             accept="application/pdf"
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
+            className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-fg"
           />
           {form.attachment ? (
             <p className="mt-1 text-green-600">{form.attachment.name}</p>

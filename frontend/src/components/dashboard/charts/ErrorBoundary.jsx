@@ -39,7 +39,7 @@ class ErrorBoundary extends React.Component {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted">
               {dir === 'rtl' 
                 ? 'حدث خطأ أثناء تحميل هذا المكون. يرجى المحاولة مرة أخرى.'
                 : 'An error occurred while loading this component. Please try again.'

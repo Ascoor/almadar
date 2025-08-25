@@ -1,57 +1,102 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
+/* -----------------------------------------------------------
+   Libya Legal Dashboard — Color Tokens (Light + Dark)
+   ----------------------------------------------------------- */
 :root {
-  /* Base */
-  --background: 255 255 255;
-  --foreground: 17 24 39;
+  /* Base surfaces & text */
+  --bg:            #f6f7f9;
+  --fg:            #0e1521;
+  --muted:         #6b7280;
 
-  /* Brand */
-  --primary: 60 64 198;
-  --primary-foreground: 255 255 255;
+  /* Cards / popovers */
+  --card:          #ffffff;
+  --popover:       #ffffff;
 
-  --secondary: 5 150 160;
-  --secondary-foreground: 255 255 255;
+  /* Actions */
+  --primary:       #12d2b0; /* neon teal */
+  --primary-foreground: #041316;
+  --secondary:     #2dd4bf; /* mint teal */
+  --accent:        #a3e635; /* lime accent */
 
-  --accent: 99 102 241;
-  --muted: 107 114 128;
+  /* State feedback */
+  --success:       #22c55e;
+  --warning:       #f59e0b;
+  --destructive:   #ef4444;
 
-  /* Status */
-  --success: 16 185 129;
-  --warning: 245 158 11;
-  --destructive: 239 68 68;
-
-  /* Surfaces */
-  --card: 255 255 255;
-  --card-foreground: 17 24 39;
-  --popover: 255 255 255;
-  --border: 229 231 235;
-  --ring: 60 64 198;
+  /* Lines & rings */
+  --border:        #e5e7eb;
+  --input:         #d1d5db;
+  --ring:          #10b981;
 
   /* Sidebar */
-  --sidebar: 17 24 39;
-  --sidebar-foreground: 229 231 235;
-  --sidebar-muted: 100 116 139;
+  --sidebar-bg:    #ffffff;
+  --sidebar-fg:    #111827;
+  --sidebar-muted: #6b7280;
+  --sidebar-active:#0ea5a5;
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, rgb(60 64 198) 0%, rgb(99 102 241) 100%);
-  --gradient-card: linear-gradient(180deg, rgba(60 64 198/0.08) 0%, rgba(99 102 241/0.02) 100%);
+  /* Charts */
+  --chart-1: #10b981;
+  --chart-2: #22d3ee;
+  --chart-3: #84cc16;
+  --chart-4: #f59e0b;
+  --chart-5: #60a5fa;
+  --chart-6: #eab308;
+  --chart-7: #34d399;
+  --chart-8: #fb923c;
 
-  /* Shadows */
-  --shadow-lg: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  /* Map gradient */
+  --map-start: #16a34a;
+  --map-mid:   #84cc16;
+  --map-end:   #22d3ee;
 
-  /* Fonts */
-  --font-heading: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  --font-body: "Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  /* Shadows (light) */
+  --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.05);
+  --shadow-md: 0 8px 24px rgba(2, 6, 23, 0.08);
+  --shadow-lg: 0 16px 48px rgba(2, 6, 23, 0.10);
+  --shadow-glow: 0 0 0 2px rgba(18,210,176,0.25), 0 12px 40px rgba(18,210,176,0.25);
 }
-
+/* DARK THEME */
 .dark {
-  --background: 3 7 18;
-  --foreground: 243 244 246;
-  --card: 9 13 28;
-  --card-foreground: 243 244 246;
-  --popover: 9 13 28;
-  --border: 31 41 55;
-  --sidebar: 3 7 18;
-  --sidebar-foreground: 203 213 225;
-  --sidebar-muted: 100 116 139;
+  --bg:            #0b1016;
+  --fg:            #e7f5f5;
+  --muted:         #93a3b5;
+  --card:          #0f141b;
+  --popover:       #0f141b;
+
+  --primary:       #16e1bf;
+  --primary-foreground: #061112;
+  --secondary:     #22d3ee;
+  --accent:        #9ae52f;
+
+  --success:       #22c55e;
+  --warning:       #f59e0b;
+  --destructive:   #ef4444;
+
+  --border:        #1b2330;
+  --input:         #1f2937;
+  --ring:          #22d3ee;
+
+  --sidebar-bg:    #0c1218;
+  --sidebar-fg:    #e7f5f5;
+  --sidebar-muted: #8aa0b3;
+  --sidebar-active:#19c6ae;
+
+  --chart-1: #19c6ae;
+  --chart-2: #22d3ee;
+  --chart-3: #9ae52f;
+  --chart-4: #f59e0b;
+  --chart-5: #60a5fa;
+  --chart-6: #7dd3fc;
+  --chart-7: #34d399;
+  --chart-8: #fb923c;
+
+  --map-start: #1dbf7a;
+  --map-mid:   #9ae52f;
+  --map-end:   #22d3ee;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 0 2px rgba(34,211,238,0.28), 0 16px 60px rgba(26, 214, 178, 0.35);
 }
+/* Utilities */
+:root, .dark { --radius: 16px; }

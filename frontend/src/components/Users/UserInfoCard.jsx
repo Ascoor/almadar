@@ -21,7 +21,7 @@ const UserInfoCard = ({ user }) => (
           />
         ) : (
           <div className="bg-muted flex items-center justify-center w-full h-full">
-            <span className="text-sm text-muted-foreground">بدون صورة</span>
+            <span className="text-sm text-muted">بدون صورة</span>
           </div>
         )}
       </div>
@@ -43,13 +43,13 @@ const UserInfoCard = ({ user }) => (
 
       {/* تاريخ الإنشاء */}
       {user.created_at && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted">
           تم الإنشاء: {new Date(user.created_at).toLocaleDateString('ar-EG')}
         </p>
       )}
 
       {/* بيانات التواصل */}
-      <ul className="text-sm text-foreground space-y-2">
+      <ul className="text-sm text-fg space-y-2">
         {user.phone && (
           <li className="flex items-center gap-2 justify-start sm:justify-end">
             <Phone size={16} className="text-primary-muted" />

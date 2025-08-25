@@ -1,41 +1,74 @@
+// tailwind.config.js
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
-import rtl from 'tailwindcss-rtl';
 
 export default {
-  darkMode: 'class',
-  content: ['index.html', 'src/**/*.{js,jsx,ts,tsx}'],
+  darkMode: ['class'],
+  content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
+    container: { center: true, padding: '1rem', screens: { '2xl': '1280px' } },
     extend: {
       colors: {
-        background: 'rgb(var(--background) / <alpha-value>)',
-        foreground: 'rgb(var(--foreground) / <alpha-value>)',
-        primary: 'rgb(var(--primary) / <alpha-value>)',
-        'primary-foreground': 'rgb(var(--primary-foreground) / <alpha-value>)',
-        secondary: 'rgb(var(--secondary) / <alpha-value>)',
-        accent: 'rgb(var(--accent) / <alpha-value>)',
-        muted: 'rgb(var(--muted) / <alpha-value>)',
-        success: 'rgb(var(--success) / <alpha-value>)',
-        warning: 'rgb(var(--warning) / <alpha-value>)',
-        destructive: 'rgb(var(--destructive) / <alpha-value>)',
-        card: 'rgb(var(--card) / <alpha-value>)',
-        'card-foreground': 'rgb(var(--card-foreground) / <alpha-value>)',
-        border: 'rgb(var(--border) / <alpha-value>)',
-        sidebar: 'rgb(var(--sidebar) / <alpha-value>)',
-        'sidebar-foreground': 'rgb(var(--sidebar-foreground) / <alpha-value>)',
-      },
-      boxShadow: {
-        lg: 'var(--shadow-lg)',
-      },
-      fontFamily: {
-        heading: 'var(--font-heading)',
-        body: 'var(--font-body)',
+        /* base */
+        bg: 'var(--bg)',
+        fg: 'var(--fg)',
+        muted: 'var(--muted)',
+
+        /* surfaces */
+        card: { DEFAULT: 'var(--card)', foreground: 'var(--fg)' },
+        popover: { DEFAULT: 'var(--popover)', foreground: 'var(--fg)' },
+
+        /* actions */
+        primary: { DEFAULT: 'var(--primary)', foreground: 'var(--primary-foreground)' },
+        secondary: 'var(--secondary)',
+        accent: 'var(--accent)',
+
+        /* states */
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        destructive: 'var(--destructive)',
+
+        /* lines */
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+
+        /* sidebar */
+        sidebar: {
+          DEFAULT: 'var(--sidebar-bg)',
+          fg: 'var(--sidebar-fg)',
+          muted: 'var(--sidebar-muted)',
+          active: 'var(--sidebar-active)',
+        },
+
+        /* charts & map */
+        chart: {
+          1: 'var(--chart-1)', 2: 'var(--chart-2)', 3: 'var(--chart-3)', 4: 'var(--chart-4)',
+          5: 'var(--chart-5)', 6: 'var(--chart-6)', 7: 'var(--chart-7)', 8: 'var(--chart-8)',
+        },
+        map: { start: 'var(--map-start)', mid: 'var(--map-mid)', end: 'var(--map-end)' },
       },
       backgroundImage: {
-        'gradient-primary': 'var(--gradient-primary)',
-        'gradient-card': 'var(--gradient-card)',
+        'map-gradient': 'linear-gradient(90deg, var(--map-start), var(--map-mid), var(--map-end))',
+        'gradient-primary': 'linear-gradient(135deg, var(--primary), var(--accent))',
+        'gradient-card': 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06))',
+      },
+      boxShadow: {
+        sm: 'var(--shadow-sm)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
+        xl: 'var(--shadow-lg)',
+        glow: 'var(--shadow-glow)',
+      },
+      borderRadius: {
+        xl: 'var(--radius)',
+        '2xl': 'calc(var(--radius) + 8px)',
+      },
+      fontFamily: {
+        heading: ['var(--font-heading)', 'inherit'],
+        body: ['var(--font-body)', 'inherit'],
       },
     },
   },
-  plugins: [forms, typography, rtl],
+  plugins: [forms, typography],
 };

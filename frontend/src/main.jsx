@@ -9,7 +9,6 @@ import { Suspense } from 'react';
 import ThemeProvider from './utils/ThemeContext';
 import { AuthProvider } from '@/components/auth/AuthContext';
 import { Toaster } from 'sonner';
-import './index.css'; 
  
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

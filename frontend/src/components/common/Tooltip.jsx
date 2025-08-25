@@ -33,11 +33,11 @@ function Tooltip({ children, className, bg, size, position }) {
   const colorClasses = (bg) => {
     switch (bg) {
       case 'light':
-        return 'bg-card text-muted-foreground border-border';
+        return 'bg-card text-muted border-border';
       case 'dark':
-        return 'bg-popover text-popover-foreground border-border';
+        return 'bg-popover text-fg border-border';
       default:
-        return 'bg-card text-muted-foreground border-border';
+        return 'bg-card text-muted border-border';
     }
   };
 
@@ -69,7 +69,7 @@ function Tooltip({ children, className, bg, size, position }) {
         onClick={(e) => e.preventDefault()}
       >
         <svg
-          className="fill-current text-muted-foreground"
+          className="fill-current text-muted"
           width="16"
           height="16"
           viewBox="0 0 16 16"

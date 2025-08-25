@@ -20,7 +20,7 @@ export default function TreemapByCategory({ data, onSelectCategory }) {
         <Treemap
           data={formatted}
           dataKey="size"
-          stroke="rgb(var(--background))"
+          stroke="rgb(var(--bg))"
           onClick={(node) => onSelectCategory && onSelectCategory({ categories: [node.name] })}
         />
       </ResponsiveContainer>

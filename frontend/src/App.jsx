@@ -1,5 +1,7 @@
 // src/App.jsx
-import  { useContext, useEffect } from 'react';
+import '@/styles/tokens.css';
+import '@/styles/index.css';
+import { useContext, useEffect } from 'react';
 import AuthWrapper from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
 import { useThemeProvider } from './utils/ThemeContext';

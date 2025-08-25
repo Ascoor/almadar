@@ -12,12 +12,12 @@ const tableStyle = `
 `;
 
 const theadStyle = `
-  bg-secondary text-secondary-foreground text-sm md:text-base
+  bg-secondary text-fg text-sm md:text-base
 `;
 
 const thTdStyle = `
   px-4 py-3 border-b border-border
-  text-foreground text-center font-medium
+  text-fg text-center font-medium
 `;
 
 const rowHoverStyle = `

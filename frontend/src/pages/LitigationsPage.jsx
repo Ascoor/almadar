@@ -69,7 +69,7 @@ export default function LitigationsPage() {
             className={`px-6 py-2 text-sm font-bold border rounded-full transition ${
               activeTab === tab.key
                 ? 'bg-primary text-primary-foreground shadow-md'
-                : 'bg-background text-primary border-primary hover:bg-primary/10'
+                : 'bg-bg text-primary border-primary hover:bg-primary/10'
             }`}
           >
             {tab.label}
@@ -102,7 +102,7 @@ export default function LitigationsPage() {
               delay: 0.1,
             }}
           >
-            <Card className="p-4 sm:p-6 rounded-xl shadow-md border overflow-x-auto bg-card text-card-foreground">
+            <Card className="p-4 sm:p-6 rounded-xl shadow-md border overflow-x-auto bg-card text-fg">
               <Suspense fallback={<div>تحميل الجدول...</div>}>
                 <UnifiedLitigationsTable
                   litigations={filteredLitigations}

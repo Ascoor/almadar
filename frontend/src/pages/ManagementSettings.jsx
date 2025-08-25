@@ -168,7 +168,7 @@ export default function ManagementSettings() {
         transition={{ delay, type: 'spring', stiffness: 80, damping: 14 }}
         className="mt-6 border border-border rounded-xl p-4 shadow-lg shadow-primary/20"
       >
-        <h3 className="p-6 text-xl font-bold text-center bg-secondary/20 text-card-foreground shadow-md">
+        <h3 className="p-6 text-xl font-bold text-center bg-secondary/20 text-fg shadow-md">
           {title}
         </h3>
         <div className="flex justify-between items-center mb-4">
@@ -180,7 +180,7 @@ export default function ManagementSettings() {
                 setEditMode(false);
                 setNewItem('');
               }}
-              className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-primary text-primary-foreground hover:bg-primary-hover hover:scale-105 transition"
+              className="flex items-center gap-2 rounded-2xl px-4 py-2 text-sm bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow hover:scale-105 transition"
             >
               <Plus />
               <span>إضافة</span>
@@ -189,10 +189,10 @@ export default function ManagementSettings() {
         </div>
 
         {pagedData.length === 0 ? (
-          <p className="text-muted-foreground">لا توجد بيانات</p>
+          <p className="text-muted">لا توجد بيانات</p>
         ) : (
           <table className="min-w-full text-sm text-center table-auto border border-border rounded-xl overflow-hidden shadow-lg">
-            <thead className="bg-primary-light/40 text-foreground">
+            <thead className="bg-/40 text-fg">
               <tr>
                 <th className="px-4 py-3 border-b border-border">الاسم</th>
                 {can('edit') && (
@@ -203,7 +203,7 @@ export default function ManagementSettings() {
                 )}
               </tr>
             </thead>
-            <tbody className="text-foreground bg-card">
+            <tbody className="text-fg bg-card">
               {pagedData.map((item) => (
                 <React.Fragment key={item.id}>
                   <motion.tr
@@ -325,7 +325,7 @@ export default function ManagementSettings() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
           >
-            <div className="bg-white dark:bg-background w-full max-w-md p-6 rounded-xl shadow-xl">
+            <div className="bg-white dark:bg-bg w-full max-w-md p-6 rounded-xl shadow-xl">
               <h2 className="text-lg font-bold mb-4">
                 {editMode ? 'تعديل العنصر' : 'إضافة عنصر جديد'}
               </h2>
