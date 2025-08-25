@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
-import { VitePWA } from 'vite-plugin-pwa'; 
+import { VitePWA } from 'vite-plugin-pwa';
+import compression from 'vite-plugin-compression';
 export default defineConfig(({ mode }) => ({
   server: {
     proxy: {
@@ -17,10 +18,10 @@ export default defineConfig(({ mode }) => ({
 optimizeDeps: {
   include: ['react', 'react-dom', 'socket.io-client', 'laravel-echo'],
 },
-   plugins: [
-    react(),
-
-    VitePWA({
+    plugins: [
+      react(),
+      compression(),
+      VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       devOptions: { enabled: mode === 'development' },

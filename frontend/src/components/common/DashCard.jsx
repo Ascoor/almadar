@@ -54,7 +54,7 @@ const DashCard = ({
       </div>
 
       <div className="flex flex-col w-full">
-        <h2 className="text-center text-lg font-bold text-foreground">
+        <h2 className="text-center text-lg font-bold text-fg">
           {title}
         </h2>
         <p className="text-center text-sm font-semibold text-muted-foreground">
@@ -75,10 +75,10 @@ const DashCard = ({
                   className="flex items-center justify-between px-3 py-2 rounded transition-all hover:bg-secondary/10"
                 >
                   {iconFor(subTitle)}
-                  <span className="ml-2 text-sm font-medium text-foreground">
+                  <span className="ml-2 text-sm font-medium text-fg">
                     {subTitle}
                   </span>
-                  <span className="ml-auto text-sm font-bold text-foreground">
+                  <span className="ml-auto text-sm font-bold text-fg">
                     {subCount}
                   </span>
                 </Link>

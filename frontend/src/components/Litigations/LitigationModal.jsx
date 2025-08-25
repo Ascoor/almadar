@@ -141,7 +141,7 @@ export default function LitigationModal({
                 value={form[name]}
                 onChange={handleChange}
                 required
-                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-background text-foreground`}
+                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-bg text-fg`}
               >
                 {options.map(opt => (
                   <option key={opt.value} value={opt.value}>
@@ -156,7 +156,7 @@ export default function LitigationModal({
                 value={form[name]}
                 onChange={handleChange}
                 required
-                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-background text-foreground`}
+                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-bg text-fg`}
               />
             )}
             {errors[name] && <p className="text-red-600 text-sm mt-1">{errors[name]}</p>}
@@ -171,7 +171,7 @@ export default function LitigationModal({
           value={form.notes}
           onChange={handleChange}
           rows={3}
-          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground"
+          className="w-full px-3 py-2 rounded-lg border border-border bg-bg text-fg"
         />
       </div>
     </ModalCard>

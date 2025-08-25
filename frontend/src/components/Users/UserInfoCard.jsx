@@ -49,7 +49,7 @@ const UserInfoCard = ({ user }) => (
       )}
 
       {/* بيانات التواصل */}
-      <ul className="text-sm text-foreground space-y-2">
+      <ul className="text-sm text-fg space-y-2">
         {user.phone && (
           <li className="flex items-center gap-2 justify-start sm:justify-end">
             <Phone size={16} className="text-primary-muted" />

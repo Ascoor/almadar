@@ -1,7 +1,6 @@
 // src/index.jsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom'; 
 import { registerSW } from 'virtual:pwa-register';
 import { SpinnerProvider } from './context/SpinnerContext';
 import App from './App';
@@ -9,7 +8,6 @@ import { Suspense } from 'react';
 import ThemeProvider from './utils/ThemeContext';
 import { AuthProvider } from '@/components/auth/AuthContext';
 import { Toaster } from 'sonner';
-import './index.css'; 
  
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -27,11 +25,10 @@ registerSW({
 
 root.render(
   <React.StrictMode>
-    <ThemeProvider>
-      <BrowserRouter>
+      <ThemeProvider>
         <AuthProvider>
           <SpinnerProvider>
-            <Toaster 
+            <Toaster
               position="top-center"
               toastOptions={{
                 duration: 3000,
@@ -43,7 +40,6 @@ root.render(
             </Suspense>
           </SpinnerProvider>
         </AuthProvider>
-      </BrowserRouter>
-    </ThemeProvider>
-  </React.StrictMode>
-);
+      </ThemeProvider>
+    </React.StrictMode>
+  );

@@ -38,7 +38,7 @@ function DropdownEditMenu({ children, align, ...rest }) {
         className={`rounded-full ${
           dropdownOpen
             ? 'bg-muted text-muted-foreground'
-            : 'text-muted-foreground hover:text-foreground'
+            : 'text-muted-foreground hover:text-fg'
         }`}
         aria-haspopup="true"
         onClick={() => setDropdownOpen(!dropdownOpen)}

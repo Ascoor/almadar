@@ -12,8 +12,8 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary-hover",
         accent: "bg-accent text-accent-foreground hover:bg-accent-hover",
         destructive: "bg-destructive text-destructive-foreground hover:opacity-90",
-        outline: "border border-border bg-background text-foreground hover:bg-muted",
-        ghost: "bg-transparent text-foreground hover:bg-muted",
+        outline: "border border-border bg-bg text-fg hover:bg-muted",
+        ghost: "bg-transparent text-fg hover:bg-muted",
         link: "bg-transparent text-primary underline-offset-4 hover:text-primary-hover",
       },
       size: {
@@ -52,7 +52,7 @@ Button.displayName = "Button";
 
 const ButtonCollection = () => {
   return (
-    <div className="flex flex-wrap gap-4 p-4 bg-background text-foreground rounded-lg shadow-md">
+    <div className="flex flex-wrap gap-4 p-4 bg-bg text-fg rounded-lg shadow-md">
       <Button variant="default">أساسي</Button>
       <Button variant="secondary">ثانوي</Button>
       <Button variant="accent">مميز</Button>

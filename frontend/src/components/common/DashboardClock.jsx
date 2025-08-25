@@ -59,7 +59,7 @@ export default function DashboardClock() {
         return (
           <div
             key={i}
-            className="absolute text-xs md:text-sm font-bold text-foreground"
+            className="absolute text-xs md:text-sm font-bold text-fg"
             style={{
               top: `${y}%`,
               left: `${x}%`,

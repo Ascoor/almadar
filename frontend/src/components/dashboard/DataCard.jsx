@@ -63,7 +63,7 @@ const DataCard = ({ title, items, type }) => {
       <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full text-right text-sm">
-            <thead className="bg-secondary/50 text-foreground">
+            <thead className="bg-secondary/50 text-fg">
               <tr>
                 {type === 'contracts' && (
                   <>

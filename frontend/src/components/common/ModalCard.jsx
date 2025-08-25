@@ -26,8 +26,8 @@ export default function ModalCard({
       >
         {/* Loading Overlay */}
         {loading && (
-          <div className="absolute inset-0 bg-card/80 dark:bg-background/60 backdrop-blur-sm flex items-center justify-center rounded-2xl z-10">
-            <span className="text-2xl font-bold text-foreground animate-pulse">
+          <div className="absolute inset-0 bg-card/80 dark:bg-bg/60 backdrop-blur-sm flex items-center justify-center rounded-2xl z-10">
+            <span className="text-2xl font-bold text-fg animate-pulse">
               جاري الحفظ...
             </span>
           </div>

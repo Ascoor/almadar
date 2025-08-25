@@ -5,43 +5,36 @@ import { AuthContext } from '@/components/auth/AuthContext';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Input } from '../../components/ui/input';
+import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
+const Login = () => {
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    onAuthStart();
 
     try {
-      const { success, message, requirePasswordChange } = await login(email, password);
+      const { success, message } = await login(email, password);
 
       if (success) {
         toast.success('✅ تم تسجيل الدخول بنجاح', { description: 'تم الدخول إلى النظام بنجاح.' });
-
-        if (requirePasswordChange) {
-          setShowPasswordChangeModal(true);
-        } else {
-          onAuthComplete(true);
-        }
+        navigate('/dashboard', { replace: true });
       } else {
         const errorMsg = message === 'Bad credentials'
           ? 'تأكد من صحة اسم المستخدم وكلمة المرور.'
           : message;
 
         toast.error('❌ فشل تسجيل الدخول', { description: errorMsg });
-        onAuthComplete(false);
       }
     } catch (error) {
       toast.error('حدث خطأ غير متوقع', { description: error.message });
-      onAuthComplete(false);
     }
   };
 
   const handleCancel = () => {
-    handleFormClose();
     setEmail('');
     setPassword('');
   };

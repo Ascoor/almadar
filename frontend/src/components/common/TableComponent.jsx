@@ -120,7 +120,7 @@ export default function TableComponent({
             type="text"
             placeholder="🔍 ابحث..."
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full md:w-64 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none bg-background text-foreground"
+            className="w-full md:w-64 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none bg-bg text-fg"
           />
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function TableComponent({
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full table-auto text-sm border rounded border-border">
-          <thead className="bg-secondary/80 text-foreground">
+          <thead className="bg-secondary/80 text-fg">
             <tr>
               <th className="p-3"></th>
               {headers.map((h) => (
@@ -246,7 +246,7 @@ export default function TableComponent({
               className={`px-3 py-1 text-sm rounded font-bold transition-all duration-200 ${
                 currentPage === i + 1
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-background text-primary hover:bg-primary/10'
+                  : 'bg-bg text-primary hover:bg-primary/10'
               }`}
             >
               {i + 1}

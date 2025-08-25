@@ -216,15 +216,14 @@ export function AuthProvider({ children }) {
       updateUserContext,
       updatePermissions,
       http: api,
+      isLoading: loading,
     }),
-    [user, token, roles, permissions]
+    [user, token, roles, permissions, loading]
   );
-
-  if (loading) return <div><AuthSpinner/></div>;
 
   return (
     <AuthContext.Provider value={authContextValue}>
-      {children}
+      {loading ? <AuthSpinner /> : children}
     </AuthContext.Provider>
   );
 }

@@ -6,7 +6,7 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
   className="
     relative z-10 flex flex-col items-center justify-center text-center space-y-4
     px-6 py-8 sm:py-10 rounded-3xl shadow-xl transition-all border border-border backdrop-blur-md
-    bg-gradient-accent text-foreground font-bold text-xl sm:text-2xl tracking-wide
+    bg-gradient-accent text-fg font-bold text-xl sm:text-2xl tracking-wide
     dark:shadow-lg
   "
 >

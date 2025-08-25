@@ -22,7 +22,7 @@ const GlobalConfirmDeleteModal = ({ isOpen, onClose, onConfirm, itemName }) => {
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition"
+            className="px-4 py-2 rounded-lg bg-muted text-fg hover:bg-muted/80 transition"
           >
             إلغاء
           </button>

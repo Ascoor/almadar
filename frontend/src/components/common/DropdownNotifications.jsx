@@ -41,7 +41,7 @@ export default function DropdownNotifications() {
     `}
         >
           <div className="flex justify-between px-4 py-3 border-b border-border">
-            <span className="text-sm font-semibold text-foreground">
+            <span className="text-sm font-semibold text-fg">
               الإشعارات
             </span>
             {notifications.length > 0 && (
@@ -65,7 +65,7 @@ export default function DropdownNotifications() {
                   onClick={() => onClickNotif(n)}
                   className={`p-4 cursor-pointer transition hover:bg-muted ${!n.read ? 'bg-primary/10' : ''}`}
                 >
-                  <div className="text-sm font-medium text-foreground">
+                  <div className="text-sm font-medium text-fg">
                     {n.icon} {n.title}
                   </div>
                   <div className="text-xs text-muted-foreground">

@@ -17,7 +17,7 @@ const theadStyle = `
 
 const thTdStyle = `
   px-4 py-3 border-b border-border
-  text-foreground text-center font-medium
+  text-fg text-center font-medium
 `;
 
 const rowHoverStyle = `

@@ -22,7 +22,7 @@ const DashboardCard = ({
       />
 
       <CardHeader className="flex flex-row items-center justify-between pb-0">
-        <CardTitle className="text-lg md:text-xl font-semibold text-foreground">
+        <CardTitle className="text-lg md:text-xl font-semibold text-fg">
           {title}
         </CardTitle>
         <div

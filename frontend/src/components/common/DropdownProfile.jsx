@@ -80,7 +80,7 @@ export default function UserMenu({ align = 'right' }) {
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="inline-flex items-center gap-2 focus:outline-none"
       >
-        <span className="hidden md:inline font-bold text-foreground">
+        <span className="hidden md:inline font-bold text-fg">
           {user?.name || 'زائر'}
         </span>
         <img
@@ -107,7 +107,7 @@ export default function UserMenu({ align = 'right' }) {
         leaveStart="opacity-100"
         leaveEnd="opacity-0"
       >
-        <ul className="text-sm text-foreground">
+        <ul className="text-sm text-fg">
           <li>
             <Link
               to="/profile"

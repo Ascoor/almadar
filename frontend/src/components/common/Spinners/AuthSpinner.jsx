@@ -21,7 +21,7 @@ const AuthSpinner = ({ onFinish }) => {
   }, [onFinish]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm text-foreground">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg/80 backdrop-blur-sm text-fg">
       <AnimatePresence>
         <motion.div
           key="spinner"
