@@ -96,7 +96,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   return (
     <aside
       dir={dir}
-      style={isDark ? { boxShadow: '0 0 15px rgba(34,211,238,0.35)' } : undefined}
+      style={{ boxShadow: isDark ? '0 0 15px rgba(34,211,238,0.35)' : '0 0 10px rgba(0,0,0,0.1)' }}
       className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-fg border-l  border-border transition-all duration-300 ${
         isLargeScreen
           ? isOpen
