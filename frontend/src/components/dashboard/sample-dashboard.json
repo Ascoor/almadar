@@ -1,0 +1,185 @@
+{
+  "kpis": [
+    {
+      "key": "open_cases",
+      "label_en": "Open Cases",
+      "label_ar": "القضايا المفتوحة",
+      "value": 120,
+      "deltaPct": 5,
+      "spark": [
+        { "x": "2024-07-01", "y": 10 },
+        { "x": "2024-07-02", "y": 15 },
+        { "x": "2024-07-03", "y": 20 },
+        { "x": "2024-07-04", "y": 18 },
+        { "x": "2024-07-05", "y": 22 },
+        { "x": "2024-07-06", "y": 25 },
+        { "x": "2024-07-07", "y": 28 },
+        { "x": "2024-07-08", "y": 30 }
+      ]
+    },
+    {
+      "key": "sla",
+      "label_en": "SLA %",
+      "label_ar": "نسبة SLA",
+      "value": 92,
+      "deltaPct": -3,
+      "spark": [
+        { "x": "2024-07-01", "y": 80 },
+        { "x": "2024-07-02", "y": 82 },
+        { "x": "2024-07-03", "y": 85 },
+        { "x": "2024-07-04", "y": 90 },
+        { "x": "2024-07-05", "y": 92 },
+        { "x": "2024-07-06", "y": 93 },
+        { "x": "2024-07-07", "y": 94 },
+        { "x": "2024-07-08", "y": 92 }
+      ]
+    },
+    {
+      "key": "high_risk",
+      "label_en": "High Risk",
+      "label_ar": "مخاطر عالية",
+      "value": 15,
+      "deltaPct": 2,
+      "spark": [
+        { "x": "2024-07-01", "y": 2 },
+        { "x": "2024-07-02", "y": 3 },
+        { "x": "2024-07-03", "y": 4 },
+        { "x": "2024-07-04", "y": 5 },
+        { "x": "2024-07-05", "y": 6 },
+        { "x": "2024-07-06", "y": 7 },
+        { "x": "2024-07-07", "y": 8 },
+        { "x": "2024-07-08", "y": 15 }
+      ]
+    },
+    {
+      "key": "contracts_pending",
+      "label_en": "Contracts Pending",
+      "label_ar": "عقود قيد الانتظار",
+      "value": 8,
+      "deltaPct": -1,
+      "spark": [
+        { "x": "2024-07-01", "y": 10 },
+        { "x": "2024-07-02", "y": 9 },
+        { "x": "2024-07-03", "y": 8 },
+        { "x": "2024-07-04", "y": 7 },
+        { "x": "2024-07-05", "y": 9 },
+        { "x": "2024-07-06", "y": 8 },
+        { "x": "2024-07-07", "y": 8 },
+        { "x": "2024-07-08", "y": 8 }
+      ]
+    }
+  ],
+  "dailyCounts": [
+    { "date": "2024-07-01", "opened": 5, "closed": 2 },
+    { "date": "2024-07-02", "opened": 7, "closed": 3 },
+    { "date": "2024-07-03", "opened": 6, "closed": 4 },
+    { "date": "2024-07-04", "opened": 8, "closed": 5 },
+    { "date": "2024-07-05", "opened": 9, "closed": 7 },
+    { "date": "2024-07-06", "opened": 5, "closed": 8 },
+    { "date": "2024-07-07", "opened": 4, "closed": 6 }
+  ],
+  "stageBuckets": [
+    { "stage": "intake", "count": 40 },
+    { "stage": "investigation", "count": 30 },
+    { "stage": "court", "count": 20 },
+    { "stage": "closed", "count": 10 }
+  ],
+  "riskBuckets": [
+    { "level": "high", "count": 15 },
+    { "level": "medium", "count": 25 },
+    { "level": "low", "count": 60 }
+  ],
+  "sessionsHeat": [
+    { "date": "2024-07-01", "sessions": 2 },
+    { "date": "2024-07-02", "sessions": 3 },
+    { "date": "2024-07-03", "sessions": 1 },
+    { "date": "2024-07-04", "sessions": 4 },
+    { "date": "2024-07-05", "sessions": 2 },
+    { "date": "2024-07-06", "sessions": 0 },
+    { "date": "2024-07-07", "sessions": 1 },
+    { "date": "2024-07-08", "sessions": 2 },
+    { "date": "2024-07-09", "sessions": 3 },
+    { "date": "2024-07-10", "sessions": 1 }
+  ],
+  "regionMetrics": [
+    {
+      "region_id": "tripoli",
+      "name_en": "Tripoli",
+      "name_ar": "طرابلس",
+      "total_cases": 60,
+      "high_risk": 10,
+      "cities": [
+        { "city": "Tripoli", "cases": 40, "lat": 32.8872, "lon": 13.1913 },
+        { "city": "Zawiya", "cases": 20, "lat": 32.7522, "lon": 12.7278 }
+      ]
+    },
+    {
+      "region_id": "benghazi",
+      "name_en": "Benghazi",
+      "name_ar": "بنغازي",
+      "total_cases": 30,
+      "high_risk": 5,
+      "cities": [
+        { "city": "Benghazi", "cases": 25, "lat": 32.1167, "lon": 20.0667 },
+        { "city": "Derna", "cases": 5, "lat": 32.767, "lon": 22.6391 }
+      ]
+    },
+    {
+      "region_id": "misrata",
+      "name_en": "Misrata",
+      "name_ar": "مصراتة",
+      "total_cases": 20,
+      "high_risk": 2,
+      "cities": [
+        { "city": "Misrata", "cases": 20, "lat": 32.375, "lon": 15.089 }
+      ]
+    }
+  ],
+  "recentItems": [
+    {
+      "id": "1",
+      "type": "case",
+      "title": "Contract dispute",
+      "client": "Acme Corp",
+      "region_id": "tripoli",
+      "status": "open",
+      "created_at": "2024-07-07"
+    },
+    {
+      "id": "2",
+      "type": "contract",
+      "title": "Employment agreement",
+      "client": "Beta LLC",
+      "region_id": "benghazi",
+      "status": "pending",
+      "created_at": "2024-07-06"
+    },
+    {
+      "id": "3",
+      "type": "consultation",
+      "title": "Tax inquiry",
+      "client": "Gamma Inc",
+      "region_id": "misrata",
+      "status": "closed",
+      "created_at": "2024-07-05"
+    },
+    {
+      "id": "4",
+      "type": "case",
+      "title": "Property case",
+      "client": "Delta Co",
+      "region_id": "tripoli",
+      "status": "investigation",
+      "created_at": "2024-07-04"
+    },
+    {
+      "id": "5",
+      "type": "case",
+      "title": "Lease dispute",
+      "client": "Epsilon",
+      "region_id": "benghazi",
+      "status": "court",
+      "created_at": "2024-07-03"
+    }
+  ]
+}
