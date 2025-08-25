@@ -148,6 +148,19 @@
     @apply bg-muted-foreground;
   }
 
+  /* Card styling */
+  .professional-card {
+    @apply bg-gradient-to-br from-card to-card-hover border border-border rounded-xl shadow-card transition-shadow;
+  }
+
+  .professional-card:hover {
+    @apply shadow-elegant;
+  }
+
+  .dark .professional-card {
+    @apply bg-gradient-to-br from-slate-800 via-slate-900 to-black shadow-neon;
+  }
+
   /* Animations */
   .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;

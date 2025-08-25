@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import {
   FileText,
@@ -48,10 +49,11 @@ interface Task {
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { isRTL } = useLanguage();
+  const { t } = useTranslation();
 
   const stats: Stat[] = [
     {
-      title: 'إجمالي العقود',
+      title: t('dashboard.totalContracts'),
       value: '1,247',
       change: '+12%',
       icon: FileText,
@@ -59,7 +61,7 @@ const DashboardPage: React.FC = () => {
       bgColor: 'bg-blue-100',
     },
     {
-      title: 'الاستشارات القانونية',
+      title: t('dashboard.legalAdviceRequests'),
       value: '856',
       change: '+8%',
       icon: Scale,
@@ -67,7 +69,7 @@ const DashboardPage: React.FC = () => {
       bgColor: 'bg-green-100',
     },
     {
-      title: 'التحقيقات الجارية',
+      title: t('dashboard.pendingInvestigations'),
       value: '24',
       change: '-3%',
       icon: Search,
@@ -75,7 +77,7 @@ const DashboardPage: React.FC = () => {
       bgColor: 'bg-orange-100',
     },
     {
-      title: 'القضايا النشطة',
+      title: t('dashboard.activeCases'),
       value: '18',
       change: '+5%',
       icon: Gavel,
@@ -147,21 +149,21 @@ const DashboardPage: React.FC = () => {
 
   const getPriorityText = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'عاجل';
-      case 'high': return 'مهم';
-      case 'medium': return 'متوسط';
-      default: return 'عادي';
+      case 'urgent': return t('dashboard.priority.urgent');
+      case 'high': return t('dashboard.priority.high');
+      case 'medium': return t('dashboard.priority.medium');
+      default: return t('dashboard.priority.normal');
     }
   };
 
   return (
     <AppLayout>
       <div className="space-y-8">
-        <SectionHeader
-          title={`مرحباً، ${user?.name}`}
-          subtitle="نظرة عامة على أنشطة المنصة والإحصائيات"
-          icon={BarChart3}
-        />
+          <SectionHeader
+            title={t('dashboard.welcomeUser', { name: user?.name })}
+            subtitle={t('dashboard.subtitle')}
+            icon={BarChart3}
+          />
 
         {/* Statistics Cards */}
         <motion.div
@@ -217,7 +219,7 @@ const DashboardPage: React.FC = () => {
               <CardHeader>
                 <CardTitle className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
                   <Clock className="w-5 h-5 text-primary" />
-                  <span>الأنشطة الأخيرة</span>
+                  <span>{t('dashboard.recentActivities')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -251,7 +253,7 @@ const DashboardPage: React.FC = () => {
                 ))}
                 <div className="pt-4 border-t">
                   <Button variant="outline" className="w-full">
-                    عرض جميع الأنشطة
+                    {t('dashboard.viewAllActivities')}
                   </Button>
                 </div>
               </CardContent>
@@ -268,7 +270,7 @@ const DashboardPage: React.FC = () => {
               <CardHeader>
                 <CardTitle className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
                   <Calendar className="w-5 h-5 text-primary" />
-                  <span>المهام القادمة</span>
+                  <span>{t('dashboard.upcomingTasks')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -288,13 +290,13 @@ const DashboardPage: React.FC = () => {
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      الموعد النهائي: {task.deadline}
+                      {t('dashboard.deadline')}: {task.deadline}
                     </p>
                   </motion.div>
                 ))}
                 <div className="pt-4 border-t">
                   <Button variant="outline" size="sm" className="w-full">
-                    عرض جميع المهام
+                    {t('dashboard.viewAllTasks')}
                   </Button>
                 </div>
               </CardContent>
@@ -310,29 +312,29 @@ const DashboardPage: React.FC = () => {
         >
           <Card className="professional-card">
             <CardHeader>
-              <CardTitle>إجراءات سريعة</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
-                  <FileText className="w-6 h-6" />
-                  <span className="text-sm">عقد جديد</span>
-                </Button>
-                <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
-                  <Scale className="w-6 h-6" />
-                  <span className="text-sm">استشارة جديدة</span>
-                </Button>
-                <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
-                  <Search className="w-6 h-6" />
-                  <span className="text-sm">تحقيق جديد</span>
-                </Button>
-                <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
-                  <Gavel className="w-6 h-6" />
-                  <span className="text-sm">قضية جديدة</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                <CardTitle>{t('dashboard.quickActions')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
+                      <FileText className="w-6 h-6" />
+                      <span className="text-sm">{t('dashboard.newContract')}</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
+                      <Scale className="w-6 h-6" />
+                      <span className="text-sm">{t('dashboard.newAdvice')}</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
+                      <Search className="w-6 h-6" />
+                      <span className="text-sm">{t('dashboard.newInvestigation')}</span>
+                    </Button>
+                    <Button variant="outline" className="h-auto p-4 flex flex-col space-y-2">
+                      <Gavel className="w-6 h-6" />
+                      <span className="text-sm">{t('dashboard.newCase')}</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
         </motion.div>
       </div>
     </AppLayout>

@@ -31,7 +31,23 @@
     "totalContracts": "Total Contracts",
     "activeCases": "Active Cases",
     "pendingInvestigations": "Pending Investigations",
-    "legalAdviceRequests": "Legal Advice Requests"
+    "legalAdviceRequests": "Legal Advice Requests",
+    "subtitle": "Overview of platform activities and statistics",
+    "welcomeUser": "Welcome, {{name}}",
+    "upcomingTasks": "Upcoming Tasks",
+    "viewAllActivities": "View all activities",
+    "viewAllTasks": "View all tasks",
+    "newContract": "New Contract",
+    "newAdvice": "New Consultation",
+    "newInvestigation": "New Investigation",
+    "newCase": "New Case",
+    "deadline": "Deadline",
+    "priority": {
+      "urgent": "Urgent",
+      "high": "High",
+      "medium": "Medium",
+      "normal": "Normal"
+    }
   },
   "contracts": {
     "title": "Contract Management",

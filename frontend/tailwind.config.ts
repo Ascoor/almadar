@@ -88,7 +88,8 @@ export default {
       },
       boxShadow: {
         'elegant': 'var(--shadow-elegant)',
-        'card': 'var(--shadow-card)'
+        'card': 'var(--shadow-card)',
+        'neon': '0 0 15px rgba(91,192,190,0.5)'
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',

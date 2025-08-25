@@ -31,7 +31,23 @@
     "totalContracts": "إجمالي العقود",
     "activeCases": "القضايا النشطة",
     "pendingInvestigations": "التحقيقات المعلقة",
-    "legalAdviceRequests": "طلبات الاستشارة"
+    "legalAdviceRequests": "طلبات الاستشارة",
+    "subtitle": "نظرة عامة على أنشطة المنصة والإحصائيات",
+    "welcomeUser": "مرحباً، {{name}}",
+    "upcomingTasks": "المهام القادمة",
+    "viewAllActivities": "عرض جميع الأنشطة",
+    "viewAllTasks": "عرض جميع المهام",
+    "newContract": "عقد جديد",
+    "newAdvice": "استشارة جديدة",
+    "newInvestigation": "تحقيق جديد",
+    "newCase": "قضية جديدة",
+    "deadline": "الموعد النهائي",
+    "priority": {
+      "urgent": "عاجل",
+      "high": "مهم",
+      "medium": "متوسط",
+      "normal": "عادي"
+    }
   },
   "contracts": {
     "title": "إدارة العقود",
