@@ -1,138 +1,57 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
- 
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Typography */
-  --font-body: 'Cairo', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
-  --font-heading: 'Inter', 'Cairo', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  /* Base */
+  --background: 255 255 255;
+  --foreground: 17 24 39;
 
-  /* Core surfaces & text */
-  --background: #FFFFFF;
-  --foreground: #444444; /* Charcoal */
-  --muted: #E6F2FA;      /* Light Blue Tint */
-  --muted-foreground: #3F4A56;
+  /* Brand */
+  --primary: 60 64 198;
+  --primary-foreground: 255 255 255;
 
-  --border: #E5E7EB; /* gray-200 */
-  --input: #D1D5DB;  /* gray-300 */
-  --ring: #2A8DD4;   /* Accent */
+  --secondary: 5 150 160;
+  --secondary-foreground: 255 255 255;
 
-  /* Brand families */
-  --primary: #4A6C21; /* deep olive for better contrast */
-  --primary-foreground: #FFFFFF;
-  --primary-hover: #3A5218; /* darker */
-  --primary-light: #98CC5A; /* lighter */
+  --accent: 99 102 241;
+  --muted: 107 114 128;
 
-  --secondary: #188387; /* Teal */
-  --secondary-foreground: #FFFFFF;
-  --secondary-hover: #10585B; /* darker */
-  --secondary-light: #1FADB2; /* lighter */
-
-  --accent: #2A8DD4; /* Medium Blue */
-  --accent-foreground: #FFFFFF;
-  --accent-hover: #2170A9; /* darker */
-  --accent-light: #53A3DD; /* lighter */
-
-  /* State colors */
-  --success: #98CC5A;
-  --success-foreground: #0F2A0F;
-
-  --warning: #F5C242;
-  --warning-foreground: #3A2A00;
-
-  --destructive: #B03035;
-  --destructive-foreground: #FFFFFF;
+  /* Status */
+  --success: 16 185 129;
+  --warning: 245 158 11;
+  --destructive: 239 68 68;
 
   /* Surfaces */
-  --card: #FFFFFF;
-  --card-foreground: #444444;
-  --card-hover: #F8FAFC;
+  --card: 255 255 255;
+  --card-foreground: 17 24 39;
+  --popover: 255 255 255;
+  --border: 229 231 235;
+  --ring: 60 64 198;
 
-  --popover: #FFFFFF;
-  --popover-foreground: #2B2B2B;
-
-  /* Sidebar suite */
-  --sidebar: #F7FAF6; /* very light olive-tinted */
-  --sidebar-foreground: #2F4515; /* dark olive text */
-  --sidebar-accent: #98CC5A;
-  --sidebar-accent-foreground: #0F2A0F;
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-border: #E5E7EB;
-  --sidebar-ring: var(--ring);
+  /* Sidebar */
+  --sidebar: 17 24 39;
+  --sidebar-foreground: 229 231 235;
+  --sidebar-muted: 100 116 139;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #65942D 0%, #188387 100%);
-  --gradient-secondary: linear-gradient(135deg, #2A8DD4 0%, #188387 100%);
-  --gradient-hero: linear-gradient(135deg, #E6F2FA 0%, #FFFFFF 100%);
-  --gradient-card: linear-gradient(180deg, #FFFFFF 0%, #F7FAF6 100%);
+  --gradient-primary: linear-gradient(135deg, rgb(60 64 198) 0%, rgb(99 102 241) 100%);
+  --gradient-card: linear-gradient(180deg, rgba(60 64 198/0.08) 0%, rgba(99 102 241/0.02) 100%);
 
-  /* Shadows (tokenized) */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.06);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 0 3px #2A8DD433; /* ring glow using accent */
+  /* Shadows */
+  --shadow-lg: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Fonts */
+  --font-heading: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  --font-body: "Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 
 .dark {
-  --background: #0E1A17;          /* deep teal-black */
-  --foreground: #E5E7EB;          /* gray-200 */
-  --muted: #0F2A2D;               /* deep muted teal */
-  --muted-foreground: #A3B1BF;    /* soft slate */
-
-  --border: #1F2A2D;
-  --input: #2A3A3D;
-  --ring: #53A3DD; /* brighter accent in dark */
-
-  --card: #0F2123;                /* close to #082E30 */
-  --card-foreground: #E5E7EB;
-  --card-hover: #153336;
-
-  --popover: #0F2123;
-  --popover-foreground: #E5E7EB;
-
-  /* Brands keep contrast‑safe variants */
-  --primary: #98CC5A;             /* use lighter primary for dark surfaces */
-  --primary-foreground: #0F2A0F;
-  --primary-hover: #7FBB38;
-  --primary-light: #B0D881;
-
-  --secondary: #1FADB2;           /* lighter teal for dark */
-  --secondary-foreground: #082E30;
-  --secondary-hover: #2BD3D9;
-  --secondary-light: #53DCE1;
-
-  --accent: #53A3DD;              /* lighter accent for dark */
-  --accent-foreground: #0C2235;
-  --accent-hover: #7EBAE5;
-  --accent-light: #A9D2F0;
-
-  --success: #A7D67A;
-  --success-foreground: #0E2410;
-
-  --warning: #F6CA5A;
-  --warning-foreground: #2A1F00;
-
-  --destructive: #C23A40;
-  --destructive-foreground: #FFFFFF;
-
-  --sidebar: #0F2123;
-  --sidebar-foreground: #DDE5D1;
-  --sidebar-accent: #4A6C21; /* darker olive for active */
-  --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-border: #1F2A2D;
-  --sidebar-ring: var(--ring);
-
-  --gradient-primary: linear-gradient(135deg, #10585B 0%, #98CC5A 100%);
-  --gradient-secondary: linear-gradient(135deg, #2170A9 0%, #1FADB2 100%);
-  --gradient-hero: linear-gradient(135deg, #0E1A17 0%, #0F2123 100%);
-  --gradient-card: linear-gradient(180deg, #0F2123 0%, #0E1A17 100%);
-
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.35);
-  --shadow-md: 0 4px 8px 0 rgb(0 0 0 / 0.45);
-  --shadow-lg: 0 12px 20px 0 rgb(0 0 0 / 0.5);
-  --shadow-xl: 0 20px 35px 0 rgb(0 0 0 / 0.55);
-  --shadow-glow: 0 0 0 3px #53A3DD55; 
+  --background: 3 7 18;
+  --foreground: 243 244 246;
+  --card: 9 13 28;
+  --card-foreground: 243 244 246;
+  --popover: 9 13 28;
+  --border: 31 41 55;
+  --sidebar: 3 7 18;
+  --sidebar-foreground: 203 213 225;
+  --sidebar-muted: 100 116 139;
 }
