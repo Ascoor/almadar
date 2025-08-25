@@ -4,22 +4,25 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 disabled:pointer-events-none",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary-hover",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary-hover",
-        accent: "bg-accent text-accent-foreground hover:bg-accent-hover",
-        destructive: "bg-destructive text-destructive-foreground hover:opacity-90",
-        outline: "border border-border bg-background text-foreground hover:bg-muted",
-        ghost: "bg-transparent text-foreground hover:bg-muted",
-        link: "bg-transparent text-primary underline-offset-4 hover:text-primary-hover",
+        default:
+          "bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow",
+        secondary: "bg-secondary text-fg hover:brightness-110",
+        accent: "bg-accent text-fg hover:brightness-110",
+        destructive: "bg-destructive text-fg hover:opacity-90",
+        outline:
+          "border border-border bg-bg text-fg hover:shadow-glow",
+        ghost: "bg-transparent text-fg hover:bg-bg/80",
+        link:
+          "bg-transparent text-primary underline-offset-4 hover:brightness-110",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 px-3 rounded-md",
-        lg: "h-11 px-8 rounded-lg",
+        sm: "h-9 px-3 rounded-xl",
+        lg: "h-11 px-8 rounded-2xl",
         icon: "h-10 w-10",
       },
     },
@@ -52,7 +55,7 @@ Button.displayName = "Button";
 
 const ButtonCollection = () => {
   return (
-    <div className="flex flex-wrap gap-4 p-4 bg-background text-foreground rounded-lg shadow-md">
+    <div className="flex flex-wrap gap-4 p-4 bg-bg text-fg rounded-lg shadow-md">
       <Button variant="default">أساسي</Button>
       <Button variant="secondary">ثانوي</Button>
       <Button variant="accent">مميز</Button>
