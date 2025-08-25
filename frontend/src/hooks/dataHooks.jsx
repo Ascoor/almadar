@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 
 import * as adviceTypesApi from '@/services/api/adviceTypes'; 
 import * as legalAdvicesApi from '@/services/api/legalAdvices';
-import * as dashboardApi from '@/services/api/dashboard';
 
 import * as notificationsApi from '@/services/api/notifications';
 import * as usersApi from '@/services/api/users'; 
@@ -42,18 +41,6 @@ export const useLegalAdvices = () => {
   return useQuery({
     queryKey: ['legalAdvices'],
     queryFn: legalAdvicesApi.getLegalAdvices, // ✅ الحرف A كبير هنا
-  });
-}; 
-export const useDashboardStats  = () => {
-  return useQuery({
-    queryKey: ['dashboardStatus'],
-    queryFn: dashboardApi.getDashboardCounts, // ✅ الحرف A كبير هنا
-  });
-};
-export const useRecentData  = () => {
-  return useQuery({
-    queryKey: ['allRecentData'],
-    queryFn: dashboardApi.getAllRecentData, // ✅ الحرف A كبير هنا
   });
 };
 export const useActionTypes = (type) => {

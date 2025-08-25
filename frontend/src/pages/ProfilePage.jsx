@@ -121,12 +121,18 @@ export default function ProfilePage() {
               onChange={handleFormChange}
               className="w-full"
             />
-            {preview && (
+            {preview ? (
               <img
                 src={preview}
                 alt="صورة المستخدم"
                 className="w-24 h-24 mt-2 rounded-full object-cover"
               />
+            ) : (
+              <div className="w-24 h-24 mt-2 rounded-full bg-muted flex items-center justify-center">
+                <span className="text-3xl font-semibold text-muted-foreground">
+                  {form.name ? form.name.charAt(0) : '?'}
+                </span>
+              </div>
             )}
           </div>
           <button

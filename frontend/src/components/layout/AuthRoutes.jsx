@@ -5,9 +5,10 @@ import GlobalSpinner from '../common/Spinners/GlobalSpinner';
 import { lazy } from 'react';
 import Forbidden from '@/pages/Forbidden';
 import ProtectedRoute from '../auth/ProtectedRoute.jsx';
-import ProfilePage from '../../pages/ProfilePage.jsx'; 
+import ProfilePage from '../../pages/ProfilePage.jsx';
 
-const Home = lazy(() => import('../dashboard/Dashboard'));
+// عرض لوحة التحكم الرئيسية التي تحتوي على الرسوم البيانية مباشرة
+const Home = lazy(() => import('../dashboard/DashboardHome'));
 const ProfileUser = lazy(() => import('../Settings/ProfileUser'));
 const Contracts = lazy(() => import('../../pages/ContractsPage.jsx'));
 const Investigations = lazy(() => import('../../pages/InvestigationsPage.jsx'));
