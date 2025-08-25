@@ -1,6 +1,4 @@
  
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
- 
 @import './styles/tokens.css';
 
 @tailwind base;
@@ -14,8 +12,6 @@
 
   html {
     font-family: var(--font-body);
-    direction: rtl;
-    lang: ar;
   }
 
   body {

@@ -9,7 +9,8 @@ import { Suspense } from 'react';
 import ThemeProvider from './utils/ThemeContext';
 import { AuthProvider } from '@/components/auth/AuthContext';
 import { Toaster } from 'sonner';
-import './index.css'; 
+import { LanguageProvider } from './context/LanguageContext';
+import './index.css';
  
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -27,23 +28,25 @@ registerSW({
 
 root.render(
   <React.StrictMode>
-    <ThemeProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <SpinnerProvider>
-            <Toaster 
-              position="top-center"
-              toastOptions={{
-                duration: 3000,
-                className: 'touch-target'
-              }}
-            />
-            <Suspense fallback={null}>  
-  <App />
-</Suspense>
-          </SpinnerProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <SpinnerProvider>
+              <Toaster
+                position="top-center"
+                toastOptions={{
+                  duration: 3000,
+                  className: 'touch-target'
+                }}
+              />
+              <Suspense fallback={null}>
+                <App />
+              </Suspense>
+            </SpinnerProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </ThemeProvider>
+    </LanguageProvider>
   </React.StrictMode>
 );
