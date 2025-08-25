@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -78,3 +79,19 @@ const Loaders = {
 };
 
 export default Loaders;
+=======
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+
+/** Basic loader skeleton for dashboard widgets */
+export function CardLoader() {
+  return (
+    <Card className="p-4" aria-label="loader">
+      <Skeleton className="h-6 w-1/3 mb-4" />
+      <Skeleton className="h-4 w-full" />
+    </Card>
+  );
+}
+
+export default { CardLoader };
+>>>>>>> d9039229ee7b761f0a81db294b0be7d0ad02d048

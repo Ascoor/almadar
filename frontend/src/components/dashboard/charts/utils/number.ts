@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 /**
  * Number formatting utilities with internationalization support
@@ -81,4 +82,31 @@ export function formatCompact(value: number, locale = 'ar-EG'): string {
 export function formatDelta(value: number, locale = 'ar-EG'): string {
   const sign = value > 0 ? '+' : '';
   return `${sign}${formatPercent(value / 100, locale)}`;
+=======
+/**
+ * Number formatting helpers using Intl APIs.
+ */
+export function formatNumber(value: number, locale = 'en'): string {
+  return new Intl.NumberFormat(locale).format(value);
+}
+
+export function formatCurrency(
+  value: number,
+  locale = 'en',
+  currency = 'USD'
+): string {
+  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
+}
+
+export function formatPercent(
+  value: number,
+  locale = 'en',
+  digits = 1
+): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'percent',
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
+>>>>>>> d9039229ee7b761f0a81db294b0be7d0ad02d048
 }

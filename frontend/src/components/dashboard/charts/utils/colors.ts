@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 /**
  * Color utilities for charts and visualizations
@@ -15,11 +16,16 @@ export const CHART_COLORS = [
 
 // Heat map colors
 export const HEAT_COLORS = [
+=======
+/** Color scales derived from CSS variables */
+export const heatScale = [
+>>>>>>> d9039229ee7b761f0a81db294b0be7d0ad02d048
   'rgb(var(--heat-1))',
   'rgb(var(--heat-2))',
   'rgb(var(--heat-3))',
   'rgb(var(--heat-4))',
   'rgb(var(--heat-5))',
+<<<<<<< HEAD
 ] as const;
 
 // Status colors
@@ -67,4 +73,16 @@ export function generateGradient(
   opacity = 0.3
 ): string {
   return `url(#${id})`;
+=======
+];
+
+const seriesVars = ['--primary', '--secondary', '--accent', '--warning', '--success', '--destructive'];
+
+/**
+ * Returns a color from the palette with optional alpha.
+ */
+export function getSeriesColor(index: number, alpha = 1): string {
+  const variable = seriesVars[index % seriesVars.length];
+  return `rgb(var(${variable}) / ${alpha})`;
+>>>>>>> d9039229ee7b761f0a81db294b0be7d0ad02d048
 }
