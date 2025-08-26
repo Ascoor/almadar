@@ -10,6 +10,8 @@ export default function LibyaMap({ data = [], onRegionClick }) {
     return m;
   }, [data]);
 
+  const [tooltip, setTooltip] = React.useState(null);
+
   const pickCode = (geo) =>
     geo.properties?.id ??
     geo.id ??
@@ -20,8 +22,21 @@ export default function LibyaMap({ data = [], onRegionClick }) {
     geo.properties?.name ??
     geo.rsmKey;
 
+  const handleEnter = (geo, evt) => {
+    const code = pickCode(geo);
+    const count = counts[code] || 0;
+    const name =
+      geo.properties?.NAME_AR || geo.properties?.NAME_EN || code;
+    setTooltip({
+      x: evt.clientX,
+      y: evt.clientY,
+      name,
+      count,
+    });
+  };
+
   return (
-    <div className="w-full h-[420px]">
+    <div className="relative w-full h-[420px]">
       <ComposableMap projection="geoMercator" projectionConfig={{ scale: 2000, center: [17, 27] }}>
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
@@ -33,6 +48,8 @@ export default function LibyaMap({ data = [], onRegionClick }) {
                   key={geo.rsmKey}
                   geography={geo}
                   onClick={() => onRegionClick?.(code)}
+                  onMouseEnter={(e) => handleEnter(geo, e)}
+                  onMouseLeave={() => setTooltip(null)}
                   fill={count ? "var(--primary, #12d2b0)" : "#eee"}
                   stroke="#999"
                   style={{
@@ -46,6 +63,14 @@ export default function LibyaMap({ data = [], onRegionClick }) {
           }
         </Geographies>
       </ComposableMap>
+      {tooltip && (
+        <div
+          className="absolute bg-foreground text-background text-xs px-2 py-1 rounded shadow pointer-events-none"
+          style={{ left: tooltip.x, top: tooltip.y }}
+        >
+          {tooltip.name}: {tooltip.count}
+        </div>
+      )}
     </div>
   );
 }
