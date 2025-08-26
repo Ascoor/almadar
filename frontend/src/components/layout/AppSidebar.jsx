@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { LogoArtGreen, LogoTextArtGreen, LogoTextArtWhite } from '../../assets/images';
+import { LogoArt, LogoTextArtGreen, LogoTextArtWhite } from '../../assets/images';
 import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
   ArchiveIcon, CourtHouseIcon, LawBookIcon
@@ -52,7 +52,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   // ✅ Fix: choose logo by sidebar state + theme
   const logoSrc = isOpen
     ? (isDark ? LogoTextArtWhite : LogoTextArtGreen) // open → text logo (white in dark, green in light)
-    : LogoArtGreen;                                       // closed → compact mark
+    : LogoArt;                                       // closed → compact mark
 
   const navConfig = useMemo(() => [
     { id: 'home', label: t('home'), to: '/', icon: <DashboardIcon size={20} /> },
@@ -96,7 +96,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   return (
     <aside
       dir={dir}
-      style={{ boxShadow: isDark ? '0 0 15px rgba(34,211,238,0.35)' : '0 0 10px rgba(0,0,0,0.1)' }}
+      style={isDark ? { boxShadow: '0 0 15px rgba(34,211,238,0.35)' } : undefined}
       className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-fg border-l  border-border transition-all duration-300 ${
         isLargeScreen
           ? isOpen
@@ -115,7 +115,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
         <img
           src={logoSrc}
           alt="Almadar Logo"
-          className={`transition-all duration-300 ${isOpen ? 'h-12' : 'h-12'}`}
+          className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
         />
         {isOpen && <button onClick={onToggle} className="absolute top-4 left-4">×</button>}
       </div>

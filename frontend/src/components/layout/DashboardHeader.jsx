@@ -25,8 +25,12 @@ export default function Header({ isOpen, user, onToggleSidebar }) {
   return (
     <nav
       dir={dir}
-      style={{ boxShadow: isDark ? '10px 0px 5px 0px rgba(34,211,238,0.35)' : '0 0 10px rgba(0,0,0,0.1)' }}
-      className={`
+     style={{
+  boxShadow: isDark
+    ? '0 10px 30px -10px rgba(34,211,238,0.35)'  // إضاءة للأسفل فقط
+    : '0 6px 12px -4px rgba(0,0,0,0.1)'          // ظل خفيف للأسفل فقط
+}}
+ className={`
         fixed top-0 left-0 right-0
         transition-all duration-300
         ${marginClass}
@@ -35,7 +39,7 @@ export default function Header({ isOpen, user, onToggleSidebar }) {
         text-gray-900 dark:text-white
         dark:border-navy-dark
         shadow-md dark:shadow-[0_01px_#16b8f640]
-        z-20
+        z-30
       `}
     >
       <Button variant="ghost" size="icon" onClick={onToggleSidebar}>

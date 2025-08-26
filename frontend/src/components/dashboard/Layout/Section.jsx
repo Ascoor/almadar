@@ -1,11 +1,39 @@
-import React from 'react';
+import React from "react";
+import { motion } from "framer-motion";
 
-export default function Section({ title, description, children }) {
+export default function Section({ 
+  title, 
+  description, 
+  actions, 
+  children, 
+  className = "",
+  delay = 0 
+}) {
   return (
-    <section className="space-y-2" aria-label={title}>
-      {title && <h2 className="text-xl font-semibold">{title}</h2>}
-      {description && <p className="text-sm text-muted">{description}</p>}
+    <motion.section 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      className={`glass-card hover-scale ${className}`}
+    >
+      {(title || actions) && (
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            {title && (
+              <h3 className="text-lg font-semibold text-gradient mb-1">
+                {title}
+              </h3>
+            )}
+            {description && (
+              <p className="text-sm text-muted-foreground">{description}</p>
+            )}
+          </div>
+          {actions && (
+            <div className="flex items-center gap-2">{actions}</div>
+          )}
+        </div>
+      )}
       {children}
-    </section>
+    </motion.section>
   );
 }
