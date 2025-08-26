@@ -1,8 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, CheckCircle, Clock, XCircle } from "lucide-react";
-import { t } from "@/utils/i18n";
-import { useLanguage } from "@/context/LanguageContext";
+import {  useLanguage } from "@/context/LanguageContext";
 
 const statusIcons = {
   "Open": Clock,
@@ -21,27 +20,27 @@ const statusColors = {
 };
 
 export default function CompactTable({ rows = [] }) {
-  const { language, direction } = useLanguage();
+  const { lang, dir ,t} = useLanguage();
   return (
     <div className="glass rounded-2xl overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border/50">
-              <th className={`${direction === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
-                {t('title_header', language)}
+              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+                {t('title_header', lang)}
               </th>
-              <th className={`${direction === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
-                {t('type', language)}
+              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+                {t('type', lang)}
               </th>
-              <th className={`${direction === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
-                {t('region', language)}
+              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+                {t('region', lang)}
               </th>
-              <th className={`${direction === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
-                {t('status', language)}
+              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+                {t('status', lang)}
               </th>
-              <th className={`${direction === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
-                {t('date', language)}
+              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+                {t('date', lang)}
               </th>
             </tr>
           </thead>
@@ -76,7 +75,7 @@ export default function CompactTable({ rows = [] }) {
                   <td className="p-4">
                     <div className={`flex items-center gap-2 ${statusColor}`}>
                       <StatusIcon className="w-4 h-4" />
-                      {t(row.status.toLowerCase(), language)}
+                      {t(row.status.toLowerCase(), lang)}
                     </div>
                   </td>
                   <td className="p-4">

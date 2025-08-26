@@ -1,91 +1,64 @@
 import React from "react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
-import { motion } from "framer-motion";
 
-const GEO_URL = "/geo/libya.json";
 
-const pickCode = (geo) =>
-  geo.properties?.id ??
-  geo.id ??
-  geo.properties?.ADM1_PCODE ??
-  geo.properties?.ISO_3166_2 ??
-  geo.properties?.NAME_EN ??
-  geo.properties?.NAME_AR ??
-  geo.properties?.name ??
-  geo.rsmKey;
+const GEO_URL = "/geo/libya.json"; // كفاية كده
+export default function LibyaMap({ data = [], onRegionClick, isDark = false }) {
+  // اختياري: تحقّق سريع يمنع الريندر قبل الجاهزية
+  const [ready, setReady] = React.useState(false);
+  const [err, setErr] = React.useState(null);
 
-export default function LibyaMap({ data = [], onRegionClick, height = 400 }) {
-  // Create counts map for regions
-  const counts = React.useMemo(() => {
-    const countMap = {};
-    data.forEach(d => {
-      countMap[d.regionCode] = d.count;
-    });
-    return countMap;
-  }, [data]);
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch(GEO_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status} for ${GEO_URL}`);
+        const j = await res.json();
+        // لازم يكون FeatureCollection أو Topology
+        const valid =
+          j && typeof j === "object" &&
+          ((j.type === "FeatureCollection" && Array.isArray(j.features)) ||
+           (j.type === "Topology" && j.objects && Object.keys(j.objects).length));
+        if (!valid) throw new Error(`Invalid GeoJSON/TopoJSON shape: ${j?.type || typeof j}`);
+        if (mounted) setReady(true);
+      } catch (e) {
+        console.error("Geo check failed:", e);
+        if (mounted) setErr(e.message || String(e));
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
-  // Get max count for color scaling
-  const maxCount = Math.max(...data.map(d => d.count), 1);
+  if (err) {
+    return (
+      <div className="rounded-xl p-4 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300">
+        Map load error: {err}<br/>
+        تأكد من وجود <code>/public/geo/libya.json</code> وأنه صالح.
+      </div>
+    );
+  }
+  if (!ready) return <div className="text-sm opacity-70">Loading map…</div>;
 
-  const getRegionColor = (count) => {
-    if (!count) return "hsl(var(--muted) / 0.3)";
-    
-    const intensity = count / maxCount;
-    if (intensity > 0.7) return "hsl(84, 81%, 56%)"; // Lime for high
-    if (intensity > 0.4) return "hsl(172, 84%, 55%)"; // Turquoise for medium
-    return "hsl(172, 84%, 75%)"; // Light turquoise for low
-  };
-
+  // مرِّر URL فقط — اترك التحميل لـ Geographies
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-      className="w-full"
-      style={{ height }}
-    >
-      <ComposableMap 
-        projection="geoMercator" 
-        projectionConfig={{ 
-          scale: 2000, 
-          center: [17, 27] 
-        }}
-        className="w-full h-full"
-      >
+    <div className="w-full h-[360px]">
+      <ComposableMap projection="geoMercator" projectionConfig={{ scale: 2000, center: [17, 27] }}>
         <Geographies geography={GEO_URL}>
           {({ geographies }) =>
-            geographies.map((geo) => {
-              const regionCode = pickCode(geo);
-              const count = counts[regionCode] || 0;
-              const regionName = geo.properties?.name || geo.properties?.name_en || regionCode;
-              
-              return (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  onClick={() => onRegionClick?.(regionCode)}
-                  fill={getRegionColor(count)}
-                  stroke="hsl(var(--border))"
-                  strokeWidth={1}
-                  className="cursor-pointer transition-all duration-300 hover:brightness-110"
-                  style={{
-                    default: { outline: "none" },
-                    hover: { 
-                      outline: "none", 
-                      filter: "brightness(1.1) saturate(1.2)",
-                      stroke: "hsl(var(--primary))",
-                      strokeWidth: 2
-                    },
-                    pressed: { outline: "none" }
-                  }}
-                >
-                  <title>{`${regionName}: ${count.toLocaleString()} قضية`}</title>
-                </Geography>
-              );
-            })
+            geographies.map((g) => (
+              <Geography
+                key={g.rsmKey}
+                geography={g}
+                onClick={() => onRegionClick?.(g.properties?.id || g.id || g.rsmKey)}
+                fill={isDark ? "#1f2937" : "#e5e7eb"}
+                stroke={isDark ? "#334155" : "#9ca3af"}
+                style={{ default:{ outline:"none" }, hover:{ outline:"none", opacity:0.9 }, pressed:{ outline:"none" } }}
+              />
+            ))
           }
         </Geographies>
       </ComposableMap>
-    </motion.div>
+    </div>
   );
 }

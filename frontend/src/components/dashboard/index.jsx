@@ -1,3 +1,4 @@
+// Dashboard components barrel exports
 export { default as Section } from "./Layout/Section";
 export { default as Toolbar } from "./Filters/Toolbar";
 export { default as KpiCard } from "./KPI/KpiCard";

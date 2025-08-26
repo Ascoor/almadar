@@ -1,11 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, Filter, RotateCcw } from "lucide-react";
-import { t } from "@/utils/i18n";
+ 
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Toolbar({ value, onChange }) {
-  const { language } = useLanguage();
+  const { lang,t} = useLanguage();
   const [local, setLocal] = React.useState(value ?? { 
     period: "last-12m", 
     region: "ALL", 
@@ -34,9 +34,9 @@ export default function Toolbar({ value, onChange }) {
           value={local.period} 
           onChange={e => setLocal(v => ({...v, period: e.target.value}))}
         >
-          <option value="last-12m">{t('last12Months', language)}</option>
-          <option value="ytd">{t('yearToDate', language)}</option>
-          <option value="last-90d">{t('last90Days', language)}</option>
+          <option value="last-12m">{t('last12Months', lang)}</option>
+          <option value="ytd">{t('yearToDate', lang)}</option>
+          <option value="last-90d">{t('last90Days', lang)}</option>
         </select>
       </div>
 
@@ -47,12 +47,12 @@ export default function Toolbar({ value, onChange }) {
           value={local.region} 
           onChange={e => setLocal(v => ({...v, region: e.target.value}))}
         >
-          <option value="ALL">{t('allRegions', language)}</option>
-          <option value="TRP">{t('tripoli', language)}</option>
-          <option value="BEN">{t('benghazi', language)}</option>
-          <option value="MIS">{t('misrata', language)}</option>
-          <option value="ZAW">{t('zawiya', language)}</option>
-          <option value="SBH">{t('sebha', language)}</option>
+          <option value="ALL">{t('allRegions', lang)}</option>
+          <option value="TRP">{t('tripoli', lang)}</option>
+          <option value="BEN">{t('benghazi', lang)}</option>
+          <option value="MIS">{t('misrata', lang)}</option>
+          <option value="ZAW">{t('zawiya', lang)}</option>
+          <option value="SBH">{t('sebha', lang)}</option>
         </select>
       </div>
 
@@ -63,12 +63,12 @@ export default function Toolbar({ value, onChange }) {
           value={local.status} 
           onChange={e => setLocal(v => ({...v, status: e.target.value}))}
         >
-          <option value="ALL">{t('allStatuses', language)}</option>
-          <option value="Open">{t('open', language)}</option>
-          <option value="InProgress">{t('inProgress', language)}</option>
-          <option value="Won">{t('won', language)}</option>
-          <option value="Lost">{t('lost', language)}</option>
-          <option value="Closed">{t('closed', language)}</option>
+          <option value="ALL">{t('allStatuses', lang)}</option>
+          <option value="Open">{t('open', lang)}</option>
+          <option value="InProgress">{t('inProgress', lang)}</option>
+          <option value="Won">{t('won', lang)}</option>
+          <option value="Lost">{t('lost', lang)}</option>
+          <option value="Closed">{t('closed', lang)}</option>
         </select>
       </div>
 
@@ -78,7 +78,7 @@ export default function Toolbar({ value, onChange }) {
           onClick={() => setLocal({period: "last-12m", region: "ALL", status: "ALL"})}
         >
           <RotateCcw className="w-4 h-4" />
-          {t('reset', language)}
+          {t('reset', lang)}
         </button>
       </div>
     </motion.div>

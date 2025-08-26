@@ -1,107 +1,139 @@
 /* -----------------------------------------------------------
    Libya Legal Dashboard — Color Tokens (Light + Dark)
+   Libya Dashboard — Color Tokens (Light + Dark)
    ----------------------------------------------------------- */
 :root {
   /* Fonts */
   --font-heading: 'Cairo', sans-serif;
   --font-body: 'Cairo', sans-serif;
-  /* Base surfaces & text */
-  --bg:            #f6f7f9;
-  --fg:            #0e1521;
-  --muted:         #6b7280;
+  
+  /* Libya Dashboard Color System - Light Mode */
+  --bg: hsl(209 20% 97%);
+  --fg: hsl(220 17% 7%);
 
-  /* Cards / popovers */
-  --card:          #ffffff;
-  --popover:       #ffffff;
+  --card: hsl(0 0% 100%);
+  --popover: hsl(0 0% 100%);
 
-  /* Actions */
-  --primary:       #12d2b0; /* neon teal */
-  --primary-foreground: #041316;
-  --secondary:     #2dd4bf; /* mint teal */
-  --accent:        #a3e635; /* lime accent */
+  /* Primary - Turquoise */
+  --primary: hsl(172 84% 45%);
+  --primary-foreground: hsl(172 100% 4%);
 
-  /* State feedback */
-  --success:       #22c55e;
-  --warning:       #f59e0b;
-  --destructive:   #ef4444;
+  /* Secondary - Mint */
+  --secondary: hsl(172 84% 65%);
+  --accent: hsl(84 81% 56%);
 
-  /* Lines & rings */
-  --border:        #e5e7eb;
-  --input:         #d1d5db;
-  --ring:          #10b981;
+  --muted: hsl(210 40% 96%);
+  --muted-foreground: hsl(215 16% 47%);
+
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(210 40% 98%);
+
+  --border: hsl(214 32% 91%);
+  --input: hsl(214 32% 91%);
+  --ring: hsl(172 84% 45%);
 
   /* Sidebar */
-  --sidebar-bg:    #ecfdf5;
-  --sidebar-fg:    #064e3b;
-  --sidebar-muted: #6b7280;
-  --sidebar-active:#0ea5a5;
+  
+  --sidebar-bg: hsl(0 0% 98%);
+  --sidebar-fg: hsl(240 5% 26%);
+  --sidebar-muted: hsl(240 5% 96%);
+  --sidebar-active: hsl(172 84% 45%);
 
-  /* Charts */
-  --chart-1: #10b981;
-  --chart-2: #22d3ee;
-  --chart-3: #84cc16;
-  --chart-4: #f59e0b;
-  --chart-5: #60a5fa;
-  --chart-6: #eab308;
-  --chart-7: #34d399;
-  --chart-8: #fb923c;
+  /* Glass effect variables */
+  --glass-bg: 255 255 255 / 0.85;
+  --glass-border: 255 255 255 / 0.2;
+  --glass-shadow: 0 8px 32px hsla(172,84%,45%,0.1);
 
-  /* Map gradient */
-  --map-start: #16a34a;
-  --map-mid:   #84cc16;
-  --map-end:   #22d3ee;
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, hsl(172,84%,45%), hsl(84,81%,56%));
+  --gradient-subtle: linear-gradient(180deg, hsl(209,20%,97%), hsl(172,84%,95%));
 
-  /* Shadows (light) */
-  --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.05);
-  --shadow-md: 0 8px 24px rgba(2, 6, 23, 0.08);
-  --shadow-lg: 0 16px 48px rgba(2, 6, 23, 0.10);
-  --: 0 0 0 2px rgba(18,210,176,0.25), 0 12px 40px rgba(18,210,176,0.25);
+  /* Charts */ 
+  --chart-1: hsl(172 84% 45%);
+  --chart-2: hsl(172 84% 65%);
+  --chart-3: hsl(84 81% 56%);
+  --chart-4: hsl(0 84% 60%);
+  --chart-5: hsl(210 40% 96%);
+  --chart-6: hsl(215 16% 47%);
+  --chart-7: hsl(172 84% 55%);
+  --chart-8: hsl(84 81% 66%);
+
+  /* Map gradient */ 
+  --map-start: hsl(172 84% 45%);
+  --map-mid: hsl(84 81% 56%);
+  --map-end: hsl(172 84% 65%);
+
+  /* Shadows (light) */ 
+  --shadow-sm: 0 1px 2px rgba(2,6,23,0.05);
+  --shadow-md: 0 8px 32px rgba(2,6,23,0.08);
+  --shadow-lg: 0 16px 48px rgba(2,6,23,0.10);
+  --shadow-glow: 0 0 0 2px rgba(18,210,176,0.25), 0 12px 40px rgba(18,210,176,0.25);
 }
 /* DARK THEME */
 
-.dark {
-  --bg:            #0b1016;
-  --fg:            #e7f5f5;
-  --muted:         #93a3b5;
-  --card:          #0f141b;
-  --popover:       #0f141b;
+.dark { 
+    /* Libya Dashboard Color System - Dark Mode */
+  --bg: hsl(220 17% 7%);
+  --fg: hsl(210 40% 93%);
 
-  --primary:       #16e1bf;
-  --primary-foreground: #061112;
-  --secondary:     #22d3ee;
-  --accent:        #9ae52f;
+  --card: hsl(220 17% 11%);
+  --popover: hsl(220 17% 11%);
 
-  --success:       #22c55e;
-  --warning:       #f59e0b;
-  --destructive:   #ef4444;
+  /* Primary - Turquoise (brighter in dark) */
+  --primary: hsl(172 84% 55%);
+  --primary-foreground: hsl(172 100% 4%);
 
-  --border:        #1b2330;
-  --input:         #1f2937;
-  --ring:          #22d3ee;
+  /* Secondary - Mint */
+  --secondary: hsl(172 84% 65%);
+  --accent: hsl(84 81% 66%);
 
-  --sidebar-bg:    #0c1218;
-  --sidebar-fg:    #e7f5f5;
-  --sidebar-muted: #8aa0b3;
-  --sidebar-active:#16e1bf;
+  --muted: hsl(217 33% 18%);
+  --muted-foreground: hsl(215 20% 65%);
 
-  --chart-1: #19c6ae;
-  --chart-2: #22d3ee;
-  --chart-3: #9ae52f;
-  --chart-4: #f59e0b;
-  --chart-5: #60a5fa;
-  --chart-6: #7dd3fc;
-  --chart-7: #34d399;
-  --chart-8: #fb923c;
-  --chart-9: #cae5f1;
+  --destructive: hsl(0 63% 31%);
+  --destructive-foreground: hsl(210 40% 98%);
 
-  --map-start: #1dbf7a;
-  --map-mid:   #9ae52f;
-  --map-end:   #22d3ee;
+  --border: hsl(217 33% 18%);
+  --input: hsl(217 33% 18%);
+  --ring: hsl(172 84% 55%);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
-  --shadow-glow: 0 0 0 2px rgba(34,211,238,0.28), 0 16px 60px rgba(26, 214, 178, 0.35);
+  /* Sidebar */
+  --sidebar-bg: hsl(240 6% 10%);
+  --sidebar-fg: hsl(240 5% 96%);
+  --sidebar-muted: hsl(240 4% 16%);
+  --sidebar-active: hsl(172 84% 55%);
+
+  /* Glass effect variables - Dark */
+  --glass-bg: 0 0 0 / 0.4;
+  --glass-border: 255 255 255 / 0.1;
+  --glass-shadow: 0 8px 32px hsla(172,84%,45%,0.15);
+
+  /* Gradients - Dark */
+  --gradient-primary: linear-gradient(135deg, hsl(172,84%,55%), hsl(84,81%,66%));
+  --gradient-subtle: linear-gradient(180deg, hsl(220,17%,7%), hsl(172,84%,8%));
+
+  /* Charts */
+  --chart-1: hsl(172 84% 55%);
+  --chart-2: hsl(172 84% 65%);
+  --chart-3: hsl(84 81% 66%);
+  --chart-4: hsl(0 63% 31%);
+  --chart-5: hsl(210 40% 93%);
+  --chart-6: hsl(215 20% 65%);
+  --chart-7: hsl(172 84% 45%);
+  --chart-8: hsl(84 81% 56%);
+  --chart-9: hsl(240 5% 96%);
+
+  /* Map gradient */
+  --map-start: hsl(172 84% 55%);
+  --map-mid: hsl(84 81% 66%);
+  --map-end: hsl(172 84% 45%);
+
+  /* Shadows (dark) */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.45);
+  --shadow-lg: 0 24px 60px rgba(0,0,0,0.55);
+  --shadow-glow: 0 0 0 2px rgba(34,211,238,0.28), 0 16px 60px rgba(26,214,178,0.35);
 }
-/* Utilities */
-:root, .dark { --radius: 16px; }
+ 
+/* Radius */
+:root, .dark { --radius: 1rem; }

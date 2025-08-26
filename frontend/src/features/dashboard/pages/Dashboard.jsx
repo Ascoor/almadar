@@ -10,10 +10,9 @@ import {
   BarChartBasic,
   AreaChartBasic,
   PieChartBasic,
-  LibyaMapPro,
+  LibyaMapPro, 
   CompactTable
-} from "@/components/dashboard"; 
-import { t, formatNumber } from "@/utils/i18n";
+} from "@/components/dashboard";  
 
 // Import API functions
 import {
@@ -29,7 +28,7 @@ import {
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Dashboard() { 
-  const { language, direction } = useLanguage();
+  const { lang, dir ,t, formatNumber } = useLanguage();
   
   const [filters, setFilters] = useState({
     period: "last-12m",
@@ -93,14 +92,14 @@ export default function Dashboard() {
           className="text-center"
         >
           <div className="w-12 h-12 mx-auto mb-4 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-          <p className="text-muted-foreground">{t('loading', language)}</p>
+          <p className="text-muted-foreground">{t('loading', lang)}</p>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen" dir={direction}>
+    <div className="min-h-screen" dir={dir }>
  
       <div className="container mx-auto px-6 py-6 space-y-6">
         {/* Header */}
@@ -110,10 +109,10 @@ export default function Dashboard() {
           className="text-center mb-8"
         >
           <h1 className="text-4xl font-bold text-gradient mb-2">
-            {t('title', language)}
+            {t('title', lang)}
           </h1>
           <p className="text-muted-foreground">
-            {t('subtitle', language)}
+            {t('subtitle', lang)}
           </p>
         </motion.div>
 
@@ -126,23 +125,23 @@ export default function Dashboard() {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <KpiCard
-            title={t('totalCases', language)}
-            value={formatNumber(data.kpis.totalCases, language)}
+            title={t('totalCases', lang)}
+            value={formatNumber(data.kpis.totalCases, lang)}
             delta={12}
             miniSeries={getMiniSeries(8)}
             icon={Scale}
             delay={0.1}
           />
           <KpiCard
-            title={t('wonCases', language)}
-            value={formatNumber(data.kpis.wonCases, language)}
+            title={t('wonCases', lang)}
+            value={formatNumber(data.kpis.wonCases, lang)}
             delta={8}
             miniSeries={getMiniSeries(8)}
             icon={CheckCircle}
             delay={0.2}
           />
           <KpiCard
-            title={t('successRate', language)}
+            title={t('successRate', lang)}
             value={`${data.kpis.successRate}%`}
             delta={5}
             miniSeries={getMiniSeries(8)}
@@ -150,8 +149,8 @@ export default function Dashboard() {
             delay={0.3}
           />
           <KpiCard
-            title={t('activeSessions', language)}
-            value={formatNumber(data.kpis.activeSessions, language)}
+            title={t('activeSessions', lang)}
+            value={formatNumber(data.kpis.activeSessions, lang)}
             delta={-3}
             miniSeries={getMiniSeries(8)}
             icon={Users}
@@ -161,8 +160,8 @@ export default function Dashboard() {
 
         {/* Professional Libya Map */}
         <ChartCard
-          title={t('geographicDistribution', language)}
-          description={t('geoDescription', language)}
+          title={t('geographicDistribution', lang)}
+          description={t('geoDescription', lang)}
           delay={0.5}
           actions={
             <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
@@ -176,13 +175,14 @@ export default function Dashboard() {
             height={400}
           />
         </ChartCard>
+     
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Monthly Cases Chart */}
           <ChartCard
-            title={t('monthlyCases', language)}
-            description={t('monthlyDescription', language)}
+            title={t('monthlyCases', lang)}
+            description={t('monthlyDescription', lang)}
             delay={0.6}
             actions={
               <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
@@ -200,8 +200,8 @@ export default function Dashboard() {
 
           {/* Case Outcomes */}
           <ChartCard
-            title={t('caseOutcomes', language)}
-            description={t('outcomesDescription', language)}
+            title={t('caseOutcomes', lang)}
+            description={t('outcomesDescription', lang)}
             delay={0.7}
             actions={
               <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
@@ -218,8 +218,8 @@ export default function Dashboard() {
 
           {/* Sessions Trend */}
           <ChartCard
-            title={t('courtSessions', language)}
-            description={t('sessionsDescription', language)}
+            title={t('courtSessions', lang)}
+            description={t('sessionsDescription', lang)}
             delay={0.8}
             actions={
               <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
@@ -238,8 +238,8 @@ export default function Dashboard() {
 
         {/* Recent Cases Table */}
         <ChartCard
-          title={t('recentCases', language)}
-          description={t('recentDescription', language)}
+          title={t('recentCases', lang)}
+          description={t('recentDescription', lang)}
           delay={0.9}
           actions={
             <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
@@ -247,7 +247,7 @@ export default function Dashboard() {
             </button>
           }
         >
-          <CompactTable rows={data.recentCases} language={language} />
+          <CompactTable rows={data.recentCases} language={lang} />
         </ChartCard>
       </div>
     </div>

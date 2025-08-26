@@ -171,9 +171,15 @@ export const LanguageProvider = ({ children }) => {
 
   const t = key => translations[lang][key] || key;
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
-
+  
+  const formatNumber = (num, language = 'ar') => {
+    if (language === 'ar') {
+      return new Intl.NumberFormat('ar-EG').format(num);
+    }
+    return new Intl.NumberFormat('en-US').format(num);
+  };
   return (
-    <LanguageContext.Provider value={{ lang, dir, toggleLanguage, t }}>
+    <LanguageContext.Provider value={{ lang, dir, toggleLanguage, t,formatNumber}}>
       {children}
     </LanguageContext.Provider>
   );
