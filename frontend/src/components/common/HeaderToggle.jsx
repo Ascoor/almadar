@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSidebar } from '../../utils/SidebarContext';
+import { useSidebar } from '@/context/SidebarContext';
 
 function HeaderToggle() {
   const { isSidebarOpen, setIsSidebarOpen } = useSidebar();

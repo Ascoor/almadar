@@ -1,11 +1,13 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
-import KpiCard from '@/components/dashboard/KpiCard';
-import ChartCard from '@/components/dashboard/ChartCard';
+import KpiCard from '@/components/dashboard/KPI/KpiCard';
+import ChartCard from '@/components/dashboard/Charts/ChartCard';
 import Toolbar from '@/components/dashboard/Filters/Toolbar';
 import Section from '@/components/dashboard/Layout/Section';
 import CompactTable from '@/components/dashboard/Tables/CompactTable';
 import EmptyState from '@/components/common/EmptyState';
 import GlobalSpinner from '@/components/common/Spinners/GlobalSpinner';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { useLanguage } from '@/context/LanguageContext';
 import { getKpis, getTrends, getDistribution, getMapData, getRecent } from '@/services/api/dashboard';
 
 const LineChart = lazy(() => import('@/components/dashboard/Charts/LineChart'));
@@ -21,6 +23,7 @@ export default function Dashboard() {
   const [distribution, setDistribution] = useState([]);
   const [mapData, setMapData] = useState([]);
   const [recent, setRecent] = useState([]);
+  const { dir } = useLanguage();
 
   useEffect(() => {
     getKpis(filters).then(setKpis);
@@ -35,8 +38,9 @@ export default function Dashboard() {
   if (!kpis) return <GlobalSpinner />;
 
   return (
-    <div className="space-y-6">
-      <Toolbar filters={filters} onChange={setFilters} onReset={resetFilters} />
+    <ErrorBoundary>
+      <div className="space-y-6" dir={dir}>
+        <Toolbar dir={dir} filters={filters} onChange={setFilters} onReset={resetFilters} />
 
       <Section>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -51,12 +55,12 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <ChartCard title="Cases by Month">
             <Suspense fallback={<GlobalSpinner />}>
-              <LineChart data={trends} xKey="month" yKey="cases" />
+              <LineChart data={trends} xKey="month" yKey="cases" dir={dir} />
             </Suspense>
           </ChartCard>
           <ChartCard title="Sessions by Month">
             <Suspense fallback={<GlobalSpinner />}>
-              <BarChart data={trends} xKey="month" yKey="sessions" />
+              <BarChart data={trends} xKey="month" yKey="sessions" dir={dir} />
             </Suspense>
           </ChartCard>
         </div>
@@ -66,7 +70,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <ChartCard title="Actions">
             <Suspense fallback={<GlobalSpinner />}>
-              <AreaChart data={trends} xKey="month" yKey="actions" />
+              <AreaChart data={trends} xKey="month" yKey="actions" dir={dir} />
             </Suspense>
           </ChartCard>
           <ChartCard title="Status">
@@ -92,6 +96,7 @@ export default function Dashboard() {
           <EmptyState message="No records" />
         )}
       </Section>
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }
