@@ -1,7 +1,6 @@
 <?php
 
 namespace Database\Seeders;
-namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Litigation;
@@ -13,56 +12,90 @@ class LitigationActionsSeeder extends Seeder
 {
     public function run(): void
     {
-        // إدخال أنواع الإجراءات إلى جدول litigation_action_types
+        // ✅ أنواع إجراءات ليبية (وإصلاح "نصوير" -> "تصوير")
         $actionTypes = [
-            'اطلاع',     // مثال: اطلاع على المستندات
-            'نصوير',     // مثال: تصوير المستندات
-            'إعلان',     // مثال: إعلان عن جلسة أو قرار
-            'جلسة',      // مثال: جلسة في المحكمة
-            'طعن',       // مثال: تقديم طعن في القرار
+            'اطلاع',
+            'تصوير',
+            'إعلان',
+            'جلسة',
             'جلسة مرافعة',
             'مذكرة رد',
             'طلب تأجيل',
-            'جلسة نطق بالحكم'
+            'طعن',
+            'جلسة نطق بالحكم',
         ];
 
-        foreach ($actionTypes as $actionType) {
-            LitigationActionType::create([
-                'action_name' => $actionType
-            ]);
+        // ✅ تأمين وجود الأنواع بدون تكرار
+        foreach ($actionTypes as $name) {
+            LitigationActionType::firstOrCreate(['action_name' => $name]);
         }
 
-        // استرجاع جميع القضايا من قاعدة البيانات
+        // ✅ استرجاع القضايا
         $litigations = Litigation::all();
-
         if ($litigations->isEmpty()) {
-            $this->command->warn('⚠️ لا توجد قضايا في قاعدة البيانات. تأكد من تشغيل LitigationSeeder أولاً.');
+            $this->command->warn('⚠️ لا توجد قضايا في قاعدة البيانات. شغّل LitigationSeeder أولاً.');
             return;
         }
 
+        // ✅ أماكن/محاكم ليبية
+        $libyanCourts = [
+            'محكمة طرابلس الابتدائية',
+            'محكمة شمال طرابلس الابتدائية',
+            'محكمة بنغازي الابتدائية',
+            'محكمة مصراتة الابتدائية',
+            'محكمة سبها الابتدائية',
+            'محكمة البيضاء الابتدائية',
+            'محكمة درنة الابتدائية',
+            'محكمة الزاوية الابتدائية',
+            'محكمة غريان الابتدائية',
+            'محكمة سرت الابتدائية',
+            'محكمة طرابلس التجارية',
+            'محكمة بنغازي التجارية',
+        ];
+
+        // ✅ أسماء محامين عيّنة
+        $lawyers = [
+            'المحامي محمد الطرابلسي',
+            'المحامية هدى البنغازية',
+            'الأستاذ علي المصراتي',
+            'الأستاذة سمية السبهاوية',
+            'الأستاذ طارق الزاوي',
+            'الأستاذ عادل السرتاوي',
+            'المحامية مروة البيضاء',
+        ];
+
         foreach ($litigations as $litigation) {
-            // لكل قضية نضيف من 1 إلى 4 إجراءات
-            $actionsCount = rand(1, 4);
+            // هنعمل 2–6 إجراءات لكل قضية
+            $actionsCount = rand(2, 6);
 
             for ($i = 0; $i < $actionsCount; $i++) {
-                // اختيار نوع الإجراء عشوائيًا من جدول litigation_action_types
                 $actionType = LitigationActionType::inRandomOrder()->first();
 
                 LitigationAction::create([
                     'litigation_id' => $litigation->id,
-                    'action_type_id' => $actionType->id,  // ربط الإجراء باستخدام ID من جدول litigation_action_types
-                    'action_date'   => Carbon::now()->subDays(rand(1, 200)),
-                    'requirements'  => fake()->optional()->sentence(4),
-                    'results'       => fake()->optional()->sentence(5),
-                    'lawyer_name'   => fake()->name(),
-                    'location'      => fake()->randomElement(['محكمة الرياض', 'محكمة جدة', 'محكمة الدمام']),
-                    'notes'         => fake()->optional()->paragraph(2),
+                    'action_type_id' => $actionType->id,
+
+                    // تاريخ واقعي خلال آخر سنتين
+                    'action_date'   => Carbon::now()->subDays(rand(5, 700))->format('Y-m-d'),
+
+                    // متطلبات/نتائج عربية مختصرة
+                    'requirements'  => fake('ar_SA')->optional()->sentence(6),
+                    'results'       => fake('ar_SA')->optional()->sentence(7),
+
+                    // محامي وموقع ليبي
+                    'lawyer_name'   => $lawyers[array_rand($lawyers)],
+                    'location'      => $libyanCourts[array_rand($libyanCourts)],
+
+                    'notes'         => fake('ar_SA')->optional()->paragraph(2),
+
+                    // حالات مناسبة لسير الإجراءات
                     'status'        => fake()->randomElement(['pending', 'in_review', 'done']),
-                      'created_by' => 1, // ✅ مضاف
+
+                    'created_by'    => 1,
                 ]);
             }
         }
 
-        $this->command->info('✅ تم إنشاء إجراءات قضائية بشكل عشوائي لكل قضية.');
+        $this->command->info('✅ تم إنشاء إجراءات قضائية (ليبيا) عشوائيًا لكل قضية.');
     }
 }
