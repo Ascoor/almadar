@@ -2647,15 +2647,15 @@
               33.181225327241926
             ]
           ]
-        ]
-      }, 
-      "type": "Feature", 
-      "properties": {
-        "source": "https://simplemaps.com", 
-        "id": "LY", 
-        "name": "Libya"
-      }, 
-      "id": 1
+            ]
+        }, 
+        "type": "Feature", 
+        "properties": {
+            "source": "https://simplemaps.com", 
+            "id": "LY", 
+            "name": "Libya"
+        }, 
+        "id": 1
+        }
+    ]
     }
-  ]
-}
