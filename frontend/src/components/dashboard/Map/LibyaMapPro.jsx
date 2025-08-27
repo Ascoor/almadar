@@ -1,57 +1,60 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import { geoCentroid } from 'd3-geo';
 import { scaleOrdinal } from 'd3-scale';
 
-const DEFAULT_GEO_URL = '/geo/Libya_wgs84.json';
+const DEFAULT_GEO_URL = '/geo/LY_regions.geojson';
+const CASES_URL = '/data/cases.libya.json';
 
 const THEMES = {
   day:  { stroke: '#0f172a', label: '#0f172a', legendBg: 'rgba(255,255,255,.7)', legendText: '#0f172a', tooltipBg: '#0f172a', tooltipText: '#fff', border: '#1f2937' },
-  night:{ stroke: '#e5e7eb', label: '#e5e7eb', legendBg: 'rgba(0,0,0,.4)',  legendText: '#e5e7eb', tooltipBg: '#111827', tooltipText: '#fff', border: '#374151' },
+  night:{ stroke: '#e5e7eb', label: '#e5e7eb', legendBg: 'rgba(0,0,0,.4)',  legendText: '#e5e7eb', tooltipBg: '#111827', tooltipText: '#fff', border: '#374151' }
 };
 
-const REGIONS = {
-  Tripolitania: new Set([
-    'Tripoli','Al Jafarah','Zawiya','Nuqat al Khams','Almurgeb','Misrata','Sirt','Jabal al Gharbi','Nalut','Zliten','Ghadames'
-  ]),
-  Cyrenaica: new Set([
-    'Butnan','Derna','Al Jabal al Akhdar','Al Marj','Benghazi','Ajdabiya','Al Kufrah','Shahat','Quba'
-  ]),
-  Fezzan: new Set([
-    'Sabha','Murzuq','Wadi al Hayaa','Wadi ash Shati','Ghat','Al Jufrah'
-  ]),
+const EN_TO_AR = {
+  'Tripoli':'طرابلس','Al Jafarah':'الجفارة','Zawiya':'الزاوية','Nuqat al Khams':'النقاط الخمس','Almurgeb':'المرقب','Misrata':'مصراتة','Sirt':'سرت','Jabal al Gharbi':'الجبل الغربي','Nalut':'نالوت','Zliten':'زليتن','Ghadames':'غدامس',
+  'Butnan':'البطنان','Derna':'درنة','Al Jabal al Akhdar':'الجبل الأخضر','Al Marj':'المرج','Benghazi':'بنغازي','Ajdabiya':'أجدابيا','Al Kufrah':'الكفرة','Shahat':'شحات','Quba':'القبة',
+  'Sabha':'سبها','Murzuq':'مرزق','Wadi al Hayaa':'وادي الحياة','Wadi ash Shati':'وادي الشاطئ','Ghat':'غات','Al Jufrah':'الجفرة'
 };
 
-const REGION_COLORS = {
-  Tripolitania: '#22c55e',
-  Cyrenaica: '#3b82f6',
-  Fezzan: '#f59e0b',
-  Unknown: '#94a3b8',
-};
+const TRIPOLITANIA = new Set(['Tripoli','Al Jafarah','Zawiya','Nuqat al Khams','Almurgeb','Misrata','Sirt','Jabal al Gharbi','Nalut','Zliten','Ghadames']);
+const CYRENAICA   = new Set(['Butnan','Derna','Al Jabal al Akhdar','Al Marj','Benghazi','Ajdabiya','Al Kufrah','Shahat','Quba']);
+const FEZZAN      = new Set(['Sabha','Murzuq','Wadi al Hayaa','Wadi ash Shati','Ghat','Al Jufrah']);
 
-function resolveRegion(name) {
-  if (REGIONS.Tripolitania.has(name)) return 'Tripolitania';
-  if (REGIONS.Cyrenaica.has(name)) return 'Cyrenaica';
-  if (REGIONS.Fezzan.has(name)) return 'Fezzan';
-  return 'Unknown';
+const REGION_AR = { Tripolitania:'طرابلس', Cyrenaica:'برقة', Fezzan:'فزّان', Unknown:'غير مصنّف' };
+const REGION_COLORS = { 'طرابلس':'#22c55e', 'برقة':'#3b82f6', 'فزّان':'#f59e0b', 'غير مصنّف':'#94a3b8' };
+
+function pick(props, keys){ for(const k of keys){ if(props && props[k]!=null) return props[k]; } return undefined; }
+function getNameEn(props){ return pick(props, ['name','NAME_1','NAME_EN']); }
+function getNameAr(props){ return pick(props, ['name_ar','NAME_AR','AR_NAME']); }
+function toArabicName(props){
+  const ar = getNameAr(props);
+  if (ar) return ar;
+  const en = getNameEn(props);
+  if (!en) return '';
+  return EN_TO_AR[en] || en;
+}
+function regionOfEn(en){
+  if (TRIPOLITANIA.has(en)) return REGION_AR.Tripolitania;
+  if (CYRENAICA.has(en))   return REGION_AR.Cyrenaica;
+  if (FEZZAN.has(en))      return REGION_AR.Fezzan;
+  return REGION_AR.Unknown;
 }
 
 export default function LibyaMapPro({
   mode = 'day',
   geographyUrl = DEFAULT_GEO_URL,
-  showLabels = true,
-  regionColorOverrides = {},
+  showLabels = true
 }) {
   const theme = THEMES[mode] || THEMES.day;
   const fallbackScale = useMemo(() => scaleOrdinal().range(['#60a5fa','#34d399','#fbbf24','#f472b6','#a78bfa','#f87171']), []);
-
+  const [cases, setCases] = useState({});
   const [tooltip, setTooltip] = useState({ content: '', x: 0, y: 0 });
   const [selected, setSelected] = useState(null);
 
-  const getFill = (name, idx) => {
-    const region = resolveRegion(name);
-    return regionColorOverrides[region] || REGION_COLORS[region] || fallbackScale(idx);
-  };
+  useEffect(() => {
+    fetch(CASES_URL).then(r => r.json()).then(setCases).catch(() => setCases({}));
+  }, []);
 
   const onMove = (e, text) => {
     const { clientX, clientY } = e;
@@ -63,57 +66,52 @@ export default function LibyaMapPro({
       <ComposableMap projection="geoMercator" projectionConfig={{ center: [17.5, 26], scale: 2100 }} style={{ background: 'transparent' }}>
         <Geographies geography={geographyUrl}>
           {({ geographies }) => {
-            const legendRegions = ['Tripolitania','Cyrenaica','Fezzan'].filter(r => geographies.some(g => resolveRegion(g.properties?.name || '') === r));
+            const legend = new Map();
             return (
               <>
                 {geographies.map((geo, idx) => {
-                  const name = geo.properties?.name || `Region ${idx + 1}`;
-                  const region = resolveRegion(name);
-                  const sel = selected === name;
+                  const en = getNameEn(geo.properties) || `Region ${idx+1}`;
+                  const ar = toArabicName(geo.properties) || en;
+                  const region = regionOfEn(en);
+                  const color = REGION_COLORS[region] || fallbackScale(idx);
+                  legend.set(region, REGION_COLORS[region] || color);
+                  const v = cases[ar];
+                  const sel = selected === ar;
                   return (
                     <Geography
                       key={geo.rsmKey}
                       geography={geo}
-                      fill={getFill(name, idx)}
+                      fill={color}
                       stroke={theme.stroke}
                       strokeWidth={sel ? 1.6 : 0.9}
-                      onMouseMove={(e) => onMove(e, `${name} — ${region}`)}
+                      onMouseMove={(e) => onMove(e, v==null ? ar : `${ar} — ${v}`)}
                       onMouseLeave={() => setTooltip({ content: '', x: 0, y: 0 })}
-                      onClick={() => setSelected(sel ? null : name)}
-                      style={{
-                        default: { outline: 'none' },
-                        hover:   { outline: 'none', filter: 'brightness(0.98)' },
-                        pressed: { outline: 'none', opacity: 0.9 },
-                      }}
+                      onClick={() => setSelected(sel ? null : ar)}
+                      style={{ default:{outline:'none'}, hover:{outline:'none',filter:'brightness(0.98)'}, pressed:{outline:'none',opacity:0.9} }}
                     />
                   );
                 })}
 
-                {showLabels &&
-                  geographies.map((geo, idx) => {
-                    const name = geo.properties?.name || `Region ${idx + 1}`;
-                    const [cx, cy] = geoCentroid(geo);
-                    if (!isFinite(cx) || !isFinite(cy)) return null;
-                    return (
-                      <Marker key={`lbl-${geo.rsmKey}`} coordinates={[cx, cy]}>
-                        <text
-                          textAnchor="middle"
-                          fontSize={10}
-                          style={{ pointerEvents: 'none', fill: theme.label, paintOrder: 'stroke', stroke: '#000', strokeWidth: 0.5, opacity: 0.9 }}
-                        >
-                          {name}
-                        </text>
-                      </Marker>
-                    );
-                  })}
+                {showLabels && geographies.map((geo, idx) => {
+                  const ar = toArabicName(geo.properties) || getNameEn(geo.properties) || `Region ${idx+1}`;
+                  const [cx, cy] = geoCentroid(geo);
+                  if (!isFinite(cx) || !isFinite(cy)) return null;
+                  return (
+                    <Marker key={`lbl-${geo.rsmKey}`} coordinates={[cx, cy]}>
+                      <text textAnchor="middle" fontSize={10} style={{ pointerEvents:'none', fill: theme.label, paintOrder:'stroke', stroke:'#000', strokeWidth:0.5, opacity:0.9 }}>
+                        {ar}
+                      </text>
+                    </Marker>
+                  );
+                })}
 
                 <foreignObject x="8" y="8" width="320" height="180">
                   <div className="rounded-md p-2 shadow text-xs" style={{ background: theme.legendBg, color: theme.legendText }}>
                     <div className="font-semibold mb-1">الأقاليم</div>
                     <div className="flex flex-wrap gap-3">
-                      {legendRegions.map((r) => (
+                      {[...legend.entries()].map(([r, c]) => (
                         <div key={r} className="flex items-center gap-2">
-                          <span className="inline-block w-3 h-3 rounded" style={{ background: regionColorOverrides[r] || REGION_COLORS[r] }} />
+                          <span className="inline-block w-3 h-3 rounded" style={{ background:c }} />
                           <span>{r}</span>
                         </div>
                       ))}
@@ -127,10 +125,7 @@ export default function LibyaMapPro({
       </ComposableMap>
 
       {tooltip.content && (
-        <div
-          className="absolute text-xs px-2 py-1 rounded pointer-events-none shadow"
-          style={{ left: tooltip.x, top: tooltip.y, background: theme.tooltipBg, color: theme.tooltipText, border: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}
-        >
+        <div className="absolute text-xs px-2 py-1 rounded pointer-events-none shadow" style={{ left: tooltip.x, top: tooltip.y, background: theme.tooltipBg, color: theme.tooltipText, border: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>
           {tooltip.content}
         </div>
       )}
