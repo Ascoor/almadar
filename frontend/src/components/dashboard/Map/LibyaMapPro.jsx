@@ -1,103 +1,132 @@
-import React, { useMemo } from 'react';
-import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
-import { geoCentroid } from 'd3-geo';
-import { scaleOrdinal } from 'd3-scale';
+import React, { useMemo, useState } from "react";
+import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
+import { scaleQuantize } from "d3-scale";
 
-const COUNTRY_URL = '/geo/libya-country.geojson';  // حدود الدولة (Feature واحدة)
-const ADM1_URL    = '/geo/libya-adm1.geojson';     // تقسيم المحافظات/الولايات (Features متعددة)
+/**
+ * props:
+ *  - dataByRegion: { [regionId: string]: number }
+ *  - onRegionClick?: (info) => void
+ */
+const GEO_URL = "/geo/libya-adm1.json";
 
-const REGION_AR = { Tripolitania:'طرابلس', Cyrenaica:'برقة', Fezzan:'فزّان', Unknown:'غير مصنّف' };
-const TRIPOLITANIA = new Set(['Tripoli','Al Jafarah','Zawiya','Nuqat al Khams','Almurgeb','Misrata','Sirt','Jabal al Gharbi','Nalut','Zliten','Ghadames']);
-const CYRENAICA   = new Set(['Butnan','Derna','Al Jabal al Akhdar','Al Marj','Benghazi','Ajdabiya','Al Kufrah','Shahat','Quba']);
-const FEZZAN      = new Set(['Sabha','Murzuq','Wadi al Hayaa','Wadi ash Shati','Ghat','Al Jufrah']);
+const LibyaMapPro = ({ dataByRegion = {}, onRegionClick }) => {
+  const [hoverInfo, setHoverInfo] = useState(null);
 
-const COLORS = {
-  'طرابلس': '#bbf7d0',
-  'برقة':   '#86efac',
-  'فزّان':  '#4ade80',
-  'غير مصنّف': '#d1fae5',
-};
+  // build domain and color scale
+  const { colorScale, maxVal } = useMemo(() => {
+    const vals = Object.values(dataByRegion);
+    const max = vals.length ? Math.max(...vals) : 0;
+    const scale = scaleQuantize()
+      .domain([0, Math.max(1, max)])
+      .range([
+        "#e6f4ea",
+        "#ccead6",
+        "#b3e0c2",
+        "#99d6ad",
+        "#80cc99",
+        "#66c285",
+        "#4db870",
+        "#33ad5c",
+        "#1aa347",
+        "#009933",
+      ]);
+    return { colorScale: scale, maxVal: max };
+  }, [dataByRegion]);
 
-const EN_TO_AR = {
-  Tripoli:'طرابلس','Al Jafarah':'الجفارة','Zawiya':'الزاوية','Nuqat al Khams':'النقاط الخمس','Almurgeb':'المرقب','Misrata':'مصراتة','Sirt':'سرت','Jabal al Gharbi':'الجبل الغربي','Nalut':'نالوت','Zliten':'زليتن','Ghadames':'غدامس',
-  Butnan:'البطنان','Derna':'درنة','Al Jabal al Akhdar':'الجبل الأخضر','Al Marj':'المرج','Benghazi':'بنغازي','Ajdabiya':'أجدابيا','Al Kufrah':'الكفرة','Shahat':'شحات','Quba':'القبة',
-  Sabha:'سبها','Murzuq':'مرزق','Wadi al Hayaa':'وادي الحياة','Wadi ash Shati':'وادي الشاطئ','Ghat':'غات','Al Jufrah':'الجفرة'
-};
-
-const pick = (o, ks) => ks.reduce((acc,k)=> acc ?? (o?.[k] ?? o?.[k?.toUpperCase?.()] ), undefined);
-const getNameEn = (props) => pick(props, ['name','NAME_1','NAME_EN','adminName']);
-const getNameAr = (props) => pick(props, ['name_ar','NAME_AR','AR_NAME','ar_name']);
-const toArabic = (props) => getNameAr(props) ?? EN_TO_AR[getNameEn(props)] ?? getNameEn(props) ?? '';
-
-const regionOfEn = (en) => {
-  if (TRIPOLITANIA.has(en)) return REGION_AR.Tripolitania;
-  if (CYRENAICA.has(en))    return REGION_AR.Cyrenaica;
-  if (FEZZAN.has(en))       return REGION_AR.Fezzan;
-  return REGION_AR.Unknown;
-};
-
-export default function LibyaMap() {
-  const fallback = useMemo(() => scaleOrdinal().range(['#d1fae5','#bbf7d0','#86efac','#4ade80']), []);
+  const getId = (p) => p.id ?? p.shapeID ?? p.HASC_1 ?? p.GID_1 ?? p.ADM1_PCODE ?? p.name_en;
+  const getName = (p) => p.name_ar ?? p.name_en ?? p.shapeName ?? p.NAME_1 ?? "غير معروف";
 
   return (
-    <div className="relative w-full h-full">
-      <ComposableMap projection="geoMercator" projectionConfig={{ center: [17.5, 26], scale: 500 }} style={{ background: 'transparent' }}>
+    <div className="w-full">
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-right">
+          <div className="text-lg font-semibold">التوزيع الجغرافي</div>
+          <div className="text-sm text-gray-500">عدد القضايا حسب المنطقة</div>
+        </div>
+      </div>
 
-        {/* طبقة حدود الدولة */}
-        <Geographies geography={COUNTRY_URL}>
-          {({ geographies }) =>
-            geographies.map(geo => (
-              <Geography
-                key={`ly-${geo.rsmKey}`}
-                geography={geo}
-                fill="transparent"
-                stroke="#334155"
-                strokeWidth={1.2}
-                style={{ default:{outline:'none'}, hover:{outline:'none'}, pressed:{outline:'none'} }}
-              />
-            ))
-          }
-        </Geographies>
-
-        {/* طبقة الأقاليم/المحافظات (ADM1) */}
-        <Geographies geography={ADM1_URL}>
-          {({ geographies }) => (
-            <>
-              {geographies.map((geo, i) => {
-                const en = getNameEn(geo.properties) || `ADM1-${i+1}`;
-                const ar = toArabic(geo.properties) || en;
-                const reg = regionOfEn(en);
-                const fill = COLORS[reg] || fallback(i);
+      <ComposableMap projection="geoMercator">
+        <ZoomableGroup center={[17, 27]} zoom={3.5}>
+          <Geographies geography={GEO_URL}>
+            {({ geographies }) =>
+              geographies.map((geo) => {
+                const p = geo.properties || {};
+                const id = String(getId(p));
+                const name = getName(p);
+                const value = dataByRegion[id] ?? 0;
+                const fill = colorScale(value);
                 return (
                   <Geography
-                    key={`adm1-${geo.rsmKey}`}
+                    key={geo.rsmKey}
                     geography={geo}
-                    fill={fill}
-                    stroke="#0f172a"
-                    strokeWidth={0.7}
-                    style={{ default:{outline:'none'}, hover:{filter:'brightness(.98)'}, pressed:{opacity:.9} }}
+                    onMouseEnter={() => setHoverInfo({ id, name, value })}
+                    onMouseLeave={() => setHoverInfo(null)}
+                    onClick={() => onRegionClick?.({ id, name, value })}
+                    style={{
+                      default: { fill, outline: "none", stroke: "#9CA3AF", strokeWidth: 0.6 },
+                      hover: { fill, outline: "none", stroke: "#111827", strokeWidth: 1.1 },
+                      pressed: { fill, outline: "none" },
+                    }}
                   />
                 );
-              })}
-
-              {/* لابل عربية داخل كل محافظة */}
-              {geographies.map((geo, i) => {
-                const ar = toArabic(geo.properties) || getNameEn(geo.properties) || `ADM1-${i+1}`;
-                const [cx, cy] = geoCentroid(geo);
-                if(!isFinite(cx)||!isFinite(cy)) return null;
-                return (
-                  <Marker key={`label-${geo.rsmKey}`} coordinates={[cx, cy]}>
-                    <text textAnchor="middle" fontSize={10} style={{ pointerEvents:'none', fill:'#0f172a', paintOrder:'stroke', stroke:'#fff', strokeWidth:.75 }}>
-                      {ar}
-                    </text>
-                  </Marker>
-                );
-              })}
-            </>
-          )}
-        </Geographies>
-
+              })
+            }
+          </Geographies>
+        </ZoomableGroup>
       </ComposableMap>
+
+      {hoverInfo && (
+        <div
+          dir="rtl"
+          style={{
+            position: "fixed",
+            pointerEvents: "none",
+            top: 12,
+            left: 12,
+            background: "rgba(255,255,255,0.95)",
+            padding: "8px 10px",
+            borderRadius: 8,
+            boxShadow: "0 6px 20px rgba(0,0,0,.12)",
+            fontSize: 13,
+          }}
+        >
+          <div>
+            <b>{hoverInfo.name}</b>
+          </div>
+          <div>القضايا: {hoverInfo.value}</div>
+        </div>
+      )}
+
+      <Legend maxVal={maxVal} />
     </div>
   );
-}
+};
+
+const Legend = ({ maxVal }) => {
+  const steps = 10;
+  const boxes = new Array(steps).fill(0).map((_, i) => i);
+  return (
+    <div className="mt-3" dir="rtl" style={{ fontSize: 12 }}>
+      <div className="mb-1 text-gray-600">مقياس الألوان (منخفض ← مرتفع)</div>
+      <div style={{ display: "flex", gap: 2 }}>
+        {boxes.map((i) => (
+          <div
+            key={i}
+            style={{
+              width: 24,
+              height: 12,
+              background: `hsl(${140}, 80%, ${90 - i * 7}%)`,
+              border: "1px solid #e5e7eb",
+            }}
+          />
+        ))}
+      </div>
+      <div className="flex justify-between text-gray-500 mt-1">
+        <span>0</span>
+        <span>{maxVal}</span>
+      </div>
+    </div>
+  );
+};
+
+export default LibyaMapPro;

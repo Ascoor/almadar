@@ -19,7 +19,8 @@
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "contrast:test": "node scripts/contrast-test.js",
-    "test": "jest"
+    "test": "jest",
+    "geo:normalize": "node scripts/normalize-libya-geo.mjs"
   },
   "keywords": [
     "react",
