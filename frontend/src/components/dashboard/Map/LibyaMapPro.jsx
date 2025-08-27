@@ -7,7 +7,7 @@ import { scaleQuantize } from "d3-scale";
  *  - dataByRegion: { [regionId: string]: number }
  *  - onRegionClick?: (info) => void
  */
-const GEO_URL = "/geo/libya-adm1.json";
+const GEO_URL = "/geo/libya-adm1.geojson";
 
 const LibyaMapPro = ({ dataByRegion = {}, onRegionClick }) => {
   const [hoverInfo, setHoverInfo] = useState(null);

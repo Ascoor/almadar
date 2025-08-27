@@ -2,7 +2,7 @@ import React from "react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 
 
-const GEO_URL = "/geo/libya.json"; // كفاية كده
+const GEO_URL = "/geo/libya-adm1.geojson"; // كفاية كده
 export default function LibyaMap({ data = [], onRegionClick, isDark = false }) {
   // اختياري: تحقّق سريع يمنع الريندر قبل الجاهزية
   const [ready, setReady] = React.useState(false);
@@ -34,7 +34,7 @@ export default function LibyaMap({ data = [], onRegionClick, isDark = false }) {
     return (
       <div className="rounded-xl p-4 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300">
         Map load error: {err}<br/>
-        تأكد من وجود <code>/public/geo/libya.json</code> وأنه صالح.
+        تأكد من وجود <code>/public/geo/libya-adm1.geojson</code> وأنه صالح.
       </div>
     );
   }
