@@ -23,7 +23,20 @@ const CYRENAICA   = new Set(['Butnan','Derna','Al Jabal al Akhdar','Al Marj','Be
 const FEZZAN      = new Set(['Sabha','Murzuq','Wadi al Hayaa','Wadi ash Shati','Ghat','Al Jufrah']);
 
 const REGION_AR = { Tripolitania:'طرابلس', Cyrenaica:'برقة', Fezzan:'فزّان', Unknown:'غير مصنّف' };
-const REGION_COLORS = { 'طرابلس':'#22c55e', 'برقة':'#3b82f6', 'فزّان':'#f59e0b', 'غير مصنّف':'#94a3b8' };
+
+// Use soft green gradients in the day theme and a muted back‑lit palette at night
+const REGION_COLORS_DAY = {
+  'طرابلس': '#bbf7d0',
+  'برقة': '#86efac',
+  'فزّان': '#4ade80',
+  'غير مصنّف': '#d1fae5'
+};
+const REGION_COLORS_NIGHT = {
+  'طرابلس': '#14532d',
+  'برقة': '#166534',
+  'فزّان': '#065f46',
+  'غير مصنّف': '#0f172a'
+};
 
 function pick(props, keys){ for(const k of keys){ if(props && props[k]!=null) return props[k]; } return undefined; }
 function getNameEn(props){ return pick(props, ['name','NAME_1','NAME_EN']); }
@@ -50,7 +63,16 @@ export default function LibyaMapPro({
   const { currentTheme } = useThemeProvider();
   const resolvedMode = mode === 'auto' ? (currentTheme === 'dark' ? 'night' : 'day') : mode;
   const theme = THEMES[resolvedMode] || THEMES.day;
-  const fallbackScale = useMemo(() => scaleOrdinal().range(['#60a5fa','#34d399','#fbbf24','#f472b6','#a78bfa','#f87171']), []);
+  const colorMap = resolvedMode === 'night' ? REGION_COLORS_NIGHT : REGION_COLORS_DAY;
+  const fallbackScale = useMemo(
+    () =>
+      scaleOrdinal().range(
+        resolvedMode === 'night'
+          ? ['#14532d', '#166534', '#065f46', '#047857', '#064e3b', '#022c22']
+          : ['#d1fae5', '#bbf7d0', '#86efac', '#4ade80', '#22c55e', '#16a34a']
+      ),
+    [resolvedMode]
+  );
   const [cases, setCases] = useState({});
   const [tooltip, setTooltip] = useState({ content: '', x: 0, y: 0 });
   const [selected, setSelected] = useState(null);
@@ -73,11 +95,11 @@ export default function LibyaMapPro({
             return (
               <>
                 {geographies.map((geo, idx) => {
-                  const en = getNameEn(geo.properties) || `Region ${idx+1}`;
+                  const en = getNameEn(geo.properties) || `Region ${idx + 1}`;
                   const ar = toArabicName(geo.properties) || en;
                   const region = regionOfEn(en);
-                  const color = REGION_COLORS[region] || fallbackScale(idx);
-                  legend.set(region, REGION_COLORS[region] || color);
+                  const color = colorMap[region] || fallbackScale(idx);
+                  legend.set(region, colorMap[region] || color);
                   const v = cases[ar];
                   const sel = selected === ar;
                   return (
@@ -90,7 +112,11 @@ export default function LibyaMapPro({
                       onMouseMove={(e) => onMove(e, v==null ? ar : `${ar} — ${v}`)}
                       onMouseLeave={() => setTooltip({ content: '', x: 0, y: 0 })}
                       onClick={() => setSelected(sel ? null : ar)}
-                      style={{ default:{outline:'none'}, hover:{outline:'none',filter:'brightness(0.98)'}, pressed:{outline:'none',opacity:0.9} }}
+                      style={{
+                        default: { outline: 'none', transition: 'fill 0.3s ease' },
+                        hover: { outline: 'none', filter: 'brightness(0.98)' },
+                        pressed: { outline: 'none', opacity: 0.9 }
+                      }}
                     />
                   );
                 })}
