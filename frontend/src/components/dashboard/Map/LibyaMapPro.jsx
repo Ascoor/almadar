@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import { geoCentroid } from 'd3-geo';
 import { scaleOrdinal } from 'd3-scale';
+import { useThemeProvider } from '@/utils/ThemeContext';
 
 const DEFAULT_GEO_URL = '/geo/LY_regions.geojson';
 const CASES_URL = '/data/cases.libya.json';
@@ -42,11 +43,13 @@ function regionOfEn(en){
 }
 
 export default function LibyaMapPro({
-  mode = 'day',
+  mode = 'auto',
   geographyUrl = DEFAULT_GEO_URL,
   showLabels = true
 }) {
-  const theme = THEMES[mode] || THEMES.day;
+  const { currentTheme } = useThemeProvider();
+  const resolvedMode = mode === 'auto' ? (currentTheme === 'dark' ? 'night' : 'day') : mode;
+  const theme = THEMES[resolvedMode] || THEMES.day;
   const fallbackScale = useMemo(() => scaleOrdinal().range(['#60a5fa','#34d399','#fbbf24','#f472b6','#a78bfa','#f87171']), []);
   const [cases, setCases] = useState({});
   const [tooltip, setTooltip] = useState({ content: '', x: 0, y: 0 });
@@ -62,7 +65,7 @@ export default function LibyaMapPro({
   };
 
   return (
-    <div className="relative w-full h-full bg-transparent">
+    <div className="relative w-full h-full bg-transparent rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.2)] dark:shadow-[0_0_15px_rgba(255,255,255,0.1)]">
       <ComposableMap projection="geoMercator" projectionConfig={{ center: [17.5, 26], scale: 2100 }} style={{ background: 'transparent' }}>
         <Geographies geography={geographyUrl}>
           {({ geographies }) => {
