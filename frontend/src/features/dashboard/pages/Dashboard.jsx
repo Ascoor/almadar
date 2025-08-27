@@ -158,82 +158,83 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Professional Libya Map */}
-        <ChartCard
-          title={t('geographicDistribution', lang)}
-          description={t('geoDescription', lang)}
-          delay={0.5}
-          actions={
-            <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
-              <Download className="w-4 h-4" />
-            </button>
-          }
-        >
-          <LibyaMapPro
-            data={data.mapData}
-            onRegionClick={handleRegionClick}
-            height={400}
-          />
-        </ChartCard>
-     
-
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Monthly Cases Chart */}
+        {/* Map and charts */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <ChartCard
-            title={t('monthlyCases', lang)}
-            description={t('monthlyDescription', lang)}
-            delay={0.6}
+            title={t('geographicDistribution', lang)}
+            description={t('geoDescription', lang)}
+            delay={0.5}
+            className="h-full"
             actions={
               <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
                 <Download className="w-4 h-4" />
               </button>
             }
           >
-            <BarChartBasic
-              data={data.trends}
-              xKey="month"
-              yKey="cases"
-              height={200}
+            <LibyaMapPro
+              data={data.mapData}
+              onRegionClick={handleRegionClick}
+              height={400}
             />
           </ChartCard>
 
-          {/* Case Outcomes */}
-          <ChartCard
-            title={t('caseOutcomes', lang)}
-            description={t('outcomesDescription', lang)}
-            delay={0.7}
-            actions={
-              <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                <Filter className="w-4 h-4" />
-              </button>
-            }
-          >
-            <PieChartBasic
-              data={data.distribution}
-              height={200}
-              innerRadius={50}
-            />
-          </ChartCard>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6">
+            {/* Monthly Cases Chart */}
+            <ChartCard
+              title={t('monthlyCases', lang)}
+              description={t('monthlyDescription', lang)}
+              delay={0.6}
+              actions={
+                <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
+                  <Download className="w-4 h-4" />
+                </button>
+              }
+            >
+              <BarChartBasic
+                data={data.trends}
+                xKey="month"
+                yKey="cases"
+                height={200}
+              />
+            </ChartCard>
 
-          {/* Sessions Trend */}
-          <ChartCard
-            title={t('courtSessions', lang)}
-            description={t('sessionsDescription', lang)}
-            delay={0.8}
-            actions={
-              <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                <Calendar className="w-4 h-4" />
-              </button>
-            }
-          >
-            <AreaChartBasic
-              data={data.trends}
-              xKey="month"
-              yKey="sessions"
-              height={200}
-            />
-          </ChartCard>
+            {/* Case Outcomes */}
+            <ChartCard
+              title={t('caseOutcomes', lang)}
+              description={t('outcomesDescription', lang)}
+              delay={0.7}
+              actions={
+                <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
+                  <Filter className="w-4 h-4" />
+                </button>
+              }
+            >
+              <PieChartBasic
+                data={data.distribution}
+                height={200}
+                innerRadius={50}
+              />
+            </ChartCard>
+
+            {/* Sessions Trend */}
+            <ChartCard
+              title={t('courtSessions', lang)}
+              description={t('sessionsDescription', lang)}
+              delay={0.8}
+              actions={
+                <button className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
+                  <Calendar className="w-4 h-4" />
+                </button>
+              }
+            >
+              <AreaChartBasic
+                data={data.trends}
+                xKey="month"
+                yKey="sessions"
+                height={200}
+              />
+            </ChartCard>
+          </div>
         </div>
 
         {/* Recent Cases Table */}
@@ -251,5 +252,5 @@ export default function Dashboard() {
         </ChartCard>
       </div>
     </div>
-    );
-  }
+  );
+}
