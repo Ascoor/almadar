@@ -9,6 +9,7 @@ jest.mock('react-simple-maps', () => ({
     </g>
   ),
   Geography: ({ geography, fill }) => <path data-id={geography.properties.id} fill={fill} />,
+  ZoomableGroup: ({ children }) => <g>{children}</g>,
 }));
 
 import LibyaMapPro from '../Map/LibyaMapPro';
