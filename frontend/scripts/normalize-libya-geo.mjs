@@ -1,7 +1,7 @@
 import fs from "fs";
 
-const inFile = "public/geo/libya-adm1.json";
-const outFile = "public/geo/libya-adm1.json"; // overwrite same file
+const inFile = "public/geo/libya-adm1.geojson";
+const outFile = "public/geo/libya-adm1.geojson"; // overwrite same file
 
 const raw = JSON.parse(fs.readFileSync(inFile, "utf8"));
 if (raw.type !== "FeatureCollection") throw new Error("Invalid GeoJSON");
@@ -30,4 +30,4 @@ raw.features = raw.features.map((f) => {
 });
 
 fs.writeFileSync(outFile, JSON.stringify(raw));
-console.log("✅ libya-adm1.json normalized: id, name_en, name_ar");
+console.log("✅ libya-adm1.geojson normalized: id, name_en, name_ar");

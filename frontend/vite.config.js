@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa'; 
 export default defineConfig(({ mode }) => ({
+  base: "/",
   server: {
     proxy: {
       '/broadcasting': 'http://127.0.0.1:8000',
