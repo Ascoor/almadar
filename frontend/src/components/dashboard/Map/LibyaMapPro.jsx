@@ -11,6 +11,7 @@ const GEO_URL = "/geo/libya-adm1.geojson";
 
 const LibyaMapPro = ({ dataByRegion = {}, onRegionClick }) => {
   const [hoverInfo, setHoverInfo] = useState(null);
+  const [zoom, setZoom] = useState(1);
 
   // build domain and color scale
   const { colorScale, maxVal } = useMemo(() => {
@@ -46,7 +47,11 @@ const LibyaMapPro = ({ dataByRegion = {}, onRegionClick }) => {
       </div>
 
       <ComposableMap projection="geoMercator">
-        <ZoomableGroup center={[17, 27]} zoom={3.5}>
+        <ZoomableGroup
+          center={[17, 27]}
+          zoom={zoom}
+          onMoveEnd={(position) => setZoom(Math.max(1, position.zoom))}
+        >
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
               geographies.map((geo) => {
