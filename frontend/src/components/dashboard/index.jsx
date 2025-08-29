@@ -7,7 +7,6 @@ export { default as LineChartBasic } from "./Charts/LineChart";
 export { default as BarChartBasic } from "./Charts/BarChart";
 export { default as AreaChartBasic } from "./Charts/AreaChart";
 export { default as PieChartBasic } from "./Charts/PieChart";
-export { default as LegalCaseDistributionChart } from "./Charts/LegalCaseDistributionChart";
-
+export { default as LegalCaseCategorysChart } from "./Charts/LegalCaseCategorysChart";  
 export { default as LibyaMapPro } from "./Map/LibyaMapPro"; 
 export { default as CompactTable } from "./Tables/CompactTable";

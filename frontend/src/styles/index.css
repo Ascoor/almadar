@@ -5,10 +5,47 @@
 @layer base {
   :root { color-scheme: light dark; }
   html { -webkit-font-smoothing: antialiased; }
+  html, body { transition: background-color .2s ease, color .2s ease; }
   body { @apply bg-bg text-fg font-body antialiased; }
   h1,h2,h3,h4,h5,h6 { @apply font-heading; }
 
   /* Reusable container styles */
   .card { @apply bg-card text-fg border border-border rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out; }
-  .chart-container { @apply bg-card p-6 md:p-8 rounded-2xl shadow-md border border-border; }
+  .chart-container { @apply bg-card p-6 md:p-8 rounded-2xl shadow-md border border-border overflow-hidden min-w-0; }
+
+  /* Glass morphism helpers */
+  .glass {
+    background: rgba(var(--glass-bg));
+    border: 1px solid rgba(var(--glass-border));
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .glass-card { @apply glass rounded-2xl p-4 md:p-6; }
+  .hover-scale { @apply transition-transform duration-200 ease-in-out hover:scale-[1.01]; }
+
+  /* Gradient text utility */
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@layer utilities {
+  /* Responsive chart height utility using app tokens */
+  .chart-h { height: 220px; }
+  @screen sm { .chart-h { height: 240px; } }
+  @screen md { .chart-h { height: 260px; } }
+  @screen xl { .chart-h { height: 300px; } }
+
+  /* Height equal to two stacked charts plus gap (~24px) */
+  .chart-2h { height: calc(220px * 2 + 24px); }
+  @screen sm { .chart-2h { height: calc(240px * 2 + 24px); } }
+  @screen md { .chart-2h { height: calc(260px * 2 + 24px); } }
+  @screen xl { .chart-2h { height: calc(300px * 2 + 24px); } }
+
+  /* Consistent card padding */
+  .card-p { @apply p-4 md:p-6; }
 }

@@ -1,41 +1,39 @@
 import React from "react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { useLanguage } from "@/context/LanguageContext";
+import { axisTick, tooltipStyle, chartMargin } from "./chartTheme";
 
 export default function AreaChartBasic({ 
   data, 
   xKey = "x", 
   yKey = "y", 
-  height = 240 
+  height = '100%'
 }) {
+  const { lang, formatNumber } = useLanguage();
   return (
-    <div style={{ height }}>
+    <div style={{ height }} className="w-full min-w-0" dir="ltr">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data}>
+        <AreaChart data={data} margin={chartMargin}>
           <CartesianGrid strokeOpacity={0.1} />
           <XAxis 
             dataKey={xKey} 
-            tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+            tick={axisTick}
             axisLine={false}
             tickLine={false}
           />
           <YAxis 
-            tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+            tick={axisTick}
+            tickFormatter={(v) => (typeof v === 'number' ? formatNumber(v, lang) : v)}
             axisLine={false}
             tickLine={false}
           />
           <Tooltip 
-            contentStyle={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: '12px',
-              boxShadow: 'var(--glass-shadow)',
-              color: 'hsl(var(--foreground))'
-            }}
+            contentStyle={tooltipStyle}
           />
           <Area 
             type="monotone" 
             dataKey={yKey} 
-            stroke="hsl(var(--primary))" 
+            stroke="var(--primary)" 
             fill="url(#areaGradient)" 
             strokeWidth={3}
           />

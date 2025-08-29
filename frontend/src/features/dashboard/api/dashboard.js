@@ -113,18 +113,4 @@ export const getMiniSeries = (points = 12) => {
     y: Math.floor(Math.random() * 100) + 20
   }));
 };
-
-// Mock data for legal case distribution
-// Mock API function for radar chart data
-export const getLegalCaseRadarData = async () => {
-  await new Promise(resolve => setTimeout(resolve, 200)); // محاكاة تأخير API
-
-  // بيانات توزيع القضايا حسب الفئة
-  return [
-    { category: "قضايا تجارية", value: 1200 },
-    { category: "قضايا جنائية", value: 800 },
-    { category: "قضايا عمالية", value: 500 },
-    { category: "قضايا أحوال شخصية", value: 450 },
-    { category: "قضايا إدارية", value: 350 }
-  ];
-};
+ 

@@ -12,7 +12,10 @@ export default {
         /* base */
         bg: 'var(--bg)',
         fg: 'var(--fg)',
+        background: 'var(--bg)',
+        foreground: 'var(--fg)',
         muted: 'var(--muted)',
+        'muted-foreground': 'var(--muted-foreground)',
 
         /* surfaces */
         card: { DEFAULT: 'var(--card)', foreground: 'var(--fg)' },

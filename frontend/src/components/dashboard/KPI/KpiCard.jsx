@@ -42,8 +42,8 @@ export default function KpiCard({
             transition={{ delay: delay + 0.3, type: "spring" }}
             className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-medium ${
               isPositive 
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" 
-                : "bg-red-500/10 text-red-600 dark:text-red-400"
+                ? "bg-primary/10 text-[color:var(--primary)]" 
+                : "bg-destructive/10 text-[color:var(--destructive)]"
             }`}
           >
             {isPositive ? (
@@ -56,14 +56,14 @@ export default function KpiCard({
         )}
       </div>
 
-      <div className="h-12">
+      <div className="h-12 w-full min-w-0" dir="ltr">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={miniSeries}>
             <Line 
               type="monotone" 
               dataKey="y" 
               dot={false} 
-              stroke="hsl(var(--primary))" 
+              stroke="var(--primary)" 
               strokeWidth={3}
               strokeDasharray="0"
             />

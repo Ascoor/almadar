@@ -1,36 +1,34 @@
 import React from "react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { useLanguage } from "@/context/LanguageContext";
+import { axisTick, tooltipStyle, chartMargin } from "./chartTheme";
 
 export default function LineChartBasic({ 
   data, 
   xKey = "x", 
   yKey = "y", 
-  height = 240 
+  height = '100%'
 }) {
+  const { lang, formatNumber } = useLanguage();
   return (
-    <div style={{ height }}>
+    <div style={{ height }} className="w-full min-w-0" dir="ltr">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
+        <LineChart data={data} margin={chartMargin}>
           <CartesianGrid strokeOpacity={0.1} />
           <XAxis 
             dataKey={xKey} 
-            tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+            tick={axisTick}
             axisLine={false}
             tickLine={false}
           />
           <YAxis 
-            tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+            tick={axisTick}
+            tickFormatter={(v) => (typeof v === 'number' ? formatNumber(v, lang) : v)}
             axisLine={false}
             tickLine={false}
           />
           <Tooltip 
-            contentStyle={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: '12px',
-              boxShadow: 'var(--glass-shadow)',
-              color: 'hsl(var(--foreground))'
-            }}
+            contentStyle={tooltipStyle}
           />
           <Line 
             type="monotone" 
@@ -40,8 +38,8 @@ export default function LineChartBasic({
             dot={false}
             activeDot={{ 
               r: 6, 
-              fill: 'hsl(var(--primary))',
-              stroke: 'hsl(var(--background))',
+              fill: 'var(--primary)',
+              stroke: 'var(--bg)',
               strokeWidth: 2
             }}
           />
