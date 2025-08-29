@@ -86,8 +86,89 @@
   .section-title {
     color: var(--primary);
     text-shadow:
-      0 0 8px rgba(50, 255, 170, 0.28), /* soft halo */
-      0 2px 0 rgba(0,0,0,0.35);         /* emboss */
+      0 0 6px rgba(50, 255, 170, 0.22),
+      0 2px 0 rgba(0,0,0,0.35);
     letter-spacing: 0.2px;
+  }
+  /* Dark mode: stronger neon green with layered 3D glow */
+  .dark .section-title {
+    color: var(--neon-title);
+    text-shadow:
+      0 0 12px rgba(50, 255, 170, 0.45),
+      0 0 24px rgba(50, 255, 170, 0.30),
+      0 2px 0 rgba(0,0,0,0.45),
+      0 8px 18px rgba(0,0,0,0.35);
+  }
+
+  /* Stronger, lighter neon backlight specifically for chart cards */
+  .dark .chart-card .section-title {
+    text-shadow:
+      0 0 14px rgba(80, 255, 190, 0.60),
+      0 0 30px rgba(80, 255, 190, 0.40),
+      0 0 48px rgba(80, 255, 190, 0.22),
+      0 2px 0 rgba(0,0,0,0.5),
+      0 10px 22px rgba(0,0,0,0.40);
+  }
+
+  /* Slightly brighter pulse for chart titles */
+  .dark .chart-card .section-title-animate { animation: neonTitlePulse 3s ease-in-out infinite; }
+
+  /* Page header title/subtitle (bolder than section titles) */
+  .page-title {
+    font-family: var(--font-heading);
+    line-height: 1.1;
+    letter-spacing: 0.2px;
+    color: var(--primary);
+    text-shadow:
+      0 0 6px rgba(50,255,170,0.20),
+      0 2px 0 rgba(0,0,0,0.30);
+  }
+  .dark .page-title {
+    color: var(--neon-title);
+    text-shadow:
+      0 0 16px rgba(50,255,170,0.55),
+      0 0 36px rgba(50,255,170,0.35),
+      0 3px 0 rgba(0,0,0,0.5),
+      0 12px 26px rgba(0,0,0,0.45);
+  }
+  .page-title-animate { animation: neonTitlePulse 3.4s ease-in-out infinite; }
+
+  .page-subtitle {
+    color: var(--muted-foreground);
+    text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  }
+
+  /* Animated neon pulse for titles in dark mode */
+  @keyframes neonTitlePulse {
+    0%, 100% {
+      text-shadow:
+        0 0 8px rgba(50, 255, 170, 0.40),
+        0 0 18px rgba(50, 255, 170, 0.25),
+        0 2px 0 rgba(0,0,0,0.45),
+        0 8px 18px rgba(0,0,0,0.35);
+    }
+    50% {
+      text-shadow:
+        0 0 14px rgba(50, 255, 170, 0.55),
+        0 0 28px rgba(50, 255, 170, 0.35),
+        0 2px 0 rgba(0,0,0,0.5),
+        0 10px 22px rgba(0,0,0,0.4);
+    }
+  }
+  .dark .section-title-animate { animation: neonTitlePulse 3.2s ease-in-out infinite; }
+
+  /* 3D icon shadow (light + dark) */
+  .icon-3d {
+    filter:
+      drop-shadow(0 1px 0 rgba(0,0,0,0.35))
+      drop-shadow(0 4px 10px rgba(0,0,0,0.25));
+    transition: transform .2s ease, filter .2s ease;
+  }
+  .icon-3d:hover { transform: translateY(-1px); }
+  .dark .icon-3d {
+    filter:
+      drop-shadow(0 1px 0 rgba(0,0,0,0.55))
+      drop-shadow(0 6px 14px rgba(0,0,0,0.45))
+      drop-shadow(0 0 8px rgba(50,255,170,0.18));
   }
 }

@@ -14,7 +14,7 @@ const translations = {
     archive: 'الأرشيف',
     fatwa: 'الرأي والفتوى',
   // Header
-    title: "لوحة التحكم",
+    title: "لوحة التحكم الرئيسية",
     subtitle: "نظام متقدم لإدارة ومتابعة القضايا القانونية",
     
     // Navigation
@@ -62,7 +62,7 @@ const translations = {
     // Filters
     allRegions: "جميع المناطق",
     allStatuses: "جميع الحالات",
-    last12Months: "آخر 12 شهر",
+    last12Months: "آخر ١٢ شهر",
     yearToDate: "من بداية السنة",
     last90Days: "آخر 90 يوم",
     reset: "إعادة تعيين",
@@ -134,6 +134,10 @@ const translations = {
     usersList: 'Users',
     archive: 'Archive',
     fatwa: 'Fatwa',
+
+    // Header
+    title: "Main Dashboard",
+    subtitle: "Advanced legal case management and tracking system",
 
     // KPIs
     totalCases: "Total Cases",

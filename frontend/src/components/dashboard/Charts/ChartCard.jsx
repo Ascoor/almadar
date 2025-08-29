@@ -14,7 +14,7 @@ export default function ChartCard({
       title={title} 
       description={description} 
       actions={actions} 
-      className={`${className} overflow-hidden`}
+      className={`${className} overflow-hidden chart-card`}
       delay={delay}
     >
       <div className="relative w-full min-w-0" dir="ltr">

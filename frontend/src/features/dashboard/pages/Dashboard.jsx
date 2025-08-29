@@ -23,7 +23,7 @@ import {
   getMapData,
   getRecent,
   getMiniSeries
-} from "../api/dashboard";
+} from "@/services/dashboard.service";
 import { useLanguage } from "@/context/LanguageContext"; 
 
 const fadeIn = (delay = 0) => ({
@@ -79,8 +79,10 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background" dir={dir}>
       <header className="container mx-auto px-6 pt-6 pb-2">
         <motion.div {...fadeIn(0.05)} className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-1">{t("title", lang)}</h1>
-          <p className="text-sm md:text-base text-muted-foreground">{t("subtitle", lang)}</p>
+          <h1 className="page-title page-title-animate text-3xl md:text-4xl font-extrabold tracking-tight mb-1">
+            {t("title", lang)}
+          </h1>
+          <p className="page-subtitle text-sm md:text-base">{t("subtitle", lang)}</p>
         </motion.div>
       </header>
 
@@ -100,12 +102,12 @@ export default function Dashboard() {
 
         <section className="grid grid-cols-1 xl:grid-cols-12 gap-6">
           <motion.div {...fadeIn(0.12)} className="xl:col-span-3 space-y-6 order-2 xl:order-1">
-            <ChartCard title={t("monthlyCases", lang)} description={t("monthlyDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Download className="w-4 h-4" /></button>}>
+            <ChartCard title={t("monthlyCases", lang)} description={t("monthlyDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Download className="w-4 h-4 icon-3d" /></button>}>
               <div className="chart-h w-full min-w-0">
                 <BarChartBasic data={data.trends} xKey="month" yKey="cases" />
               </div>
             </ChartCard>
-            <ChartCard title={t("courtSessions", lang)} description={t("sessionsDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Calendar className="w-4 h-4" /></button>}>
+            <ChartCard title={t("courtSessions", lang)} description={t("sessionsDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Calendar className="w-4 h-4 icon-3d" /></button>}>
               <div className="chart-h w-full min-w-0">
                 <AreaChartBasic data={data.trends} xKey="month" yKey="sessions" />
               </div>
@@ -114,7 +116,7 @@ export default function Dashboard() {
 
           <motion.div {...fadeIn(0.18)} className="xl:col-span-6 order-1 xl:order-2 space-y-6">
             <div className="relative">
-              <ChartCard title={t("geographicDistribution", lang)} description={t("geoDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Download className="w-4 h-4" /></button>} className="p-4">
+              <ChartCard title={t("geographicDistribution", lang)} description={t("geoDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Download className="w-4 h-4 icon-3d" /></button>} className="p-4">
                 <div className="chart-2h w-full min-w-0">
                   <LibyaMapPro data={data.mapData} onRegionClick={handleRegionClick} />
                 </div>
@@ -126,7 +128,7 @@ export default function Dashboard() {
           </motion.div>
 
           <motion.div {...fadeIn(0.22)} className="xl:col-span-3 space-y-6 order-3">
-            <ChartCard title={t("caseOutcomes", lang)} description={t("outcomesDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Filter className="w-4 h-4" /></button>}>
+            <ChartCard title={t("caseOutcomes", lang)} description={t("outcomesDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Filter className="w-4 h-4 icon-3d" /></button>}>
               <div className="chart-h w-full min-w-0">
                 <PieChartBasic data={data.distribution} innerRadius={56} />
               </div>

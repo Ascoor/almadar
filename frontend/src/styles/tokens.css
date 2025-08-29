@@ -7,6 +7,8 @@
   --font-heading: 'Lora', 'Cairo', Georgia, 'Times New Roman', serif;
   /* Map/Charts preferred font (works well with Recharts + SVG) */
   --font-map: 'Roboto', 'Cairo', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  /* Headings neon (light: follow primary; dark overrides below) */
+  --neon-title: hsl(215 80% 58%);
 
   /* Corporate Legal Color System – Light */
   --bg: hsl(0 0% 94%);               /* #f0f0f0 */
@@ -137,6 +139,8 @@
   --shadow-md: 0 10px 30px rgba(0,0,0,0.5);
   --shadow-lg: 0 24px 60px rgba(0,0,0,0.6);
   --shadow-glow: 0 0 0 2px rgba(70, 110, 180, 0.20), 0 16px 60px rgba(0, 0, 0, 0.45);
+  /* Dedicated neon green for headings in dark mode */
+  --neon-title: hsl(145 85% 75%);
 }
 
 /* Radius */

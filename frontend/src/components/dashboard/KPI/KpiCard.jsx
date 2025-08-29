@@ -29,7 +29,7 @@ export default function KpiCard({
           )}
           <div>
             <p className="text-sm text-muted-foreground mb-1">{title}</p>
-            <h3 className="text-3xl font-bold text-gradient">
+            <h3 className="text-3xl font-extrabold section-title section-title-animate">
               {typeof value === 'number' ? value.toLocaleString() : value}
             </h3>
           </div>

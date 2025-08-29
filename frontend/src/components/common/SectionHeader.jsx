@@ -2,25 +2,26 @@ import { ArrowLeft } from 'lucide-react';
 
 const SectionHeader = ({ listName, icon, showBackButton }) => {
   return (
-<div
-  className="
-    relative z-10 flex flex-col items-center justify-center text-center space-y-4
-    px-6 py-8 sm:py-10 rounded-3xl shadow-xl transition-all border border-border backdrop-blur-md
-    bg-gradient-accent text-fg font-bold text-xl sm:text-2xl tracking-wide
-    dark:shadow-lg
-  "
->
-  
+    <div
+      className="
+        relative z-10 flex flex-col items-center justify-center text-center gap-4
+        px-6 py-8 sm:py-10 rounded-3xl border border-border backdrop-blur-md
+        bg-card/70 shadow-md dark:shadow-glow transition-all duration-300
+      "
+      aria-label={listName}
+    >
       {icon && (
         <img
           src={icon}
-          alt="icon"
-          className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain transition-transform duration-300 hover:scale-110"
+          alt={typeof listName === 'string' ? listName : 'section icon'}
+          className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain icon-3d transition-transform duration-300 hover:scale-110"
         />
       )}
 
-
-  <h2 className="text-shadow text-balance leading-relaxed">   {listName}
+      <h2
+        className="section-title section-title-animate text-balance leading-tight font-extrabold text-2xl sm:text-3xl md:text-4xl"
+      >
+        {listName}
       </h2>
 
       {showBackButton && (
@@ -28,7 +29,7 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
           onClick={() => window.history.back()}
           className="flex items-center gap-2 rounded-2xl px-4 py-1.5 bg-secondary text-fg hover:shadow-glow transition"
         >
-          <ArrowLeft />
+          <ArrowLeft className="icon-3d" />
           <span className="text-sm sm:text-base">رجوع</span>
         </button>
       )}
