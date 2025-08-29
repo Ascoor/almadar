@@ -1,77 +1,39 @@
-import React, { useEffect, useState } from "react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend
-} from "recharts";
-import { getLegalCaseDistributionData } from "@/features/dashboard/api/dashboard";
+import React, { useState, useEffect } from 'react';
+import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { getLegalCaseRadarData } from "@/features/dashboard/api/dashboard"; // استدعاء البيانات من API
 
-export default function LegalCaseDistributionChart({ height = 240 }) {
+const LegalCaseRadarChart = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
+    const fetchData = async () => {
       try {
-        const result = await getLegalCaseDistributionData();
-        mounted && setData(result);
-      } catch (e) {
-        console.error("Error fetching legal case distribution data:", e);
+        const result = await getLegalCaseRadarData(); // استرجاع البيانات من API
+        setData(result);
+      } catch (error) {
+        console.error("Error fetching radar chart data:", error);
       }
-    })();
-    return () => {
-      mounted = false;
     };
+    fetchData();
   }, []);
 
-  if (!data.length) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <span className="text-muted-foreground text-sm">Loading...</span>
-      </div>
-    );
-  }
+  if (!data.length) return <div>Loading...</div>;
 
   return (
-    <div style={{ height }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} barCategoryGap="20%">
-          <CartesianGrid strokeOpacity={0.1} />
-          <XAxis
-            dataKey="name"
-            tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: "hsl(var(--card))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: "12px",
-              boxShadow: "var(--glass-shadow)",
-              color: "hsl(var(--foreground))"
-            }}
-          />
-          <Legend
-            wrapperStyle={{
-              fontSize: "12px",
-              color: "hsl(var(--muted-foreground))"
-            }}
-          />
-          <Bar dataKey="value" fill="url(#primaryGradient)" radius={[8, 8, 0, 0]} />
-        </BarChart>
+    <div className="chart-container bg-card p-6 rounded-xl shadow-md">
+      <h2 className="text-xl font-semibold text-center mb-4">Legal Case Distribution by Category (Radar)</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <RadarChart data={data}>
+          <PolarGrid />
+          <PolarAngleAxis dataKey="category" />
+          <PolarRadiusAxis angle={30} domain={[0, 1500]} />
+          <Radar name="Cases" dataKey="value" stroke="#4caf50" fill="#4caf50" fillOpacity={0.6} />
+          <Tooltip />
+          <Legend />
+        </RadarChart>
       </ResponsiveContainer>
     </div>
   );
-}
+};
 
+export default LegalCaseRadarChart;

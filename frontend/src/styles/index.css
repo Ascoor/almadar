@@ -5,7 +5,10 @@
 @layer base {
   :root { color-scheme: light dark; }
   html { -webkit-font-smoothing: antialiased; }
-  body { @apply bg-bg text-fg font-body; }
+  body { @apply bg-bg text-fg font-body antialiased; }
   h1,h2,h3,h4,h5,h6 { @apply font-heading; }
-  .card { @apply bg-card border border-border rounded-2xl shadow-md; }
+
+  /* Reusable container styles */
+  .card { @apply bg-card text-fg border border-border rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out; }
+  .chart-container { @apply bg-card p-6 md:p-8 rounded-2xl shadow-md border border-border; }
 }

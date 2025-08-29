@@ -45,7 +45,7 @@ const LibyaMapPro = () => {
           <Suspense fallback={<div className="w-full h-full grid place-items-center text-muted-foreground">…</div>}>
             <ComposableMap
               projection="geoMercator"
-              projectionConfig={{ scale: 1550, center: [29.5, 27.5]}}
+              projectionConfig={{ scale: 1800, center: [27.5, 27.5]}}
               width={window.innerWidth}
               height={window.innerHeight}
               viewBox="0 0 800 600"

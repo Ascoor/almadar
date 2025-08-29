@@ -59,6 +59,8 @@ export default {
         lg: 'var(--shadow-lg)',
         xl: 'var(--shadow-lg)',
         glow: 'var(--shadow-glow)',
+        light: '0 8px 24px var(--shadow-light)',
+        dark: '0 16px 40px var(--shadow-dark)',
       },
       borderRadius: {
         xl: 'var(--radius)',

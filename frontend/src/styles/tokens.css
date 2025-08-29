@@ -3,134 +3,137 @@
    ----------------------------------------------------------- */
 :root {
   /* Fonts */
-  --font-heading: 'Cairo', sans-serif;
-  --font-body: 'Cairo', sans-serif;
-  
-  /* Libya Dashboard Color System - Light Mode */
-  --bg: hsl(209 20% 97%);
-  --fg: hsl(220 17% 7%);
+  --font-body: 'Roboto', 'Cairo', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  --font-heading: 'Lora', 'Cairo', Georgia, 'Times New Roman', serif;
+
+  /* Corporate Legal Color System – Light */
+  --bg: hsl(0 0% 94%);               /* #f0f0f0 */
+  --fg: hsl(0 0% 13%);               /* #212121 */
 
   --card: hsl(0 0% 100%);
   --popover: hsl(0 0% 100%);
 
-  /* Primary - Turquoise */
-  --primary: hsl(172 84% 45%);
-  --primary-foreground: hsl(172 100% 4%);
+  /* Primary / Secondary / Accent */
+  --primary: hsl(180 100% 25%);      /* #008080 teal */
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(146 50% 36%);     /* #2e8b57 seagreen */
+  --accent: hsl(9 100% 64%);         /* #ff6347 tomato */
 
-  /* Secondary - Mint */
-  --secondary: hsl(172 84% 65%);
-  --accent: hsl(84 81% 56%);
-
-  --muted: hsl(210 40% 96%);
+  /* Neutrals */
+  --muted: hsl(210 12% 92%);
   --muted-foreground: hsl(215 16% 47%);
 
-  --destructive: hsl(0 84% 60%);
-  --destructive-foreground: hsl(210 40% 98%);
+  /* Status */
+  --success: hsl(156 72% 35%);
+  --warning: hsl(35 92% 56%);
+  --destructive: hsl(0 72% 50%);
+  --destructive-foreground: hsl(0 0% 100%);
 
-  --border: hsl(214 32% 91%);
-  --input: hsl(214 32% 91%);
-  --ring: hsl(172 84% 45%);
+  /* Lines / Inputs / Focus */
+  --border: hsl(0 0% 82%);           /* #d1d1d1 */
+  --input: hsl(0 0% 82%);
+  --ring: hsl(180 100% 35%);
 
   /* Sidebar */
   --sidebar-bg: hsl(0 0% 98%);
-  --sidebar-fg: hsl(240 5% 26%);
-  --sidebar-muted: hsl(240 5% 96%);
-  --sidebar-active: hsl(172 84% 45%);
+  --sidebar-fg: hsl(0 0% 23%);
+  --sidebar-muted: hsl(0 0% 92%);
+  --sidebar-active: hsl(180 100% 25%);
 
-  /* Glass effect variables */
+  /* Glass effects */
   --glass-bg: 255 255 255 / 0.85;
-  --glass-border: 255 255 255 / 0.2;
-  --glass-shadow: 0 8px 32px hsla(172,84%,45%,0.1);
+  --glass-border: 0 0 0 / 0.08;
+  --glass-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, hsl(172,84%,45%), hsl(84,81%,56%));
-  --gradient-subtle: linear-gradient(180deg, hsl(209,20%,97%), hsl(172,84%,95%));
+  --gradient-primary: linear-gradient(135deg, hsl(180 100% 25%), hsl(146 50% 36%));
+  --gradient-subtle: linear-gradient(180deg, hsl(0 0% 96%), hsl(0 0% 92%));
 
-  /* Charts */ 
-  --chart-1: hsl(172 84% 45%);
-  --chart-2: hsl(172 84% 65%);
-  --chart-3: hsl(84 81% 56%);
-  --chart-4: hsl(0 84% 60%);
-  --chart-5: hsl(210 40% 96%);
-  --chart-6: hsl(215 16% 47%);
-  --chart-7: hsl(172 84% 55%);
-  --chart-8: hsl(84 81% 66%);
+  /* Charts */
+  --chart-1: hsl(180 100% 35%);  /* primary */
+  --chart-2: hsl(146 50% 44%);   /* secondary */
+  --chart-3: hsl(9 100% 64%);    /* accent */
+  --chart-4: hsl(210 8% 50%);    /* neutral mid */
+  --chart-5: hsl(210 12% 92%);   /* muted */
+  --chart-6: hsl(215 16% 47%);   /* text muted */
+  --chart-7: hsl(180 100% 27%);
+  --chart-8: hsl(146 50% 52%);
 
-  /* Map gradient */ 
-  --map-start: hsl(172 84% 45%);
-  --map-mid: hsl(84 81% 56%);
-  --map-end: hsl(172 84% 65%);
+  /* Map gradient */
+  --map-start: hsl(180 100% 35%);
+  --map-mid: hsl(146 50% 44%);
+  --map-end: hsl(9 100% 64%);
 
-  /* Shadows (light) */ 
+  /* Shadows (light) */
+  --shadow-light: rgba(0, 0, 0, 0.10);
+  --shadow-dark: rgba(0, 0, 0, 0.30);
   --shadow-sm: 0 1px 2px rgba(2,6,23,0.05);
-  --shadow-md: 0 8px 32px rgba(2,6,23,0.08);
-  --shadow-lg: 0 16px 48px rgba(2,6,23,0.10);
-  --shadow-glow: 0 0 0 2px rgba(18,210,176,0.25), 0 12px 40px rgba(18,210,176,0.25);
+  --shadow-md: 0 8px 24px rgba(2,6,23,0.08);
+  --shadow-lg: 0 16px 48px rgba(2,6,23,0.12);
+  --shadow-glow: 0 0 0 2px rgba(0,128,128,0.25), 0 12px 40px rgba(0,128,128,0.22);
 }
 
 /* DARK THEME */
-.dark { 
-    /* Libya Dashboard Color System - Dark Mode */
-  --bg: hsl(220 17% 7%);
-  --fg: hsl(210 40% 93%);
+.dark {
+  /* Corporate Legal Color System – Dark */
+  --bg: hsl(0 0% 18%);               /* #2e2e2e */
+  --fg: hsl(0 0% 96%);               /* #f5f5f5 */
 
-  --card: hsl(220 17% 11%);
-  --popover: hsl(220 17% 11%);
+  --card: hsl(210 15% 14%);
+  --popover: hsl(210 15% 14%);
 
-  /* Primary - Turquoise (brighter in dark) */
-  --primary: hsl(172 84% 55%);
-  --primary-foreground: hsl(172 100% 4%);
+  --primary: hsl(180 100% 35%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(146 45% 42%);
+  --accent: hsl(9 100% 64%);
 
-  /* Secondary - Mint */
-  --secondary: hsl(172 84% 65%);
-  --accent: hsl(84 81% 66%);
+  --muted: hsl(210 10% 24%);
+  --muted-foreground: hsl(210 8% 70%);
 
-  --muted: hsl(217 33% 18%);
-  --muted-foreground: hsl(215 20% 65%);
+  --destructive: hsl(0 72% 46%);
+  --destructive-foreground: hsl(0 0% 100%);
 
-  --destructive: hsl(0 63% 31%);
-  --destructive-foreground: hsl(210 40% 98%);
-
-  --border: hsl(217 33% 18%);
-  --input: hsl(217 33% 18%);
-  --ring: hsl(172 84% 55%);
+  --border: hsl(210 8% 28%);
+  --input: hsl(210 8% 28%);
+  --ring: hsl(180 100% 40%);
 
   /* Sidebar */
-  --sidebar-bg: hsl(240 6% 10%);
-  --sidebar-fg: hsl(240 5% 96%);
-  --sidebar-muted: hsl(240 4% 16%);
-  --sidebar-active: hsl(172 84% 55%);
+  --sidebar-bg: hsl(210 15% 12%);
+  --sidebar-fg: hsl(0 0% 96%);
+  --sidebar-muted: hsl(210 10% 20%);
+  --sidebar-active: hsl(180 100% 40%);
 
-  /* Glass effect variables - Dark */
-  --glass-bg: 0 0 0 / 0.4;
-  --glass-border: 255 255 255 / 0.1;
-  --glass-shadow: 0 8px 32px hsla(172,84%,45%,0.15);
+  /* Glass effects */
+  --glass-bg: 0 0 0 / 0.45;
+  --glass-border: 255 255 255 / 0.12;
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.35);
 
-  /* Gradients - Dark */
-  --gradient-primary: linear-gradient(135deg, hsl(172,84%,55%), hsl(84,81%,66%));
-  --gradient-subtle: linear-gradient(180deg, hsl(220,17%,7%), hsl(172,84%,8%));
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, hsl(180 100% 35%), hsl(146 45% 42%));
+  --gradient-subtle: linear-gradient(180deg, hsl(0 0% 18%), hsl(210 15% 14%));
 
   /* Charts */
-  --chart-1: hsl(172 84% 55%);
-  --chart-2: hsl(172 84% 65%);
-  --chart-3: hsl(84 81% 66%);
-  --chart-4: hsl(0 63% 31%);
-  --chart-5: hsl(210 40% 93%);
-  --chart-6: hsl(215 20% 65%);
-  --chart-7: hsl(172 84% 45%);
-  --chart-8: hsl(84 81% 56%);
-  --chart-9: hsl(240 5% 96%);
+  --chart-1: hsl(180 100% 40%);
+  --chart-2: hsl(146 45% 48%);
+  --chart-3: hsl(9 100% 64%);
+  --chart-4: hsl(210 8% 60%);
+  --chart-5: hsl(210 10% 24%);
+  --chart-6: hsl(210 8% 70%);
+  --chart-7: hsl(180 100% 32%);
+  --chart-8: hsl(146 45% 55%);
 
   /* Map gradient */
-  --map-start: hsl(172 84% 55%);
-  --map-mid: hsl(84 81% 66%);
-  --map-end: hsl(172 84% 45%);
+  --map-start: hsl(180 100% 40%);
+  --map-mid: hsl(146 45% 48%);
+  --map-end: hsl(9 100% 64%);
 
   /* Shadows (dark) */
+  --shadow-light: rgba(0, 0, 0, 0.10);
+  --shadow-dark: rgba(0, 0, 0, 0.30);
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
   --shadow-md: 0 10px 30px rgba(0,0,0,0.45);
   --shadow-lg: 0 24px 60px rgba(0,0,0,0.55);
-  --shadow-glow: 0 0 0 2px rgba(34,211,238,0.28), 0 16px 60px rgba(26,214,178,0.35);
+  --shadow-glow: 0 0 0 2px rgba(0,128,128,0.30), 0 16px 60px rgba(0,128,128,0.35);
 }
 
 /* Radius */
