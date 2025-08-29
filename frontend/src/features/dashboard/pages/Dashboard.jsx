@@ -3,8 +3,25 @@ import { motion } from "framer-motion";
 import { Download, Filter, TrendingUp, Scale, Users, Calendar, CheckCircle } from "lucide-react";
 
 // Building blocks
-import { Toolbar, KpiCard, ChartCard, BarChartBasic, AreaChartBasic, PieChartBasic, LibyaMapPro, CompactTable } from "@/components/dashboard";
-import { getKpis, getTrends, getDistribution, getMapData, getRecent,LegalCaseDistributionChart, getMiniSeries } from "../api/dashboard";
+import {
+  Toolbar,
+  KpiCard,
+  ChartCard,
+  BarChartBasic,
+  AreaChartBasic,
+  PieChartBasic,
+  LibyaMapPro,
+  CompactTable,
+  LegalCaseDistributionChart
+} from "@/components/dashboard";
+import {
+  getKpis,
+  getTrends,
+  getDistribution,
+  getMapData,
+  getRecent,
+  getMiniSeries
+} from "../api/dashboard";
 import { useLanguage } from "@/context/LanguageContext";
 
 const fadeIn = (delay = 0) => ({

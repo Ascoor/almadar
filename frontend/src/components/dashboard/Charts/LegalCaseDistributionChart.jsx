@@ -1,39 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getLegalCaseDistributionData } from "@/features/dashboard/api/dashboard"; // Assuming API file
+import React, { useEffect, useState } from "react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend
+} from "recharts";
+import { getLegalCaseDistributionData } from "@/features/dashboard/api/dashboard";
 
-const LegalCaseDistributionChart = () => {
+export default function LegalCaseDistributionChart({ height = 240 }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    let mounted = true;
+    (async () => {
       try {
-        const result = await getLegalCaseDistributionData(); // Get data from the API
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching legal case distribution data:", error);
+        const result = await getLegalCaseDistributionData();
+        mounted && setData(result);
+      } catch (e) {
+        console.error("Error fetching legal case distribution data:", e);
       }
+    })();
+    return () => {
+      mounted = false;
     };
-    fetchData();
   }, []);
 
-  if (!data.length) return <div className="text-center p-4">Loading...</div>;
+  if (!data.length) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="text-muted-foreground text-sm">Loading...</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="chart-container bg-card p-6 rounded-xl shadow-md">
-      <h2 className="text-xl font-semibold text-center mb-4">Legal Case Distribution by Category</h2>
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="value" fill="#8884d8" />
+    <div style={{ height }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} barCategoryGap="20%">
+          <CartesianGrid strokeOpacity={0.1} />
+          <XAxis
+            dataKey="name"
+            tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "hsl(var(--card))",
+              border: "1px solid hsl(var(--border))",
+              borderRadius: "12px",
+              boxShadow: "var(--glass-shadow)",
+              color: "hsl(var(--foreground))"
+            }}
+          />
+          <Legend
+            wrapperStyle={{
+              fontSize: "12px",
+              color: "hsl(var(--muted-foreground))"
+            }}
+          />
+          <Bar dataKey="value" fill="url(#primaryGradient)" radius={[8, 8, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
-};
+}
 
-export default LegalCaseDistributionChart; // Ensure this is exported correctly
