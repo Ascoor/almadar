@@ -113,3 +113,16 @@ export const getMiniSeries = (points = 12) => {
     y: Math.floor(Math.random() * 100) + 20
   }));
 };
+
+// Mock data for legal case distribution
+export const getLegalCaseDistributionData = async () => {
+  await new Promise(resolve => setTimeout(resolve, 200)); // محاكاة تأخير API
+
+  return [
+    { name: "قضايا تجارية", value: 1200 },
+    { name: "قضايا جنائية", value: 800 },
+    { name: "قضايا عمالية", value: 500 },
+    { name: "قضايا أحوال شخصية", value: 450 },
+    { name: "قضايا إدارية", value: 350 }
+  ];
+};
