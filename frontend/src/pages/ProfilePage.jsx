@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { getProfile, updateUser, changePassword } from '@/services/api/users';
-import { AuthContext } from '@/components/auth/AuthContext';
+import { AuthContext } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import API_CONFIG from '../config/config';
 

@@ -1,7 +1,7 @@
   import React, { useState, useEffect, useRef } from 'react';
   import { ToggleLeft, ToggleRight } from 'lucide-react';
   import { toast } from 'sonner';
-  import { useAuth } from '@/components/auth/AuthContext';
+  import { useAuth } from '@/context/AuthContext';
 
   const translatePermission = (name) => {
     switch (name) {

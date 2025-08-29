@@ -1,7 +1,7 @@
 // src/router/AppRouter.jsx
 import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
-import { AuthProvider, useAuth } from '@/components/auth/AuthContext';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 // Optional: wrap with your theme provider if you have one
 // import ThemeProvider from '@/utils/ThemeContext';

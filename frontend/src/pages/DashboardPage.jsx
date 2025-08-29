@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, lazy, Suspense } from 'react';
 
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
-import { AuthContext } from '@/components/auth/AuthContext';
+import { AuthContext } from '@/context/AuthContext';
 import { AnimatePresence } from 'framer-motion';
 import { MobileThemeProvider } from '@/components/MobileThemeProvider';
 import { NotificationProvider } from '@/components/Notifications/NotificationContext';

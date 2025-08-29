@@ -2,7 +2,7 @@ import React, { useState, useMemo, useContext } from 'react';
 import { Edit, Eye, Trash, ChevronUp, ChevronDown } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import API_CONFIG from '../../config/config';
-import { AuthContext } from '@/components/auth/AuthContext';
+import { AuthContext } from '@/context/AuthContext';
 
 export default function TableComponent({
   data = [],
@@ -24,6 +24,44 @@ export default function TableComponent({
   const [selectedIds, setSelectedIds] = useState([]);
   const rowsPerPage = 10;
 
+  // Infer if a column is numeric by sampling first non-null value
+  const isNumericColumn = (key) => {
+    const sample = data.find((d) => d[key] !== undefined && d[key] !== null);
+    if (!sample) return false;
+    const v = sample[key];
+    return typeof v === 'number' || (!isNaN(Number(v)) && v !== '' && v !== null);
+  };
+
+  // Parse and test numeric filter expressions: 
+  // supports ">=10", "< 25", "= 5", "10-20" (range), or plain number (equals)
+  const matchNumeric = (val, expr) => {
+    const value = Number(val);
+    if (isNaN(value)) return false;
+    const s = String(expr).trim().replace(/\s+/g, '');
+    if (!s) return true;
+    // Range pattern a-b
+    const range = s.match(/^(\-?\d+(?:\.\d+)?)[-–](\-?\d+(?:\.\d+)?)$/);
+    if (range) {
+      const a = Number(range[1]);
+      const b = Number(range[2]);
+      const [minV, maxV] = a <= b ? [a, b] : [b, a];
+      return value >= minV && value <= maxV;
+    }
+    const opMatch = s.match(/^(>=|<=|>|<|=)?(\-?\d+(?:\.\d+)?)$/);
+    if (opMatch) {
+      const op = opMatch[1] || '=';
+      const num = Number(opMatch[2]);
+      switch (op) {
+        case '>': return value > num;
+        case '<': return value < num;
+        case '>=': return value >= num;
+        case '<=': return value <= num;
+        case '=': default: return value === num;
+      }
+    }
+    return false;
+  };
+
   const can = (action) => {
     if (!moduleName || typeof moduleName !== 'string') return false;
     const possibilities = [];
@@ -42,16 +80,23 @@ export default function TableComponent({
   };
 
   const filteredData = useMemo(() => {
-    const keywords = searchQuery.toLowerCase().split(/\s+/);
-    return data.filter((item) =>
-      keywords.every((kw) =>
-        headers.some((h) =>
-          String(item[h.key] ?? '')
-            .toLowerCase()
-            .includes(kw),
-        ),
-      ),
-    );
+    const tokens = searchQuery.trim().split(/\s+/).filter(Boolean);
+    if (tokens.length === 0) return data;
+
+    // Each token must match at least one column.
+    return data.filter((item) => tokens.every((tk) => {
+      // numeric token detection
+      const numericExpr = /^(>=|<=|>|<|=)?\s*\-?\d+(?:\.\d+)?(?:\s*[-–]\s*\-?\d+(?:\.\d+)?)?$/;
+      const isNumericTk = numericExpr.test(tk.replace(/\s+/g, ''));
+
+      if (isNumericTk) {
+        // match against any numeric column
+        return headers.some((h) => isNumericColumn(h.key) && matchNumeric(item[h.key], tk));
+      }
+      // text token: match against any column string
+      const low = tk.toLowerCase();
+      return headers.some((h) => String(item[h.key] ?? '').toLowerCase().includes(low));
+    }));
   }, [searchQuery, data, headers]);
 
   const sortedData = useMemo(() => {
@@ -118,7 +163,7 @@ export default function TableComponent({
           </button>
           <input
             type="text"
-            placeholder="🔍 ابحث..."
+            placeholder="🔍 ابحث... (يدعم >=10 أو 10-20 للأرقام)"
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full md:w-64 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none bg-bg text-fg"
           />
@@ -163,6 +208,7 @@ export default function TableComponent({
                 <th className="p-3">إجراءات</th>
               ) : null}
             </tr>
+            
           </thead>
           <tbody className="divide-y divide-border">
             {paginatedData.map((row) => (

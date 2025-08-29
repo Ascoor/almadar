@@ -82,12 +82,11 @@
     animation: neonPulse 3s ease-in-out infinite;
   }
 
-  /* Section heading: subtle green neon, medium intensity, embossed */
+  /* Section heading (light: clean & simple, dark: neon 3D override below) */
   .section-title {
     color: var(--primary);
-    text-shadow:
-      0 0 6px rgba(50, 255, 170, 0.22),
-      0 2px 0 rgba(0,0,0,0.35);
+    /* Light mode: keep very subtle depth for a clean, matte look */
+    text-shadow: 0 1px 0 rgba(0,0,0,0.12);
     letter-spacing: 0.2px;
   }
   /* Dark mode: stronger neon green with layered 3D glow */
@@ -136,6 +135,19 @@
   .page-subtitle {
     color: var(--muted-foreground);
     text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  }
+
+  /* Mini-sidebar item helpers (light + dark) */
+  .mini-sidebar-item {
+    @apply flex items-center gap-2 px-3 py-2 rounded-lg transition-colors;
+    color: var(--fg);
+  }
+  .mini-sidebar-item:hover {
+    background: color-mix(in oklab, var(--primary) 12%, transparent);
+  }
+  .mini-sidebar-item.active {
+    background: color-mix(in oklab, var(--primary) 18%, transparent);
+    outline: 2px solid color-mix(in oklab, var(--primary) 30%, transparent);
   }
 
   /* Animated neon pulse for titles in dark mode */

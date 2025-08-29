@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { firstLoginPassword } from '@/services/api/users';
-import { AuthContext } from '@/components/auth/AuthContext';
+import { AuthContext } from '@/context/AuthContext';
 
 const ForcePasswordChangeModal = ({ onClose }) => {
   const { user, updateUserContext } = useContext(AuthContext);

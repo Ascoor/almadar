@@ -62,6 +62,15 @@
   --chart-6: hsl(215 16% 47%);   /* text muted */
   --chart-7: hsl(180 100% 27%);
   --chart-8: hsl(146 50% 52%);
+  --chart-grid: hsl(210 16% 86%);
+
+  /* KPI (light) */
+  --kpi-title: hsl(215 16% 35%);
+  --kpi-value: hsl(180 100% 25%);
+  --kpi-positive: hsl(156 72% 35%);
+  --kpi-positive-bg: hsla(156,72%,35%,0.12);
+  --kpi-negative: hsl(0 72% 46%);
+  --kpi-negative-bg: hsla(0,72%,46%,0.12);
 
   /* Map gradient */
   --map-start: hsl(180 100% 35%);
@@ -126,6 +135,7 @@
   --chart-6: hsl(220 12% 72%);
   --chart-7: hsl(210 70% 50%);
   --chart-8: hsl(200 60% 50%);
+  --chart-grid: hsl(220 20% 22%);
 
   /* Map gradient */
   --map-start: hsl(230 35% 12%);
@@ -141,6 +151,14 @@
   --shadow-glow: 0 0 0 2px rgba(70, 110, 180, 0.20), 0 16px 60px rgba(0, 0, 0, 0.45);
   /* Dedicated neon green for headings in dark mode */
   --neon-title: hsl(145 85% 75%);
+
+  /* KPI (dark) */
+  --kpi-title: hsl(220 12% 72%);
+  --kpi-value: hsl(145 85% 60%);
+  --kpi-positive: hsl(145 80% 52%);
+  --kpi-positive-bg: hsla(145,80%,52%,0.16);
+  --kpi-negative: hsl(0 70% 56%);
+  --kpi-negative-bg: hsla(0,70%,56%,0.16);
 }
 
 /* Radius */

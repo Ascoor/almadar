@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { AuthContext } from "@/components/auth/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 import { initEcho } from "@/lib/echo";
 
 export default function EchoInitializer({ children }) {

@@ -5,8 +5,8 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
     <div
       className="
         relative z-10 flex flex-col items-center justify-center text-center gap-4
-        px-6 py-8 sm:py-10 rounded-3xl border border-border backdrop-blur-md
-        bg-card/70 shadow-md dark:shadow-glow transition-all duration-300
+        px-6 py-8 sm:py-10 rounded-3xl border border-border
+        bg-card shadow-sm md:shadow dark:shadow-glow transition-all duration-300
       "
       aria-label={listName}
     >
@@ -19,7 +19,7 @@ const SectionHeader = ({ listName, icon, showBackButton }) => {
       )}
 
       <h2
-        className="section-title section-title-animate text-balance leading-tight font-extrabold text-2xl sm:text-3xl md:text-4xl"
+        className="section-title section-title-animate text-balance leading-tight font-extrabold font-heading text-2xl sm:text-3xl md:text-4xl"
       >
         {listName}
       </h2>

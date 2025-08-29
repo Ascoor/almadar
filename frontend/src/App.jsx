@@ -5,7 +5,7 @@ import { useContext, useEffect } from 'react';
 import AuthWrapper from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
 import { SpinnerProvider } from './context/SpinnerContext';
-import { AuthContext } from '@/components/auth/AuthContext'; 
+import { AuthContext } from '@/context/AuthContext'; 
 import { useNavigate } from 'react-router-dom';
 
 const App = () => { 

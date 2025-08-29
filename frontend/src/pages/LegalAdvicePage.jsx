@@ -6,7 +6,7 @@ import TableComponent from "../components/common/TableComponent";
 import SectionHeader from "../components/common/SectionHeader";
 import { Button } from "../components/ui/button";
 import { LegalAdviceIcon } from "../assets/icons";
-import { AuthContext } from "@/components/auth/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 import { motion } from 'framer-motion';
 
 import { useLegalAdvices } from "@/hooks/dataHooks"; // ✅ من React Query
