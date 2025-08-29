@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, Filter, RotateCcw } from "lucide-react";
  
+import   {DashboardClock}   from "@/components/dashboard";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Toolbar({ value, onChange }) {
@@ -27,6 +28,7 @@ export default function Toolbar({ value, onChange }) {
       transition={{ duration: 0.5 }}
       className="mb-6 flex flex-wrap items-center gap-3 p-4 glass rounded-2xl"
     >
+      <DashboardClock />
       <div className="flex items-center gap-2">
         <Calendar className="w-4 h-4 text-primary" />
         <select 

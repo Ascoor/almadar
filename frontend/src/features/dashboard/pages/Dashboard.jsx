@@ -5,6 +5,7 @@ import { Download, Filter, TrendingUp, Scale, Users, Calendar, CheckCircle } fro
 // Building blocks
 import {
   Toolbar,
+  
   KpiCard,
   ChartCard,
   BarChartBasic,
@@ -12,7 +13,8 @@ import {
   PieChartBasic,
   LibyaMapPro,
   CompactTable,
-  LegalCaseCategorysChart
+  LegalCaseCategorysChart,
+  MapDetailsCard
 } from "@/components/dashboard";
 import {
   getKpis,
@@ -22,7 +24,7 @@ import {
   getRecent,
   getMiniSeries
 } from "../api/dashboard";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContext"; 
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0, y: 12 },
@@ -85,7 +87,7 @@ export default function Dashboard() {
       <div className="sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-background/70 bg-background/90 border-b">
         <div className="container mx-auto px-6 py-3">
           <Toolbar value={filters} onChange={setFilters} />
-        </div>
+                </div>
       </div>
 
       <main className="container mx-auto px-6 py-6 space-y-6">
@@ -110,7 +112,7 @@ export default function Dashboard() {
             </ChartCard>
           </motion.div>
 
-          <motion.div {...fadeIn(0.18)} className="xl:col-span-6 order-1 xl:order-2">
+          <motion.div {...fadeIn(0.18)} className="xl:col-span-6 order-1 xl:order-2 space-y-6">
             <div className="relative">
               <ChartCard title={t("geographicDistribution", lang)} description={t("geoDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Download className="w-4 h-4" /></button>} className="p-4">
                 <div className="chart-2h w-full min-w-0">
@@ -118,6 +120,9 @@ export default function Dashboard() {
                 </div>
               </ChartCard>
             </div>
+            <motion.div {...fadeIn(0.2)}>
+              <MapDetailsCard />
+            </motion.div>
           </motion.div>
 
           <motion.div {...fadeIn(0.22)} className="xl:col-span-3 space-y-6 order-3">

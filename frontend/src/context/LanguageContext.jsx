@@ -14,7 +14,7 @@ const translations = {
     archive: 'الأرشيف',
     fatwa: 'الرأي والفتوى',
   // Header
-    title: "مركز البيانات القانونية الليبية",
+    title: "لوحة التحكم",
     subtitle: "نظام متقدم لإدارة ومتابعة القضايا القانونية",
     
     // Navigation
@@ -69,9 +69,30 @@ const translations = {
     
     // Actions
     download: "تحميل",
+    upload: "رفع",
+    export: "تصدير",
+    import: "استيراد",
     filter: "تصفية",
+    applyFilters: "تطبيق الفلاتر",
+    resetFilters: "إعادة تعيين الفلاتر",
     view: "عرض",
     edit: "تعديل",
+    save: "حفظ",
+    submit: "إرسال",
+    cancel: "إلغاء",
+    delete: "حذف",
+    update: "تحديث",
+    add: "إضافة",
+    remove: "إزالة",
+    close: "إغلاق",
+    confirm: "تأكيد",
+    ok: "حسناً",
+    yes: "نعم",
+    no: "لا",
+    back: "رجوع",
+    next: "التالي",
+    previous: "السابق",
+    search: "بحث",
     
     // Loading
     loading: "جاري التحميل...",
@@ -81,7 +102,25 @@ const translations = {
     type: "النوع",
     region: "المنطقة",
     status: "الحالة",
-    date: "التاريخ"
+    date: "التاريخ",
+
+    // Forms / Auth
+    email: "البريد الإلكتروني",
+    password: "كلمة المرور",
+    confirmPassword: "تأكيد كلمة المرور",
+    username: "اسم المستخدم",
+    name: "الاسم",
+    phone: "الهاتف",
+    address: "العنوان",
+    city: "المدينة",
+    country: "الدولة",
+    signIn: "تسجيل الدخول",
+    signOut: "تسجيل الخروج",
+    signUp: "إنشاء حساب",
+    profile: "الملف الشخصي",
+    language: "اللغة",
+    arabic: "العربية",
+    english: "الإنجليزية"
   },
   en: {
     home: 'Home',
@@ -141,9 +180,30 @@ const translations = {
     
     // Actions
     download: "Download",
+    upload: "Upload",
+    export: "Export",
+    import: "Import",
     filter: "Filter",
+    applyFilters: "Apply Filters",
+    resetFilters: "Reset Filters",
     view: "View",
     edit: "Edit",
+    save: "Save",
+    submit: "Submit",
+    cancel: "Cancel",
+    delete: "Delete",
+    update: "Update",
+    add: "Add",
+    remove: "Remove",
+    close: "Close",
+    confirm: "Confirm",
+    ok: "OK",
+    yes: "Yes",
+    no: "No",
+    back: "Back",
+    next: "Next",
+    previous: "Previous",
+    search: "Search",
     
     // Loading
     loading: "Loading...",
@@ -153,7 +213,25 @@ const translations = {
     type: "Type",
     region: "Region",
     status: "Status",
-    date: "Date"
+    date: "Date",
+
+    // Forms / Auth
+    email: "Email",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    username: "Username",
+    name: "Name",
+    phone: "Phone",
+    address: "Address",
+    city: "City",
+    country: "Country",
+    signIn: "Sign In",
+    signOut: "Sign Out",
+    signUp: "Sign Up",
+    profile: "Profile",
+    language: "Language",
+    arabic: "Arabic",
+    english: "English"
   }
 };
 
@@ -186,4 +264,3 @@ export const LanguageProvider = ({ children }) => {
 };
 
 export const useLanguage = () => useContext(LanguageContext);
-

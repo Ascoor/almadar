@@ -9,6 +9,10 @@
   body { @apply bg-bg text-fg font-body antialiased; }
   h1,h2,h3,h4,h5,h6 { @apply font-heading; }
 
+  /* Switch map font by document language for best legibility */
+  html[lang="ar"] { --font-map: 'Cairo', var(--font-body); }
+  html[lang="en"] { --font-map: 'Roboto', var(--font-body); }
+
   /* Reusable container styles */
   .card { @apply bg-card text-fg border border-border rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out; }
   .chart-container { @apply bg-card p-6 md:p-8 rounded-2xl shadow-md border border-border overflow-hidden min-w-0; }
@@ -48,4 +52,42 @@
 
   /* Consistent card padding */
   .card-p { @apply p-4 md:p-6; }
+
+  /* Map helpers */
+  .map-container { @apply w-full h-full flex items-center justify-center; }
+  .map-label {
+    font-family: var(--font-map);
+    font-weight: 700;
+    /* doubled from previous values */
+    font-size: clamp(22px, 3.2vw, 32px);
+    fill: var(--fg);
+    stroke: var(--bg);
+    stroke-width: 2px;
+    paint-order: stroke fill;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    user-select: none;
+  }
+  .map-label-city {
+    /* doubled from previous values */
+    font-size: clamp(20px, 2.8vw, 28px);
+    font-weight: 600;
+  }
+
+  /* Subtle neon pulse used in dark mode */
+  @keyframes neonPulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(0,128,128,0.35), 0 0 60px rgba(0,128,128,0.15); }
+    50% { box-shadow: 0 0 45px rgba(0,128,128,0.55), 0 0 80px rgba(0,128,128,0.25); }
+  }
+  .neon-pulse-dark {
+    animation: neonPulse 3s ease-in-out infinite;
+  }
+
+  /* Section heading: subtle green neon, medium intensity, embossed */
+  .section-title {
+    color: var(--primary);
+    text-shadow:
+      0 0 8px rgba(50, 255, 170, 0.28), /* soft halo */
+      0 2px 0 rgba(0,0,0,0.35);         /* emboss */
+    letter-spacing: 0.2px;
+  }
 }

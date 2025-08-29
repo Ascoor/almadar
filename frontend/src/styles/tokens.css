@@ -5,6 +5,8 @@
   /* Fonts */
   --font-body: 'Roboto', 'Cairo', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   --font-heading: 'Lora', 'Cairo', Georgia, 'Times New Roman', serif;
+  /* Map/Charts preferred font (works well with Recharts + SVG) */
+  --font-map: 'Roboto', 'Cairo', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 
   /* Corporate Legal Color System – Light */
   --bg: hsl(0 0% 94%);               /* #f0f0f0 */
@@ -75,65 +77,66 @@
 
 /* DARK THEME */
 .dark {
-  /* Corporate Legal Color System – Dark */
-  --bg: hsl(0 0% 18%);               /* #2e2e2e */
-  --fg: hsl(0 0% 96%);               /* #f5f5f5 */
+  /* Lux matte dark blue palette */
+  --bg: hsl(225 40% 8%);
+  --fg: hsl(210 30% 96%);
 
-  --card: hsl(210 15% 14%);
-  --popover: hsl(210 15% 14%);
+  --card: hsl(225 32% 12%);
+  --popover: hsl(225 32% 12%);
 
-  --primary: hsl(180 100% 35%);
+  /* Matte blue accents */
+  --primary: hsl(215 80% 58%);       /* rich azure */
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(146 45% 42%);
-  --accent: hsl(9 100% 64%);
+  --secondary: hsl(205 45% 48%);     /* cyan-blue */
+  --accent: hsl(230 30% 60%);        /* slate blue */
 
-  --muted: hsl(210 10% 24%);
-  --muted-foreground: hsl(210 8% 70%);
+  --muted: hsl(225 25% 16%);
+  --muted-foreground: hsl(220 12% 72%);
 
   --destructive: hsl(0 72% 46%);
   --destructive-foreground: hsl(0 0% 100%);
 
-  --border: hsl(210 8% 28%);
-  --input: hsl(210 8% 28%);
-  --ring: hsl(180 100% 40%);
+  --border: hsl(220 20% 22%);
+  --input: hsl(220 20% 22%);
+  --ring: hsl(215 80% 58%);
 
   /* Sidebar */
-  --sidebar-bg: hsl(210 15% 12%);
-  --sidebar-fg: hsl(0 0% 96%);
-  --sidebar-muted: hsl(210 10% 20%);
-  --sidebar-active: hsl(180 100% 40%);
+  --sidebar-bg: hsl(225 35% 10%);
+  --sidebar-fg: hsl(210 30% 96%);
+  --sidebar-muted: hsl(225 25% 16%);
+  --sidebar-active: hsl(215 80% 58%);
 
   /* Glass effects */
-  --glass-bg: 0 0 0 / 0.45;
+  --glass-bg: 0 0 0 / 0.5;
   --glass-border: 255 255 255 / 0.12;
-  --glass-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.45);
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, hsl(180 100% 35%), hsl(146 45% 42%));
-  --gradient-subtle: linear-gradient(180deg, hsl(0 0% 18%), hsl(210 15% 14%));
+  /* Gradients (matte, non-glossy) */
+  --gradient-primary: linear-gradient(135deg, hsl(230 35% 12%), hsl(215 32% 16%));
+  --gradient-subtle: linear-gradient(180deg, hsl(225 40% 8%), hsl(225 32% 12%));
 
-  /* Charts */
-  --chart-1: hsl(180 100% 40%);
-  --chart-2: hsl(146 45% 48%);
-  --chart-3: hsl(9 100% 64%);
-  --chart-4: hsl(210 8% 60%);
-  --chart-5: hsl(210 10% 24%);
-  --chart-6: hsl(210 8% 70%);
-  --chart-7: hsl(180 100% 32%);
-  --chart-8: hsl(146 45% 55%);
+  /* Charts (blue spectrum) */
+  --chart-1: hsl(215 80% 58%);
+  --chart-2: hsl(205 70% 55%);
+  --chart-3: hsl(230 30% 65%);
+  --chart-4: hsl(220 18% 60%);
+  --chart-5: hsl(225 25% 16%);
+  --chart-6: hsl(220 12% 72%);
+  --chart-7: hsl(210 70% 50%);
+  --chart-8: hsl(200 60% 50%);
 
   /* Map gradient */
-  --map-start: hsl(180 100% 40%);
-  --map-mid: hsl(146 45% 48%);
-  --map-end: hsl(9 100% 64%);
+  --map-start: hsl(230 35% 12%);
+  --map-mid: hsl(215 32% 16%);
+  --map-end: hsl(215 80% 58%);
 
-  /* Shadows (dark) */
+  /* Shadows (dark) — softened, non-glossy */
   --shadow-light: rgba(0, 0, 0, 0.10);
   --shadow-dark: rgba(0, 0, 0, 0.30);
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
-  --shadow-md: 0 10px 30px rgba(0,0,0,0.45);
-  --shadow-lg: 0 24px 60px rgba(0,0,0,0.55);
-  --shadow-glow: 0 0 0 2px rgba(0,128,128,0.30), 0 16px 60px rgba(0,128,128,0.35);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.5);
+  --shadow-lg: 0 24px 60px rgba(0,0,0,0.6);
+  --shadow-glow: 0 0 0 2px rgba(70, 110, 180, 0.20), 0 16px 60px rgba(0, 0, 0, 0.45);
 }
 
 /* Radius */

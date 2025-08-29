@@ -20,7 +20,7 @@ export default function Section({
         <div className="mb-4 flex items-center justify-between">
           <div>
             {title && (
-              <h3 className="text-lg font-semibold text-gradient mb-1">
+              <h3 className="text-lg md:text-xl font-semibold section-title mb-1">
                 {title}
               </h3>
             )}
