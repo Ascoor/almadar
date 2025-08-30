@@ -6,7 +6,16 @@ import { useLanguage } from '@/context/LanguageContext';
 
 const geoUrl = "/geo/libya-country.geojson";
 
-const LibyaMapPro = () => {
+const LibyaMapPro = ({
+  highlightTop = true,
+  topBy = 'combined',
+  topN = 3,
+  projection = 'geoMercator',
+  projectionConfig = { scale: 2120, center: [17.5, 26.5] },
+  markers = [], // optional: [{ name, coordinates:[lon,lat], markerOffset: number }]
+  displayTopOnly = false, // show only top cities
+  displayCount, // number of cities to show (e.g., 3 or 6). If undefined, shows all.
+} = {}) => {
   const colorScale = scaleOrdinal(schemeCategory10);
   const [data, setData] = useState([]);
   const { lang, t, formatNumber } = useLanguage();
@@ -23,6 +32,21 @@ const LibyaMapPro = () => {
   const cities = top6.map(c => ({ name: lang === 'ar' ? c.ar : c.en, ...c }));
   const maxContracts = Math.max(...cities.map(c => c.contracts));
   const maxCases = Math.max(...cities.map(c => c.cases));
+  const withCombined = cities.map(c => ({ ...c, combined: (c.contracts || 0) + (c.cases || 0) }));
+  const metric = (c) => (topBy === 'cases' ? c.cases : topBy === 'contracts' ? c.contracts : c.combined);
+  const topSorted = [...withCombined].sort((a,b) => metric(b) - metric(a));
+  const topSet = new Set(highlightTop ? topSorted.slice(0, topN).map(c => c.name) : []);
+
+  // Choose which list to render
+  let renderList;
+  if (markers.length) {
+    renderList = typeof displayCount === 'number' ? markers.slice(0, displayCount) : markers;
+  } else if (displayTopOnly) {
+    const count = typeof displayCount === 'number' ? displayCount : topN;
+    renderList = topSorted.slice(0, count);
+  } else {
+    renderList = typeof displayCount === 'number' ? withCombined.slice(0, displayCount) : withCombined;
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,8 +68,8 @@ const LibyaMapPro = () => {
         <div className="absolute inset-0">
           <Suspense fallback={<div className="w-full h-full grid place-items-center text-gray-500">Loading...</div>}>
             <ComposableMap
-              projection="geoMercator"
-              projectionConfig={{ scale: 2120, center: [17.5, 26.5] }}
+              projection={projection}
+              projectionConfig={projectionConfig}
               width={800}
               height={600}
               viewBox="0 0 800 600"
@@ -70,8 +94,8 @@ const LibyaMapPro = () => {
                           <text
                             textAnchor="middle"
                             dy="0.3em"
-                            className="text-sm font-medium"
-                            style={{ fontFamily: "var(--font-body)", fill: "var(--fg)" }}
+                            className="map-label hidden xl:block"
+                            style={{ vectorEffect: 'non-scaling-stroke' }}
                           >
                             {regionName}
                           </text>
@@ -81,29 +105,48 @@ const LibyaMapPro = () => {
                   })
                 }
               </Geographies>
-              {cities.map((city, idx) => {
+              {renderList.map((cityOrMarker, idx) => {
+                // If custom markers provided, use them verbatim (no top logic/metrics)
+                if (markers.length) {
+                  const label = cityOrMarker.name;
+                  const markerOffset = cityOrMarker.markerOffset ?? (idx % 2 === 0 ? -30 : 15);
+                  return (
+                    <Marker key={`mk-${idx}`} coordinates={cityOrMarker.coordinates}>
+                      <g className="pointer-events-none" transform="translate(-12, -24)" fill="none" stroke={'var(--chart-1)'} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="10" r="3" />
+                        <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
+                      </g>
+                      <text textAnchor="middle" y={markerOffset} className="map-label map-label-city" style={{ vectorEffect: 'non-scaling-stroke' }}>
+                        {label}
+                      </text>
+                    </Marker>
+                  );
+                }
+
+                const city = cityOrMarker; // default cities path
                 const minR = 6, maxR = 12;
                 const combined = (city.cases || 0) + (city.contracts || 0);
                 const maxCombined = (maxCases + maxContracts) || 1;
-                const r = Math.max(minR, Math.min(maxR, (combined / maxCombined) * maxR));
-                const markerOffset = idx % 2 === 0 ? -15 : 18;
+                let r = Math.max(minR, Math.min(maxR, (combined / maxCombined) * maxR));
+                const markerOffset = idx % 2 === 0 ? -30 : 15;
                 const label = `${city.name} · ${t('contracts', lang)} ${formatNumber(city.contracts, lang)} · ${t('cases', lang)} ${formatNumber(city.cases, lang)}`;
+                const isTop = highlightTop && topSet.has(city.name);
+                if (isTop) r = r + 3;
 
                 return (
                   <Marker key={`city-${idx}`} coordinates={city.coord}>
-                    <g className="pointer-events-none">
-                      <circle r={r} fill="var(--chart-1)" stroke="var(--card)" strokeWidth={2}>
-                        <title>{label}</title>
-                      </circle>
-                      <text
-                        textAnchor="middle"
-                        y={markerOffset}
-                        className="map-label map-label-city"
-                        style={{ vectorEffect: 'non-scaling-stroke' }}
-                      >
-                        {label}
-                      </text>
+                    <g className="pointer-events-none" transform="translate(-12, -24)" fill="none" stroke={isTop ? 'var(--neon-title)' : 'var(--chart-1)'} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="10" r="3" />
+                      <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
                     </g>
+                    {isTop && (
+                      <g className="pointer-events-none" transform="translate(-12, -24)" fill="none" stroke="var(--neon-title)" strokeOpacity="0.35" strokeWidth={2}>
+                        <path d="M12 24 C18 18 22 13 22 10 a10 10 0 1 0 -20 0 c0 3 4 8 10 14" />
+                      </g>
+                    )}
+                    <text textAnchor="middle" y={markerOffset} className="map-label map-label-city" style={{ vectorEffect: 'non-scaling-stroke' }}>
+                      {isTop ? `★ ${label}` : label}
+                    </text>
                   </Marker>
                 );
               })}

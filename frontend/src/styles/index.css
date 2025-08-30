@@ -58,18 +58,17 @@
   .map-label {
     font-family: var(--font-map);
     font-weight: 700;
-    /* doubled from previous values */
-    font-size: clamp(22px, 3.2vw, 32px);
+    /* reduce to avoid overlaps; scale with viewport */
+    font-size: clamp(11px, 1.2vw, 16px);
     fill: var(--fg);
     stroke: var(--bg);
     stroke-width: 2px;
     paint-order: stroke fill;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     user-select: none;
   }
   .map-label-city {
-    /* doubled from previous values */
-    font-size: clamp(20px, 2.8vw, 28px);
+    font-size: clamp(10px, 1vw, 14px);
     font-weight: 600;
   }
 
@@ -141,6 +140,8 @@
   .mini-sidebar-item {
     @apply flex items-center gap-2 px-3 py-2 rounded-lg transition-colors;
     color: var(--fg);
+    position: relative;
+    transition: background-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
   }
   .mini-sidebar-item:hover {
     background: color-mix(in oklab, var(--primary) 12%, transparent);
@@ -148,6 +149,42 @@
   .mini-sidebar-item.active {
     background: color-mix(in oklab, var(--primary) 18%, transparent);
     outline: 2px solid color-mix(in oklab, var(--primary) 30%, transparent);
+    box-shadow: 0 6px 18px rgba(0,0,0,.12);
+    transform: translateX(2px);
+  }
+
+  /* Left (logical start) active bar with motion */
+  .mini-sidebar-item::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 15%;
+    inset-inline-start: 0;
+    inline-size: 3px;
+    block-size: 70%;
+    background: color-mix(in oklab, var(--primary) 45%, transparent);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .18s ease-out, background-color .2s ease;
+  }
+  .mini-sidebar-item:hover::before,
+  .mini-sidebar-item.active::before {
+    transform: scaleX(1);
+  }
+
+  /* Dark mode: special neon-y hover/active without being too bright */
+  .dark .mini-sidebar-item:hover {
+    background: color-mix(in oklab, var(--neon-title) 10%, transparent);
+    box-shadow: 0 0 14px rgba(50,255,170,0.12);
+  }
+  .dark .mini-sidebar-item.active {
+    background: color-mix(in oklab, var(--neon-title) 16%, transparent);
+    outline: 2px solid color-mix(in oklab, var(--neon-title) 28%, transparent);
+    box-shadow: 0 0 18px rgba(50,255,170,0.18), 0 8px 22px rgba(0,0,0,.35);
+    transform: translateX(3px);
+  }
+  .dark .mini-sidebar-item::before {
+    background: color-mix(in oklab, var(--neon-title) 55%, transparent);
   }
 
   /* Animated neon pulse for titles in dark mode */
