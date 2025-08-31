@@ -55,7 +55,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
       transition={{ duration: 0.4 }}
     >
       <div className="p-10">
-        <h2 className="text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-300 to-emerald-500 drop-shadow-xl mb-8">
+        <h2 id="login-title" className="text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-300 to-emerald-500 drop-shadow-xl mb-8">
           تسجيل الدخول
         </h2>
 

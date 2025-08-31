@@ -1,22 +1,22 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence , useReducedMotion } from "framer-motion";
 import Login from '../components/auth/Login';
-import { WelcomeLogoWhite, LoginBg } from '../assets/images';
+import { WelcomeLogoWhite, WelcomeImage2 } from '../assets/images';
 import AuthSpinner from '../components/common/Spinners/AuthSpinner';
 
 const HomePage = () => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const reduce = useReducedMotion();
   return (
     <div className="relative w-full min-h-screen overflow-hidden font-['Tajawal']">
       <img
-        src={LoginBg}
+        src={WelcomeImage2}
         alt="خلفية"
         className="absolute inset-0 w-full h-full object-cover z-0"
         loading="lazy"
       />
-      <div className="absolute inset-0 bg-black/70 z-10" />
+      <div className="absolute inset-0 bg-black/20 z-10" />
 
       <div className="relative z-20 flex items-center justify-center h-screen px-4 sm:px-6">
         {isLoading && <AuthSpinner />}
@@ -28,7 +28,7 @@ const HomePage = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 30 }}
               transition={{ duration: 0.5 }}
-              className="w-full max-w-xl text-center backdrop-blur-2xl bg-white/10 border border-white/20 rounded-3xl shadow-xl p-8 sm:p-10 space-y-6"
+              className="w-full max-w-xl text-center   rounded-3xl shadow-xl p-8 sm:p-10 space-y-6"
             >
               <motion.img
                 src={WelcomeLogoWhite}
@@ -39,16 +39,49 @@ const HomePage = () => {
                 transition={{ duration: 1 }}
               />
 
- 
+     <motion.button
+      type="button" 
+        onClick={() => setShowLoginForm(true)}
+            
+      disabled={isLoading} 
+      aria-label="تسجيل الدخول"
+      className="
+        relative inline-flex items-center justify-center gap-2
+        px-6 md:px-8 py-3 rounded-xl
+        font-semibold tracking-tight
+        text-primary-foreground
+        bg-gradient-primary
+        shadow-glow hover:shadow-xl
+        focus-ring
+        transition-[transform,box-shadow,opacity] will-change-transform
+        disabled:opacity-60 disabled:cursor-not-allowed
+        select-none
+      "
+      whileHover={reduce ? undefined : { y: -1, scale: 1.02 }}
+      whileTap={reduce ? undefined : { scale: 0.98 }}
+    >
+      {/* sheen خفيف عند المرور */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-[inherit] 
+                   before:absolute before:inset-0 before:rounded-[inherit]
+                   before:bg-background/10 before:opacity-0 hover:before:opacity-100
+                   before:transition-opacity"
+      />
+      {/* محتوى الزر */}
+      <span className={isLoading ? "opacity-0" : "opacity-100"}>🚀 تسجيل الدخول</span>
 
-              <motion.button
-                onClick={() => setShowLoginForm(true)}
-                className="px-8 py-3 rounded-full mt-0 bg-gradient-to-r from-emerald-500 via-cyan-500 to-emerald-600 text-white font-bold shadow-lg hover:scale-105 transition"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                🚀 تسجيل الدخول
-              </motion.button>
+      {/* مُحمّل صغير داخل الزر */}
+      {isLoading && (
+        <span className="absolute inset-0 grid place-items-center">
+          <span
+            className="h-5 w-5 animate-spin rounded-full border-2
+                       border-primary-foreground/60 border-t-transparent"
+          />
+        </span>
+      )}
+    </motion.button>
+ 
             </motion.div>
           )}
         </AnimatePresence>

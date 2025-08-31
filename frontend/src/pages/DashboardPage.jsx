@@ -6,7 +6,6 @@ import { AnimatePresence } from 'framer-motion';
 import { MobileThemeProvider } from '@/components/MobileThemeProvider';
 import { NotificationProvider } from '@/components/Notifications/NotificationContext';
 import { AppWithQuery } from '@/hooks/dataHooks';
-import { LanguageProvider } from '@/context/LanguageContext';
 
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'));
 const AuthRoutes = lazy(() => import('@/components/layout/AuthRoutes'));
@@ -38,13 +37,11 @@ const DashboardContent = () => {
 
 const AuthWrapper = () => (
   <MobileThemeProvider>
-    <LanguageProvider>
-      <AppWithQuery>
-        <NotificationProvider>
-          <DashboardContent />
-        </NotificationProvider>
-      </AppWithQuery>
-    </LanguageProvider>
+    <AppWithQuery>
+      <NotificationProvider>
+        <DashboardContent />
+      </NotificationProvider>
+    </AppWithQuery>
   </MobileThemeProvider>
 );
 

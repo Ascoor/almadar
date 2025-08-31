@@ -9,6 +9,7 @@ import { Suspense } from 'react';
 import ThemeProvider from './utils/ThemeContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { Toaster } from 'sonner';
+import { LanguageProvider } from '@/context/LanguageContext';
  
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -28,6 +29,7 @@ root.render(
   <React.StrictMode>
     <ThemeProvider>
       <BrowserRouter>
+        <LanguageProvider>
         <AuthProvider>
           <SpinnerProvider>
             <Toaster 
@@ -42,6 +44,7 @@ root.render(
 </Suspense>
           </SpinnerProvider>
         </AuthProvider>
+        </LanguageProvider>
       </BrowserRouter>
     </ThemeProvider>
   </React.StrictMode>

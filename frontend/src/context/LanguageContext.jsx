@@ -3,7 +3,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 const translations = {
   ar: {
     home: 'الرئيسية',
-    contracts: 'التعاقدات',
     investigations: 'التحقيقات',
     legalAdvices: 'المشورة القانونية',
     litigations: 'التقاضي',

@@ -12,4 +12,5 @@ export { default as LogoArtGreen } from './logo-green.png';
 export { default as LogoTextArtGreen } from './logo.png';
 export { default as LogoTextArtWhite } from './logo512.png';
 export { default as WelcomeImage } from './welcome-image.jpg';
+export { default as WelcomeImage2 } from './welcome-image2.png';
  
