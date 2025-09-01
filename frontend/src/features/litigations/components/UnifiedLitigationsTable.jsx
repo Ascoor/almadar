@@ -7,13 +7,15 @@ import { AuthContext } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom"; 
 import { deleteLitigation } from "@/services/api/litigations";
 import { toast } from "sonner";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function UnifiedLitigationsTable({ litigations, scope, reloadLitigations, autoOpen = false }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [current, setCurrent] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const { hasPermission } = useContext(AuthContext);
+  const { t } = useLanguage();
 
   const moduleName = `litigation-${scope}`;
   const can = (action) => {
@@ -39,10 +41,10 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
     if (!current) return;
     try {
       await deleteLitigation(current.id);
-      toast.success("تم حذف الدعوى بنجاح");
+      toast.success(t('messages.litigationDeleteSuccess'));
       await reloadLitigations?.();
     } catch {
-      toast.error("فشل حذف الدعوى");
+      toast.error(t('messages.litigationDeleteFailure'));
     } finally {
       setConfirmDelete(false);
       setCurrent(null); 
@@ -56,30 +58,30 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
   }, [autoOpen]);
 
   const headers = [
-    { key: "case_number", text: "رقم الدعوى" },
-    { key: "court", text: "المحكمة" },
-    { key: "opponent", text: "الخصم" },
-    { key: "subject", text: "الموضوع" },
-    { key: "status", text: "الحالة" },
+    { key: "case_number", text: t('labels.litigationNumber') },
+    { key: "court", text: t('labels.court') },
+    { key: "opponent", text: t('labels.opponent') },
+    { key: "subject", text: t('labels.subject') },
+    { key: "status", text: t('labels.status') },
   ];
 
   const customRenderers = {
     status: (row) => {
-      const map = { open: "مفتوحة", in_progress: "قيد التنفيذ", closed: "مغلقة" };
+      const map = { open: t('open'), in_progress: t('inProgress'), closed: t('closed') };
       const cls =
         {
           open: "text-emerald-600 dark:text-emerald-400",
           in_progress: "text-amber-600 dark:text-amber-400",
           closed: "text-slate-500 dark:text-slate-400",
         }[row?.status] || "text-slate-400";
-      return <span className={`font-semibold ${cls}`}>{map[row?.status] || "غير معروف"}</span>;
+      return <span className={`font-semibold ${cls}`}>{map[row?.status] || t('labels.unknown')}</span>;
     },
   };
 
   if (!can("view")) {
     return (
       <div className="p-6 bg-amber-50 dark:bg-slate-800 text-center rounded-xl text-red-600 dark:text-amber-300 font-semibold">
-        ليس لديك صلاحية عرض الدعاوى.
+        {t('messages.noPermissionViewLitigations')}
       </div>
     );
   }
@@ -97,7 +99,7 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
         renderAddButton={can("create") ? {
           render: () => (
             <Button onClick={handleAdd}>
-              إضافة دعوى
+              {t('buttons.addLitigation')}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-4 h-4 ml-2"
@@ -129,7 +131,7 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
           onConfirm={handleDeleteConfirm}
           itemName={current?.case_number}
         />
-      )} 
+      )}
     </>
   );
 }

@@ -7,6 +7,7 @@ import { deleteLitigation } from '@/services/api/litigations';
 import { CaseIcon } from '@/assets/icons';
 import { useLitigations } from '@/hooks/dataHooks'; // ✅ hook من React Query
 import { useLocation } from 'react-router-dom';
+import { useLanguage } from '@/context/LanguageContext';
 const UnifiedLitigationsTable = lazy(
   () => import('@/features/litigations/components/UnifiedLitigationsTable'),
 );
@@ -18,6 +19,7 @@ export default function LitigationsPage() {
   const [activeTab, setActiveTab] = useState('against');
   const [litigationToDelete, setLitigationToDelete] = useState(null);
   const location = useLocation();
+  const { t } = useLanguage();
 
   // ✅ استخدام React Query لجلب الدعاوى
   const { data, isLoading, refetch } = useLitigations();
@@ -33,11 +35,11 @@ export default function LitigationsPage() {
     if (!litigationToDelete) return;
     try {
       await deleteLitigation(litigationToDelete.id);
-      toast.success('تم الحذف بنجاح');
+      toast.success(t('messages.deleteSuccess'));
       setLitigationToDelete(null);
       await refetch(); // ✅ تحديث البيانات بعد الحذف
     } catch {
-      toast.error('فشل الحذف');
+      toast.error(t('messages.deleteFailure'));
     }
   };
 
@@ -50,7 +52,7 @@ export default function LitigationsPage() {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: 'spring', stiffness: 70, damping: 14 }}
       >
-        <SectionHeader listName="قسم التقاضي" icon={CaseIcon} />
+        <SectionHeader listName={t('labels.litigationsSection')} icon={CaseIcon} />
       </motion.div>
 
       <motion.div
@@ -60,8 +62,8 @@ export default function LitigationsPage() {
         className="flex justify-center gap-4"
       >
         {[
-          { key: 'from', label: 'من الشركة' },
-          { key: 'against', label: 'ضد الشركة' },
+          { key: 'from', label: t('labels.fromCompany') },
+          { key: 'against', label: t('labels.againstCompany') },
         ].map((tab) => (
           <motion.button
             key={tab.key}
@@ -105,7 +107,7 @@ export default function LitigationsPage() {
             }}
           >
             <Card className="p-4 sm:p-6 rounded-xl shadow-md border overflow-x-auto bg-card text-fg">
-              <Suspense fallback={<div>تحميل الجدول...</div>}>
+              <Suspense fallback={<div>{t('labels.tableLoading')}</div>}>
                 <UnifiedLitigationsTable
                   litigations={filteredLitigations}
                   reloadLitigations={refetch}
@@ -126,7 +128,7 @@ export default function LitigationsPage() {
             isOpen={!!litigationToDelete}
             onClose={() => setLitigationToDelete(null)}
             onConfirm={handleConfirmDelete}
-            itemName={litigationToDelete?.case_number || 'الدعوى'}
+            itemName={litigationToDelete?.case_number || t('labels.unknown')}
           />
         )}
       </Suspense>
