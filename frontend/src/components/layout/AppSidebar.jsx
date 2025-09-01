@@ -223,7 +223,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                   `px-4 py-2 rounded-md transition-all duration-200 font-semibold tracking-tight flex items-center gap-2 group ${
                     isActive
                       ? 'text-sidebar-active shadow-md'
-                      : 'text-sidebar-fg hover:bg-accent/50 hover:text-fg'
+                      : 'text-sidebar-fg hover:bg-accent/50 hover:text-sidebar-active'
                   }`
                 }
               >
@@ -231,8 +231,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                   React.cloneElement(it.icon, {
                     className: `transition duration-200 ${
                       isActive
-                        ? 'text-fg dark:text-[color:var(--neon-title)]'
-                        : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
+                        ? 'text-sidebar-active dark:text-[color:var(--neon-title)]'
+                        : 'text-sidebar-fg group-hover:text-sidebar-active dark:group-hover:text-[color:var(--neon-title)]'
                     }`
                   })
                 }
