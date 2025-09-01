@@ -5,6 +5,7 @@ import {
   modalCancelButton,
   modalPrimaryButton,
 } from './modalStyles';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ModalCard({
   isOpen,
@@ -13,9 +14,10 @@ export default function ModalCard({
   loading = false,
   onClose,
   onSubmit,
-  submitLabel = 'حفظ',
+  submitLabel = 'save',
   className = '',
 }) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -31,7 +33,7 @@ export default function ModalCard({
         {loading && (
           <div className="absolute inset-0 bg-card/80 dark:bg-bg/60 backdrop-blur-sm flex items-center justify-center rounded-2xl z-10">
             <span className="text-2xl font-bold text-fg animate-pulse">
-              جاري الحفظ...
+              {t('loading')}
             </span>
           </div>
         )}
@@ -41,7 +43,7 @@ export default function ModalCard({
           text-2xl font-bold text-center mb-6
           text-primary border-b border-border pb-2
         ">
-          {title}
+          {t(title)}
         </h2>
 
         {/* Content */}
@@ -56,7 +58,7 @@ export default function ModalCard({
             onClick={onClose}
             className={`${modalCancelButton} font-semibold`}
           >
-            إلغاء
+            {t('cancel')}
           </button>
 
           <button
@@ -64,7 +66,7 @@ export default function ModalCard({
             disabled={loading}
             className={`${modalPrimaryButton} px-6 py-2.5 font-bold disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            {loading ? '⏳ جاري الحفظ...' : submitLabel}
+            {loading ? `⏳ ${t('loading')}` : t(submitLabel)}
           </button>
         </div>
       </div>

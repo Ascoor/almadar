@@ -3,6 +3,12 @@ import { Edit, Eye, Trash, ChevronUp, ChevronDown } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import API_CONFIG from '../../config/config';
 import { AuthContext } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
+
+const EXPORT_LABELS = {
+  excel: { en: '📁 Excel', ar: '📁 إكسل' },
+  csv: { en: '🧾 CSV', ar: '🧾 CSV' }
+};
 
 export default function TableComponent({
   data = [],
@@ -17,6 +23,7 @@ export default function TableComponent({
 }) {
   
   const { hasPermission } = useContext(AuthContext);
+  const { lang, translations } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortKey, setSortKey] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
@@ -153,17 +160,17 @@ export default function TableComponent({
             onClick={() => exportTo('xlsx')}
             className="rounded-2xl px-3 py-1 text-sm bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow transition"
           >
-            📁 Excel
+            {EXPORT_LABELS.excel[lang]}
           </button>
           <button
             onClick={() => exportTo('csv')}
             className="rounded-2xl px-3 py-1 text-sm bg-secondary text-fg hover:shadow-glow transition"
           >
-            🧾 CSV
+            {EXPORT_LABELS.csv[lang]}
           </button>
           <input
             type="text"
-            placeholder="🔍 ابحث... (يدعم >=10 أو 10-20 للأرقام)"
+            placeholder={`🔍 ${translations.search_placeholder}`}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full md:w-64 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none bg-bg text-fg"
           />

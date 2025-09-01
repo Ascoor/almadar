@@ -78,7 +78,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
       ]
     },
     hasPermission('view users') && {
-      id: 'users', label: t('users'), icon: <UsersRound size={20} />, children: [
+      id: 'users', label: t('usersManagement'), icon: <UsersRound size={20} />, children: [
         { id: 'users-list', label: t('usersList'), to: '/users', icon: <UserCheck size={16} /> },
       ]
     },
