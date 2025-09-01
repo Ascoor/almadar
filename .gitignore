@@ -2,6 +2,7 @@
 # Laravel (backend - public_html)
 # ==========================
 /public_html/
+
 /public_html/node_modules/
 /public_html/storage/*.key
 /public_html/storage/app/public
