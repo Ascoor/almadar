@@ -12,7 +12,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { lang } = useLanguage();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,18 +22,18 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
       const { success, message } = await login(email, password);
 
       if (success) {
-        toast.success('✅ تم تسجيل الدخول بنجاح', { description: 'تم الدخول إلى النظام بنجاح.' });
+        toast.success(t('loginSuccessTitle'), { description: t('loginSuccessMessage') });
         onAuthComplete(true);
       } else {
         const errorMsg = message === 'Bad credentials'
-          ? 'تأكد من صحة اسم المستخدم وكلمة المرور.'
+          ? t('loginFailedBadCredentials')
           : message;
 
-        toast.error('❌ فشل تسجيل الدخول', { description: errorMsg });
+        toast.error(t('loginFailedTitle'), { description: errorMsg });
         onAuthComplete(false);
       }
     } catch (error) {
-      toast.error('حدث خطأ غير متوقع', { description: error.message });
+      toast.error(t('unexpectedError'), { description: error.message });
       onAuthComplete(false);
     }
   };
@@ -61,7 +61,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
           id="login-title"
           className="text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-300 to-emerald-500 drop-shadow-xl"
         >
-          {lang === 'ar' ? 'تسجيل الدخول' : 'Sign In'}
+          {t('signIn')}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -70,8 +70,8 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
             name="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            placeholder={{ ar: 'البريد الإلكتروني', en: 'Email' }}
-            label={{ ar: 'البريد الإلكتروني', en: 'Email' }}
+            placeholder={t('email')}
+            label={t('email')}
           />
 
           <FormField
@@ -79,15 +79,15 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
             name="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder={{ ar: 'كلمة المرور', en: 'Password' }}
-            label={{ ar: 'كلمة المرور', en: 'Password' }}
+            placeholder={t('password')}
+            label={t('password')}
           />
 
           <Button
             type="submit"
             className="w-full py-3 font-bold text-white bg-gradient-to-l from-emerald-600 via-green-600 to-emerald-700 rounded-lg shadow-md hover:scale-105 transition-all"
           >
-            {lang === 'ar' ? '🚀 دخول' : '🚀 Login'}
+            {`🚀 ${t('signIn')}`}
           </Button>
 
           <button
@@ -95,7 +95,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
             onClick={handleCancel}
             className="w-full py-3 font-semibold text-white bg-gray-600/80 border border-gray-500 rounded-lg hover:bg-gray-500 transition-all hover:scale-105"
           >
-            {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+            {t('cancel')}
           </button>
         </form>
       </div>

@@ -119,7 +119,14 @@ const translations = {
     profile: "الملف الشخصي",
     language: "اللغة",
     arabic: "العربية",
-    english: "الإنجليزية"
+    english: "الإنجليزية",
+    loginSuccessTitle: "تم تسجيل الدخول بنجاح",
+    loginSuccessMessage: "تم الدخول إلى النظام بنجاح.",
+    loginFailedTitle: "فشل تسجيل الدخول",
+    loginFailedBadCredentials: "تأكد من صحة اسم المستخدم وكلمة المرور.",
+    unexpectedError: "حدث خطأ غير متوقع",
+    switchToEnglish: "التبديل إلى الإنجليزية",
+    switchToArabic: "التبديل إلى العربية"
   },
   en: {
     home: 'Home',
@@ -234,7 +241,14 @@ const translations = {
     profile: "Profile",
     language: "Language",
     arabic: "Arabic",
-    english: "English"
+    english: "English",
+    loginSuccessTitle: "Login Successful",
+    loginSuccessMessage: "Logged into the system successfully.",
+    loginFailedTitle: "Login Failed",
+    loginFailedBadCredentials: "Please check your username and password.",
+    unexpectedError: "An unexpected error occurred",
+    switchToEnglish: "Switch to English",
+    switchToArabic: "Switch to Arabic"
   }
 };
 
