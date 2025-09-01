@@ -21,7 +21,31 @@ export default function LitigationDetailsPage() {
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
       <Button onClick={() => navigate(-1)} className="mb-4">
         رجوع
-      </Button>
+      </Button> 
+      <div className="mb-6 p-4 bg-card text-fg rounded-xl shadow">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <span className="font-semibold">رقم الدعوى: </span>
+            {litigation.case_number}
+          </div>
+          <div>
+            <span className="font-semibold">المحكمة: </span>
+            {litigation.court}
+          </div>
+          <div>
+            <span className="font-semibold">الخصم: </span>
+            {litigation.opponent}
+          </div>
+          <div>
+            <span className="font-semibold">الموضوع: </span>
+            {litigation.subject}
+          </div>
+          <div>
+            <span className="font-semibold">الحالة: </span>
+            {litigation.status}
+          </div>
+        </div>
+      </div> 
       <Suspense fallback={<div>تحميل البيانات...</div>}>
         <LitigationActionsTable litigationId={litigation.id} scope={litigation.scope} reloadLitigations={refetch} />
       </Suspense>
