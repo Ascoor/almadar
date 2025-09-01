@@ -14,7 +14,6 @@ export default function TableComponent({
   onView,
   renderAddButton,
   onRowClick,
-  expandedRowRenderer,
 }) {
   const { hasPermission } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState('');
@@ -212,11 +211,11 @@ export default function TableComponent({
           </thead>
           <tbody className="divide-y divide-border">
             {paginatedData.map((row) => (
-              <React.Fragment key={row.id}>
-                <tr
-                  className="transition cursor-pointer hover:bg-secondary/30"
-                  onClick={() => onRowClick?.(row)}
-                >
+              <tr
+                key={row.id}
+                className="transition cursor-pointer hover:bg-secondary/30"
+                onClick={() => onRowClick?.(row)}
+              >
                   <td className="p-2 text-center">
                     <input
                       type="checkbox"
@@ -273,9 +272,7 @@ export default function TableComponent({
                       </button>
                     )}
                   </td>
-                </tr>
-                {expandedRowRenderer?.(row)}
-              </React.Fragment>
+              </tr>
             ))}
           </tbody>
         </table>

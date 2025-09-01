@@ -12,17 +12,16 @@ import { motion } from 'framer-motion';
 import { useLegalAdvices } from "@/hooks/dataHooks"; // ✅ من React Query
 import { useQuery } from "@tanstack/react-query"; // لاستدعاء أنواع المشورة
 import API_CONFIG  from "@/config/config";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 const LegalAdviceModal = lazy(() => import("../components/LegalAdvices/LegalAdviceModal"));
-const LegalAdviceDetails = lazy(() => import("../components/LegalAdvices/LegalAdviceDetails"));
 const GlobalConfirmDeleteModal = lazy(() => import("../components/common/GlobalConfirmDeleteModal"));
 
 export default function LegalAdvicePage() {
   const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(location.state?.openModal || false);
   const [editingAdvice, setEditingAdvice] = useState(null);
-  const [selectedAdvice, setSelectedAdvice] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const navigate = useNavigate();
 
   const { hasPermission } = useContext(AuthContext);
   const moduleName = "legaladvices";
@@ -113,19 +112,7 @@ export default function LegalAdvicePage() {
                 <span className="text-gray-400">لا يوجد</span>
               )
           }}
-          onRowClick={(row) =>
-            setSelectedAdvice((prev) => (prev?.id === row.id ? null : row))
-          }
-          expandedRowRenderer={(row) =>
-            selectedAdvice?.id === row.id && (
-              <tr>
-                <td colSpan={7} className="bg-muted/40 px-4 pb-6">
-                       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
-                    <LegalAdviceDetails selected={selectedAdvice} onClose={() => setSelectedAdvice(null)} />
-                  </Suspense>                </td>
-              </tr>
-            )
-          }
+          onRowClick={(row) => navigate(`/legal/legal-advices/${row.id}`, { state: row })}
         />
       </motion.div>
 
