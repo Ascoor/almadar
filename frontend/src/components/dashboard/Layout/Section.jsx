@@ -14,7 +14,7 @@ export default function Section({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
-      className={`glass-card hover-scale min-w-0 ${className}`}
+      className={`card-soft hover-scale min-w-0 p-4 md:p-6 ${className}`}
     >
       {(title || actions) && (
         <div className="mb-4 flex items-center justify-between">

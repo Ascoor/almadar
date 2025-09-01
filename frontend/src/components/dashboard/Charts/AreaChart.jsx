@@ -14,7 +14,7 @@ export default function AreaChartBasic({
     <div style={{ height }} className="w-full min-w-0" dir="ltr">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={chartMargin}>
-          <CartesianGrid strokeOpacity={0.1} />
+          <CartesianGrid stroke="var(--chart-grid)" strokeOpacity={1} />
           <XAxis 
             dataKey={xKey} 
             tick={axisTick}
@@ -33,7 +33,7 @@ export default function AreaChartBasic({
           <Area 
             type="monotone" 
             dataKey={yKey} 
-            stroke="var(--primary)" 
+            stroke="var(--chart-2)" 
             fill="url(#areaGradient)" 
             strokeWidth={3}
           />

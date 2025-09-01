@@ -70,7 +70,94 @@
   .map-label-city {
     font-size: clamp(10px, 1vw, 14px);
     font-weight: 600;
+}
+
+/* Token-driven form styles (unified across app) */
+@layer base {
+  /* Text inputs, selects, textareas */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    @apply w-full rounded-lg border bg-background text-foreground;
+    border-color: var(--border);
+    caret-color: var(--primary);
   }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground);
+    opacity: .8;
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ring);
+    border-color: var(--ring);
+  }
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    @apply opacity-60 cursor-not-allowed;
+    background: color-mix(in oklab, var(--muted) 80%, transparent);
+  }
+
+  /* Checkboxes & radios */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--primary);
+  }
+
+  /* Labels */
+  label {
+    @apply text-sm font-medium;
+    color: var(--fg);
+  }
+}
+
+@layer components {
+  /* Optional explicit helpers for consistency */
+  .form-control { @apply w-full rounded-lg border bg-background text-foreground; border-color: var(--border); }
+  .form-control:focus { outline: none; box-shadow: 0 0 0 2px var(--ring); border-color: var(--ring); }
+  .form-hint { @apply text-xs; color: var(--muted-foreground); }
+  .btn-primary { @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-semibold; color: var(--primary-foreground); background: var(--primary); }
+  .btn-primary:hover { filter: brightness(1.03); }
+
+  /* Dashboard clock styling via tokens */
+  .dashboard-clock {
+    background: var(--gradient-subtle);
+    border: 2px solid var(--border);
+    box-shadow: var(--shadow-md);
+  }
+  .dashboard-clock__rim { box-shadow: var(--shadow-glow); }
+  .dashboard-clock__pivot { background: var(--fg); box-shadow: 0 0 0 2px var(--card); }
+  .dashboard-clock__hand--hour { background: var(--accent); }
+  .dashboard-clock__hand--minute { background: var(--fg); box-shadow: 0 0 0 1px var(--card); }
+  .dashboard-clock__hand--second { background: var(--neon-title); }
+}
+
+/* Extend forms: selection, option/listbox colors via tokens */
+@layer base {
+  ::selection { background: var(--primary); color: var(--primary-foreground); }
+  ::-moz-selection { background: var(--primary); color: var(--primary-foreground); }
+
+  select { background-color: var(--background); color: var(--foreground); }
+  option { background-color: var(--card); color: var(--fg); }
+  option:checked, option:focus, option:active { background-color: var(--primary); color: var(--primary-foreground); }
+  select[multiple] option:checked { background-color: var(--primary); color: var(--primary-foreground); }
+
+  [role="listbox"] { background: var(--card); color: var(--fg); border: 1px solid var(--border); border-radius: .75rem; }
+  [role="listbox"] [role="option"] { padding: .5rem .75rem; cursor: pointer; }
+  [role="listbox"] [role="option"][aria-selected="true"] { background: color-mix(in oklab, var(--primary) 24%, transparent); color: var(--primary-foreground); }
+  [role="listbox"] [role="option"]:hover { background: color-mix(in oklab, var(--primary) 15%, transparent); color: var(--primary-foreground); }
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+}
 
   /* Subtle neon pulse used in dark mode */
   @keyframes neonPulse {

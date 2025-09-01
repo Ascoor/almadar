@@ -22,12 +22,12 @@ export default function ChartCard({
         <svg width="0" height="0" style={{ position: 'absolute' }}>
           <defs>
             <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="var(--primary)" />
-              <stop offset="100%" stopColor="var(--secondary)" />
+              <stop offset="0%" stopColor="var(--chart-2)" />
+              <stop offset="100%" stopColor="var(--chart-1)" />
             </linearGradient>
             <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.05" />
+              <stop offset="0%" stopColor="var(--chart-2)" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="var(--chart-1)" stopOpacity="0.05" />
             </linearGradient>
           </defs>
         </svg>

@@ -17,19 +17,21 @@ export default function Toolbar({ value, onChange }) {
     onChange && onChange(local);
   }, [local, onChange]);
 
-  const selectClass = "glass rounded-xl px-4 py-2 text-sm border-0 focus:ring-2 focus:ring-primary/50 transition-all";
-  const buttonClass = "glass rounded-xl px-4 py-2 text-sm hover:bg-primary/10 transition-all flex items-center gap-2";
-  const resetClass = "gradient-primary text-primary-foreground rounded-xl px-4 py-2 text-sm font-medium hover:opacity-90 transition-all flex items-center gap-2";
+  const selectClass = "select rounded-xl px-4 py-2 text-sm transition-all";
+  const buttonClass = "btn-primary rounded-xl px-4 py-2 text-sm transition-all flex items-center gap-2";
+  const resetClass = "btn-primary rounded-xl px-4 py-2 text-sm font-medium transition-all flex items-center gap-2";
 
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="mb-6 flex flex-wrap items-center gap-3 p-4 glass rounded-2xl"
+      className="mb-6 flex flex-wrap items-center gap-3 p-4 card-soft rounded-2xl"
     >
-      <DashboardClock />
-      <div className="flex items-center gap-2">
+      <div className="shrink-0">
+        <DashboardClock size={112} sweepSeconds={false} />
+      </div>
+      <div className="flex items-center gap-2 w-full sm:w-auto">
         <Calendar className="w-4 h-4 text-primary" />
         <select 
           className={selectClass}
@@ -42,7 +44,7 @@ export default function Toolbar({ value, onChange }) {
         </select>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 w-full sm:w-auto">
         <MapPin className="w-4 h-4 text-primary" />
         <select 
           className={selectClass}
@@ -58,7 +60,7 @@ export default function Toolbar({ value, onChange }) {
         </select>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 w-full sm:w-auto">
         <Filter className="w-4 h-4 text-primary" />
         <select 
           className={selectClass}
@@ -74,7 +76,7 @@ export default function Toolbar({ value, onChange }) {
         </select>
       </div>
 
-      <div className="flex items-center gap-2 ml-auto">
+      <div className="flex items-center gap-2 ml-auto w-full sm:w-auto justify-end">
         <button 
           className={resetClass}
           onClick={() => setLocal({period: "last-12m", region: "ALL", status: "ALL"})}

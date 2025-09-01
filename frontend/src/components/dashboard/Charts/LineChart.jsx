@@ -14,7 +14,7 @@ export default function LineChartBasic({
     <div style={{ height }} className="w-full min-w-0" dir="ltr">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={chartMargin}>
-          <CartesianGrid strokeOpacity={0.1} />
+          <CartesianGrid stroke="var(--chart-grid)" strokeOpacity={1} />
           <XAxis 
             dataKey={xKey} 
             tick={axisTick}

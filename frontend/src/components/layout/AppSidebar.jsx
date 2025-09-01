@@ -141,8 +141,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                     {React.cloneElement(item.icon, {
                       className: `transition-colors duration-200 ${
                         isActive
-                          ? 'text-sidebar-active'
-                          : 'text-sidebar-fg group-hover:text-fg'
+                          ? 'text-sidebar-active dark:text-[color:var(--neon-title)]'
+                          : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
                       }`
                     })}
                     <span className="flex-1 text-right">{item.label}</span>
@@ -161,8 +161,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                 {React.cloneElement(item.icon, {
                   className: `transition-colors duration-200 ${
                     activeSection === item.id
-                      ? 'text-sidebar-active'
-                      : 'text-sidebar-fg group-hover:text-fg'
+                      ? 'text-sidebar-active dark:text-[color:var(--neon-title)]'
+                      : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
                   }`
                 })}
                 <span className="flex-1 text-right">{item.label}</span>
@@ -196,8 +196,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                         {React.cloneElement(ch.icon, {
                           className: `transition duration-200 ${
                             isActive
-                              ? 'text-sidebar-active'
-                              : 'text-sidebar-fg group-hover:text-fg'
+                              ? 'text-sidebar-active dark:text-[color:var(--neon-title)]'
+                              : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
                           }`
                         })}
                         <span>{ch.label}</span>
@@ -231,8 +231,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                   React.cloneElement(it.icon, {
                     className: `transition duration-200 ${
                       isActive
-                        ? 'text-fg'
-                        : 'text-sidebar-fg group-hover:text-fg'
+                        ? 'text-fg dark:text-[color:var(--neon-title)]'
+                        : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
                     }`
                   })
                 }
