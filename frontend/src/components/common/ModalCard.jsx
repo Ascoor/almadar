@@ -1,4 +1,10 @@
 import React from 'react';
+import {
+  modalOverlay,
+  modalContainer,
+  modalCancelButton,
+  modalPrimaryButton,
+} from './modalStyles';
 
 export default function ModalCard({
   isOpen,
@@ -13,10 +19,9 @@ export default function ModalCard({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div className={modalOverlay}>
       <div
-        className={`relative w-full max-w-3xl max-h-[90vh] overflow-y-auto
-          card p-6 sm:p-8 flex flex-col
+        className={`${modalContainer} max-w-3xl sm:p-8 flex flex-col
           transition-all duration-300 ease-in-out
           hover:shadow-3xl hover:scale-[1.01]
           ${className}
@@ -49,7 +54,7 @@ export default function ModalCard({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-2xl font-semibold bg-destructive text-fg hover:brightness-110 hover:shadow-glow transition-all duration-200"
+            className={`${modalCancelButton} font-semibold`}
           >
             إلغاء
           </button>
@@ -57,7 +62,7 @@ export default function ModalCard({
           <button
             onClick={onSubmit}
             disabled={loading}
-            className={`px-6 py-2.5 rounded-2xl font-bold bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200`}
+            className={`${modalPrimaryButton} px-6 py-2.5 font-bold disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {loading ? '⏳ جاري الحفظ...' : submitLabel}
           </button>

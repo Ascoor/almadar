@@ -1,11 +1,17 @@
 import React from 'react';
+import {
+  modalOverlay,
+  modalContainer,
+  modalCancelButton,
+  modalDestructiveButton,
+} from './modalStyles';
 
 const GlobalConfirmDeleteModal = ({ isOpen, onClose, onConfirm, itemName }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-fg/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="p-6 rounded-lg shadow-lg max-w-md w-full bg-card">
+    <div className={modalOverlay}>
+      <div className={`${modalContainer} max-w-md`}>
         <h2 className="mb-4 text-center text-lg font-bold text-fg">
           تأكيد الحذف
         </h2>
@@ -14,16 +20,10 @@ const GlobalConfirmDeleteModal = ({ isOpen, onClose, onConfirm, itemName }) => {
           <span className="font-bold text-destructive">{itemName}</span>؟
         </p>
         <div className="flex justify-center gap-4">
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 rounded-2xl bg-destructive text-fg hover:brightness-110 hover:shadow-glow transition"
-          >
+          <button onClick={onConfirm} className={modalDestructiveButton}>
             تأكيد
           </button>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-2xl bg-muted text-fg hover:shadow-glow transition"
-          >
+          <button onClick={onClose} className={modalCancelButton}>
             إلغاء
           </button>
         </div>
