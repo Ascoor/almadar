@@ -249,7 +249,10 @@ export default function TableComponent({
                   <td className="p-2 space-x-1 text-center">
                     {onView && can('view') && (
                       <button
-                        onClick={() => onView(row)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onView(row);
+                        }}
                         className="text-accent hover:text-"
                       >
                         <Eye size={16} />
@@ -257,7 +260,10 @@ export default function TableComponent({
                     )}
                     {onEdit && can('edit') && (
                       <button
-                        onClick={() => onEdit(row)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(row);
+                        }}
                         className="text-secondary hover:text-"
                       >
                         <Edit size={16} />
@@ -265,7 +271,10 @@ export default function TableComponent({
                     )}
                     {onDelete && can('delete') && (
                       <button
-                        onClick={() => onDelete(row)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(row);
+                        }}
                         className="text-destructive hover:text-destructive/90"
                       >
                         <Trash size={16} />
