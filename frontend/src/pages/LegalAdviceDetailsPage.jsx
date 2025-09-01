@@ -22,13 +22,16 @@ export default function LegalAdviceDetailsPage() {
   const location = useLocation();
   const { hasPermission } = useContext(AuthContext);
 
+  // البيانات الأساسية
   const { data, refetch } = useLegalAdvices();
   const { data: typesData } = useAdviceTypes();
-
   const advices = data?.data || [];
-  const initialAdvice = location.state || advices.find((a) => a.id === Number(id));
 
+  // تحديد المشورة الحالية
+  const initialAdvice = location.state || advices.find((a) => a.id === Number(id));
   const [current, setCurrent] = useState(initialAdvice);
+
+  // مودالات
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -36,13 +39,19 @@ export default function LegalAdviceDetailsPage() {
     return <div className="p-4">لا توجد بيانات</div>;
   }
 
+  // إعادة تحميل بيانات المشورة بعد التعديل
   const reloadAdvice = async () => {
-    const res = await refetch();
-    const list = res?.data || [];
-    const updated = list.find((a) => a.id === current.id);
-    if (updated) setCurrent(updated);
+    try {
+      const res = await refetch();
+      const list = res?.data || [];
+      const updated = list.find((a) => a.id === current.id);
+      if (updated) setCurrent(updated);
+    } catch {
+      toast.error("فشل تحديث البيانات");
+    }
   };
 
+  // حذف المشورة
   const handleDelete = async () => {
     try {
       await deleteLegalAdvice(current.id);
@@ -58,6 +67,7 @@ export default function LegalAdviceDetailsPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
+      {/* أزرار التحكم */}
       <div className="mb-4 flex gap-2">
         <Button onClick={() => navigate(-1)}>رجوع</Button>
 
@@ -72,10 +82,12 @@ export default function LegalAdviceDetailsPage() {
         )}
       </div>
 
+      {/* تفاصيل المشورة */}
       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
         <LegalAdviceDetails selected={current} onClose={() => navigate(-1)} />
       </Suspense>
 
+      {/* مودال تعديل وحذف */}
       <Suspense fallback={null}>
         {isModalOpen && (
           <LegalAdviceModal

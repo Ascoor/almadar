@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from "react";
 import TableComponent from "@/components/common/TableComponent";
 import { Button } from "@/components/ui/button";
-import ContractModal from "./ContractModal";
-import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
-import { deleteContract } from "../../services/api/contracts";
-import { toast } from "sonner";
+import ContractModal from "./ContractModal"; 
+import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import { useNavigate } from "react-router-dom";
+import { deleteContract } from "@/services/api/contracts";
+import { toast } from "sonner";
 
-export default function ContractsTable({
-  contracts = [],
-  categories = [],
-  reloadContracts,
-  scope,
-  autoOpen = false,
-}) {
+export default function ContractsTable({ contracts = [], categories = [], reloadContracts, scope, autoOpen = false }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(false); 
   const navigate = useNavigate();
 
   const filteredContracts = Array.isArray(contracts)
@@ -24,20 +19,32 @@ export default function ContractsTable({
 
   useEffect(() => {
     if (autoOpen) setIsModalOpen(true);
-  }, [autoOpen]);
+  }, [autoOpen]); 
 
-  const openEdit = (row) => navigate(`/contracts/${row.id}`, { state: row });
-  const confirmDelete = (row) => setDeleteTarget(row);
+  const handleAdd = () => {
+    setSelected(null);
+    setIsModalOpen(true);
+  };
 
-  const handleConfirmDelete = async () => {
-    if (!deleteTarget?.id) return;
+  const handleEdit = (row) => {
+    setSelected(row);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (row) => {
+    setSelected(row);
+    setConfirmDelete(true);
+  };
+
+  const handleDeleteConfirm = async () => {
     try {
-      await deleteContract(deleteTarget.id);
+      await deleteContract(selected.id);
       toast.success("تم حذف العقد بنجاح");
-      setDeleteTarget(null);
-      reloadContracts?.();
-    } catch (e) {
-      toast.error("تعذر حذف العقد");
+      await reloadContracts?.();
+    } catch {
+      toast.error("فشل حذف العقد");
+    } finally {
+      setConfirmDelete(false); 
     }
   };
 
@@ -54,15 +61,13 @@ export default function ContractsTable({
           { key: "attachment", text: "المرفق" },
           { key: "status", text: "الحالة" },
         ]}
-        customRenderers={{
-          category_name: (row) => row?.category?.name || "—",
+        customRenderers={{ 
+          category_name: (row) => row.category?.name || "—",
         }}
-        onEdit={openEdit}
-        onDelete={confirmDelete}
         renderAddButton={{
           action: "create",
           render: () => (
-            <Button onClick={() => setIsModalOpen(true)}>
+            <Button onClick={handleAdd}> 
               إضافة عقد جديد
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -76,26 +81,33 @@ export default function ContractsTable({
               </svg>
             </Button>
           ),
-        }}
+        }} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
         onRowClick={(row) => navigate(`/contracts/${row.id}`, { state: row })}
       />
 
-      <ContractModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        categories={categories}
-        reloadContracts={reloadContracts}
-      />
+      {isModalOpen && (
+        <ContractModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelected(null);
+          }}
+          initialData={selected}
+          categories={categories}
+          reloadContracts={reloadContracts}
+        />
+      )}
 
-      <GlobalConfirmDeleteModal
-        isOpen={!!deleteTarget}
-        title="تأكيد حذف العقد"
-        description={`هل تريد حذف العقد رقم ${deleteTarget?.number ?? ""}؟ لا يمكن التراجع عن هذه العملية.`}
-        confirmText="حذف"
-        cancelText="إلغاء"
-        onConfirm={handleConfirmDelete}
-        onClose={() => setDeleteTarget(null)}
-      />
+      {confirmDelete && (
+        <GlobalConfirmDeleteModal
+          isOpen={confirmDelete}
+          onClose={() => setConfirmDelete(false)}
+          onConfirm={handleDeleteConfirm}
+          itemName={selected?.number}
+        />
+      )} 
     </>
   );
 }

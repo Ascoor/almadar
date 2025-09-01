@@ -4,17 +4,15 @@ import LitigationModal from "@/components/Litigations/LitigationModal";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
+import { deleteLitigation } from "@/services/api/litigations";
+import { toast } from "sonner";
 
-export default function UnifiedLitigationsTable({
-  litigations = [],
-  scope,
-  reloadLitigations,
-  autoOpen = false,
-}) {
+export default function UnifiedLitigationsTable({ litigations, scope, reloadLitigations, autoOpen = false }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [current, setCurrent] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const navigate = useNavigate(); 
 
   const navigate = useNavigate();
   const { hasPermission } = useContext(AuthContext);
@@ -24,33 +22,40 @@ export default function UnifiedLitigationsTable({
     const parts = moduleName.split("-");
     const attempts = [moduleName, parts.slice(0, 2).join("-"), parts[0]];
     return attempts.some((mod) => hasPermission(`${action} ${mod}`));
-  };
-
-  useEffect(() => {
-    if (autoOpen) setIsModalOpen(true);
-  }, [autoOpen]);
-
+  }; 
   const handleAdd = () => {
-    setEditingItem(null);
+    setCurrent(null);
     setIsModalOpen(true);
   };
 
   const handleEdit = (row) => {
-    setEditingItem(row);
+    setCurrent(row);
     setIsModalOpen(true);
-  };
+  }; 
 
+  const handleDelete = (row) => {
+    setCurrent(row);
+    setConfirmDelete(true);
+  }; 
   const handleDeleteConfirm = async () => {
+    if (!current) return;
     try {
-      // TODO: replace with your actual delete call, e.g. await deleteLitigation(deleteTarget.id)
-      // await deleteLitigation(deleteTarget.id);
-      setDeleteTarget(null);
-      reloadLitigations?.();
-    } catch (e) {
-      console.error("Delete litigation failed:", e);
-      setDeleteTarget(null);
+      await deleteLitigation(current.id);
+      toast.success("تم حذف الدعوى بنجاح");
+      await reloadLitigations?.();
+    } catch {
+      toast.error("فشل حذف الدعوى");
+    } finally {
+      setConfirmDelete(false);
+      setCurrent(null); 
     }
   };
+
+  useEffect(() => {
+    if (autoOpen) {
+      setIsModalOpen(true);
+    }
+  }, [autoOpen]);
 
   const headers = [
     { key: "case_number", text: "رقم الدعوى" },
@@ -87,54 +92,46 @@ export default function UnifiedLitigationsTable({
         data={litigations}
         moduleName={moduleName}
         headers={headers}
-        customRenderers={customRenderers}
-        onEdit={can("edit") ? handleEdit : null}
-        onDelete={can("delete") ? (row) => setDeleteTarget(row) : null}
+        customRenderers={customRenderers} 
+        onEdit={handleEdit}
+        onDelete={handleDelete}
         onRowClick={(row) => navigate(`/legal/litigations/${row.id}`, { state: row })}
-        renderAddButton={
-          can("create")
-            ? {
-                render: () => (
-                  <Button onClick={handleAdd}>
-                    إضافة دعوى
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-4 h-4 ml-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                  </Button>
-                ),
-              }
-            : null
-        }
+        renderAddButton={can("create") ? {
+          render: () => (
+            <Button onClick={handleAdd}>
+              إضافة دعوى
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4 ml-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+            </Button>
+          ),
+        } : null}
       />
 
-      <LitigationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        reloadLitigations={reloadLitigations}
-        litigation={editingItem || undefined}
-        scope={scope}
-      />
+      {isModalOpen && (
+        <LitigationModal
+          isOpen={isModalOpen}
+          onClose={() => { setIsModalOpen(false); setCurrent(null); }}
+          initialData={current}
+          reloadLitigations={reloadLitigations}
+        />
+      )}
 
-      <GlobalConfirmDeleteModal
-        isOpen={!!deleteTarget}
-        title="تأكيد حذف الدعوى"
-        description={
-          deleteTarget
-            ? `هل تريد حذف الدعوى رقم ${deleteTarget.case_number ?? ""}؟ لا يمكن التراجع عن هذه العملية.`
-            : ""
-        }
-        confirmText="حذف"
-        cancelText="إلغاء"
-        onConfirm={handleDeleteConfirm}
-        onClose={() => setDeleteTarget(null)}
-      />
+      {confirmDelete && (
+        <GlobalConfirmDeleteModal
+          isOpen={confirmDelete}
+          onClose={() => setConfirmDelete(false)}
+          onConfirm={handleDeleteConfirm}
+          itemName={current?.case_number}
+        />
+      )} 
     </>
   );
 }

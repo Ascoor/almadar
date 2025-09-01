@@ -5,21 +5,25 @@ import { Button } from "../components/ui/button";
 import { LegalAdviceIcon } from "../assets/icons";
 import { AuthContext } from "@/context/AuthContext";
 import { motion } from "framer-motion";
-
 import { useLegalAdvices, useAdviceTypes } from "@/hooks/dataHooks";
 import API_CONFIG from "@/config/config";
 import { useLocation, useNavigate } from "react-router-dom";
+import { deleteLegalAdvice } from "@/services/api/legalAdvices";
+import { toast } from "sonner";
 
 const LegalAdviceModal = lazy(() => import("../components/LegalAdvices/LegalAdviceModal"));
+const GlobalConfirmDeleteModal = lazy(() => import("../components/common/GlobalConfirmDeleteModal"));
 
 export default function LegalAdvicePage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(location.state?.openModal || false);
-
   const { hasPermission } = useContext(AuthContext);
   const moduleName = "legaladvices";
   const can = (action) => hasPermission(`${action} ${moduleName}`);
+
+  const [isModalOpen, setIsModalOpen] = useState(location.state?.openModal || false);
+  const [current, setCurrent] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const { data: advicesData, refetch: refetchAdvices } = useLegalAdvices();
   const { data: adviceTypesData } = useAdviceTypes();
@@ -30,6 +34,20 @@ export default function LegalAdvicePage() {
   const getAdviceTypeName = (typeId) => {
     const type = adviceTypes.find((t) => t.id === typeId);
     return type ? type.type_name : "غير معروف";
+  };
+
+  const handleDelete = async () => {
+    if (!current) return;
+    try {
+      await deleteLegalAdvice(current.id);
+      toast.success("تم حذف المشورة بنجاح");
+      await refetchAdvices();
+      setCurrent(null);
+    } catch {
+      toast.error("فشل حذف المشورة");
+    } finally {
+      setConfirmDelete(false);
+    }
   };
 
   return (
@@ -77,12 +95,14 @@ export default function LegalAdvicePage() {
                 <span className="text-gray-400">لا يوجد</span>
               ),
           }}
+          onEdit={(row) => { setCurrent(row); setIsModalOpen(true); }}
+          onDelete={(row) => { setCurrent(row); setConfirmDelete(true); }}
           onRowClick={(row) => navigate(`/legal/legal-advices/${row.id}`, { state: row })}
           renderAddButton={
             can("create")
               ? {
                   render: () => (
-                    <Button onClick={() => setIsModalOpen(true)}>
+                    <Button onClick={() => { setCurrent(null); setIsModalOpen(true); }}>
                       إضافة مشورة / رأي
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -106,10 +126,18 @@ export default function LegalAdvicePage() {
         {isModalOpen && (
           <LegalAdviceModal
             isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
+            onClose={() => { setIsModalOpen(false); setCurrent(null); }}
             adviceTypes={adviceTypes}
-            initialData={null}
+            initialData={current}
             reload={refetchAdvices}
+          />
+        )}
+        {confirmDelete && (
+          <GlobalConfirmDeleteModal
+            isOpen={confirmDelete}
+            onClose={() => setConfirmDelete(false)}
+            onConfirm={handleDelete}
+            itemName={current?.topic}
           />
         )}
       </Suspense>
