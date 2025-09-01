@@ -49,8 +49,8 @@ export default function InvestigationActionModal({
     <ModalCard
       isOpen={isOpen}
       onClose={onClose}
-      title={form.id ? "تعديل إجراء" : "إضافة إجراء"}
-      submitLabel={form.id ? "تحديث" : "إضافة"}
+      title={form.id ? 'editAction' : 'addAction'}
+      submitLabel={form.id ? 'update' : 'add'}
       onSubmit={handleSave}
       loading={loading}
     >
