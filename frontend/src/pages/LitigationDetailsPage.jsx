@@ -21,7 +21,7 @@ export default function LitigationDetailsPage() {
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
       <Button onClick={() => navigate(-1)} className="mb-4">
         رجوع
-      </Button>
+      </Button> 
       <div className="mb-6 p-4 bg-card text-fg rounded-xl shadow">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -45,7 +45,7 @@ export default function LitigationDetailsPage() {
             {litigation.status}
           </div>
         </div>
-      </div>
+      </div> 
       <Suspense fallback={<div>تحميل البيانات...</div>}>
         <LitigationActionsTable litigationId={litigation.id} scope={litigation.scope} reloadLitigations={refetch} />
       </Suspense>
