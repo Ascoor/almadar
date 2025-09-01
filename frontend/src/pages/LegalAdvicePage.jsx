@@ -4,16 +4,18 @@ import SectionHeader from "../components/common/SectionHeader";
 import { Button } from "../components/ui/button";
 import { LegalAdviceIcon } from "../assets/icons";
 import { AuthContext } from "@/context/AuthContext";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+
 import { useLegalAdvices, useAdviceTypes } from "@/hooks/dataHooks";
 import API_CONFIG from "@/config/config";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
+
 const LegalAdviceModal = lazy(() => import("../components/LegalAdvices/LegalAdviceModal"));
 
 export default function LegalAdvicePage() {
   const location = useLocation();
-  const [isModalOpen, setIsModalOpen] = useState(location.state?.openModal || false);
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(location.state?.openModal || false);
 
   const { hasPermission } = useContext(AuthContext);
   const moduleName = "legaladvices";
@@ -37,7 +39,7 @@ export default function LegalAdvicePage() {
         initial={{ opacity: 0, y: -100 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -40 }}
-        transition={{ type: 'spring', stiffness: 70, damping: 14 }}
+        transition={{ type: "spring", stiffness: 70, damping: 14 }}
       >
         <SectionHeader listName="قسم المشورة القانونية" icon={LegalAdviceIcon} />
       </motion.div>
@@ -46,28 +48,18 @@ export default function LegalAdvicePage() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 60 }}
-        transition={{ type: 'spring', stiffness: 60, damping: 14, delay: 0.1 }}
+        transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.1 }}
         className="rounded-xl bg-card text-fg p-4 shadow-md"
       >
         <TableComponent
           moduleName={moduleName}
-          renderAddButton={can("create") ? {
-            render: () => (
-              <Button onClick={() => setIsModalOpen(true)}>
-                إضافة مشورة / رأي
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-              </Button>
-            )
-          } : null}
           data={advices}
           headers={[
-            { key: 'type', text: 'نوع المشورة' },
-            { key: 'topic', text: 'الموضوع' },
-            { key: 'advice_date', text: 'تاريخ المشورة' },
-            { key: 'advice_number', text: 'رقم المشورة' },
-            { key: 'attachment', text: 'مرفق' },
+            { key: "type", text: "نوع المشورة" },
+            { key: "topic", text: "الموضوع" },
+            { key: "advice_date", text: "تاريخ المشورة" },
+            { key: "advice_number", text: "رقم المشورة" },
+            { key: "attachment", text: "مرفق" },
           ]}
           customRenderers={{
             type: (row) => getAdviceTypeName(row.advice_type_id),
@@ -83,9 +75,30 @@ export default function LegalAdvicePage() {
                 </a>
               ) : (
                 <span className="text-gray-400">لا يوجد</span>
-              )
+              ),
           }}
           onRowClick={(row) => navigate(`/legal/legal-advices/${row.id}`, { state: row })}
+          renderAddButton={
+            can("create")
+              ? {
+                  render: () => (
+                    <Button onClick={() => setIsModalOpen(true)}>
+                      إضافة مشورة / رأي
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-4 h-4 ml-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </Button>
+                  ),
+                }
+              : null
+          }
         />
       </motion.div>
 

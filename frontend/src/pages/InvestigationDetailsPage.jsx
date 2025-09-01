@@ -6,19 +6,27 @@ import { updateInvestigation, deleteInvestigation } from "@/services/api/investi
 import { toast } from "sonner";
 import { AuthContext } from "@/context/AuthContext";
 
-const InvestigationActionsTable = lazy(() => import("@/components/Investigations/InvestigationActionsTable"));
-const InvestigationModal = lazy(() => import("@/components/Investigations/InvestigationModal"));
-const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalConfirmDeleteModal"));
+const InvestigationActionsTable = lazy(() =>
+  import("@/components/Investigations/InvestigationActionsTable")
+);
+const InvestigationModal = lazy(() =>
+  import("@/components/Investigations/InvestigationModal")
+);
+const GlobalConfirmDeleteModal = lazy(() =>
+  import("@/components/common/GlobalConfirmDeleteModal")
+);
 
 export default function InvestigationDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
   const { hasPermission } = useContext(AuthContext);
+
   const { data, refetch } = useInvestigations();
   const investigations = data?.data?.data || [];
-  const initialInvestigation = location.state || investigations.find((i) => i.id === Number(id));
-  const [current, setCurrent] = useState(initialInvestigation);
+  const initial = location.state || investigations.find((i) => i.id === Number(id));
+
+  const [current, setCurrent] = useState(initial || null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -61,13 +69,16 @@ export default function InvestigationDetailsPage() {
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
       <div className="mb-4 flex gap-2">
         <Button onClick={() => navigate(-1)}>رجوع</Button>
-        {hasPermission("edit investigations") && (
+        {hasPermission?.("edit investigations") && (
           <Button onClick={() => setIsModalOpen(true)}>تعديل</Button>
         )}
-        {hasPermission("delete investigations") && (
-          <Button variant="destructive" onClick={() => setConfirmDelete(true)}>حذف</Button>
+        {hasPermission?.("delete investigations") && (
+          <Button variant="destructive" onClick={() => setConfirmDelete(true)}>
+            حذف
+          </Button>
         )}
       </div>
+
       <div className="mb-6 p-4 bg-card text-fg rounded-xl shadow">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -92,8 +103,12 @@ export default function InvestigationDetailsPage() {
           </div>
         </div>
       </div>
+
       <Suspense fallback={<div>تحميل البيانات...</div>}>
-        <InvestigationActionsTable investigationId={current.id} reloadInvestigations={refetch} />
+        <InvestigationActionsTable
+          investigationId={current.id}
+          reloadInvestigations={refetch}
+        />
       </Suspense>
 
       <Suspense fallback={null}>
@@ -105,12 +120,16 @@ export default function InvestigationDetailsPage() {
             onSubmit={handleSave}
           />
         )}
+
         {confirmDelete && (
           <GlobalConfirmDeleteModal
             isOpen={confirmDelete}
             onClose={() => setConfirmDelete(false)}
             onConfirm={handleDelete}
-            itemName={current.employee_name}
+            title="تأكيد حذف التحقيق"
+            description={`هل تريد حذف تحقيق الموظف ${current.employee_name ?? ""}؟ لا يمكن التراجع عن هذه العملية.`}
+            confirmText="حذف"
+            cancelText="إلغاء"
           />
         )}
       </Suspense>

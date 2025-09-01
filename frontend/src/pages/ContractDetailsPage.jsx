@@ -15,11 +15,14 @@ export default function ContractDetailsPage() {
   const { id } = useParams();
   const location = useLocation();
   const { hasPermission } = useContext(AuthContext);
+
   const { data, refetch } = useContracts();
   const { data: categoriesData } = useContractCategories();
+
   const contracts = data?.data?.data || [];
   const initialContract = location.state || contracts.find((c) => c.id === Number(id));
-  const [current, setCurrent] = useState(initialContract);
+
+  const [current, setCurrent] = useState(initialContract || null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -40,7 +43,7 @@ export default function ContractDetailsPage() {
       toast.success("تم حذف العقد بنجاح");
       await refetch();
       navigate(-1);
-    } catch {
+    } catch (e) {
       toast.error("فشل حذف العقد");
     } finally {
       setConfirmDelete(false);
@@ -55,9 +58,12 @@ export default function ContractDetailsPage() {
           <Button onClick={() => setIsModalOpen(true)}>تعديل</Button>
         )}
         {hasPermission("delete contracts") && (
-          <Button variant="destructive" onClick={() => setConfirmDelete(true)}>حذف</Button>
+          <Button variant="destructive" onClick={() => setConfirmDelete(true)}>
+            حذف
+          </Button>
         )}
       </div>
+
       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
         <ContractDetails selected={current} onClose={() => navigate(-1)} />
       </Suspense>
@@ -72,12 +78,16 @@ export default function ContractDetailsPage() {
             reloadContracts={reloadContract}
           />
         )}
+
         {confirmDelete && (
           <GlobalConfirmDeleteModal
             isOpen={confirmDelete}
             onClose={() => setConfirmDelete(false)}
             onConfirm={handleDelete}
-            itemName={current.number}
+            title="تأكيد حذف العقد"
+            description={`هل تريد حذف العقد رقم ${current.number ?? ""}؟ لا يمكن التراجع عن هذه العملية.`}
+            confirmText="حذف"
+            cancelText="إلغاء"
           />
         )}
       </Suspense>
