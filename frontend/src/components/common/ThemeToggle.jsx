@@ -1,4 +1,4 @@
-import { useThemeProvider } from '../../utils/ThemeContext';
+import { useThemeProvider } from '@/context/ThemeContext';
 import { SunMedium , MoonStar  } from 'lucide-react';
 import IconButton from './iconButton';
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useNotifications } from "@/features/notifications/NotificationContext";
+import { useNotifications } from "@/context/NotificationContext";
 import { initEcho } from "@/lib/echo";
 
 export default function AdminEchoListener() {
