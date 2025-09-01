@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getActionReports } from '@/services/api/reports'; // استيراد دالة الحصول على البيانات من API
 import { toast } from 'sonner';
+import FormField from '@/components/form/FormField';
+import ThemeToggle from '@/components/common/ThemeToggle';
+import LanguageToggle from '@/components/common/LanguageToggle';
+import { useLanguage } from '@/context/LanguageContext';
 
 const ReportsPage = () => {
   const [reports, setReports] = useState([]);
@@ -12,6 +16,7 @@ const ReportsPage = () => {
   const [procedureType, setProcedureType] = useState('');
   const [caseStatus, setCaseStatus] = useState('');
   const [selectedSection, setSelectedSection] = useState('all'); // للتحكم في الفلترة حسب الأقسام
+  const { lang } = useLanguage();
 
   useEffect(() => {
     const loadReports = async () => {
@@ -61,43 +66,59 @@ const ReportsPage = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-10">
-      <h2 className="text-2xl font-bold mb-4">التقارير والإجراءات</h2>
+      <div className="flex justify-end gap-2">
+        <LanguageToggle />
+        <ThemeToggle />
+      </div>
+      <h2 className="text-2xl font-bold mb-4">
+        {lang === 'ar' ? 'التقارير والإجراءات' : 'Reports & Actions'}
+      </h2>
 
       {/* الفلاتر العامة */}
       <div className="space-y-4 mb-6">
-        <div className="flex justify-between items-center">
-          <input
-            type="text"
-            placeholder="بحث عن اسم الشركة أو رقم العقد"
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <FormField
+            name="search"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="border p-2 rounded w-1/3"
+            placeholder={{
+              ar: 'بحث عن اسم الشركة أو رقم العقد',
+              en: 'Search company or contract number',
+            }}
+            label={{ ar: 'بحث', en: 'Search' }}
+            className="md:w-1/3"
           />
-          <div className="flex gap-4">
-            <input
+          <div className="flex gap-4 flex-1">
+            <FormField
               type="date"
               name="startDate"
               value={startDate}
               onChange={handleDateChange}
-              className="border p-2 rounded"
+              label={{ ar: 'من', en: 'From' }}
+              className="flex-1"
             />
-            <input
+            <FormField
               type="date"
               name="endDate"
               value={endDate}
               onChange={handleDateChange}
-              className="border p-2 rounded"
+              label={{ ar: 'إلى', en: 'To' }}
+              className="flex-1"
             />
-            <select
+            <FormField
+              type="select"
+              name="selectedSection"
               value={selectedSection}
               onChange={handleSectionChange}
-              className="border p-2 rounded"
-            >
-              <option value="all">كل الأقسام</option>
-              <option value="contracts">العقود</option>
-              <option value="investigations">التحقيقات</option>
-              <option value="litigations">القضايا</option>
-            </select>
+              label={{ ar: 'القسم', en: 'Section' }}
+              options={[
+                { value: 'all', label: { ar: 'كل الأقسام', en: 'All sections' } },
+                { value: 'contracts', label: { ar: 'العقود', en: 'Contracts' } },
+                { value: 'investigations', label: { ar: 'التحقيقات', en: 'Investigations' } },
+                { value: 'litigations', label: { ar: 'القضايا', en: 'Litigations' } },
+              ]}
+              className="flex-1"
+            />
           </div>
         </div>
       </div>
@@ -105,59 +126,53 @@ const ReportsPage = () => {
       {/* الفلاتر الخاصة بكل قسم */}
       {selectedSection === 'contracts' && (
         <div className="space-y-4">
-          <div>
-            <label>فئة العقد</label>
-            <select
-              value={contractType}
-              onChange={handleContractTypeChange}
-              className="border p-2 rounded w-full"
-            >
-              <option value="all">الكل</option>
-              <option value="local">محلي</option>
-              <option value="international">دولي</option>
-            </select>
-          </div>
+          <FormField
+            type="select"
+            name="contractType"
+            value={contractType}
+            onChange={handleContractTypeChange}
+            label={{ ar: 'فئة العقد', en: 'Contract Category' }}
+            options={[
+              { value: 'all', label: { ar: 'الكل', en: 'All' } },
+              { value: 'local', label: { ar: 'محلي', en: 'Local' } },
+              { value: 'international', label: { ar: 'دولي', en: 'International' } },
+            ]}
+          />
         </div>
       )}
 
       {selectedSection === 'investigations' && (
         <div className="space-y-4">
-          <div>
-            <label>اسم الموظف</label>
-            <input
-              type="text"
-              value={employeeName}
-              onChange={handleEmployeeNameChange}
-              className="border p-2 rounded w-full"
-            />
-          </div>
-          <div>
-            <label>نوع الإجراء</label>
-            <input
-              type="text"
-              value={procedureType}
-              onChange={handleProcedureTypeChange}
-              className="border p-2 rounded w-full"
-            />
-          </div>
+          <FormField
+            name="employeeName"
+            value={employeeName}
+            onChange={handleEmployeeNameChange}
+            label={{ ar: 'اسم الموظف', en: 'Employee Name' }}
+          />
+          <FormField
+            name="procedureType"
+            value={procedureType}
+            onChange={handleProcedureTypeChange}
+            label={{ ar: 'نوع الإجراء', en: 'Procedure Type' }}
+          />
         </div>
       )}
 
       {selectedSection === 'litigations' && (
         <div className="space-y-4">
-          <div>
-            <label>حالة الإجراء</label>
-            <select
-              value={caseStatus}
-              onChange={handleCaseStatusChange}
-              className="border p-2 rounded w-full"
-            >
-              <option value="">الكل</option>
-              <option value="pending">معلق</option>
-              <option value="completed">مكتمل</option>
-              <option value="cancelled">ملغي</option>
-            </select>
-          </div>
+          <FormField
+            type="select"
+            name="caseStatus"
+            value={caseStatus}
+            onChange={handleCaseStatusChange}
+            label={{ ar: 'حالة الإجراء', en: 'Procedure Status' }}
+            options={[
+              { value: '', label: { ar: 'الكل', en: 'All' } },
+              { value: 'pending', label: { ar: 'معلق', en: 'Pending' } },
+              { value: 'completed', label: { ar: 'مكتمل', en: 'Completed' } },
+              { value: 'cancelled', label: { ar: 'ملغي', en: 'Cancelled' } },
+            ]}
+          />
         </div>
       )}
 
