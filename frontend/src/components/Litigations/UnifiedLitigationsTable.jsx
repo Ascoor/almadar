@@ -12,9 +12,7 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [current, setCurrent] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const navigate = useNavigate(); 
-
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
   const { hasPermission } = useContext(AuthContext);
 
   const moduleName = `litigation-${scope}`;
