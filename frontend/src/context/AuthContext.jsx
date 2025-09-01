@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
     setUser(user);
     setRoles(roles);
     setPermissions(permissions);
-    navigate('/dashboard');
+    navigate('/');
   };
 
   const login = async (email, password) => {
