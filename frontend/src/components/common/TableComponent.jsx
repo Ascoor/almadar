@@ -15,6 +15,7 @@ export default function TableComponent({
   renderAddButton,
   onRowClick,
 }) {
+  
   const { hasPermission } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortKey, setSortKey] = useState(null);

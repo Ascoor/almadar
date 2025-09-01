@@ -1,15 +1,11 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useMemo,
-  useContext,
-} from 'react';
-import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import { toast } from 'sonner';
-import api, { setOnUnauthorized } from '@/services/api/axiosConfig';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { initEcho } from '@/lib/echo';
+import API_CONFIG from '@/config/config';
 
+// إنشاء الـ Context
 export const AuthContext = createContext({
   user: null,
   token: null,
@@ -21,120 +17,105 @@ export const AuthContext = createContext({
   hasPermission: () => false,
   updateUserContext: () => {},
   updatePermissions: () => {},
-  http: api,
 });
 
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
+  const [token, setToken] = useState(() => sessionStorage.getItem('token') ? JSON.parse(sessionStorage.getItem('token')) : null);
+  const [user, setUser] = useState(() => sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')) : null);
+  const [roles, setRoles] = useState(() => sessionStorage.getItem('roles') ? JSON.parse(sessionStorage.getItem('roles')) : []);
+  const [permissions, setPermissions] = useState(() => sessionStorage.getItem('permissions') ? JSON.parse(sessionStorage.getItem('permissions')) : []);
 
-  const [token, setToken] = useState(() => {
-    const t = sessionStorage.getItem('token');
-    return t ? JSON.parse(t) : null;
-  });
+  const saveAuth = ({ user, token, roles, permissions }) => {
+    sessionStorage.setItem('token', JSON.stringify(token));
+    sessionStorage.setItem('user', JSON.stringify(user));
+    sessionStorage.setItem('roles', JSON.stringify(roles));
+    sessionStorage.setItem('permissions', JSON.stringify(permissions));
 
-  const [user, setUser] = useState(() => {
-    const u = sessionStorage.getItem('user');
-    return u ? JSON.parse(u) : null;
-  });
-
-  const [roles, setRoles] = useState(() => {
-    const r = sessionStorage.getItem('roles');
-    return r ? JSON.parse(r) : [];
-  });
-
-  const [permissions, setPermissions] = useState(() => {
-    const p = sessionStorage.getItem('permissions');
-    return p ? JSON.parse(p) : [];
-  });
-
-  const [loading, setLoading] = useState(true);
-
-  const saveAuth = ({ user: u, token: t, roles: rl, permissions: pr }) => {
-    sessionStorage.setItem('token', JSON.stringify(t));
-    sessionStorage.setItem('user', JSON.stringify(u));
-    sessionStorage.setItem('roles', JSON.stringify(rl));
-    sessionStorage.setItem('permissions', JSON.stringify(pr));
-
-    setToken(t);
-    setUser(u);
-    setRoles(rl);
-    setPermissions(pr);
-
-    navigate('/');
+    setToken(token);
+    setUser(user);
+    setRoles(roles);
+    setPermissions(permissions);
+    navigate('/dashboard');
   };
 
   const login = async (email, password) => {
     try {
-      await api.get('/sanctum/csrf-cookie');
-      const resp = await api.post(
-        '/api/login',
+      await axios.get(`${API_CONFIG.baseURL}/sanctum/csrf-cookie`, { withCredentials: true });
+      const response = await axios.post(
+        `${API_CONFIG.baseURL}/api/login`,
         { email, password },
-        { headers: { 'Content-Type': 'application/json' } }
+        { withCredentials: true, headers: { 'Content-Type': 'application/json' } }
       );
-      const { user: u, token: t, roles: rl = [], permissions: pr = [] } = resp.data;
-      if (u && t) {
-        saveAuth({ user: u, token: t, roles: rl, permissions: pr });
-        return { success: true, requirePasswordChange: u.password_changed === false, user: u };
+      const { user, token, roles = [], permissions = [] } = response.data;
+      if (user && token) {
+        saveAuth({ user, token, roles, permissions });
+        return { success: true, user };
       }
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || 'فشل الاتصال بالخادم' };
+      return { success: false, message: err.response?.data?.message || 'Connection error' };
     }
   };
 
-  const logout = async (showToast = false) => {
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      try { await api.post('/api/logout'); } catch (error) { console.error('Logout error:', error); }
+  const logout = async () => {
+    try {
+      await axios.post('/api/logout');
+    } catch (error) {
+      console.warn('Logout failed:', error);
     }
     sessionStorage.clear();
-    setUser(null);
     setToken(null);
+    setUser(null);
     setRoles([]);
     setPermissions([]);
-    if (showToast) toast.warning('تم تسجيل الخروج بسبب انتهاء الجلسة');
-    navigate('/');
+    navigate('/login');
   };
 
-  useEffect(() => { setOnUnauthorized(() => () => logout(true)); }, []);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const tokenString = sessionStorage.getItem('token');
-      let token;
-      try { token = JSON.parse(tokenString); } catch { token = null; }
-      if (!token) { setLoading(false); return; }
-      try {
-        const res = await api.get('/api/user');
-        const { user: u, roles: rl = [], permissions: pr = [] } = res.data;
-        setUser(u); setRoles(rl); setPermissions(pr);
-      } catch (err) {
-        console.error('Error fetching user:', err);
-        await logout(true);
-      } finally { setLoading(false); }
-    };
-    fetchUser();
-  }, []);
-
-  const updateUserContext = (updatedUser) => {
-    setUser(updatedUser);
-    sessionStorage.setItem('user', JSON.stringify(updatedUser));
-  };
-  const updatePermissions = (newPermissions) => {
-    setPermissions(newPermissions);
-    sessionStorage.setItem('permissions', JSON.stringify(newPermissions));
-  };
   const hasRole = (roleName) => roles.includes(roleName);
   const hasPermission = (permName) => permissions.includes(permName);
 
-  const authContextValue = useMemo(() => ({
-    user, token, roles, permissions, login, logout, hasRole, hasPermission,
-    updateUserContext, updatePermissions, http: api,
-  }), [user, token, roles, permissions]);
+  // Echo for real-time updates
+  useEffect(() => {
+    if (!user?.id) return;
 
-  if (loading) return (<div><AuthSpinner/></div>);
+    const echo = initEcho();
+    const channel = echo.private(`user.${user.id}`);
+    const handler = (eventData) => {
+      if (eventData?.permissions) {
+        setPermissions(eventData.permissions);
+        sessionStorage.setItem('permissions', JSON.stringify(eventData.permissions));
+        toast.success('تم تحديث صلاحياتك');
+      }
+    };
+
+    channel.listen('.permissions.updated', handler);
+
+    return () => {
+      channel.stopListening('.permissions.updated', handler);
+    };
+  }, [user]);
 
   return (
-    <AuthContext.Provider value={authContextValue}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        roles,
+        permissions,
+        login,
+        logout,
+        hasRole,
+        hasPermission,
+        updateUserContext: (updatedUser) => {
+          setUser(updatedUser);
+          sessionStorage.setItem('user', JSON.stringify(updatedUser));
+        },
+        updatePermissions: (newPermissions) => {
+          setPermissions(newPermissions);
+          sessionStorage.setItem('permissions', JSON.stringify(newPermissions));
+        },
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
