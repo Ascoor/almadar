@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ModalCard from '../common/ModalCard';
+import ModalCard from '@/components/common/ModalCard';
 
 export default function InvestigationModal({ isOpen, onClose, onSubmit, initialData }) {
   const [form, setForm] = useState({

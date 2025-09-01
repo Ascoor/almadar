@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import TableComponent from "@/components/common/TableComponent";
-import LitigationModal from "@/components/Litigations/LitigationModal";
+import LitigationModal from "./LitigationModal";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/context/AuthContext";

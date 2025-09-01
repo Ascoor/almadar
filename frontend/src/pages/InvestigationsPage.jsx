@@ -15,7 +15,7 @@ import {
 } from "@/services/api/investigations";
 
 const InvestigationModal = lazy(() =>
-  import("@/components/Investigations/InvestigationModal")
+  import("@/features/investigations/components/InvestigationModal")
 );
 const GlobalConfirmDeleteModal = lazy(() =>
   import("@/components/common/GlobalConfirmDeleteModal")

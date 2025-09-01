@@ -4,11 +4,11 @@ import { useSpinner } from '../../context/SpinnerContext';
 import GlobalSpinner from '../common/Spinners/GlobalSpinner';
 import { lazy } from 'react';
 import Forbidden from '@/pages/Forbidden';
-import ProtectedRoute from '../auth/ProtectedRoute.jsx';
+import ProtectedRoute from '@/features/auth/components/ProtectedRoute.jsx';
 import ProfilePage from '../../pages/ProfilePage.jsx'; 
 
 const Home = lazy(() => import('../../pages/Dashboard.jsx'));
-const ProfileUser = lazy(() => import('../Settings/ProfileUser'));
+const ProfileUser = lazy(() => import('@/features/settings/components/ProfileUser'));
 const Contracts = lazy(() => import('../../pages/ContractsPage.jsx'));
 const ContractDetailsPage = lazy(() => import('../../pages/ContractDetailsPage.jsx'));
 const Investigations = lazy(() => import('../../pages/InvestigationsPage.jsx'));

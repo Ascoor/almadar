@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
-import ModalCard from "../common/ModalCard";
-import { createContract, updateContract } from "../../services/api/contracts";
+import ModalCard from "@/components/common/ModalCard";
+import { createContract, updateContract } from "@/services/api/contracts";
 
 const EMPTY_FORM = {
   id: null,

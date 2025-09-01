@@ -1,9 +1,9 @@
 // components/LegalAdvices/LegalAdviceModal.jsx
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
-import ModalCard from "../common/ModalCard";
-import { createLegalAdvice, updateLegalAdvice } from "../../services/api/legalAdvices";
-import API_CONFIG from "../../config/config";
+import ModalCard from "@/components/common/ModalCard";
+import { createLegalAdvice, updateLegalAdvice } from "@/services/api/legalAdvices";
+import API_CONFIG from "@/config/config";
 
 const EMPTY_FORM = {
   id: null,

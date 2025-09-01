@@ -6,10 +6,10 @@
 //   createServiceType,
 //   updateServiceType,
 //   deleteServiceType,
-// } from '../../services/api/services';
+// } from '@/services/api/services';
 // import { FaEdit, FaTrash } from 'react-icons/fa';
-// import SectionHeader from '../common/SectionHeader';
-// import { ServiceIcon } from '../../assets/icons';
+// import SectionHeader from '@/components/common/SectionHeader';
+// import { ServiceIcon } from '@/assets/icons';
 
 // const ServiceTypes = () => {
 //   const [serviceTypes, setServiceTypes] = useState([]);

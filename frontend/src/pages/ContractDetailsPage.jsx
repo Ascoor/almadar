@@ -1,9 +1,9 @@
 import { lazy, Suspense, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useContracts } from "@/hooks/dataHooks";
 
-const ContractDetails = lazy(() => import("../components/Contracts/ContractDetails"));
+const ContractDetails = lazy(() => import("@/features/contracts/components/ContractDetails"));
 
 export default function ContractDetailsPage() {
   const navigate = useNavigate();

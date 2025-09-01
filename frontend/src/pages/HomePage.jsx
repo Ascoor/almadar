@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence , useReducedMotion } from "framer-motion";
-import Login from '../components/auth/Login';
-import { WelcomeLogoWhite, WelcomeImage2 } from '../assets/images';
-import AuthSpinner from '../components/common/Spinners/AuthSpinner';
+import Login from '@/features/auth/components/Login';
+import { WelcomeLogoWhite, WelcomeImage2 } from '@/assets/images';
+import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 
 const HomePage = () => {
   const [showLoginForm, setShowLoginForm] = useState(false);

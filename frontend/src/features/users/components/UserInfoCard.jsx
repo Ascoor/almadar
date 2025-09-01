@@ -1,5 +1,5 @@
 import { Mail, Phone } from 'lucide-react';
-import API_CONFIG from '../../config/config';
+import API_CONFIG from '@/config/config';
 const roleLabels = {
   admin: 'أدمن',
   staff: 'موظف',

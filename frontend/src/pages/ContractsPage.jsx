@@ -1,12 +1,12 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getContractCategories } from '../services/api/contracts';
-import { LocalIcon, InternationalIcon } from '../assets/icons';
+import { getContractCategories } from '@/services/api/contracts';
+import { LocalIcon, InternationalIcon } from '@/assets/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useContracts } from '@/hooks/dataHooks'; // ✅ استخدم الهُوك المُخصص
-const SectionHeader = lazy(() => import('../components/common/SectionHeader'));
+const SectionHeader = lazy(() => import('@/components/common/SectionHeader'));
 const ContractsTable = lazy(
-  () => import('../components/Contracts/ContractsTable'),
+  () => import('@/features/contracts/components/ContractsTable'),
 );
 
 export default function Contracts() {

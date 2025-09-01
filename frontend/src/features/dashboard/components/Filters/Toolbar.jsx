@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, Filter, RotateCcw } from "lucide-react";
  
-import   {DashboardClock}   from "@/components/dashboard";
+import   {DashboardClock}   from "@/features/dashboard/components";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Toolbar({ value, onChange }) {

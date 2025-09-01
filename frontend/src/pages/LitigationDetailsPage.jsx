@@ -1,10 +1,10 @@
 import { lazy, Suspense, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useLitigations } from "@/hooks/dataHooks";
 
 const LitigationActionsTable = lazy(() =>
-  import("@/components/Litigations/LitigationActionsTable")
+  import("@/features/litigations/components/LitigationActionsTable")
 );
 
 export default function LitigationDetailsPage() {

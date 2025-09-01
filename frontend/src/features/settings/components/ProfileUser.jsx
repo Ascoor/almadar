@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import API_CONFIG from '../../config/config';
+import API_CONFIG from '@/config/config';
 import { useParams } from 'react-router-dom';
 
 const ProfileUser = () => {

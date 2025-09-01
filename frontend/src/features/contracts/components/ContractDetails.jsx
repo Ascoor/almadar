@@ -1,4 +1,4 @@
-import API_CONFIG from "../../config/config";
+import API_CONFIG from "@/config/config";
 import {
   FileText, File, UserCheck, ShieldCheck, Calendar,
   BadgeDollarSign, Layers, Globe, XCircle, Notebook

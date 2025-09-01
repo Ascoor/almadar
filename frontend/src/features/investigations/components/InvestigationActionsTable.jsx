@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { AuthContext } from "@/context/AuthContext";
 
 import InvestigationActionModal from "./InvestigationActionModal";
-import GlobalConfirmDeleteModal from "../common/GlobalConfirmDeleteModal";
+import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import {
   deleteInvestigationAction,
   updateInvestigationAction,

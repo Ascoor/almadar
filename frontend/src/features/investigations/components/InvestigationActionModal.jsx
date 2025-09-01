@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ModalCard from "../common/ModalCard";
+import ModalCard from "@/components/common/ModalCard";
 
 const EMPTY_FORM = {
   id: null,
