@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bell } from 'lucide-react';
-import { useNotifications } from '@/features/notifications/NotificationContext';
+import { useNotifications } from '@/context/NotificationContext';
 import IconButton from './iconButton';
 import { markAsRead as apiMarkAsRead } from '@/services/api/notifications';
 

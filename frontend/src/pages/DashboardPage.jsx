@@ -4,12 +4,12 @@ import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import { AuthContext } from '@/context/AuthContext';
 import { AnimatePresence } from 'framer-motion';
 import { MobileThemeProvider } from '@/components/MobileThemeProvider';
-import { NotificationProvider } from '@/features/notifications/NotificationContext';
+import { NotificationProvider } from '@/context/NotificationContext';
 import { AppWithQuery } from '@/hooks/dataHooks';
 
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'));
 const AuthRoutes = lazy(() => import('@/components/layout/AuthRoutes'));
-const ForcePasswordChangeModal = lazy(() => import('@/features/auth/components/ForcePasswordChangeModal'));
+const ForcePasswordChangeModal = lazy(() => import('@/components/organisms/ForcePasswordChangeModal'));
 
 const DashboardContent = () => {
   const { user } = useContext(AuthContext);

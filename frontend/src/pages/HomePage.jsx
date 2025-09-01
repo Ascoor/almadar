@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence , useReducedMotion } from "framer-motion";
-import Login from '@/features/auth/components/Login';
+import Login from '@/components/organisms/Login';
 import { WelcomeLogoWhite, WelcomeImage2 } from '@/assets/images';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 

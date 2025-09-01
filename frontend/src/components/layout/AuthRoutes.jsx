@@ -4,11 +4,10 @@ import { useSpinner } from '../../context/SpinnerContext';
 import GlobalSpinner from '../common/Spinners/GlobalSpinner';
 import { lazy } from 'react';
 import Forbidden from '@/pages/Forbidden';
-import ProtectedRoute from '@/features/auth/components/ProtectedRoute.jsx';
+import ProtectedRoute from '@/components/templates/ProtectedRoute.jsx';
 import ProfilePage from '../../pages/ProfilePage.jsx'; 
 
 const Home = lazy(() => import('../../pages/Dashboard.jsx'));
-const ProfileUser = lazy(() => import('@/features/settings/components/ProfileUser'));
 const Contracts = lazy(() => import('../../pages/ContractsPage.jsx'));
 const ContractDetailsPage = lazy(() => import('../../pages/ContractDetailsPage.jsx'));
 const Investigations = lazy(() => import('../../pages/InvestigationsPage.jsx'));
@@ -41,7 +40,7 @@ const AuthRoutes = () => {
       <Suspense fallback={<GlobalSpinner />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/profile/:userId" element={<ProfileUser />} />
+          <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/archive" element={<ArchivePage />} />
           <Route path="/contracts" element={<ProtectedRoute permission="view contracts"><Contracts /></ProtectedRoute>} />
           <Route path="/contracts/:id" element={<ProtectedRoute permission="view contracts"><ContractDetailsPage /></ProtectedRoute>} />

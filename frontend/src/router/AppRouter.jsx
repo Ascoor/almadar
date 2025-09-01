@@ -4,9 +4,9 @@ import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-rou
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 // Optional: wrap with your theme provider if you have one
-// import ThemeProvider from '@/utils/ThemeContext';
+// import ThemeProvider from '@/context/ThemeContext';
 
-const Login = lazy(() => import('@/features/auth/components/Login'));
+const Login = lazy(() => import('@/components/organisms/Login'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 
 function Protected({ children }) {
