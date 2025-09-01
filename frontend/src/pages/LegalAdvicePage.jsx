@@ -1,59 +1,52 @@
 import { useState, useContext, lazy, Suspense } from "react";
-import { toast } from 'sonner';
-import { deleteLegalAdvice } from "@/services/api/legalAdvices";
-import { getAdviceTypes } from "../services/api/adviceTypes.js";
 import TableComponent from "../components/common/TableComponent";
 import SectionHeader from "../components/common/SectionHeader";
 import { Button } from "../components/ui/button";
 import { LegalAdviceIcon } from "../assets/icons";
 import { AuthContext } from "@/context/AuthContext";
 import { motion } from 'framer-motion';
-
-import { useLegalAdvices } from "@/hooks/dataHooks"; // ✅ من React Query
-import { useQuery } from "@tanstack/react-query"; // لاستدعاء أنواع المشورة
-import API_CONFIG  from "@/config/config";
-import { useLocation } from 'react-router-dom';
+import { useLegalAdvices, useAdviceTypes } from "@/hooks/dataHooks";
+import API_CONFIG from "@/config/config";
+import { useLocation, useNavigate } from 'react-router-dom';
+import { deleteLegalAdvice } from "@/services/api/legalAdvices";
+import { toast } from "sonner";
 const LegalAdviceModal = lazy(() => import("../components/LegalAdvices/LegalAdviceModal"));
-const LegalAdviceDetails = lazy(() => import("../components/LegalAdvices/LegalAdviceDetails"));
 const GlobalConfirmDeleteModal = lazy(() => import("../components/common/GlobalConfirmDeleteModal"));
 
 export default function LegalAdvicePage() {
   const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(location.state?.openModal || false);
-  const [editingAdvice, setEditingAdvice] = useState(null);
-  const [selectedAdvice, setSelectedAdvice] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [current, setCurrent] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const navigate = useNavigate();
 
   const { hasPermission } = useContext(AuthContext);
   const moduleName = "legaladvices";
   const can = (action) => hasPermission(`${action} ${moduleName}`);
 
-  // ✅ جلب البيانات
   const { data: advicesData, refetch: refetchAdvices } = useLegalAdvices();
-  const { data: adviceTypesData } = useQuery({
-    queryKey: ['adviceTypes'],
-    queryFn: getAdviceTypes
-  });
+  const { data: adviceTypesData } = useAdviceTypes();
 
   const advices = advicesData?.data || [];
-  const adviceTypes = adviceTypesData?.data || [];
-
-  const handleConfirmDelete = async () => {
-    if (!deleteTarget) return;
-    try {
-      await deleteLegalAdvice(deleteTarget.id);
-      toast.success("تم حذف المشورة بنجاح");
-      await refetchAdvices(); // ✅ استخدم refetch من react-query
-    } catch {
-      toast.error("فشل حذف المشورة");
-    } finally {
-      setDeleteTarget(null);
-    }
-  };
+  const adviceTypes = adviceTypesData || [];
 
   const getAdviceTypeName = (typeId) => {
     const type = adviceTypes.find((t) => t.id === typeId);
     return type ? type.type_name : "غير معروف";
+  };
+
+  const handleDelete = async () => {
+    if (!current) return;
+    try {
+      await deleteLegalAdvice(current.id);
+      toast.success("تم حذف المشورة بنجاح");
+      await refetchAdvices();
+    } catch {
+      toast.error("فشل حذف المشورة");
+    } finally {
+      setConfirmDelete(false);
+      setCurrent(null);
+    }
   };
 
   return (
@@ -79,7 +72,7 @@ export default function LegalAdvicePage() {
           moduleName={moduleName}
           renderAddButton={can("create") ? {
             render: () => (
-              <Button onClick={() => setIsModalOpen(true)}>
+              <Button onClick={() => { setCurrent(null); setIsModalOpen(true); }}>
                 إضافة مشورة / رأي
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -87,8 +80,6 @@ export default function LegalAdvicePage() {
               </Button>
             )
           } : null}
-          onEdit={can("edit") ? (row) => { setEditingAdvice(row); setIsModalOpen(true); } : null}
-          onDelete={can("delete") ? (row) => setDeleteTarget(row) : null}
           data={advices}
           headers={[
             { key: 'type', text: 'نوع المشورة' },
@@ -113,39 +104,28 @@ export default function LegalAdvicePage() {
                 <span className="text-gray-400">لا يوجد</span>
               )
           }}
-          onRowClick={(row) =>
-            setSelectedAdvice((prev) => (prev?.id === row.id ? null : row))
-          }
-          expandedRowRenderer={(row) =>
-            selectedAdvice?.id === row.id && (
-              <tr>
-                <td colSpan={7} className="bg-muted/40 px-4 pb-6">
-                       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
-                    <LegalAdviceDetails selected={selectedAdvice} onClose={() => setSelectedAdvice(null)} />
-                  </Suspense>                </td>
-              </tr>
-            )
-          }
+          onEdit={(row) => { setCurrent(row); setIsModalOpen(true); }}
+          onDelete={(row) => { setCurrent(row); setConfirmDelete(true); }}
+          onRowClick={(row) => navigate(`/legal/legal-advices/${row.id}`, { state: row })}
         />
       </motion.div>
 
-     <Suspense fallback={null}>
+      <Suspense fallback={null}>
         {isModalOpen && (
           <LegalAdviceModal
             isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
+            onClose={() => { setIsModalOpen(false); setCurrent(null); }}
             adviceTypes={adviceTypes}
-            initialData={editingAdvice}
+            initialData={current}
             reload={refetchAdvices}
           />
         )}
-
-        {deleteTarget && (
+        {confirmDelete && (
           <GlobalConfirmDeleteModal
-            isOpen={!!deleteTarget}
-            onClose={() => setDeleteTarget(null)}
-            onConfirm={handleConfirmDelete}
-            itemName={deleteTarget?.topic || "المشورة"}
+            isOpen={confirmDelete}
+            onClose={() => setConfirmDelete(false)}
+            onConfirm={handleDelete}
+            itemName={current?.topic}
           />
         )}
       </Suspense>

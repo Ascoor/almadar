@@ -14,7 +14,6 @@ export default function TableComponent({
   onView,
   renderAddButton,
   onRowClick,
-  expandedRowRenderer,
 }) {
   const { hasPermission } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState('');
@@ -212,11 +211,11 @@ export default function TableComponent({
           </thead>
           <tbody className="divide-y divide-border">
             {paginatedData.map((row) => (
-              <React.Fragment key={row.id}>
-                <tr
-                  className="transition cursor-pointer hover:bg-secondary/30"
-                  onClick={() => onRowClick?.(row)}
-                >
+              <tr
+                key={row.id}
+                className="transition cursor-pointer hover:bg-secondary/30"
+                onClick={() => onRowClick?.(row)}
+              >
                   <td className="p-2 text-center">
                     <input
                       type="checkbox"
@@ -250,7 +249,10 @@ export default function TableComponent({
                   <td className="p-2 space-x-1 text-center">
                     {onView && can('view') && (
                       <button
-                        onClick={() => onView(row)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onView(row);
+                        }}
                         className="text-accent hover:text-"
                       >
                         <Eye size={16} />
@@ -258,7 +260,10 @@ export default function TableComponent({
                     )}
                     {onEdit && can('edit') && (
                       <button
-                        onClick={() => onEdit(row)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(row);
+                        }}
                         className="text-secondary hover:text-"
                       >
                         <Edit size={16} />
@@ -266,16 +271,17 @@ export default function TableComponent({
                     )}
                     {onDelete && can('delete') && (
                       <button
-                        onClick={() => onDelete(row)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(row);
+                        }}
                         className="text-destructive hover:text-destructive/90"
                       >
                         <Trash size={16} />
                       </button>
                     )}
                   </td>
-                </tr>
-                {expandedRowRenderer?.(row)}
-              </React.Fragment>
+              </tr>
             ))}
           </tbody>
         </table>
