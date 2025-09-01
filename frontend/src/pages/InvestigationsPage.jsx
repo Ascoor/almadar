@@ -1,26 +1,25 @@
 import { useState, lazy, Suspense } from "react";
-  import { toast } from "sonner";
-  import {
-    createInvestigation,
-    updateInvestigation,
-    deleteInvestigation,
-  } from "@/services/api/investigations";
-  import { ChevronDown, ChevronRight } from "lucide-react";
-  import { motion } from 'framer-motion';
-  import TableComponent from "@/components/common/TableComponent";
-  import SectionHeader from "@/components/common/SectionHeader"; 
-  import { Button } from "@/components/ui/button"; 
-  import { InvestigationSection } from "@/assets/icons"; 
-  import { useInvestigations } from "../hooks/dataHooks";
+import { toast } from "sonner";
+import {
+  createInvestigation,
+  updateInvestigation,
+  deleteInvestigation,
+} from "@/services/api/investigations";
+import { motion } from 'framer-motion';
+import TableComponent from "@/components/common/TableComponent";
+import SectionHeader from "@/components/common/SectionHeader";
+import { Button } from "@/components/ui/button";
+import { InvestigationSection } from "@/assets/icons";
+import { useInvestigations } from "../hooks/dataHooks";
+import { useNavigate } from 'react-router-dom';
 const InvestigationModal = lazy(() => import("@/components/Investigations/InvestigationModal"));
-const InvestigationActionsTable = lazy(() => import("@/components/Investigations/InvestigationActionsTable"));
 const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalConfirmDeleteModal"));
 
   export default function InvestigationsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
-    const [expandedId, setExpandedId] = useState(null);
     const [toDelete, setToDelete] = useState(null);
+    const navigate = useNavigate();
 
     const moduleName = "investigations";
     const { data, isLoading, refetch } = useInvestigations();
@@ -61,12 +60,7 @@ const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalCo
       }
     };
 
-    const toggleRowExpand = (id) => {
-      setExpandedId((prev) => (prev === id ? null : id));
-    };
-
     const headers = [
-      { key: "expand", text: "" },
       { key: "employee_name", text: "الموظف" },
       { key: "source", text: "الجهة المحيلة" },
       { key: "subject", text: "الموضوع" },
@@ -75,11 +69,6 @@ const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalCo
     ];
 
     const customRenderers = {
-      expand: (row) => (
-        <button onClick={(e) => { e.stopPropagation(); toggleRowExpand(row.id); }}>
-          {expandedId === row.id ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        </button>
-      ),
       status: (row) => (
         <span className="font-semibold text-red-600 dark:text-yellow-300">
           {row.status}
@@ -109,7 +98,7 @@ const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalCo
           <TableComponent
             title="قسم التحقيقات القانونية"
             data={investigations}
-            headers={headers} 
+            headers={headers}
             customRenderers={customRenderers}
             moduleName={moduleName}
             renderAddButton={{
@@ -124,21 +113,7 @@ const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalCo
             }}
             onEdit={handleEdit}
             onDelete={(row) => setToDelete(row)}
-            expandedRowRenderer={(row) =>
-              expandedId === row.id && (
-                <tr>
-                  <td colSpan={headers.length + 2} className="p-4 bg-gray-50 dark:bg-gray-800">
-                    <Suspense fallback={<div>تحميل البيانات...</div>}>
-                    <InvestigationActionsTable
-                      investigationId={row.id}
-                      actions={row.actions || []}
-                      reloadInvestigations={refetch}
-                    />
-                  </Suspense>
-                  </td>
-                </tr>
-              )
-            }
+            onRowClick={(row) => navigate(`/legal/investigations/${row.id}`, { state: row })}
           />
         </motion.div>
 

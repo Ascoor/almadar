@@ -4,16 +4,15 @@ import { deleteLitigation } from "@/services/api/litigations";
 import TableComponent from "@/components/common/TableComponent";
 import LitigationModal from "@/components/Litigations/LitigationModal";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
-import {Button} from "@/components/ui/button";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import LitigationActionsTable from "@/components/Litigations/LitigationActionsTable";
+import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function UnifiedLitigationsTable({ litigations, scope, reloadLitigations, autoOpen = false }) {
-  const [expandedId, setExpandedId] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const navigate = useNavigate();
 
   const { hasPermission } = useContext(AuthContext);
   const moduleName = `litigation-${scope}`;
@@ -21,10 +20,6 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
     const parts = moduleName.split("-");
     const attempts = [moduleName, parts.slice(0, 2).join("-"), parts[0]];
     return attempts.some((mod) => hasPermission(`${action} ${mod}`));
-  };
-
-  const toggleRowExpand = (id) => {
-    setExpandedId((prev) => (prev === id ? null : id));
   };
 
   const handleEdit = (row) => {
@@ -58,7 +53,6 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
   };
 
   const headers = [
-    { key: "expand", text: "" },
     { key: "case_number", text: "رقم الدعوى" },
     { key: "court", text: "المحكمة" },
     { key: "opponent", text: "الخصم" },
@@ -67,18 +61,6 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
   ];
 
   const customRenderers = {
-    expand: (row) => (
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleRowExpand(row.id);
-        }}
-        className="text-gray-700 dark:text-white"
-        title="عرض الإجراءات"
-      >
-        {expandedId === row.id ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-      </button>
-    ),
     status: (row) => {
       const statusMap = {
         open: "مفتوحة",
@@ -100,19 +82,6 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
     },
   };
 
-  const expandedRowRenderer = (row) =>
-    expandedId === row.id ? (
-      <tr key={`expanded-${row.id}`}>
-        <td colSpan={headers.length + 2} className="bg-gray-50 dark:bg-navy-darker p-4">
-          <LitigationActionsTable
-            litigationId={row.id}
-            scope={scope}
-            reloadLitigations={reloadLitigations}
-          />
-        </td>
-      </tr>
-    ) : null;
-
   if (!can("view")) {
     return (
       <div className="p-6 bg-yellow-100 dark:bg-gray-800 text-center rounded-xl text-red-600 dark:text-yellow-300 font-semibold">
@@ -130,7 +99,7 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
         customRenderers={customRenderers}
         onEdit={can("edit") ? handleEdit : null}
         onDelete={can("delete") ? (row) => setDeleteTarget(row) : null}
-        expandedRowRenderer={expandedRowRenderer}
+        onRowClick={(row) => navigate(`/legal/litigations/${row.id}`, { state: row })}
         renderAddButton={can("create") ? { render: () => (
                     <Button
                       onClick={handleAdd}
