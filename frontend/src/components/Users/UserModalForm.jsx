@@ -3,6 +3,13 @@ import { toast } from 'sonner';
 import { User } from 'lucide-react';
 import API_CONFIG from '@/config/config';
 import { getRoles } from '@/services/api/users';
+import {
+  modalOverlay,
+  modalContainer,
+  modalInput,
+  modalCancelButton,
+  modalPrimaryButton,
+} from '@/components/common/modalStyles';
 
 const roleLabels = {
   admin: 'أدمن',
@@ -130,9 +137,9 @@ export default function UserModalForm({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6">
-      <div className="bg-white dark:bg-gray-900 w-full max-w-lg p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-auto max-h-[90vh]">
-        <h2 className="text-xl font-bold text-center mb-6 text-gray-800 dark:text-white">
+    <div className={modalOverlay}>
+      <div className={`${modalContainer} max-w-lg`}>
+        <h2 className="text-xl font-bold text-center mb-6 text-fg">
           {isEdit ? 'تعديل المستخدم' : 'إضافة مستخدم'}
         </h2>
 
@@ -148,15 +155,13 @@ export default function UserModalForm({
           />
 
           <div>
-            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">الدور</label>
+            <label className="block mb-1 font-medium text-fg">الدور</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
               disabled={isSubmitting}
-              className={`w-full p-2 rounded border bg-white dark:bg-zinc-800 text-gray-900 dark:text-white ${
-                validationErrors.role ? 'border-red-500' : 'border-gray-300 dark:border-zinc-600'
-              }`}
+              className={`${modalInput} ${validationErrors.role ? 'border-red-500' : ''}`}
             >
               <option value="">اختر الدور</option>
               {availableRoles.map((r) => (
@@ -194,7 +199,7 @@ export default function UserModalForm({
               accept="image/*"
               disabled={isSubmitting}
               onChange={handleFileChange}
-              className="w-full rounded-xl bg-card border border-border text-fg placeholder:text-muted focus:ring-2 focus:ring-ring focus:border-border text-sm"
+              className={`${modalInput} text-sm`}
             />
             {formData.image && (
               <img
@@ -210,14 +215,14 @@ export default function UserModalForm({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-gray-800 dark:text-white"
+              className={modalCancelButton}
             >
               إلغاء
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-2xl px-4 py-2 bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow transition"
+              className={modalPrimaryButton}
             >
               {isSubmitting ? '...جاري الحفظ' : isEdit ? 'تحديث' : 'إضافة'}
             </button>
@@ -239,9 +244,7 @@ function FormField({ label, icon, name, value, onChange, error, disabled }) {
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`w-full rounded-xl bg-card border border-border text-fg placeholder:text-muted focus:ring-2 focus:ring-ring focus:border-border p-2 ${
-          error ? 'border-red-500' : ''
-        }`}
+        className={`${modalInput} ${error ? 'border-red-500' : ''}`}
       />
       {error && <p className="text-red-600 mt-1 text-xs">هذا الحقل مطلوب</p>}
     </div>
