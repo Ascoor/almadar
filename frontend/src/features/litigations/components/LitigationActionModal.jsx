@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
-import ModalCard from "../common/ModalCard";
+import ModalCard from "@/components/common/ModalCard";
 import { useActionTypes } from "@/hooks/dataHooks";
 
 const EMPTY_FORM = {

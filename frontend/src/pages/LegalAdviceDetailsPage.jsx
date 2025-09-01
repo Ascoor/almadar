@@ -1,10 +1,10 @@
 import { lazy, Suspense, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useLegalAdvices } from "@/hooks/dataHooks";
 
 const LegalAdviceDetails = lazy(() =>
-  import("../components/LegalAdvices/LegalAdviceDetails")
+  import("@/features/legal-advices/components/LegalAdviceDetails")
 );
 
 export default function LegalAdviceDetailsPage() {

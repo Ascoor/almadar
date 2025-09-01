@@ -6,7 +6,7 @@ import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 // Optional: wrap with your theme provider if you have one
 // import ThemeProvider from '@/utils/ThemeContext';
 
-const Login = lazy(() => import('@/components/auth/Login'));
+const Login = lazy(() => import('@/features/auth/components/Login'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 
 function Protected({ children }) {

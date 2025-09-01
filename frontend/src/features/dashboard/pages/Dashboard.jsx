@@ -5,16 +5,16 @@
   // Building blocks
   import {
     Toolbar,
-    
+
     KpiCard,
     ChartCard,
     BarChartBasic,
     AreaChartBasic,
-    PieChartBasic, 
+    PieChartBasic,
     CompactTable,
     LegalCaseCategorysChart,
     MapDetailsCard
-  } from "@/components/dashboard";
+  } from "@/features/dashboard/components";
   import {
     getKpis,
     getTrends,
@@ -24,7 +24,7 @@
     getMiniSeries
   } from "@/services/dashboard.service";
   import { useLanguage } from "@/context/LanguageContext"; 
-  import CityMiniMapResponsive from "../../../components/dashboard/Map/CityMiniMapResponsive";
+  import CityMiniMapResponsive from "@/features/dashboard/components/Map/CityMiniMapResponsive";
 
   const fadeIn = (delay = 0) => ({
     initial: { opacity: 0, y: 12 },

@@ -8,7 +8,7 @@ import { CaseIcon } from '@/assets/icons';
 import { useLitigations } from '@/hooks/dataHooks'; // ✅ hook من React Query
 import { useLocation } from 'react-router-dom';
 const UnifiedLitigationsTable = lazy(
-  () => import('@/components/Litigations/UnifiedLitigationsTable'),
+  () => import('@/features/litigations/components/UnifiedLitigationsTable'),
 );
 const GlobalConfirmDeleteModal = lazy(
   () => import('@/components/common/GlobalConfirmDeleteModal'),

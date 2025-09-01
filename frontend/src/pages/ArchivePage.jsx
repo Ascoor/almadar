@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { FolderKanban, FolderOpenDot, ChevronsDown, ChevronsLeft } from 'lucide-react';
 import API_CONFIG from '@/config/config';
 import { ArchiveSection } from '@/assets/icons';
-import ArchiveCard from '@/components/Archives/ArchiveCard';
+import ArchiveCard from '@/features/archives/components/ArchiveCard';
 
 const SectionHeader = lazy(() => import('@/components/common/SectionHeader'));
 const PDFViewer = lazy(() => import('@/components/PDFViewer'));

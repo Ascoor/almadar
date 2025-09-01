@@ -10,10 +10,10 @@
 //   updateLegcaseSubType,
 //   deleteLegcaseType,
 //   deleteLegcaseSubType,
-// } from '../../services/api/legalCases';
+// } from '@/services/api/legalCases';
 // import { FaEdit, FaTrash } from 'react-icons/fa';
-// import SectionHeader from '../common/SectionHeader';
-// import { LegCaseIcon } from '../../assets/icons';
+// import SectionHeader from '@/components/common/SectionHeader';
+// import { LegCaseIcon } from '@/assets/icons';
 
 // const LegcaseTypes = () => {
 //   const [legcaseTypes, setLegcaseTypes] = useState([]);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
-import ModalCard from "../common/ModalCard";
-import { createLitigation, updateLitigation } from "../../services/api/litigations";
+import ModalCard from "@/components/common/ModalCard";
+import { createLitigation, updateLitigation } from "@/services/api/litigations";
 
 const EMPTY_FORM = {
   id: null,

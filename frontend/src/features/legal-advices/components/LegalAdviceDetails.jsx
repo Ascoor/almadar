@@ -9,7 +9,7 @@ import {
   Paperclip,
   XCircle,
 } from "lucide-react";
-import API_CONFIG from "../../config/config";
+import API_CONFIG from "@/config/config";
 
 export default function LegalAdviceDetails({ selected, onClose }) {
   if (!selected) return null;

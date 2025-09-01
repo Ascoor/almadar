@@ -4,13 +4,13 @@ import {
   createExpenseCategory,
   updateExpenseCategory,
   deleteExpenseCategory,
-} from '../../services/api/GeneralReqApi';
-import { ExpenseIcon } from '../../assets/icons';
+} from '@/services/api/GeneralReqApi';
+import { ExpenseIcon } from '@/assets/icons';
 import { Pencil , Trash2 } from 'lucide-react';
-import SectionHeader from '../common/SectionHeader'; 
+import SectionHeader from '@/components/common/SectionHeader';
 import { toast } from 'sonner';
 
-import GlobalConfirmDeleteModal from '../common/GlobalConfirmDeleteModal';
+import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteModal';
 const ExpenseCategorys = () => {
   const [expenseCategorys, setExpenseCategorys] = useState([]);
   const [expenseCategoryToDelete, setExpenseCategoryToDelete] = useState(null);

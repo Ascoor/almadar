@@ -1,8 +1,8 @@
 import { useState, useContext, lazy, Suspense } from "react";
-import TableComponent from "../components/common/TableComponent";
-import SectionHeader from "../components/common/SectionHeader";
-import { Button } from "../components/ui/button";
-import { LegalAdviceIcon } from "../assets/icons";
+import TableComponent from "@/components/common/TableComponent";
+import SectionHeader from "@/components/common/SectionHeader";
+import { Button } from "@/components/ui/button";
+import { LegalAdviceIcon } from "@/assets/icons";
 import { AuthContext } from "@/context/AuthContext";
 import { motion } from "framer-motion";
 import { useLegalAdvices, useAdviceTypes } from "@/hooks/dataHooks";
@@ -11,8 +11,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { deleteLegalAdvice } from "@/services/api/legalAdvices";
 import { toast } from "sonner";
 
-const LegalAdviceModal = lazy(() => import("../components/LegalAdvices/LegalAdviceModal"));
-const GlobalConfirmDeleteModal = lazy(() => import("../components/common/GlobalConfirmDeleteModal"));
+const LegalAdviceModal = lazy(() => import("@/features/legal-advices/components/LegalAdviceModal"));
+const GlobalConfirmDeleteModal = lazy(() => import("@/components/common/GlobalConfirmDeleteModal"));
 
 export default function LegalAdvicePage() {
   const location = useLocation();
