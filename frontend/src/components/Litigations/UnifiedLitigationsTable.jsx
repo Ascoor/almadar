@@ -4,7 +4,7 @@ import LitigationModal from "@/components/Litigations/LitigationModal";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
 import { deleteLitigation } from "@/services/api/litigations";
 import { toast } from "sonner";
 
@@ -12,16 +12,17 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [current, setCurrent] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
+  const navigate = useNavigate();
   const { hasPermission } = useContext(AuthContext);
+
   const moduleName = `litigation-${scope}`;
   const can = (action) => {
     const parts = moduleName.split("-");
     const attempts = [moduleName, parts.slice(0, 2).join("-"), parts[0]];
     return attempts.some((mod) => hasPermission(`${action} ${mod}`));
-  };
-
+  }; 
   const handleAdd = () => {
     setCurrent(null);
     setIsModalOpen(true);
@@ -30,13 +31,12 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
   const handleEdit = (row) => {
     setCurrent(row);
     setIsModalOpen(true);
-  };
+  }; 
 
   const handleDelete = (row) => {
     setCurrent(row);
     setConfirmDelete(true);
-  };
-
+  }; 
   const handleDeleteConfirm = async () => {
     if (!current) return;
     try {
@@ -47,7 +47,7 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
       toast.error("فشل حذف الدعوى");
     } finally {
       setConfirmDelete(false);
-      setCurrent(null);
+      setCurrent(null); 
     }
   };
 
@@ -67,29 +67,20 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
 
   const customRenderers = {
     status: (row) => {
-      const statusMap = {
-        open: "مفتوحة",
-        in_progress: "قيد التنفيذ",
-        closed: "مغلقة",
-      };
-
-      const statusColor = {
-        open: "text-green-600",
-        in_progress: "text-yellow-600",
-        closed: "text-gray-500",
-      }[row.status] || "text-gray-400";
-
-      return (
-        <span className={`font-semibold ${statusColor}`}>
-          {statusMap[row.status] || "غير معروف"}
-        </span>
-      );
+      const map = { open: "مفتوحة", in_progress: "قيد التنفيذ", closed: "مغلقة" };
+      const cls =
+        {
+          open: "text-emerald-600 dark:text-emerald-400",
+          in_progress: "text-amber-600 dark:text-amber-400",
+          closed: "text-slate-500 dark:text-slate-400",
+        }[row?.status] || "text-slate-400";
+      return <span className={`font-semibold ${cls}`}>{map[row?.status] || "غير معروف"}</span>;
     },
   };
 
   if (!can("view")) {
     return (
-      <div className="p-6 bg-yellow-100 dark:bg-gray-800 text-center rounded-xl text-red-600 dark:text-yellow-300 font-semibold">
+      <div className="p-6 bg-amber-50 dark:bg-slate-800 text-center rounded-xl text-red-600 dark:text-amber-300 font-semibold">
         ليس لديك صلاحية عرض الدعاوى.
       </div>
     );
@@ -101,7 +92,7 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
         data={litigations}
         moduleName={moduleName}
         headers={headers}
-        customRenderers={customRenderers}
+        customRenderers={customRenderers} 
         onEdit={handleEdit}
         onDelete={handleDelete}
         onRowClick={(row) => navigate(`/legal/litigations/${row.id}`, { state: row })}
@@ -140,7 +131,7 @@ export default function UnifiedLitigationsTable({ litigations, scope, reloadLiti
           onConfirm={handleDeleteConfirm}
           itemName={current?.case_number}
         />
-      )}
+      )} 
     </>
   );
 }

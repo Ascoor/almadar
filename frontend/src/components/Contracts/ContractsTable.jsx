@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import TableComponent from "@/components/common/TableComponent";
 import { Button } from "@/components/ui/button";
-import ContractModal from "./ContractModal";
+import ContractModal from "./ContractModal"; 
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
 import { useNavigate } from "react-router-dom";
 import { deleteContract } from "@/services/api/contracts";
@@ -10,14 +10,16 @@ import { toast } from "sonner";
 export default function ContractsTable({ contracts = [], categories = [], reloadContracts, scope, autoOpen = false }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selected, setSelected] = useState(null);
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false); 
   const navigate = useNavigate();
 
-  const filteredContracts = contracts.filter((c) => c.scope === scope);
+  const filteredContracts = Array.isArray(contracts)
+    ? contracts.filter((c) => (scope ? c?.scope === scope : true))
+    : [];
 
   useEffect(() => {
     if (autoOpen) setIsModalOpen(true);
-  }, [autoOpen]);
+  }, [autoOpen]); 
 
   const handleAdd = () => {
     setSelected(null);
@@ -42,7 +44,7 @@ export default function ContractsTable({ contracts = [], categories = [], reload
     } catch {
       toast.error("فشل حذف العقد");
     } finally {
-      setConfirmDelete(false);
+      setConfirmDelete(false); 
     }
   };
 
@@ -59,13 +61,13 @@ export default function ContractsTable({ contracts = [], categories = [], reload
           { key: "attachment", text: "المرفق" },
           { key: "status", text: "الحالة" },
         ]}
-        customRenderers={{
+        customRenderers={{ 
           category_name: (row) => row.category?.name || "—",
         }}
         renderAddButton={{
           action: "create",
           render: () => (
-            <Button onClick={handleAdd}>
+            <Button onClick={handleAdd}> 
               إضافة عقد جديد
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +81,7 @@ export default function ContractsTable({ contracts = [], categories = [], reload
               </svg>
             </Button>
           ),
-        }}
+        }} 
         onEdit={handleEdit}
         onDelete={handleDelete}
         onRowClick={(row) => navigate(`/contracts/${row.id}`, { state: row })}
@@ -105,7 +107,7 @@ export default function ContractsTable({ contracts = [], categories = [], reload
           onConfirm={handleDeleteConfirm}
           itemName={selected?.number}
         />
-      )}
+      )} 
     </>
   );
 }
