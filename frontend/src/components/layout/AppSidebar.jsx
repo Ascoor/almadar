@@ -7,7 +7,7 @@ import {
   ContractsIcon, ConsultationsIcon, LawsuitsIcon, DashboardIcon,
   ArchiveIcon, CourtHouseIcon, LawBookIcon
 } from '@/components/ui/Icons';
-import { Settings2, ListTree, UsersRound, UserCheck, ChevronRight } from 'lucide-react';
+import { Settings2, ListTree, UsersRound, UserCheck, ChevronRight, FileText } from 'lucide-react';
 
 export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   const { hasPermission } = useAuth();
@@ -85,6 +85,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
     hasPermission('view archive') && {
       id: 'archive', label: t('archive'), to: '/archive', icon: <ArchiveIcon size={20} />
     },
+    { id: 'document-editor', label: t('documentEditor'), to: '/document-editor', icon: <FileText size={20} /> },
   ].filter(Boolean), [hasPermission, t]);
 
   const handleSectionClick = (id, hasChildren) => {
