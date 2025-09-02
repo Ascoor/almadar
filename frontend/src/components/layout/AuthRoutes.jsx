@@ -20,7 +20,6 @@ const UserManagementPage = lazy(() => import('../../pages/UserManagementPage.jsx
 const ArchivePage = lazy(() => import('../../pages/ArchivePage.jsx'));
 const ManagementSettings = lazy(() => import('../../pages/ManagementSettings.jsx'));
 const ReportsPage = lazy(() => import('../../pages/ReportsPage.jsx'));
-const DocumentEditor = lazy(() => import('../../pages/DocumentEditor.jsx'));
 const NotFound = () => <h1 className="text-center text-red-500">404 - Page Not Found</h1>;
 
 const AuthRoutes = () => {
@@ -55,7 +54,6 @@ const AuthRoutes = () => {
           <Route path="/legal/litigations/:id" element={<ProtectedRoute permission="view litigations"><LitigationDetailsPage /></ProtectedRoute>} />
           <Route path="/managment-lists" element={<ProtectedRoute permission="view managment-lists"><ManagementSettings /></ProtectedRoute>} />
           <Route path="/reports-page" element={<ReportsPage />} />
-          <Route path="/document-editor" element={<DocumentEditor />} />
           <Route path="/forbidden" element={<Forbidden />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
