@@ -1,7 +1,10 @@
 import html2pdf from 'html2pdf.js';
 import mammoth from 'mammoth';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
-import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver'; 
+import JSZip from 'jszip';
+import { DOMParser as XMLDOMParser } from 'xmldom';
+ 
 
 export interface DocumentMetadata {
   title: string;
@@ -153,21 +156,74 @@ export class DocumentManager {
     }
   }
 
-  /**
+  /** 
+   * Extract frame paragraphs from a DOCX file and return HTML with inline styles
+   */
+  private static async parseDocxWithFrames(arrayBuffer: ArrayBuffer): Promise<string> {
+    const zip = await JSZip.loadAsync(arrayBuffer);
+    const xml = await zip.file('word/document.xml')?.async('string');
+    if (!xml) return '';
+
+    const doc = new XMLDOMParser().parseFromString(xml, 'application/xml');
+    const paragraphs = Array.from(doc.getElementsByTagName('w:p'));
+
+    return paragraphs
+      .map(p => {
+        const frame = p.getElementsByTagName('w:framePr')[0];
+        const text = Array.from(p.getElementsByTagName('w:t'))
+          .map(t => t.textContent)
+          .join('');
+        const style = frame
+          ? `border:1px solid #000;width:${frame.getAttribute('w:w') || 'auto'}pt;`
+          : '';
+        return `<p style="${style}">${text}</p>`;
+      })
+      .join('');
+  }
+
+  /** 
    * Import DOCX file and convert to HTML
    */
   static async importFromDOCX(file: File): Promise<{ content: string; metadata: Partial<DocumentMetadata> }> {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.convertToHtml({ arrayBuffer });
-      
-      const content = result.value;
+ 
+      let content = result.value;
       const warnings = result.messages;
-      
+
+ 
       if (warnings.length > 0) {
         console.warn('DOCX import warnings:', warnings);
       }
+ 
+      // Merge frame styles into converted HTML
+      try {
+        const frameHtml = await this.parseDocxWithFrames(arrayBuffer);
+        if (frameHtml) {
+          const frameContainer = document.createElement('div');
+          frameContainer.innerHTML = frameHtml;
+          const frameParagraphs = Array.from(frameContainer.querySelectorAll('p'));
 
+          const contentContainer = document.createElement('div');
+          contentContainer.innerHTML = content;
+          const contentParagraphs = Array.from(contentContainer.querySelectorAll('p'));
+
+          frameParagraphs.forEach((fp, idx) => {
+            const style = fp.getAttribute('style');
+            if (style && style.trim() && contentParagraphs[idx]) {
+              const existing = contentParagraphs[idx].getAttribute('style');
+              contentParagraphs[idx].setAttribute('style', `${existing ? existing + ';' : ''}${style}`);
+            }
+          });
+
+          content = contentContainer.innerHTML;
+        }
+      } catch (frameError) {
+        console.warn('Frame extraction failed:', frameError);
+      }
+
+ 
       // Extract basic metadata
       const metadata: Partial<DocumentMetadata> = {
         title: file.name.replace('.docx', ''),
@@ -242,5 +298,5 @@ export class DocumentManager {
     } catch {
       return null;
     }
-  }
-}
+  } 
+} 

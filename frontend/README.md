@@ -5,8 +5,9 @@ This project now includes a full Word Document editor built with
 content, exports to **PDF** and **DOCX**, and offers simple AI-driven
 suggestions. Editor components live under `src/components/editor` and
 reuse the shared UI primitives in `src/components/ui`.
-
-## Development
+ 
+### Development
+ 
 
 ```bash
 npm install
@@ -14,6 +15,7 @@ npm run dev
 ```
 
 Visit `/editor` after logging in to access the document editor.
+ 
 
 ## Build
 
@@ -25,4 +27,4 @@ npm run build
 
 ```bash
 npm test
-```
+``` 
