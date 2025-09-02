@@ -59,7 +59,7 @@ export default function LegalAdvicePage() {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: "spring", stiffness: 70, damping: 14 }}
       >
-        <SectionHeader listName="قسم المشورة القانونية" icon={LegalAdviceIcon} />
+        <SectionHeader   showBackButton listName="قسم المشورة القانونية" icon={LegalAdviceIcon} />
       </motion.div>
 
       <motion.div

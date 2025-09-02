@@ -41,6 +41,11 @@ export default defineConfig(({ mode }) => {
       // 👇 مهم: امنع تكرار نسخ React داخل الباندل
       dedupe: ['react', 'react-dom'],
     },
+    server: {
+  
+    host: '::',
+    port: 3000,
+  },
     optimizeDeps: {
       // 👇 خليه يـpre-bundle للمكتبات اللي تعمل مشاكل وقت التشغيل
       include: ['react', 'react-dom', 'lucide-react'],

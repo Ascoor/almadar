@@ -50,7 +50,7 @@ export default function LitigationsPage() {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: 'spring', stiffness: 70, damping: 14 }}
       >
-        <SectionHeader listName="قسم التقاضي" icon={CaseIcon} />
+        <SectionHeader    showBackButton listName="قسم التقاضي" icon={CaseIcon} />
       </motion.div>
 
       <motion.div

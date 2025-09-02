@@ -49,14 +49,13 @@ pm_dev() {
     npm run dev
   fi
 }
-
 safe_frontend_install() {
   set +e
   pm_install
   STATUS=$?
   if [[ $STATUS -ne 0 ]]; then
-    echo "⚠️  Install failed (code $STATUS). Cleaning and retrying once…"
-    npx rimraf node_modules package-lock.json ".ajv-*" "node_modules/.ajv-*" 2>/dev/null || true
+    echo "⚠️  Install failed (code $STATUS). Cleaning node_modules and lockfile, retrying…"
+    rm -rf node_modules package-lock.json
     npm cache verify
     npm cache clean --force
     pm_install
@@ -68,6 +67,7 @@ safe_frontend_install() {
   fi
   set -e
 }
+
 
 # --- Start Laravel ---
 echo "🚀 Starting Laravel on http://127.0.0.1:8000"

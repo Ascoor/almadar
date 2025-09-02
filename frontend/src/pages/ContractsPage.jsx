@@ -52,11 +52,13 @@ export default function Contracts() {
           fallback={<div className="text-center text-sm">تحميل العنوان...</div>}
         >
           <SectionHeader
+          
             icon={activeTab === 'local' ? LocalIcon : InternationalIcon}
             listName={
               activeTab === 'local' ? 'العقود المحلية' : 'العقود الدولية'
             }
-          />
+           showBackButton
+         />
         </Suspense>
       </motion.div>
 

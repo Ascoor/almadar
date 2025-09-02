@@ -214,7 +214,7 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: 'spring', stiffness: 60, damping: 18, delay: 0.1 }}
       >
-        <SectionHeader icon={UsersIcon} listName="إدارة المستخدمين والصلاحيات" />
+        <SectionHeader   showBackButton icon={UsersIcon} listName="إدارة المستخدمين والصلاحيات" />
       </motion.div>
 
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-zinc-700">

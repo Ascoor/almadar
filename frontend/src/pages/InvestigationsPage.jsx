@@ -102,6 +102,7 @@ export default function InvestigationsPage() {
         transition={{ type: "spring", stiffness: 70, damping: 14 }}
       >
         <SectionHeader
+          showBackButton
           icon={InvestigationSection}
           listName="قسم التحقيقات"
         />

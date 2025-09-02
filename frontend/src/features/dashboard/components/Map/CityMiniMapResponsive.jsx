@@ -84,8 +84,7 @@ export default function CityMiniMapResponsive({ cities: inputCities, className =
         style={{ width: "100%", height: "100%" }}
         preserveAspectRatio="xMidYMid slice"
       >
-        <ZoomableGroup center={view.center} zoom={view.zoom} animate animationDuration={300}>
-          <Geographies geography={geoUrl}>
+      + <ZoomableGroup center={view.center} zoom={view.zoom}>   <Geographies geography={geoUrl}>
             {({ geographies }) =>
               geographies.map((geo, index) => (
                 <Geography
