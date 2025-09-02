@@ -5,7 +5,7 @@ import GlobalSpinner from '../common/Spinners/GlobalSpinner';
 import { lazy } from 'react';
 import Forbidden from '@/pages/Forbidden';
 import ProtectedRoute from '@/components/templates/ProtectedRoute.jsx';
-import ProfilePage from '../../pages/ProfilePage.jsx'; 
+import ProfilePage from '../../pages/ProfilePage.jsx';
 
 const Home = lazy(() => import('../../pages/Dashboard.jsx'));
 const Contracts = lazy(() => import('../../pages/ContractsPage.jsx'));
@@ -20,6 +20,7 @@ const UserManagementPage = lazy(() => import('../../pages/UserManagementPage.jsx
 const ArchivePage = lazy(() => import('../../pages/ArchivePage.jsx'));
 const ManagementSettings = lazy(() => import('../../pages/ManagementSettings.jsx'));
 const ReportsPage = lazy(() => import('../../pages/ReportsPage.jsx'));
+const DocumentEditor = lazy(() => import('@/components/editor/DocumentEditor'));
 const NotFound = () => <h1 className="text-center text-red-500">404 - Page Not Found</h1>;
 
 const AuthRoutes = () => {
@@ -42,6 +43,7 @@ const AuthRoutes = () => {
           <Route path="/" element={<Home />} />
           <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/archive" element={<ArchivePage />} />
+          <Route path="/editor" element={<DocumentEditor />} />
           <Route path="/contracts" element={<ProtectedRoute permission="view contracts"><Contracts /></ProtectedRoute>} />
           <Route path="/contracts/:id" element={<ProtectedRoute permission="view contracts"><ContractDetailsPage /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute permission="view profile"><ProfilePage /></ProtectedRoute>} />
