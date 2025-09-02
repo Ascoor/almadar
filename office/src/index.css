@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Professional Document Editor Design System 
+   Inspired by Microsoft Word with modern touches
+   All colors MUST be HSL for proper theming
+*/
+
+@layer base {
+  :root {
+    /* Core Brand Colors - Professional Blue Palette */
+    --background: 248 250 252;
+    --foreground: 15 23 42;
+
+    /* Card & Surface Colors */
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
+
+    /* Interactive Elements */
+    --popover: 255 255 255;
+    --popover-foreground: 15 23 42;
+
+    /* Primary Brand - Professional Blue */
+    --primary: 217 91 60;
+    --primary-foreground: 248 250 252;
+    --primary-hover: 217 91 50;
+
+    /* Secondary Actions */
+    --secondary: 241 245 249;
+    --secondary-foreground: 51 65 85;
+    --secondary-hover: 236 241 247;
+
+    /* Subtle Elements */
+    --muted: 248 250 252;
+    --muted-foreground: 100 116 139;
+
+    /* Accent - Warm Blue */
+    --accent: 212 100 47;
+    --accent-foreground: 248 250 252;
+
+    /* Destructive Actions */
+    --destructive: 0 84 60;
+    --destructive-foreground: 248 250 252;
+
+    /* Borders & Inputs */
+    --border: 226 232 240;
+    --input: 226 232 240;
+    --ring: 217 91 60;
+
+    /* Professional Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91 60), hsl(212 100 47));
+    --gradient-subtle: linear-gradient(180deg, hsl(248 250 252), hsl(241 245 249));
+    --gradient-card: linear-gradient(145deg, hsl(255 255 255), hsl(248 250 252));
+
+    /* Professional Shadows */
+    --shadow-soft: 0 1px 3px 0 hsl(226 232 240 / 0.1), 0 1px 2px -1px hsl(226 232 240 / 0.1);
+    --shadow-medium: 0 4px 6px -1px hsl(226 232 240 / 0.1), 0 2px 4px -2px hsl(226 232 240 / 0.1);
+    --shadow-strong: 0 10px 15px -3px hsl(226 232 240 / 0.1), 0 4px 6px -4px hsl(226 232 240 / 0.1);
+    --shadow-glow: 0 0 20px hsl(217 91 60 / 0.15);
+
+    /* Animation Tokens */
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --radius: 0.5rem;
+
+    /* Sidebar */
+    --sidebar-background: 248 250 252;
+    --sidebar-foreground: 51 65 85;
+    --sidebar-primary: 217 91 60;
+    --sidebar-primary-foreground: 248 250 252;
+    --sidebar-accent: 241 245 249;
+    --sidebar-accent-foreground: 51 65 85;
+    --sidebar-border: 226 232 240;
+    --sidebar-ring: 217 91 60;
+  }
+
+  .dark {
+    /* Dark Theme - Professional Dark Blue */
+    --background: 15 23 42;
+    --foreground: 248 250 252;
+
+    --card: 30 41 59;
+    --card-foreground: 248 250 252;
+
+    --popover: 30 41 59;
+    --popover-foreground: 248 250 252;
+
+    --primary: 217 91 60;
+    --primary-foreground: 15 23 42;
+    --primary-hover: 217 91 70;
+
+    --secondary: 51 65 85;
+    --secondary-foreground: 226 232 240;
+    --secondary-hover: 71 85 105;
+
+    --muted: 30 41 59;
+    --muted-foreground: 148 163 184;
+
+    --accent: 212 100 47;
+    --accent-foreground: 15 23 42;
+
+    --destructive: 0 84 60;
+    --destructive-foreground: 248 250 252;
+
+    --border: 71 85 105;
+    --input: 71 85 105;
+    --ring: 217 91 60;
+
+    /* Dark Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91 60), hsl(212 100 57));
+    --gradient-subtle: linear-gradient(180deg, hsl(30 41 59), hsl(15 23 42));
+    --gradient-card: linear-gradient(145deg, hsl(30 41 59), hsl(15 23 42));
+
+    /* Dark Shadows */
+    --shadow-soft: 0 1px 3px 0 hsl(0 0 0 / 0.3);
+    --shadow-medium: 0 4px 6px -1px hsl(0 0 0 / 0.3);
+    --shadow-strong: 0 10px 15px -3px hsl(0 0 0 / 0.4);
+    --shadow-glow: 0 0 20px hsl(217 91 60 / 0.3);
+
+    --sidebar-background: 15 23 42;
+    --sidebar-foreground: 226 232 240;
+    --sidebar-primary: 217 91 60;
+    --sidebar-primary-foreground: 15 23 42;
+    --sidebar-accent: 51 65 85;
+    --sidebar-accent-foreground: 226 232 240;
+    --sidebar-border: 71 85 105;
+    --sidebar-ring: 217 91 60;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Arabic Text Styling */
+  .arabic-text {
+    font-family: 'Amiri', 'Cairo', serif;
+    direction: rtl;
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  .english-text {
+    font-family: 'Inter', sans-serif;
+    direction: ltr;
+    text-align: left;
+  }
+
+  /* Professional Editor Styles */
+  .editor-content {
+    font-family: 'Inter', 'Amiri', 'Cairo', sans-serif;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  .editor-content p {
+    margin: 0.75em 0;
+  }
+
+  .editor-content h1 {
+    font-size: 2.25em;
+    font-weight: 700;
+    margin: 1em 0 0.5em 0;
+    line-height: 1.2;
+  }
+
+  .editor-content h2 {
+    font-size: 1.75em;
+    font-weight: 600;
+    margin: 0.875em 0 0.5em 0;
+    line-height: 1.3;
+  }
+
+  .editor-content h3 {
+    font-size: 1.375em;
+    font-weight: 600;
+    margin: 0.75em 0 0.5em 0;
+    line-height: 1.4;
+  }
+
+  /* RTL Support */
+  [dir="rtl"] {
+    text-align: right;
+  }
+
+  [dir="ltr"] {
+    text-align: left;
+  }
+
+  /* Smooth Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.25s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(10px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+}

@@ -64,7 +64,7 @@ export default defineConfig(({ mode }) => {
           clientsClaim: true,
           globIgnores: ['**/welcome-image2-*.png'],
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
-          globDirectory: 'dist',
+          globDirectory: 'dev-dist',
           globPatterns: ['**/*.{js,css,html,png,jpg,svg,ico,webp}'],
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/api\//],
