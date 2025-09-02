@@ -76,7 +76,7 @@
   --map-mid: hsl(146 50% 42%);
   --map-end: hsl(25 85% 55%);
 
-  --neon-title: hsl(165, 55%, 47%); /* Neon green headings */
+  --neon-title: #39ff14; /* Neon green headings */
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(2,6,23,0.05);
   --shadow-md: 0 8px 24px rgba(2,6,23,0.08);
@@ -140,7 +140,8 @@
   --shadow-lg: 0 24px 60px rgba(0,0,0,0.6);
   --shadow-glow: 0 0 0 2px rgba(100,180,200,0.25), 0 16px 60px rgba(0,0,0,0.45);
 
-  --neon-title: hsl(145, 100%, 87%); /* Neon green headings */
+
+  --neon-title: #39ff14; /* Neon green headings */
 
   --kpi-title: hsl(220 12% 72%);
   --kpi-value: hsl(145 80% 60%);
