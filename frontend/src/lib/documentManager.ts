@@ -1,9 +1,10 @@
 import html2pdf from 'html2pdf.js';
 import mammoth from 'mammoth';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
-import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver'; 
 import JSZip from 'jszip';
 import { DOMParser as XMLDOMParser } from 'xmldom';
+ 
 
 export interface DocumentMetadata {
   title: string;
@@ -155,7 +156,7 @@ export class DocumentManager {
     }
   }
 
-  /**
+  /** 
    * Extract frame paragraphs from a DOCX file and return HTML with inline styles
    */
   private static async parseDocxWithFrames(arrayBuffer: ArrayBuffer): Promise<string> {
@@ -180,21 +181,22 @@ export class DocumentManager {
       .join('');
   }
 
-  /**
+  /** 
    * Import DOCX file and convert to HTML
    */
   static async importFromDOCX(file: File): Promise<{ content: string; metadata: Partial<DocumentMetadata> }> {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.convertToHtml({ arrayBuffer });
-
+ 
       let content = result.value;
       const warnings = result.messages;
 
+ 
       if (warnings.length > 0) {
         console.warn('DOCX import warnings:', warnings);
       }
-
+ 
       // Merge frame styles into converted HTML
       try {
         const frameHtml = await this.parseDocxWithFrames(arrayBuffer);
@@ -221,6 +223,7 @@ export class DocumentManager {
         console.warn('Frame extraction failed:', frameError);
       }
 
+ 
       // Extract basic metadata
       const metadata: Partial<DocumentMetadata> = {
         title: file.name.replace('.docx', ''),
@@ -295,5 +298,5 @@ export class DocumentManager {
     } catch {
       return null;
     }
-  }
-}
+  } 
+} 

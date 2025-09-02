@@ -3,8 +3,7 @@ import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
-// Optional: wrap with your theme provider if you have one
-// import ThemeProvider from '@/context/ThemeContext';
+ 
 
 const Login = lazy(() => import('@/components/organisms/Login'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
