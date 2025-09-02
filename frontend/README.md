@@ -1,9 +1,10 @@
 # React + Vite
 
-This project now includes a basic Word Document editor built with
+This project now includes a full Word Document editor built with
 [tiptap](https://tiptap.dev). The editor supports Arabic right‑to‑left
 content, exports to **PDF** and **DOCX**, and offers simple AI-driven
-suggestions.
+suggestions. Editor components live under `src/components/editor` and
+reuse the shared UI primitives in `src/components/ui`.
 
 ### Development
 

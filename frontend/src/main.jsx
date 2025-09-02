@@ -8,7 +8,7 @@ import App from './App';
 import { Suspense } from 'react';
 import ThemeProvider from './context/ThemeContext';
 import { AuthProvider } from '@/context/AuthContext';
-import { Toaster } from 'sonner';
+import { Toaster as SonnerToaster } from 'sonner';
 import { LanguageProvider } from '@/context/LanguageContext';
  
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -32,7 +32,7 @@ root.render(
         <LanguageProvider>
         <AuthProvider>
           <SpinnerProvider>
-            <Toaster 
+            <SonnerToaster
               position="top-center"
               toastOptions={{
                 duration: 3000,
