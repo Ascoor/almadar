@@ -82,11 +82,10 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
         { id: 'users-list', label: t('usersList'), to: '/users', icon: <UserCheck size={16} /> },
       ]
     },
-    hasPermission('view archive') && {
-      id: 'archive', label: t('archive'), to: '/archive', icon: <ArchiveIcon size={20} />
-    },
-    { id: 'document-editor', label: t('documentEditor'), to: '/document-editor', icon: <FileText size={20} /> },
-  ].filter(Boolean), [hasPermission, t]);
+      hasPermission('view archive') && {
+        id: 'archive', label: t('archive'), to: '/archive', icon: <ArchiveIcon size={20} />
+      },
+    ].filter(Boolean), [hasPermission, t]);
 
   const handleSectionClick = (id, hasChildren) => {
     if (!isLargeScreen && !isOpen) onToggle();
