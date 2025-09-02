@@ -56,6 +56,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
 
   const navConfig = useMemo(() => [
     { id: 'home', label: t('home'), to: '/', icon: <DashboardIcon size={20} /> },
+    { id: 'editor', label: t('editor'), to: '/editor', icon: <FileText size={20} /> },
     hasPermission('view contracts') && {
       id: 'contracts', label: t('contracts'), to: '/contracts', icon: <ContractsIcon size={20} />
     },
