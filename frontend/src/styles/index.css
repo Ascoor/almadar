@@ -174,15 +174,16 @@
     /* Light mode: keep very subtle depth for a clean, matte look */
     text-shadow: 0 1px 0 rgba(0,0,0,0.12);
     letter-spacing: 0.2px;
+    font-family: 'Cairo', var(--font-heading);
   }
   /* Dark mode: stronger neon green with layered 3D glow */
   .dark .section-title {
     color: var(--neon-title);
     text-shadow:
-      0 0 12px rgba(50, 255, 170, 0.45),
-      0 0 24px rgba(50, 255, 170, 0.30),
-      0 2px 0 rgba(0,0,0,0.45),
-      0 8px 18px rgba(0,0,0,0.35);
+      0 0 5px var(--neon-title),
+      0 0 10px var(--neon-title),
+      0 0 20px var(--neon-title),
+      0 0 40px var(--neon-title);
   }
 
   /* Stronger, lighter neon backlight specifically for chart cards */
