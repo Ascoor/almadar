@@ -8,6 +8,7 @@ import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 
 const Login = lazy(() => import('@/components/organisms/Login'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const DocumentEditor = lazy(() => import('@/pages/DocumentEditor'));
 
 function Protected({ children }) {
   const { user, isLoading } = useAuth();
@@ -44,6 +45,16 @@ const router = createBrowserRouter([
           <Protected>
             <Suspense fallback={<AuthSpinner />}>
               <Dashboard />
+            </Suspense>
+          </Protected>
+        ),
+      },
+      {
+        path: '/editor',
+        element: (
+          <Protected>
+            <Suspense fallback={<AuthSpinner />}>
+              <DocumentEditor />
             </Suspense>
           </Protected>
         ),
