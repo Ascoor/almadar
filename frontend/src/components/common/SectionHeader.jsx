@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import IconMedallion from "./IconMedallion";
 
 /**
  * Props:
@@ -130,28 +131,20 @@ const SectionHeader = ({
       >
         {/* أيقونة */}
         {icon && (
-          <div
-            className="
-              grid place-items-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24
-              rounded-2xl border border-[var(--border)]
-              shadow-[var(--shadow-sm)]
-              transition-transform duration-300 group-hover:scale-[1.03]
-              bg-[var(--card)]
-            "
-            style={{
-              boxShadow: "var(--shadow-glow)",
-            }}
-          >
+          <IconMedallion size="md" spin={true}>
             {typeof icon === "string" ? (
               <img
                 src={icon}
                 alt={typeof listName === "string" ? listName : "section icon"}
-                className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
               />
             ) : (
-              icon
+              // لو الأيقونة ReactNode (SVG)
+              <div className="w-8 h-8 sm:w-10 sm:h-10 text-[var(--fg)]">
+                {icon}
+              </div>
             )}
-          </div>
+          </IconMedallion>
         )}
 
         {/* العنوان + أكشنات */}
