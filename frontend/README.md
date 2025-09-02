@@ -1,8 +1,39 @@
-# React + Vite
+# Almadar Legal Management Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This frontend is built with [React](https://react.dev/) and [Vite](https://vitejs.dev/). It uses [Tailwind CSS](https://tailwindcss.com/) for styling and ESLint for linting.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Install dependencies and start a local development server:
+
+```bash
+npm install
+npm run dev
+```
+
+## Scripts
+
+- `npm run dev` – start Vite in development mode
+- `npm run build` – create a production build
+- `npm run lint` – run ESLint
+- `npm run preview` – preview the production build locally
+
+## Testing
+
+Vitest and Testing Library are available. Add tests in `src` and run:
+
+```bash
+npm test
+```
+
+## Project Structure
+
+- `src/` – application source
+- `public/` – static assets served as-is
+- `tailwind.config.js` – Tailwind CSS configuration
+- `postcss.config.js` – PostCSS plugins
+- `eslint.config.js` – ESLint configuration
+
+## License
+
+Distributed under the MIT License.
