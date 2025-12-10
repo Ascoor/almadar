@@ -7,11 +7,19 @@ const translations = { ar, en };
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
-  const [lang, setLang] = useState('en');
+  const getInitialLanguage = () => {
+    if (typeof window === 'undefined') return 'en';
+    const storedLang = localStorage.getItem('lang');
+    if (storedLang === 'ar' || storedLang === 'en') return storedLang;
+    return navigator.language?.toLowerCase().startsWith('ar') ? 'ar' : 'en';
+  };
+
+  const [lang, setLang] = useState(getInitialLanguage);
 
   useEffect(() => {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
+    localStorage.setItem('lang', lang);
   }, [lang]);
 
   const toggleLanguage = () => setLang(prev => (prev === 'en' ? 'ar' : 'en'));
