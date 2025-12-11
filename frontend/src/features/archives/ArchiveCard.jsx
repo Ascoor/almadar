@@ -7,8 +7,9 @@ import {
   CalendarDays,
 } from "lucide-react";
 import API_CONFIG from "@/config/config";
+import { getFileIcon, toneColors } from "./fileIcons";
 
-export default function ArchiveCard({ file = {}, onPreview }) {
+export default function ArchiveCard({ file = {}, onPreview, fileIcon }) {
   const {
     id,
     number,
@@ -38,6 +39,9 @@ export default function ArchiveCard({ file = {}, onPreview }) {
 
   // نبرة اللون حسب النوع (كلها من tokens)
   const tone = toneForType(file_type);
+  const resolvedIcon = fileIcon || getFileIcon(file);
+  const Icon = resolvedIcon.icon || FileText;
+  const iconTone = toneColors[resolvedIcon.tone] || toneColors.slate;
 
   return (
     <article
@@ -86,7 +90,7 @@ export default function ArchiveCard({ file = {}, onPreview }) {
           "
           style={{ background: tone.bg, color: tone.fg }}
         >
-          <FileText className="w-5 h-5" />
+          <Icon className={`w-5 h-5 ${iconTone.text}`} />
         </div>
 
         {/* عناوين ومعلومات */}

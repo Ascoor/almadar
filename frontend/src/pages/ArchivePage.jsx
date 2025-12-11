@@ -5,6 +5,7 @@ import React, {
   useCallback,
   lazy,
   Suspense,
+  useRef,
 } from "react";
 import { getArchiveFiles } from "@/services/api/archives";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ import {
 import API_CONFIG from "@/config/config";
 import { ArchiveSection } from "@/assets/icons";
 import ArchiveCard from "@/features/archives/ArchiveCard";
+import { getFileIcon, toneColors } from "@/features/archives/fileIcons";
 
 const SectionHeader = lazy(() => import("@/components/common/SectionHeader"));
 const PDFViewer = lazy(() => import("@/components/PDFViewer"));
@@ -99,6 +101,8 @@ export default function ArchivePage() {
   const [openFolders, setOpenFolders] = useState({});
   const [activeFile, setActiveFile] = useState(null);
   const [viewerMode, setViewerMode] = useState("auto"); // auto | preview | edit
+  const headerRef = useRef(null);
+  const previewRef = useRef(null);
 
   // Filters
   const [query, setQuery] = useState("");
@@ -204,14 +208,28 @@ export default function ArchivePage() {
     setOpenFolders((prev) => ({ ...prev, ...all }));
   };
 
-  const handleCardPreview = useCallback((file) => {
-    setActiveFile(file);
-    if (isPdfFile(file)) {
-      setViewerMode("preview");
-    } else {
-      setViewerMode("edit");
-    }
+  const scrollToPreview = useCallback(() => {
+    if (!previewRef.current) return;
+    const headerHeight = headerRef.current?.offsetHeight ?? 72;
+    const rect = previewRef.current.getBoundingClientRect();
+    const targetTop = Math.max(rect.top + window.scrollY - headerHeight - 12, 0);
+
+    window.scrollTo({ top: targetTop, behavior: "smooth" });
   }, []);
+
+  const handleCardPreview = useCallback(
+    (file) => {
+      setActiveFile(file);
+      if (isPdfFile(file)) {
+        setViewerMode("preview");
+      } else {
+        setViewerMode("edit");
+      }
+
+      requestAnimationFrame(scrollToPreview);
+    },
+    [scrollToPreview]
+  );
 
   const handleUploadClick = () => {
     toast.info("📂 سيتم إضافة واجهة رفع الملفات لاحقًا.");
@@ -220,6 +238,12 @@ export default function ArchivePage() {
   const fileUrlForPdf = activeFile?.file_path
     ? `${API_CONFIG.baseURL}/open-pdf/${activeFile.file_path}`
     : null;
+
+  const previewIcon = activeFile ? getFileIcon(activeFile) : null;
+  const previewTone = previewIcon
+    ? toneColors[previewIcon.tone] || toneColors.slate
+    : toneColors.slate;
+  const PreviewIcon = previewIcon?.icon;
 
   const currentMode = (() => {
     if (viewerMode !== "auto") return viewerMode;
@@ -236,7 +260,10 @@ export default function ArchivePage() {
           </div>
         }
       >
-        <div className="sticky top-0 z-20 border-b bg-[var(--bg)]/90 backdrop-blur-md">
+        <div
+          ref={headerRef}
+          className="sticky top-0 z-20 border-b bg-[var(--bg)]/90 backdrop-blur-md"
+        >
           <div className="px-4 py-4 sm:px-6">
             <SectionHeader
               listName="الأرشيف"
@@ -376,108 +403,130 @@ export default function ArchivePage() {
       </Suspense>
 
       {/* Content + preview/editor layout */}
-      <div className="flex flex-col gap-4 px-4 py-4 sm:px-6 sm:py-6">
-        {/* قائمة الملفات */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 shadow-[var(--shadow-md)]">
-          <div className="max-h-[45vh] overflow-y-auto px-3 pb-4 pt-3 sm:px-5 sm:pt-4">
-            {/* Loading state */}
-            {loading && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-32 rounded-xl bg-[var(--muted)] animate-pulse"
-                  />
-                ))}
-              </div>
-            )}
+      <div className="px-4 py-4 sm:px-6 sm:py-6">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.1fr_0.9fr] 2xl:grid-cols-[1.2fr_0.95fr]">
+          {/* قائمة الملفات */}
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 shadow-[var(--shadow-md)]">
+            <div className="max-h-[58vh] overflow-y-auto px-3 pb-4 pt-3 sm:px-5 sm:pt-4 xl:max-h-[70vh]">
+              {/* Loading state */}
+              {loading && (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-32 rounded-xl bg-[var(--muted)] animate-pulse"
+                    />
+                  ))}
+                </div>
+              )}
 
-            {/* Empty state */}
-            {!loading && filtered.length === 0 && (
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center shadow-[var(--shadow-md)] max-w-xl mx-auto">
-                <FolderKanban className="mb-3 h-10 w-10 text-[var(--muted-foreground)]" />
-                <p className="font-semibold text-[var(--fg)]">
-                  لا توجد نتائج مطابقة
-                </p>
-                <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                  جرّب تعديل البحث أو فلاتر النوع/الترتيب.
-                </p>
-              </div>
-            )}
+              {/* Empty state */}
+              {!loading && filtered.length === 0 && (
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center shadow-[var(--shadow-md)] max-w-xl mx-auto">
+                  <FolderKanban className="mb-3 h-10 w-10 text-[var(--muted-foreground)]" />
+                  <p className="font-semibold text-[var(--fg)]">
+                    لا توجد نتائج مطابقة
+                  </p>
+                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                    جرّب تعديل البحث أو فلاتر النوع/الترتيب.
+                  </p>
+                </div>
+              )}
 
-            {/* Groups */}
-            {!loading && Object.keys(grouped).length > 0 && (
-              <div className="space-y-5">
-                {Object.entries(grouped).map(([type, files]) => (
-                  <section
-                    key={type}
-                    className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-sm)]"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => toggleFolder(type)}
-                      className="flex w-full items-center gap-2 px-4 py-3 text-right text-[var(--fg)] sm:px-6 sm:py-4"
-                    >
-                      {openFolders[type] ? (
-                        <FolderOpenDot className="h-5 w-5 text-[var(--primary)]" />
-                      ) : (
-                        <FolderKanban className="h-5 w-5 text-[var(--muted-foreground)]" />
-                      )}
-                      <span className="font-extrabold">{getLabel(type)}</span>
-                      <span className="ml-2 text-xs text-[var(--muted-foreground)]">
-                        ({files.length})
-                      </span>
-                      <span className="ms-auto text-[var(--muted-foreground)]">
-                        {openFolders[type] ? (
-                          <ChevronsDown className="h-4 w-4" />
-                        ) : (
-                          <ChevronsLeft className="h-4 w-4" />
-                        )}
-                      </span>
-                    </button>
+              {/* Groups */}
+              {!loading && Object.keys(grouped).length > 0 && (
+                <div className="space-y-5">
+                  {Object.entries(grouped).map(([type, files]) => {
+                    const { icon: TypeIcon, tone } = getFileIcon({ file_type: type });
+                    const toneClass = toneColors[tone] || toneColors.slate;
 
-                    {openFolders[type] && (
-                      <div className="pb-4 pl-4 pr-4 sm:pb-5 sm:pl-6 sm:pr-6">
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                          {files.map((file) => (
-                            <div key={file.id} className="flex flex-col gap-2">
-                              <ArchiveCard
-                                file={file}
-                                onPreview={handleCardPreview}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => handleCardPreview(file)}
-                                className={`
-                                  mt-1 inline-flex items-center justify-center gap-2 rounded-xl
-                                  border border-[var(--border)] bg-[var(--card)]
-                                  px-3 py-1.5 text-xs sm:text-sm
-                                  hover:shadow-[var(--shadow-sm)]
-                                  transition
-                                  ${
-                                    activeFile?.id === file.id
-                                      ? "ring-1 ring-[var(--ring)] bg-[var(--muted)]"
-                                      : ""
-                                  }
-                                `}
-                              >
-                                <Eye className="h-4 w-4" />
-                                <span>عرض في الأسفل</span>
-                              </button>
+                    return (
+                      <section
+                        key={type}
+                        className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-sm)] scroll-mt-28"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => toggleFolder(type)}
+                          className="flex w-full flex-wrap items-center gap-2 px-4 py-3 text-right text-[var(--fg)] sm:px-6 sm:py-4"
+                        >
+                          <span
+                            aria-hidden
+                            className={`grid h-10 w-10 place-items-center rounded-xl ${toneClass.bg} ${toneClass.ring}`}
+                          >
+                            <TypeIcon className={`h-5 w-5 ${toneClass.text}`} />
+                          </span>
+                          <span className="font-extrabold">{getLabel(type)}</span>
+                          <span className="ml-2 text-xs text-[var(--muted-foreground)]">
+                            ({files.length})
+                          </span>
+                          <span className="ms-auto flex items-center gap-1 text-[var(--muted-foreground)]">
+                            {openFolders[type] ? (
+                              <>
+                                <ChevronsDown className="h-4 w-4" />
+                                <span className="text-xs">إخفاء</span>
+                              </>
+                            ) : (
+                              <>
+                                <ChevronsLeft className="h-4 w-4" />
+                                <span className="text-xs">عرض</span>
+                              </>
+                            )}
+                          </span>
+                        </button>
+
+                        {openFolders[type] && (
+                          <div className="pb-4 pl-4 pr-4 sm:pb-5 sm:pl-6 sm:pr-6">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
+                              {files.map((file) => {
+                                const cardIcon = getFileIcon(file);
+                                const Icon = cardIcon.icon;
+
+                                return (
+                                  <div key={file.id} className="flex flex-col gap-2">
+                                    <ArchiveCard
+                                      file={file}
+                                      fileIcon={cardIcon}
+                                      onPreview={handleCardPreview}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCardPreview(file)}
+                                      className={`
+                                        mt-1 inline-flex items-center justify-center gap-2 rounded-xl
+                                        border border-[var(--border)] bg-[var(--card)]
+                                        px-3 py-1.5 text-xs sm:text-sm
+                                        hover:shadow-[var(--shadow-sm)]
+                                        transition
+                                        ${
+                                          activeFile?.id === file.id
+                                            ? "ring-1 ring-[var(--ring)] bg-[var(--muted)]"
+                                            : ""
+                                        }
+                                      `}
+                                    >
+                                      <Icon className="h-4 w-4" />
+                                      <span>عرض في الأسفل</span>
+                                    </button>
+                                  </div>
+                                );
+                              })}
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </section>
-                ))}
-              </div>
-            )}
+                          </div>
+                        )}
+                      </section>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
         {/* منطقة المعاينة / المحرر أسفل الأرشيف */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] min-h-[220px] flex flex-col">
+        <div
+          ref={previewRef}
+          className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] min-h-[220px] flex flex-col"
+        >
           {!activeFile ? (
             <div className="flex flex-1 flex-col items-center justify-center text-center p-6">
               <img
@@ -494,23 +543,46 @@ export default function ArchivePage() {
                 ملف.
               </p>
             </div>
-          ) : (
-            <>
-              {/* Header for viewer/editor */}
-              <div className="flex items-center gap-3 border-b border-[var(--border)] bg-[var(--card)] px-4 py-3 sm:px-5">
-                <div className="min-w-0">
-                  <p className="text-xs text-[var(--muted-foreground)]">
-                    ملف مختار من الأرشيف
-                  </p>
-                  <h3 className="truncate text-sm font-bold text-[var(--fg)] sm:text-base">
-                    {activeFile.title ||
-                      activeFile.original_name ||
-                      activeFile.file_name ||
-                      "ملف بدون عنوان"}
-                  </h3>
-                </div>
+            ) : (
+              <>
+                {/* Header for viewer/editor */}
+                <div className="flex items-center gap-3 border-b border-[var(--border)] bg-[var(--card)] px-4 py-3 sm:px-5">
+                  {PreviewIcon && (
+                    <span
+                      aria-hidden
+                      className={`hidden h-11 w-11 place-items-center rounded-xl sm:grid ${previewTone.bg} ${previewTone.ring}`}
+                    >
+                      <PreviewIcon className={`h-5 w-5 ${previewTone.text}`} />
+                    </span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="text-xs text-[var(--muted-foreground)]">
+                      ملف مختار من الأرشيف
+                    </p>
+                    <h3 className="truncate text-sm font-bold text-[var(--fg)] sm:text-base">
+                      {activeFile.title ||
+                        activeFile.original_name ||
+                        activeFile.file_name ||
+                        "ملف بدون عنوان"}
+                    </h3>
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 ${previewTone.bg} ${previewTone.ring}`}
+                      >
+                        {PreviewIcon && <PreviewIcon className={`h-3.5 w-3.5 ${previewTone.text}`} />}
+                        <span className="text-[var(--fg)]">
+                          {activeFile.file_type || "ملف"}
+                        </span>
+                      </span>
+                      {activeFile.file_path && (
+                        <span className="truncate text-[var(--muted-foreground)]">
+                          {activeFile.file_path}
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
-                <div className="ms-auto flex items-center gap-2">
+                  <div className="ms-auto flex items-center gap-2">
                   {isPdfFile(activeFile) && (
                     <button
                       type="button"
