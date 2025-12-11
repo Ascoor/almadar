@@ -4,6 +4,7 @@ import {
   modalContainer,
   modalCancelButton,
   modalPrimaryButton,
+  modalHeading,
 } from './modalStyles';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -39,10 +40,8 @@ export default function ModalCard({
         )}
 
         {/* Title */}
-        <h2 className="
-          text-2xl font-bold text-center mb-6
-          text-primary border-b border-border pb-2
-        ">
+        <h2 className={`${modalHeading} mb-6 border-b border-border pb-2`}
+        >
           {t(title)}
         </h2>
 

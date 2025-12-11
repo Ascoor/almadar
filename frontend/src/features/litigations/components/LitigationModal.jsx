@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import ModalCard from "@/components/common/ModalCard";
+import { modalInput, modalLabel, modalHelperText } from "@/components/common/modalStyles";
 import { createLitigation, updateLitigation } from "@/services/api/litigations";
 
 const EMPTY_FORM = {
@@ -210,7 +211,7 @@ export default function LitigationModal({
 
         {/* ملاحظات */}
         <div className="md:col-span-2 space-y-1">
-          <label className="block text-sm font-medium text-foreground">
+          <label className={modalLabel}>
             ملاحظات
           </label>
           <textarea
@@ -218,7 +219,7 @@ export default function LitigationModal({
             value={form.notes || ""}
             onChange={handleChange}
             rows={3}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className={`${modalInput} min-h-[110px]`}
             placeholder="أي تفاصيل إضافية حول ملف الدعوى..."
           />
         </div>
@@ -240,18 +241,9 @@ function Field({
   options = [],
   placeholder,
 }) {
-  const baseCls =
-    "w-full rounded-lg border bg-card px-3 py-2 text-sm text-foreground shadow-sm " +
-    "placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 " +
-    "disabled:cursor-not-allowed disabled:opacity-70";
-
-  const borderCls = error
-    ? "border-destructive focus:ring-destructive/40 focus:border-destructive"
-    : "border-border focus:ring-primary/25 focus:border-primary";
-
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-foreground">
+      <label className={modalLabel}>
         {label}
       </label>
 
@@ -260,7 +252,11 @@ function Field({
           name={name}
           value={value ?? ""}
           onChange={onChange}
-          className={`${baseCls} ${borderCls}`}
+          className={`${modalInput} ${
+            error
+              ? "border-destructive focus:ring-destructive/40"
+              : "focus:border-ring"
+          }`}
         >
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -275,12 +271,18 @@ function Field({
           value={value ?? ""}
           onChange={onChange}
           placeholder={placeholder}
-          className={`${baseCls} ${borderCls}`}
+          className={`${modalInput} ${
+            error
+              ? "border-destructive focus:ring-destructive/40"
+              : "focus:border-ring"
+          }`}
         />
       )}
 
       {error && (
-        <p className="text-[0.75rem] font-medium text-destructive">{error}</p>
+        <p className={`${modalHelperText} font-semibold text-destructive`}>
+          {error}
+        </p>
       )}
     </div>
   );
