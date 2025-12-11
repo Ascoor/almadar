@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import ModalCard from "@/components/common/ModalCard";
+import { modalInput, modalLabel, modalHelperText } from "@/components/common/modalStyles";
 import { createLegalAdvice, updateLegalAdvice } from "@/services/api/legalAdvices";
 import API_CONFIG from "@/config/config";
 
@@ -105,13 +106,13 @@ export default function LegalAdviceModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* نوع المشورة */}
           <div>
-            <label className="block mb-1 text-sm">نوع المشورة</label>
+            <label className={modalLabel}>نوع المشورة</label>
             <select
               name="advice_type_id"
               value={form.advice_type_id}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-fg"
+              className={modalInput}
             >
               <option value="">-- اختر نوع المشورة --</option>
               {adviceTypes.map(t => (
@@ -129,14 +130,14 @@ export default function LegalAdviceModal({
             { label: "رقم المشورة", name: "advice_number", type: "text" }
           ].map(({ label, name, type }) => (
             <div key={name}>
-              <label className="block mb-1 text-sm">{label}</label>
+              <label className={modalLabel}>{label}</label>
               <input
                 type={type}
                 name={name}
                 value={form[name]}
                 onChange={handleChange}
                 required={["topic", "advice_number"].includes(name)}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-fg"
+                className={modalInput}
               />
             </div>
           ))}
@@ -144,34 +145,34 @@ export default function LegalAdviceModal({
 
         {/* نص المشورة */}
         <div>
-          <label className="block mb-1 text-sm">نص المشورة</label>
+          <label className={modalLabel}>نص المشورة</label>
           <textarea
             name="text"
             value={form.text}
             onChange={handleChange}
             rows={4}
-            className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-fg"
+            className={`${modalInput} min-h-[140px]`}
           />
         </div>
 
         {/* مرفق PDF */}
         <div>
-          <label className="block mb-1 text-sm">مرفق PDF</label>
+          <label className={modalLabel}>مرفق PDF</label>
           <input
             type="file"
             name="attachment"
             accept="application/pdf"
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-fg"
+            className={modalInput}
           />
           {form.attachment ? (
-            <p className="mt-1 text-green-600">{form.attachment.name}</p>
+            <p className={`${modalHelperText} text-success`}>{form.attachment.name}</p>
           ) : form.oldAttachment ? (
             <a
               href={`${API_CONFIG.baseURL}/storage/${form.oldAttachment}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1 text-blue-600 underline block"
+              className="mt-1 block text-primary underline"
             >
               عرض المرفق الحالي
             </a>

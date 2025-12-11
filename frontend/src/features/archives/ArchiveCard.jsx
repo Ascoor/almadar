@@ -49,7 +49,7 @@ export default function ArchiveCard({ file = {}, onPreview, fileIcon }) {
       tabIndex={0}
       aria-label={niceTitle}
       className="
-        group relative isolate overflow-hidden
+        group relative isolate overflow-hidden w-full h-full flex flex-col
         rounded-2xl border border-[var(--border)]
         bg-[var(--card)] text-[var(--fg)]
         shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)]
@@ -137,7 +137,7 @@ export default function ArchiveCard({ file = {}, onPreview, fileIcon }) {
 
       {/* المقتطف */}
       <p
-        className="px-4 text-[12px] leading-5 text-[var(--muted-foreground)] line-clamp-2"
+        className="px-4 text-[12px] leading-5 text-[var(--muted-foreground)] line-clamp-2 break-words"
         title={snippet}
       >
         {snippet}
