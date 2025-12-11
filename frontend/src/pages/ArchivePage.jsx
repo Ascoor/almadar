@@ -5,6 +5,7 @@ import React, {
   useCallback,
   lazy,
   Suspense,
+  useRef,
 } from "react";
 import { getArchiveFiles } from "@/services/api/archives";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ import {
 import API_CONFIG from "@/config/config";
 import { ArchiveSection } from "@/assets/icons";
 import ArchiveCard from "@/features/archives/ArchiveCard";
+import { getFileIcon, toneColors } from "@/features/archives/fileIcons";
 
 const SectionHeader = lazy(() => import("@/components/common/SectionHeader"));
 const PDFViewer = lazy(() => import("@/components/PDFViewer"));
@@ -99,6 +101,8 @@ export default function ArchivePage() {
   const [openFolders, setOpenFolders] = useState({});
   const [activeFile, setActiveFile] = useState(null);
   const [viewerMode, setViewerMode] = useState("auto"); // auto | preview | edit
+  const headerRef = useRef(null);
+  const previewRef = useRef(null);
 
   // Filters
   const [query, setQuery] = useState("");
@@ -204,14 +208,28 @@ export default function ArchivePage() {
     setOpenFolders((prev) => ({ ...prev, ...all }));
   };
 
-  const handleCardPreview = useCallback((file) => {
-    setActiveFile(file);
-    if (isPdfFile(file)) {
-      setViewerMode("preview");
-    } else {
-      setViewerMode("edit");
-    }
+  const scrollToPreview = useCallback(() => {
+    if (!previewRef.current) return;
+    const headerHeight = headerRef.current?.offsetHeight ?? 72;
+    const rect = previewRef.current.getBoundingClientRect();
+    const targetTop = Math.max(rect.top + window.scrollY - headerHeight - 12, 0);
+
+    window.scrollTo({ top: targetTop, behavior: "smooth" });
   }, []);
+
+  const handleCardPreview = useCallback(
+    (file) => {
+      setActiveFile(file);
+      if (isPdfFile(file)) {
+        setViewerMode("preview");
+      } else {
+        setViewerMode("edit");
+      }
+
+      requestAnimationFrame(scrollToPreview);
+    },
+    [scrollToPreview]
+  );
 
   const handleUploadClick = () => {
     toast.info("📂 سيتم إضافة واجهة رفع الملفات لاحقًا.");
@@ -220,6 +238,12 @@ export default function ArchivePage() {
   const fileUrlForPdf = activeFile?.file_path
     ? `${API_CONFIG.baseURL}/open-pdf/${activeFile.file_path}`
     : null;
+
+  const previewIcon = activeFile ? getFileIcon(activeFile) : null;
+  const previewTone = previewIcon
+    ? toneColors[previewIcon.tone] || toneColors.slate
+    : toneColors.slate;
+  const PreviewIcon = previewIcon?.icon;
 
   const currentMode = (() => {
     if (viewerMode !== "auto") return viewerMode;
@@ -465,16 +489,15 @@ export default function ArchivePage() {
                                 <span>عرض في الأسفل</span>
                               </button>
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </section>
-                ))}
-              </div>
-            )}
+                          </div>
+                        )}
+                      </section>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
         {/* منطقة المعاينة / المحرر أسفل الأرشيف */}
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] min-h-[220px] flex flex-col overflow-hidden">
