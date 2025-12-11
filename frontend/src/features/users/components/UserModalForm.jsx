@@ -9,6 +9,7 @@ import {
   modalInput,
   modalCancelButton,
   modalPrimaryButton,
+  modalLabel,
 } from '@/components/common/modalStyles';
 
 const roleLabels = {
@@ -139,7 +140,7 @@ export default function UserModalForm({
   return (
     <div className={modalOverlay}>
       <div className={`${modalContainer} max-w-lg`}>
-        <h2 className="text-xl font-bold text-center mb-6 text-fg">
+        <h2 className="text-xl font-bold text-center mb-6 text-primary drop-shadow-sm">
           {isEdit ? 'تعديل المستخدم' : 'إضافة مستخدم'}
         </h2>
 
@@ -155,13 +156,13 @@ export default function UserModalForm({
           />
 
           <div>
-            <label className="block mb-1 font-medium text-fg">الدور</label>
+            <label className={modalLabel}>الدور</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
               disabled={isSubmitting}
-              className={`${modalInput} ${validationErrors.role ? 'border-red-500' : ''}`}
+              className={`${modalInput} ${validationErrors.role ? 'border-destructive focus:ring-destructive/50' : ''}`}
             >
               <option value="">اختر الدور</option>
               {availableRoles.map((r) => (
@@ -176,14 +177,14 @@ export default function UserModalForm({
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-fg">البريد الإلكتروني</label>
-            <div className="flex rounded-xl overflow-hidden border border-border bg-card">
+            <label className={modalLabel}>البريد الإلكتروني</label>
+            <div className="flex overflow-hidden rounded-xl border border-border bg-[color:var(--card)]/95 shadow-sm focus-within:ring-2 focus-within:ring-ring">
               <input
                 name="emailPrefix"
                 value={formData.emailPrefix}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="flex-1 p-2 bg-card text-fg placeholder:text-muted focus:ring-2 focus:ring-ring focus:border-border"
+                className="flex-1 bg-transparent p-2 text-fg placeholder:text-muted-foreground/80 focus:outline-none"
               />
               <span className="p-2 bg-muted text-xs select-none">@almadar.ly</span>
             </div>
@@ -193,7 +194,7 @@ export default function UserModalForm({
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-fg">الصورة</label>
+            <label className={modalLabel}>الصورة</label>
             <input
               type="file"
               accept="image/*"
@@ -236,7 +237,7 @@ export default function UserModalForm({
 function FormField({ label, icon, name, value, onChange, error, disabled }) {
   return (
     <div>
-      <label className="mb-1 flex items-center font-medium text-fg">
+      <label className={`${modalLabel} flex items-center gap-2`}>
         {icon} {label}
       </label>
       <input
