@@ -31,11 +31,12 @@ export default function ContractModal({
   const [hasDuration, setHasDuration] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // كلما تم فتح المودال أو تغيّرت بيانات initialData، نعيد تهيئة الـ form
+  // إعادة تهيئة البيانات عند فتح المودال أو تغيير initialData
   useEffect(() => {
     if (!isOpen) return;
 
     if (initialData) {
+      const hasEndDate = Boolean(initialData.end_date);
       setForm({
         id: initialData.id || null,
         contract_category_id: initialData.contract_category_id || "",
@@ -53,7 +54,7 @@ export default function ContractModal({
         attachment: null,
         oldAttachment: initialData.attachment || null,
       });
-      setHasDuration(Boolean(initialData.end_date));
+      setHasDuration(hasEndDate);
     } else {
       setForm(EMPTY_FORM);
       setHasDuration(false);
@@ -64,16 +65,46 @@ export default function ContractModal({
 
   const validateForm = () => {
     const newErrors = {};
-    if (!form.contract_category_id)
+
+    if (!form.contract_category_id) {
       newErrors.contract_category_id = "هذا الحقل مطلوب.";
-    if (!form.number) newErrors.number = "يرجى إدخال رقم العقد.";
-    if (!form.value) newErrors.value = "يرجى إدخال قيمة العقد.";
-    if (!form.contract_parties)
+    }
+
+    if (!form.number) {
+      newErrors.number = "يرجى إدخال رقم العقد.";
+    }
+
+    if (!form.value) {
+      newErrors.value = "يرجى إدخال قيمة العقد.";
+    } else if (Number(form.value) <= 0) {
+      newErrors.value = "قيمة العقد يجب أن تكون أكبر من صفر.";
+    }
+
+    if (!form.contract_parties) {
       newErrors.contract_parties = "يرجى إدخال أطراف العقد.";
-    if (!form.start_date) newErrors.start_date = "يرجى إدخال تاريخ البداية.";
-    if (!form.summary) newErrors.summary = "يرجى كتابة ملخص للعقد.";
-    if (hasDuration && !form.end_date)
+    }
+
+    if (!form.start_date) {
+      newErrors.start_date = "يرجى إدخال تاريخ البداية.";
+    }
+
+    if (hasDuration && !form.end_date) {
       newErrors.end_date = "يرجى إدخال تاريخ الانتهاء.";
+    }
+
+    // تحقق أن تاريخ النهاية بعد أو يساوي البداية
+    if (
+      hasDuration &&
+      form.start_date &&
+      form.end_date &&
+      form.end_date < form.start_date
+    ) {
+      newErrors.end_date = "تاريخ النهاية يجب أن يكون بعد أو مساوي لتاريخ البداية.";
+    }
+
+    if (!form.summary) {
+      newErrors.summary = "يرجى كتابة ملخص للعقد.";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -83,23 +114,33 @@ export default function ContractModal({
     const { name, value, files } = e.target;
 
     if (name === "attachment") {
-      const file = files[0];
+      const file = files?.[0];
       if (file && file.type !== "application/pdf") {
         toast.error("📄 الملف يجب أن يكون بصيغة PDF فقط.");
         return;
       }
       setForm((prev) => ({ ...prev, attachment: file }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, attachment: undefined }));
+      return;
     }
 
-    // إزالة رسالة الخطأ عند التعديل
+    setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  const handleDurationChange = (hasDurationValue) => {
+    setHasDuration(hasDurationValue);
+
+    if (!hasDurationValue) {
+      // لو لا يوجد مدة للعقد → امسح تاريخ النهاية وأي خطأ مرتبط به
+      setForm((prev) => ({ ...prev, end_date: "" }));
+      setErrors((prev) => ({ ...prev, end_date: undefined }));
+    }
   };
 
   const handleSave = async () => {
     if (!validateForm()) {
-      toast.warning("⚠️ يرجى تعبئة الحقول الإلزامية.");
+      toast.warning("⚠️ يرجى تعبئة الحقول الإلزامية بشكل صحيح.");
       return;
     }
 
@@ -108,9 +149,11 @@ export default function ContractModal({
       const payload = new FormData();
 
       Object.entries(form).forEach(([key, val]) => {
-        if (key === "attachment" && val instanceof File) {
-          payload.append("attachment", val);
-        } else if (key !== "attachment" && key !== "oldAttachment" && val != null) {
+        if (key === "attachment") {
+          if (val instanceof File) {
+            payload.append("attachment", val);
+          }
+        } else if (key !== "oldAttachment" && val != null) {
           payload.append(key, val);
         }
       });
@@ -118,10 +161,10 @@ export default function ContractModal({
       if (form.id) {
         payload.append("_method", "PUT");
         await updateContract(form.id, payload);
-        toast.success("✅ تم تعديل العقد بنجاح");
+        toast.success("✅ تم تعديل العقد بنجاح.");
       } else {
         await createContract(payload);
-        toast.success("✅ تم إضافة العقد بنجاح");
+        toast.success("✅ تم إضافة العقد بنجاح.");
       }
 
       reloadContracts?.();
@@ -135,15 +178,22 @@ export default function ContractModal({
     }
   };
 
+  const inputBaseClasses =
+    "w-full p-2 rounded-lg text-sm bg-white dark:bg-zinc-900/60 border transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/70 focus:border-blue-500/70 dark:text-zinc-100";
+
   const inputClass = (name) =>
-    `w-full p-2 border rounded-lg ${
+    `${inputBaseClasses} ${
       errors[name]
         ? "border-red-500 dark:border-red-400 bg-red-50 dark:bg-red-900/30"
         : "border-gray-300 dark:border-zinc-700"
     }`;
 
   const errorText = (name) =>
-    errors[name] ? <p className="text-xs text-red-600 mt-1">{errors[name]}</p> : null;
+    errors[name] ? (
+      <p className="text-xs mt-1 text-red-600 dark:text-red-400">
+        {errors[name]}
+      </p>
+    ) : null;
 
   return (
     <ModalCard
@@ -154,10 +204,12 @@ export default function ContractModal({
       onSubmit={handleSave}
       submitLabel={initialData ? "تحديث" : "إضافة"}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-right bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 rounded-xl p-4">
         {/* التصنيف */}
         <div>
-          <label className="block mb-1 text-sm">التصنيف</label>
+          <label className="block mb-1 text-sm font-medium">
+            التصنيف <span className="text-red-500">*</span>
+          </label>
           <select
             name="contract_category_id"
             value={form.contract_category_id}
@@ -177,7 +229,7 @@ export default function ContractModal({
 
         {/* النوع */}
         <div>
-          <label className="block mb-1 text-sm">نوع العقد</label>
+          <label className="block mb-1 text-sm font-medium">نوع العقد</label>
           <select
             name="scope"
             value={form.scope}
@@ -191,7 +243,9 @@ export default function ContractModal({
 
         {/* الرقم */}
         <div>
-          <label className="block mb-1 text-sm">رقم العقد</label>
+          <label className="block mb-1 text-sm font-medium">
+            رقم العقد <span className="text-red-500">*</span>
+          </label>
           <input
             name="number"
             value={form.number}
@@ -203,7 +257,9 @@ export default function ContractModal({
 
         {/* القيمة */}
         <div>
-          <label className="block mb-1 text-sm">قيمة العقد</label>
+          <label className="block mb-1 text-sm font-medium">
+            قيمة العقد <span className="text-red-500">*</span>
+          </label>
           <input
             type="number"
             name="value"
@@ -216,7 +272,9 @@ export default function ContractModal({
 
         {/* الأطراف */}
         <div className="md:col-span-2">
-          <label className="block mb-1 text-sm">الأطراف المتعاقد معها</label>
+          <label className="block mb-1 text-sm font-medium">
+            الأطراف المتعاقد معها <span className="text-red-500">*</span>
+          </label>
           <textarea
             name="contract_parties"
             value={form.contract_parties}
@@ -229,8 +287,9 @@ export default function ContractModal({
 
         {/* البداية – النهاية */}
         <div>
-          <label className="block mb-1 text-sm">
+          <label className="block mb-1 text-sm font-medium">
             {hasDuration ? "تاريخ بداية العقد" : "تاريخ العقد"}
+            <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
@@ -243,7 +302,9 @@ export default function ContractModal({
 
           {hasDuration && (
             <div className="mt-2">
-              <label className="block mb-1 text-sm">تاريخ النهاية</label>
+              <label className="block mb-1 text-sm font-medium">
+                تاريخ النهاية <span className="text-red-500">*</span>
+              </label>
               <input
                 type="date"
                 name="end_date"
@@ -258,23 +319,25 @@ export default function ContractModal({
 
         {/* هل للعقد مدة؟ */}
         <div>
-          <label className="block mb-2 text-sm font-medium">هل للعقد مدة؟</label>
+          <label className="block mb-2 text-sm font-medium">
+            هل للعقد مدة؟
+          </label>
           <div className="flex gap-4 items-center">
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
                 name="hasDuration"
                 checked={hasDuration}
-                onChange={() => setHasDuration(true)}
+                onChange={() => handleDurationChange(true)}
               />
               <span>نعم</span>
             </label>
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
                 name="hasDuration"
                 checked={!hasDuration}
-                onChange={() => setHasDuration(false)}
+                onChange={() => handleDurationChange(false)}
               />
               <span>لا</span>
             </label>
@@ -284,7 +347,7 @@ export default function ContractModal({
         {/* الحالة (فقط عند التعديل) */}
         {initialData && (
           <div className="md:col-span-2">
-            <label className="block mb-1 text-sm">الحالة</label>
+            <label className="block mb-1 text-sm font-medium">الحالة</label>
             <select
               name="status"
               value={form.status}
@@ -302,7 +365,9 @@ export default function ContractModal({
 
         {/* الملخص */}
         <div className="md:col-span-2">
-          <label className="block mb-1 text-sm">ملخص العقد</label>
+          <label className="block mb-1 text-sm font-medium">
+            ملخص العقد <span className="text-red-500">*</span>
+          </label>
           <textarea
             name="summary"
             value={form.summary}
@@ -315,7 +380,9 @@ export default function ContractModal({
 
         {/* الملاحظات */}
         <div className="md:col-span-2">
-          <label className="block mb-1 text-sm">ملاحظات (اختياري)</label>
+          <label className="block mb-1 text-sm font-medium">
+            ملاحظات (اختياري)
+          </label>
           <textarea
             name="notes"
             value={form.notes}
@@ -327,7 +394,9 @@ export default function ContractModal({
 
         {/* المرفقات */}
         <div className="md:col-span-2">
-          <label className="block mb-1 text-sm">مرفق العقد (PDF فقط)</label>
+          <label className="block mb-1 text-sm font-medium">
+            مرفق العقد (PDF فقط)
+          </label>
           <input
             type="file"
             name="attachment"
@@ -337,7 +406,7 @@ export default function ContractModal({
           />
 
           {form.attachment ? (
-            <p className="mt-1 text-sm text-green-600">
+            <p className="mt-1 text-sm text-green-600 dark:text-green-400">
               {form.attachment.name}
             </p>
           ) : form.oldAttachment ? (
@@ -345,7 +414,7 @@ export default function ContractModal({
               href={`/storage/${form.oldAttachment}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1 block text-sm text-blue-600 underline"
+              className="mt-1 block text-sm text-blue-600 dark:text-blue-400 underline"
             >
               عرض المرفق الحالي
             </a>
