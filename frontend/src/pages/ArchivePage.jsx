@@ -227,7 +227,7 @@ export default function ArchivePage() {
   })();
 
   return (
-    <div className="relative flex h-full w-full flex-col bg-[var(--bg)] text-[var(--fg)]">
+    <div className="relative flex min-h-screen w-full flex-col bg-[var(--bg)] text-[var(--fg)]">
       {/* Header */}
       <Suspense
         fallback={
@@ -237,7 +237,7 @@ export default function ArchivePage() {
         }
       >
         <div className="sticky top-0 z-20 border-b bg-[var(--bg)]/90 backdrop-blur-md">
-          <div className="px-4 py-4 sm:px-6">
+          <div className="container mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
             <SectionHeader
               listName="الأرشيف"
               icon={ArchiveSection}
@@ -277,7 +277,7 @@ export default function ArchivePage() {
           </div>
 
           {/* Filters & search */}
-          <div className="px-4 pb-4 sm:px-6">
+          <div className="container mx-auto max-w-7xl px-4 pb-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
               {/* Search */}
               <div className="flex-1">
@@ -302,7 +302,7 @@ export default function ArchivePage() {
               </div>
 
               {/* Filters row */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {/* نوع الملف */}
                 <div className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-xs sm:text-sm">
                   <SlidersHorizontal className="h-4 w-4 text-[var(--muted-foreground)]" />
@@ -376,13 +376,13 @@ export default function ArchivePage() {
       </Suspense>
 
       {/* Content + preview/editor layout */}
-      <div className="flex flex-col gap-4 px-4 py-4 sm:px-6 sm:py-6">
+      <div className="container mx-auto max-w-7xl flex flex-col gap-4 px-4 pb-8 pt-4 sm:px-6 lg:px-8">
         {/* قائمة الملفات */}
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 shadow-[var(--shadow-md)]">
-          <div className="max-h-[45vh] overflow-y-auto px-3 pb-4 pt-3 sm:px-5 sm:pt-4">
+          <div className="max-h-[60vh] overflow-y-auto px-3 pb-4 pt-3 sm:px-5 sm:pt-4">
             {/* Loading state */}
             {loading && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div
                     key={i}
@@ -438,7 +438,7 @@ export default function ArchivePage() {
 
                     {openFolders[type] && (
                       <div className="pb-4 pl-4 pr-4 sm:pb-5 sm:pl-6 sm:pr-6">
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                           {files.map((file) => (
                             <div key={file.id} className="flex flex-col gap-2">
                               <ArchiveCard
@@ -477,7 +477,7 @@ export default function ArchivePage() {
         </div>
 
         {/* منطقة المعاينة / المحرر أسفل الأرشيف */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] min-h-[220px] flex flex-col">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] min-h-[220px] flex flex-col overflow-hidden">
           {!activeFile ? (
             <div className="flex flex-1 flex-col items-center justify-center text-center p-6">
               <img
@@ -497,7 +497,7 @@ export default function ArchivePage() {
           ) : (
             <>
               {/* Header for viewer/editor */}
-              <div className="flex items-center gap-3 border-b border-[var(--border)] bg-[var(--card)] px-4 py-3 sm:px-5">
+              <div className="flex flex-col gap-3 border-b border-[var(--border)] bg-[var(--card)] px-4 py-3 sm:flex-row sm:items-center sm:gap-3 sm:px-5">
                 <div className="min-w-0">
                   <p className="text-xs text-[var(--muted-foreground)]">
                     ملف مختار من الأرشيف
@@ -510,7 +510,7 @@ export default function ArchivePage() {
                   </h3>
                 </div>
 
-                <div className="ms-auto flex items-center gap-2">
+                <div className="ms-auto flex flex-wrap items-center gap-2">
                   {isPdfFile(activeFile) && (
                     <button
                       type="button"
@@ -562,7 +562,7 @@ export default function ArchivePage() {
               </div>
 
               {/* Body: PDF preview OR editor */}
-              <div className="min-h-[180px] flex-1 overflow-auto">
+              <div className="min-h-[260px] flex-1 overflow-auto">
                 <Suspense
                   fallback={
                     <div className="flex h-40 items-center justify-center text-sm text-[var(--muted-foreground)]">
