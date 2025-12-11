@@ -245,71 +245,69 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle flex flex-col">
+    <div className="min-h-screen bg-gradient-subtle text-foreground flex flex-col">
       <Toaster />
       {/* Header */}
-      <header className="border-b bg-card shadow-soft backdrop-blur-sm">
-        <div className="flex items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-4">
+      <header className="border-b bg-card/80 shadow-soft backdrop-blur-sm">
+        <div className="container mx-auto flex flex-col gap-3 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <div className="flex items-center gap-2">
               <FileText className="h-6 w-6 text-primary animate-pulse" />
-              <div className="hidden sm:block">
-  <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent tracking-tight">
-    محرر المستندات
-  </h1>
- 
-</div>
-
+              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent tracking-tight">
+                محرر المستندات
+              </h1>
             </div>
-            <div className="h-6 w-px bg-border hidden sm:block" />
-            <input
-              type="text"
-              value={documentTitle}
-              onChange={(e) => setDocumentTitle(e.target.value)}
-              className="text-base font-medium bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-primary/20 rounded px-3 py-2 font-cairo min-w-0 flex-1 sm:min-w-[200px]"
-              dir="auto"
-              placeholder="اسم المستند - Document Name"
-            />
+
+            <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <input
+                type="text"
+                value={documentTitle}
+                onChange={(e) => setDocumentTitle(e.target.value)}
+                className="text-sm sm:text-base font-medium bg-transparent border border-border focus:border-primary/40 focus:ring-2 focus:ring-primary/20 rounded-lg px-3 py-2 font-cairo min-w-0 w-full"
+                dir="auto"
+                placeholder="اسم المستند - Document Name"
+              />
+            </div>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleNewDocument}
               className="gap-2 hover-lift"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">جديد - New</span>
             </Button>
-            
+
             <FileManager
               onImport={handleImport}
               onExportPDF={handleExportPDF}
               onExportDOCX={handleExportDOCX}
               currentTitle={documentTitle}
             />
-            
-            <div className="h-6 w-px bg-border" />
-            
-            <Button 
-              variant="default" 
-              size="sm" 
+
+            <div className="hidden sm:block h-6 w-px bg-border" />
+
+            <Button
+              variant="default"
+              size="sm"
               onClick={handleSave}
               disabled={isSaving}
-              className="gap-2 bg-gradient-primary hover:opacity-90 transition-opacity"
+              className="gap-2 bg-gradient-primary hover:opacity-90 transition-opacity w-full sm:w-auto"
             >
               <Save className="h-4 w-4" />
               <span className="hidden sm:inline">
                 {isSaving ? 'جاري الحفظ...' : 'حفظ - Save'}
               </span>
-            </Button> 
+            </Button>
           </div>
         </div>
-        
+
         {lastSaveTime && (
-          <div className="px-6 pb-2">
-            <p className="text-xs text-muted-foreground">
+          <div className="container mx-auto px-4 pb-3 sm:px-6">
+            <p className="text-xs text-muted-foreground text-right">
               آخر حفظ - Last saved: {lastSaveTime.toLocaleTimeString('ar-EG')} | {lastSaveTime.toLocaleTimeString('en-US')}
             </p>
           </div>
@@ -317,17 +315,21 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
       </header>
 
       {/* Toolbar */}
-      <EditorToolbar editor={editor} />
+      <div className="border-b bg-card/80 backdrop-blur-sm">
+        <div className="container mx-auto px-2 sm:px-4">
+          <EditorToolbar editor={editor} />
+        </div>
+      </div>
 
       {/* Editor Area */}
-      <main className="flex-1 p-6 bg-gradient-subtle">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-card shadow-medium rounded-xl min-h-[700px] overflow-hidden border animate-fade-in">
-            <EditorContent 
-              editor={editor} 
-              className="min-h-[700px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:p-8 [&_.ProseMirror]:text-foreground"
+      <main className="flex-1 py-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative bg-card shadow-medium rounded-xl min-h-[500px] md:min-h-[640px] overflow-hidden border animate-fade-in">
+            <EditorContent
+              editor={editor}
+              className="min-h-[500px] md:min-h-[640px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:p-6 md:[&_.ProseMirror]:p-8 [&_.ProseMirror]:text-foreground"
             />
-            
+
             {isExporting && (
               <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center">
                 <div className="flex items-center gap-3 bg-card px-6 py-4 rounded-lg shadow-strong">
