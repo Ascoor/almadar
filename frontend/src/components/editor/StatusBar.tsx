@@ -28,10 +28,16 @@ export const StatusBar: React.FC<StatusBarProps> = ({ wordCount, charCount }) =>
           
           <div className="h-4 w-px bg-border" />
           
-          <div className="flex items-center gap-2">
-            <span className="font-arabic">✍️ محرر إنكويل</span>
-            <span className="text-xs">Inkwell Editor</span>
-          </div>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+  <span className="font-arabic text-lg font-semibold text-primary tracking-tight">
+    ✍️ محرر المدار الاحترافي
+  </span>
+
+  <span className="text-xs text-muted-foreground tracking-wide">
+    Almadar Professional Editor
+  </span>
+</div>
+
         </div>
         
         <div className="flex items-center gap-4">

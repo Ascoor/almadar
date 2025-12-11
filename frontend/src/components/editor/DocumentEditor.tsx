@@ -15,7 +15,6 @@ import { Link } from '@tiptap/extension-link';
 import { FontFamily } from '@tiptap/extension-font-family';
 import { EditorToolbar } from './EditorToolbar';
 import { StatusBar } from './StatusBar';
-import { ThemeToggle } from './ThemeToggle';
 import { FileManager } from './FileManager';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/toaster';
@@ -255,9 +254,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <div className="flex items-center gap-2">
               <FileText className="h-6 w-6 text-primary animate-pulse" />
               <div className="hidden sm:block">
-                <h1 className="text-lg font-semibold text-primary">محرر إنكويل</h1>
-                <p className="text-xs text-muted-foreground">Inkwell Editor</p>
-              </div>
+  <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent tracking-tight">
+    محرر المستندات
+  </h1>
+ 
+</div>
+
             </div>
             <div className="h-6 w-px bg-border hidden sm:block" />
             <input
@@ -301,9 +303,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
               <span className="hidden sm:inline">
                 {isSaving ? 'جاري الحفظ...' : 'حفظ - Save'}
               </span>
-            </Button>
-            
-            <ThemeToggle />
+            </Button> 
           </div>
         </div>
         

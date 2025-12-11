@@ -12,7 +12,7 @@ const EMPTY_FORM = {
   scope: "from",
   subject: "",
   filing_date: "",
-  status: "open", 
+  status: "open",
   notes: "",
 };
 
@@ -20,7 +20,7 @@ export default function LitigationModal({
   isOpen,
   onClose,
   initialData = null,
-  reloadLitigations
+  reloadLitigations,
 }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
@@ -28,6 +28,7 @@ export default function LitigationModal({
 
   useEffect(() => {
     if (!isOpen) return;
+
     if (initialData) {
       setForm({
         ...EMPTY_FORM,
@@ -42,8 +43,11 @@ export default function LitigationModal({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: name === "case_year" ? String(value) : value }));
-    setErrors((e) => ({ ...e, [name]: "" }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "case_year" ? String(value) : value,
+    }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validate = () => {
@@ -70,6 +74,7 @@ export default function LitigationModal({
     setLoading(true);
     try {
       const payload = { ...form, case_year: String(form.case_year) };
+
       if (form.id) {
         await updateLitigation(form.id, payload);
         toast.success("✅ تم تعديل الدعوى بنجاح");
@@ -77,6 +82,7 @@ export default function LitigationModal({
         await createLitigation(payload);
         toast.success("✅ تمت إضافة الدعوى بنجاح");
       }
+
       reloadLitigations?.();
       onClose();
     } catch (err) {
@@ -96,6 +102,8 @@ export default function LitigationModal({
     }
   };
 
+  if (!isOpen) return null;
+
   return (
     <ModalCard
       isOpen={isOpen}
@@ -105,75 +113,175 @@ export default function LitigationModal({
       onSubmit={handleSave}
       submitLabel={initialData ? "تحديث" : "إضافة"}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {[
-          {
-            label: "صفة الشركة",
-            name: "scope",
-            type: "select",
-            options: [
-              { value: "from", label: "من الشركة" },
-              { value: "against", label: "ضد الشركة" },
-            ]
-          },
-          { label: "رقم الدعوى", name: "case_number" },
-          { label: "سنة الدعوى", name: "case_year" },
-          { label: "المحكمة", name: "court" },
-          { label: "الخصم", name: "opponent" },
-          { label: "الموضوع", name: "subject" },
-          { label: "تاريخ رفع الدعوى", name: "filing_date", type: "date" },
-          {
-            label: "الحالة",
-            name: "status",
-            type: "select",
-            options: [
-              { value: "open", label: "مفتوحة" },
-              { value: "in_progress", label: "قيد التنفيذ" },
-              { value: "closed", label: "مغلقة" },
-            ]
-          } 
-        ].map(({ label, name, type = "text", options }) => (
-          <div key={name}>
-            <label className="block mb-1 text-sm text-muted">{label}</label>
-            {type === "select" ? (
-              <select
-                name={name}
-                value={form[name]}
-                onChange={handleChange}
-                required
-                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-bg text-fg`}
-              >
-                {options.map(opt => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <input
-                type={type}
-                name={name}
-                value={form[name]}
-                onChange={handleChange}
-                required
-                className={`w-full px-3 py-2 rounded-lg border ${errors[name] ? 'border-red-500' : 'border-border'} bg-bg text-fg`}
-              />
-            )}
-            {errors[name] && <p className="text-red-600 text-sm mt-1">{errors[name]}</p>}
-          </div>
-        ))}
-      </div>
-
-      <div className="md:col-span-2 mt-4">
-        <label className="block mb-1 text-sm text-muted">ملاحظات</label>
-        <textarea
-          name="notes"
-          value={form.notes}
+      <form
+        dir="rtl"
+        className="grid grid-cols-1 gap-4 text-right md:grid-cols-2"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        {/* صفة الشركة */}
+        <Field
+          label="صفة الشركة"
+          name="scope"
+          type="select"
+          value={form.scope}
           onChange={handleChange}
-          rows={3}
-          className="w-full px-3 py-2 rounded-lg border border-border bg-bg text-fg"
+          error={errors.scope}
+          options={[
+            { value: "", label: "اختر صفة الشركة" },
+            { value: "from", label: "من الشركة" },
+            { value: "against", label: "ضد الشركة" },
+          ]}
         />
-      </div>
+
+        {/* رقم الدعوى */}
+        <Field
+          label="رقم الدعوى"
+          name="case_number"
+          value={form.case_number}
+          onChange={handleChange}
+          error={errors.case_number}
+          placeholder="مثال: 1234/ق"
+        />
+
+        {/* سنة الدعوى */}
+        <Field
+          label="سنة الدعوى"
+          name="case_year"
+          value={form.case_year}
+          onChange={handleChange}
+          error={errors.case_year}
+          placeholder="مثال: 2025"
+        />
+
+        {/* المحكمة */}
+        <Field
+          label="المحكمة"
+          name="court"
+          value={form.court}
+          onChange={handleChange}
+          error={errors.court}
+          placeholder="مثال: محكمة شمال طرابلس الابتدائية"
+        />
+
+        {/* الخصم */}
+        <Field
+          label="الخصم"
+          name="opponent"
+          value={form.opponent}
+          onChange={handleChange}
+          error={errors.opponent}
+          placeholder="اسم الخصم أو الجهة"
+        />
+
+        {/* الموضوع */}
+        <Field
+          label="الموضوع"
+          name="subject"
+          value={form.subject}
+          onChange={handleChange}
+          error={errors.subject}
+          placeholder="مثال: مطالبة مالية، إنهاء عقد، تعويض..."
+        />
+
+        {/* تاريخ رفع الدعوى */}
+        <Field
+          label="تاريخ رفع الدعوى"
+          name="filing_date"
+          type="date"
+          value={form.filing_date}
+          onChange={handleChange}
+          error={errors.filing_date}
+        />
+
+        {/* الحالة */}
+        <Field
+          label="الحالة"
+          name="status"
+          type="select"
+          value={form.status}
+          onChange={handleChange}
+          error={errors.status}
+          options={[
+            { value: "open", label: "مفتوحة" },
+            { value: "in_progress", label: "قيد التنفيذ" },
+            { value: "closed", label: "مغلقة" },
+          ]}
+        />
+
+        {/* ملاحظات */}
+        <div className="md:col-span-2 space-y-1">
+          <label className="block text-sm font-medium text-foreground">
+            ملاحظات
+          </label>
+          <textarea
+            name="notes"
+            value={form.notes || ""}
+            onChange={handleChange}
+            rows={3}
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            placeholder="أي تفاصيل إضافية حول ملف الدعوى..."
+          />
+        </div>
+      </form>
     </ModalCard>
+  );
+}
+
+/**
+ * حقل موحّد للـ input / select مع ستايل مبني على التوكنز + إظهار الأخطاء
+ */
+function Field({
+  label,
+  name,
+  type = "text",
+  value,
+  onChange,
+  error,
+  options = [],
+  placeholder,
+}) {
+  const baseCls =
+    "w-full rounded-lg border bg-card px-3 py-2 text-sm text-foreground shadow-sm " +
+    "placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 " +
+    "disabled:cursor-not-allowed disabled:opacity-70";
+
+  const borderCls = error
+    ? "border-destructive focus:ring-destructive/40 focus:border-destructive"
+    : "border-border focus:ring-primary/25 focus:border-primary";
+
+  return (
+    <div className="space-y-1">
+      <label className="block text-sm font-medium text-foreground">
+        {label}
+      </label>
+
+      {type === "select" ? (
+        <select
+          name={name}
+          value={value ?? ""}
+          onChange={onChange}
+          className={`${baseCls} ${borderCls}`}
+        >
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={value ?? ""}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`${baseCls} ${borderCls}`}
+        />
+      )}
+
+      {error && (
+        <p className="text-[0.75rem] font-medium text-destructive">{error}</p>
+      )}
+    </div>
   );
 }

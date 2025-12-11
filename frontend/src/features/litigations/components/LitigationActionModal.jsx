@@ -15,14 +15,22 @@ const EMPTY_FORM = {
   status: "pending",
 };
 
-export default function LitigationActionModal({ isOpen, onClose, onSubmit, initialData }) {
+export default function LitigationActionModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialData,
+}) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
 
   const { data: actionTypes = [], isLoading } = useActionTypes("litigation");
 
+  const isEdit = !!form.id;
+
   useEffect(() => {
     if (!isOpen) return;
+    // عند الفتح: إمّا نملأ بيانات موجودة أو نرجع للفورم الفارغ
     setForm(initialData ? { ...EMPTY_FORM, ...initialData } : EMPTY_FORM);
   }, [isOpen, initialData]);
 
@@ -32,11 +40,18 @@ export default function LitigationActionModal({ isOpen, onClose, onSubmit, initi
   };
 
   const handleSave = async () => {
+    // تحقق بسيط قبل الإرسال
+    if (!form.action_date || !form.action_type_id || !form.lawyer_name) {
+      toast.error("فضلاً أكمل الحقول الأساسية (التاريخ، نوع الإجراء، اسم القائم بالإجراء).");
+      return;
+    }
+
     setLoading(true);
     try {
       await onSubmit(form);
       onClose();
-    } catch {
+    } catch (err) {
+      console.error("LitigationActionModal save error:", err);
       toast.error("فشل في حفظ الإجراء");
     } finally {
       setLoading(false);
@@ -48,21 +63,28 @@ export default function LitigationActionModal({ isOpen, onClose, onSubmit, initi
   return (
     <ModalCard
       isOpen={isOpen}
-      title={form.id ? "تعديل إجراء" : "إضافة إجراء"}
+      title={isEdit ? "تعديل إجراء" : "إضافة إجراء"}
       onClose={onClose}
       onSubmit={handleSave}
       loading={loading}
-      submitLabel={form.id ? "تحديث" : "إضافة"}
+      submitLabel={isEdit ? "تحديث" : "إضافة"}
     >
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
+      <form
+        dir="rtl"
+        className="grid grid-cols-1 gap-4 text-right md:grid-cols-2"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        {/* تاريخ الإجراء */}
         <Field
           label="تاريخ الإجراء"
           name="action_date"
           type="date"
           value={form.action_date}
           onChange={handleChange}
+          required
         />
 
+        {/* نوع الإجراء */}
         <Field
           label="نوع الإجراء"
           name="action_type_id"
@@ -74,8 +96,10 @@ export default function LitigationActionModal({ isOpen, onClose, onSubmit, initi
           value={form.action_type_id}
           onChange={handleChange}
           disabled={isLoading}
+          required
         />
 
+        {/* اسم القائم بالإجراء */}
         <Field
           label="اسم القائم بالإجراء"
           name="lawyer_name"
@@ -83,43 +107,56 @@ export default function LitigationActionModal({ isOpen, onClose, onSubmit, initi
           value={form.lawyer_name}
           onChange={handleChange}
           placeholder="مثال: د. فاطمة"
+          required
+          helper="اكتب اسم المحامي أو المستشار المسؤول عن الإجراء."
         />
 
+        {/* المطلوب */}
         <Field
           label="المطلوب"
           name="requirements"
           type="text"
           value={form.requirements}
           onChange={handleChange}
+          placeholder="مستندات، مذكرات، حضور جلسة..."
         />
 
+        {/* جهة الإجراء */}
         <Field
           label="جهة الإجراء"
           name="location"
           type="text"
           value={form.location}
           onChange={handleChange}
+          placeholder="مثال: محكمة شمال طرابلس، إدارة القضايا..."
         />
 
+        {/* النتيجة */}
         <Field
           label="النتيجة"
           name="results"
           type="text"
           value={form.results}
           onChange={handleChange}
+          placeholder="تم التنفيذ، مؤجل، مرفوض..."
         />
 
-        <div className="md:col-span-2">
-          <label className="block mb-1 text-sm">ملاحظات</label>
+        {/* ملاحظات */}
+        <div className="md:col-span-2 space-y-1">
+          <label className="block text-sm font-medium text-foreground">
+            ملاحظات
+          </label>
           <textarea
             name="notes"
             value={form.notes ?? ""}
             onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
             rows={2}
+            placeholder="أي ملاحظات إضافية حول هذا الإجراء..."
           />
         </div>
 
+        {/* الحالة */}
         <Field
           label="الحالة"
           name="status"
@@ -131,6 +168,7 @@ export default function LitigationActionModal({ isOpen, onClose, onSubmit, initi
           ]}
           value={form.status}
           onChange={handleChange}
+          required
         />
       </form>
     </ModalCard>
@@ -146,13 +184,19 @@ function Field({
   onChange,
   placeholder,
   disabled = false,
+  required = false,
+  helper,
 }) {
   const baseCls =
-    "w-full p-2 border rounded-md bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none";
+    "w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm " +
+    "placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-70";
 
   return (
-    <div>
-      <label className="block mb-1 text-sm">{label}</label>
+    <div className="space-y-1">
+      <label className="block text-sm font-medium text-foreground">
+        {label}
+      </label>
+
       {type === "select" ? (
         <select
           name={name}
@@ -160,7 +204,7 @@ function Field({
           onChange={onChange}
           disabled={disabled}
           className={baseCls}
-          required
+          required={required}
         >
           <option value="">اختر {label}</option>
           {options.map((opt) => (
@@ -177,8 +221,12 @@ function Field({
           onChange={onChange}
           className={baseCls}
           placeholder={placeholder}
-          required
+          required={required}
         />
+      )}
+
+      {helper && (
+        <p className="text-[0.7rem] text-muted-foreground">{helper}</p>
       )}
     </div>
   );

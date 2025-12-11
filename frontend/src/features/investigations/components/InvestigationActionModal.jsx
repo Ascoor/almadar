@@ -21,8 +21,12 @@ export default function InvestigationActionModal({
   const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
 
+  const isEdit = !!form.id;
+
   useEffect(() => {
     if (!isOpen) return;
+
+    // عند الفتح، إمّا نملأ البيانات القديمة أو نبدأ فورم جديد
     setForm(initialData ? { ...EMPTY_FORM, ...initialData } : EMPTY_FORM);
   }, [isOpen, initialData]);
 
@@ -32,12 +36,20 @@ export default function InvestigationActionModal({
   };
 
   const handleSave = async () => {
+    // تحقق بسيط قبل الإرسال
+    if (!form.action_date || !form.action_type_id || !form.officer_name) {
+      // يفضّل تخلي التوست من الأب لو تحب، لكن على الأقل ما نحاول نحفظ فورم ناقص
+      return;
+    }
+
     setLoading(true);
     try {
-      await onSubmit(form); // المسؤول عن التنبيهات
+      await onSubmit(form); // الأب مسؤول عن الحفظ + التوست
       onClose();
     } catch (error) {
-      throw error; // يُترك للوالد التعامل مع الخطأ
+      // الأب عنده try/catch، فمجرد إعادة الرمي هنا لو حاب
+      console.error("InvestigationActionModal Save Error:", error);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -49,31 +61,41 @@ export default function InvestigationActionModal({
     <ModalCard
       isOpen={isOpen}
       onClose={onClose}
-      title={form.id ? 'editAction' : 'addAction'}
-      submitLabel={form.id ? 'update' : 'add'}
+      title={isEdit ? "editAction" : "addAction"}
+      submitLabel={isEdit ? "update" : "add"}
       onSubmit={handleSave}
       loading={loading}
     >
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
-        <div>
-          <label className="block mb-1 text-sm">تاريخ الإجراء</label>
+      <form
+        dir="rtl"
+        className="grid grid-cols-1 gap-4 text-right md:grid-cols-2"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        {/* تاريخ الإجراء */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-foreground">
+            تاريخ الإجراء
+          </label>
           <input
             type="date"
             name="action_date"
             value={form.action_date}
             onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
             required
           />
         </div>
 
-        <div>
-          <label className="block mb-1 text-sm">نوع الإجراء</label>
+        {/* نوع الإجراء */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-foreground">
+            نوع الإجراء
+          </label>
           <select
             name="action_type_id"
             value={form.action_type_id}
             onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
             required
           >
             <option value="">اختر النوع</option>
@@ -85,48 +107,65 @@ export default function InvestigationActionModal({
           </select>
         </div>
 
-        <div>
-          <label className="block mb-1 text-sm">اسم القائم بالإجراء</label>
+        {/* اسم القائم بالإجراء */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-foreground">
+            اسم القائم بالإجراء
+          </label>
           <input
             type="text"
             name="officer_name"
             value={form.officer_name}
             onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
-            placeholder="مثال: أ. عبدالله"
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            placeholder="مثال: أ. عبدالله سالم"
             required
           />
+          <p className="text-[0.7rem] text-muted-foreground">
+            اكتب اسم المحامي أو المستشار المسؤول عن هذا الإجراء.
+          </p>
         </div>
 
-        <div>
-          <label className="block mb-1 text-sm">المتطلبات</label>
+        {/* المتطلبات */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-foreground">
+            المتطلبات
+          </label>
           <input
             type="text"
             name="requirements"
             value={form.requirements}
             onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            placeholder="مثال: مستندات إضافية، شهود، تقارير..."
           />
         </div>
 
-        <div>
-          <label className="block mb-1 text-sm">النتيجة</label>
+        {/* النتيجة */}
+        <div className="space-y-1 md:col-span-2">
+          <label className="block text-sm font-medium text-foreground">
+            النتيجة
+          </label>
           <input
             type="text"
             name="results"
             value={form.results}
             onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            placeholder="مثال: تم التنفيذ، جاري المتابعة، ملاحظات إضافية..."
           />
         </div>
 
-        <div>
-          <label className="block mb-1 text-sm">الحالة</label>
+        {/* الحالة */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-foreground">
+            الحالة
+          </label>
           <select
             name="status"
             value={form.status}
             onChange={handleChange}
-            className="w-full p-2 border rounded-lg"
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
             required
           >
             <option value="pending">معلق</option>
