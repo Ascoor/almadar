@@ -115,7 +115,14 @@
               <div className="relative">
                 <ChartCard title={t("geographicDistribution", lang)} description={t("geoDescription", lang)} actions={<button className="p-2 rounded-lg hover:bg-muted/60 transition"><Download className="w-4 h-4 icon-3d" /></button>} className="p-4">
                   <div className="chart-2h w-full min-w-0">
-                    <CityMiniMapResponsive data={data.mapData} onRegionClick={handleRegionClick} />
+                    <CityMiniMapResponsive
+                      cities={data.mapData}
+                      lat={26.5}
+                      lng={17.5}
+                      zoom={5.6}
+                      onCityClick={handleRegionClick}
+                      className="min-h-[320px]"
+                    />
                   </div>
                 </ChartCard>
               </div>

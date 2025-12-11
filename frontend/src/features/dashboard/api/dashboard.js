@@ -44,11 +44,11 @@ export const getMapData = async (filters = {}) => {
   await new Promise(resolve => setTimeout(resolve, 250));
   
   return [
-    { regionCode: "TRP", name: "طرابلس", count: 1250 },
-    { regionCode: "BEN", name: "بنغازي", count: 890 },
-    { regionCode: "MIS", name: "مصراتة", count: 654 },
-    { regionCode: "ZAW", name: "الزاوية", count: 432 },
-    { regionCode: "SBH", name: "سبها", count: 298 }
+    { regionCode: "TRP", name: "طرابلس", count: 1250, coord: [13.1913, 32.8872] },
+    { regionCode: "BEN", name: "بنغازي", count: 890, coord: [20.0647, 32.1167] },
+    { regionCode: "MIS", name: "مصراتة", count: 654, coord: [15.0906, 32.3754] },
+    { regionCode: "ZAW", name: "الزاوية", count: 432, coord: [12.7278, 32.7571] },
+    { regionCode: "SBH", name: "سبها", count: 298, coord: [14.4333, 27.0377] }
   ];
 };
 
