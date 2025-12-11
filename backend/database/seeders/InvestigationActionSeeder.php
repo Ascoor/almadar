@@ -13,11 +13,11 @@ class InvestigationActionSeeder extends Seeder
     {
         // إدخال أنواع الإجراءات في جدول investigation_action_types
         $actionTypes = [
-            'جلسة استماع', 
-            'مذكرة تفسيرية', 
-            'طلب إفادة', 
-            'تحقيق رسمي', 
-            'جلسة تحقيق'
+            'جلسة استماع بمكتب طرابلس',
+            'مذكرة تفسيرية عن إجراءات المناولة في الميناء',
+            'طلب إفادة من فرع المنطقة الشرقية',
+            'تحقيق رسمي بخصوص مشروع طرق الجنوب',
+            'جلسة تحقيق حول سلامة المواقع النفطية'
         ];
 
         foreach ($actionTypes as $actionType) {
@@ -27,7 +27,7 @@ class InvestigationActionSeeder extends Seeder
         }
 
         // إنشاء قائمة الضباط
-        $officers = ['أ. خالد علي', 'أ. مريم صالح', 'أ. عبدالله حسن', 'د. فاطمة عبدالعزيز'];
+        $officers = ['أ. نبيل الزروق', 'أ. مروان الدرسي', 'أ. كوثر بن عمران', 'د. فاطمة الشريف', 'م. عبدالقادر المقريف'];
 
         // استرجاع جميع التحقيقات من قاعدة البيانات
         $investigations = Investigation::all();
@@ -38,16 +38,18 @@ class InvestigationActionSeeder extends Seeder
                 // اختيار نوع الإجراء عشوائيًا من جدول investigation_action_types
                 $actionType = InvestigationActionType::inRandomOrder()->first();
 
-               InvestigationAction::create([
-    'investigation_id' => $investigations->random()->id,
-    'action_date' => Carbon::now()->subDays(rand(1, 60))->format('Y-m-d'),
-    'action_type_id' => $actionType->id,
-    'officer_name' => $officers[array_rand($officers)],
-    'requirements' => 'تقديم مبررات كتابية',
-    'results' => rand(0, 1) ? 'تم الاستماع إلى الموظف' : 'جارٍ دراسة الموضوع',
-    'status' => ['pending', 'in_review', 'done'][rand(0, 2)],
-    'created_by' => 1, // ✅ مضاف
-]);
+                InvestigationAction::create([
+                    'investigation_id' => $investigations->random()->id,
+                    'action_date' => Carbon::now()->subDays(rand(1, 60))->format('Y-m-d'),
+                    'action_type_id' => $actionType->id,
+                    'officer_name' => $officers[array_rand($officers)],
+                    'requirements' => 'إرفاق محاضر رسمية وأدلة من مواقع العمل في ليبيا',
+                    'results' => rand(0, 1)
+                        ? 'تم الاستماع للموظف وتوثيق أقواله في محضر بنغازي'
+                        : 'جارٍ دراسة الموضوع بالتنسيق مع إدارة التفتيش في طرابلس',
+                    'status' => ['pending', 'in_review', 'done'][rand(0, 2)],
+                    'created_by' => 1, // ✅ مضاف
+                ]);
 
             }
         }
