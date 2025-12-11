@@ -480,7 +480,11 @@ export default function ArchivePage() {
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] min-h-[220px] flex flex-col">
           {!activeFile ? (
             <div className="flex flex-1 flex-col items-center justify-center text-center p-6">
-              <ArchiveSection className="mb-3 h-10 w-10 text-[var(--muted-foreground)]" />
+              <img
+                src={ArchiveSection}
+                alt="ملف الأرشيف"
+                className="mb-3 h-10 w-10 text-[var(--muted-foreground)]"
+              />
               <p className="font-semibold text-[var(--fg)]">
                 اختر ملفًا من الأرشيف لعرضه أو تحريره هنا
               </p>

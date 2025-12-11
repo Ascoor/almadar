@@ -1,15 +1,11 @@
-import { render } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
 
-jest.mock('react-simple-maps', () => ({
-  ComposableMap: ({ children }) => <svg>{children}</svg>,
-  Geographies: ({ children }) => <g>{children({ geographies: [] })}</g>,
-  Geography: () => <g />,
-}));
+import LibyaMap from "../Map/LibyaMap";
 
-import LibyaMap from '../Map/LibyaMap';
-
-test('renders SVG map', () => {
-  const { container } = render(<LibyaMap data={[]} />);
-  expect(container.querySelector('svg')).toBeInTheDocument();
+test("renders Libya map placeholder message", () => {
+  render(<LibyaMap />);
+  expect(
+    screen.getByText(/Libya map visualization is temporarily disabled./i)
+  ).toBeInTheDocument();
 });

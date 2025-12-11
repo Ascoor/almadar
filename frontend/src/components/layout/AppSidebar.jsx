@@ -56,7 +56,6 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
 
   const navConfig = useMemo(() => [
     { id: 'home', label: t('home'), to: '/', icon: <DashboardIcon size={20} /> },
-    { id: 'editor', label: t('editor'), to: '/editor', icon: <FileText size={20} /> },
     hasPermission('view contracts') && {
       id: 'contracts', label: t('contracts'), to: '/contracts', icon: <ContractsIcon size={20} />
     },
@@ -83,9 +82,15 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
         { id: 'users-list', label: t('usersList'), to: '/users', icon: <UserCheck size={16} /> },
       ]
     },
-      hasPermission('view archive') && {
-        id: 'archive', label: t('archive'), to: '/archive', icon: <ArchiveIcon size={20} />
-      },
+    hasPermission('view archive') && {
+      id: 'archive',
+      label: t('archive'),
+      icon: <ArchiveIcon size={20} />,
+      children: [
+        { id: 'archive-root', label: t('archive'), to: '/archive', icon: <ArchiveIcon size={16} /> },
+        { id: 'editor', label: t('editor'), to: '/editor', icon: <FileText size={16} /> },
+      ]
+    },
     ].filter(Boolean), [hasPermission, t]);
 
   const handleSectionClick = (id, hasChildren) => {
