@@ -178,15 +178,15 @@ export default function UserModalForm({
 
           <div>
             <label className={modalLabel}>البريد الإلكتروني</label>
-            <div className="flex overflow-hidden rounded-xl border border-border bg-[color:var(--card)]/95 shadow-sm focus-within:ring-2 focus-within:ring-ring">
+            <div className="flex overflow-hidden rounded-xl border border-border/90 bg-[color:var(--card)] shadow-md focus-within:ring-2 focus-within:ring-ring">
               <input
                 name="emailPrefix"
                 value={formData.emailPrefix}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="flex-1 bg-transparent p-2 text-fg placeholder:text-muted-foreground/80 focus:outline-none"
+                className="flex-1 bg-transparent p-2.5 text-fg placeholder:text-muted-foreground/80 focus:outline-none"
               />
-              <span className="p-2 bg-muted text-xs select-none">@almadar.ly</span>
+              <span className="p-2.5 bg-muted text-xs select-none text-fg">@almadar.ly</span>
             </div>
             {validationErrors.emailPrefix && (
               <p className="text-red-600 mt-1 text-xs">يرجى إدخال البريد الإلكتروني</p>

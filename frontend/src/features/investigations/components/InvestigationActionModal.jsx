@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ModalCard from "@/components/common/ModalCard";
+import { modalInput, modalLabel, modalHelperText } from "@/components/common/modalStyles";
 
 const EMPTY_FORM = {
   id: null,
@@ -73,7 +74,7 @@ export default function InvestigationActionModal({
       >
         {/* تاريخ الإجراء */}
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-foreground">
+          <label className={modalLabel}>
             تاريخ الإجراء
           </label>
           <input
@@ -81,21 +82,21 @@ export default function InvestigationActionModal({
             name="action_date"
             value={form.action_date}
             onChange={handleChange}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className={`${modalInput} text-sm`}
             required
           />
         </div>
 
         {/* نوع الإجراء */}
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-foreground">
+          <label className={modalLabel}>
             نوع الإجراء
           </label>
           <select
             name="action_type_id"
             value={form.action_type_id}
             onChange={handleChange}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className={`${modalInput} text-sm`}
             required
           >
             <option value="">اختر النوع</option>
@@ -109,7 +110,7 @@ export default function InvestigationActionModal({
 
         {/* اسم القائم بالإجراء */}
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-foreground">
+          <label className={modalLabel}>
             اسم القائم بالإجراء
           </label>
           <input
@@ -117,18 +118,18 @@ export default function InvestigationActionModal({
             name="officer_name"
             value={form.officer_name}
             onChange={handleChange}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className={`${modalInput} text-sm`}
             placeholder="مثال: أ. عبدالله سالم"
             required
           />
-          <p className="text-[0.7rem] text-muted-foreground">
+          <p className={`${modalHelperText} text-[0.78rem]`}>
             اكتب اسم المحامي أو المستشار المسؤول عن هذا الإجراء.
           </p>
         </div>
 
         {/* المتطلبات */}
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-foreground">
+          <label className={modalLabel}>
             المتطلبات
           </label>
           <input
@@ -136,14 +137,14 @@ export default function InvestigationActionModal({
             name="requirements"
             value={form.requirements}
             onChange={handleChange}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className={`${modalInput} text-sm`}
             placeholder="مثال: مستندات إضافية، شهود، تقارير..."
           />
         </div>
 
         {/* النتيجة */}
         <div className="space-y-1 md:col-span-2">
-          <label className="block text-sm font-medium text-foreground">
+          <label className={modalLabel}>
             النتيجة
           </label>
           <input
@@ -151,21 +152,21 @@ export default function InvestigationActionModal({
             name="results"
             value={form.results}
             onChange={handleChange}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className={`${modalInput} text-sm`}
             placeholder="مثال: تم التنفيذ، جاري المتابعة، ملاحظات إضافية..."
           />
         </div>
 
         {/* الحالة */}
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-foreground">
+          <label className={modalLabel}>
             الحالة
           </label>
           <select
             name="status"
             value={form.status}
             onChange={handleChange}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className={`${modalInput} text-sm`}
             required
           >
             <option value="pending">معلق</option>
