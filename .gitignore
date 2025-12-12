@@ -34,6 +34,7 @@
 /frontend/npm-debug.log*
 /frontend/yarn-*.log*
 /frontend/pnpm-debug.log*
+/frontend/.npm-lock.hash
 
 # ==========================
 # Backend (لو في نسخة تانية backend/)
