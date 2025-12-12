@@ -50,6 +50,25 @@ pm_dev() {
   fi
 }
 safe_frontend_install() {
+  local lockfile_hash=""
+  local lockfile_marker=".npm-lock.hash"
+
+  if [[ -f package-lock.json ]]; then
+    lockfile_hash=$(sha256sum package-lock.json | awk '{print $1}')
+  fi
+
+  if [[ -d node_modules && -n "$lockfile_hash" && -f "$lockfile_marker" ]]; then
+    local cached_hash
+    cached_hash=$(cat "$lockfile_marker")
+
+    if [[ "$cached_hash" == "$lockfile_hash" ]]; then
+      echo "✅ Frontend dependencies match lockfile; skipping reinstall."
+      return
+    else
+      echo "ℹ️  Lockfile changed since last install — reinstalling dependencies…"
+    fi
+  fi
+
   set +e
   pm_install
   STATUS=$?
@@ -64,6 +83,10 @@ safe_frontend_install() {
       echo "❌ Frontend install failed again (code $STATUS). Check your Node/NPM versions and logs."
       exit $STATUS
     fi
+  fi
+
+  if [[ $STATUS -eq 0 && -n "$lockfile_hash" ]]; then
+    echo "$lockfile_hash" >"$lockfile_marker"
   fi
   set -e
 }
