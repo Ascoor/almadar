@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ModalCard from '@/components/common/ModalCard';
+import { modalInput, modalLabel } from '@/components/common/modalStyles';
 
 export default function InvestigationModal({ isOpen, onClose, onSubmit, initialData }) {
   const [form, setForm] = useState({
@@ -58,71 +59,29 @@ export default function InvestigationModal({ isOpen, onClose, onSubmit, initialD
     >
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              اسم الموظف
-            </label>
-            <input
-              type="text"
-              name="employee_name"
-              value={form.employee_name}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
+          {[{ label: 'اسم الموظف', name: 'employee_name' }, { label: 'الجهة المحيلة', name: 'source' }, { label: 'موضوع التحقيق', name: 'subject' }, { label: 'رقم القضية', name: 'case_number' }].map(({ label, name }) => (
+            <div key={name} className="space-y-1">
+              <label className={modalLabel}>{label}</label>
+              <input
+                type="text"
+                name={name}
+                value={form[name]}
+                onChange={handleChange}
+                required
+                className={modalInput}
+              />
+            </div>
+          ))}
 
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              الجهة المحيلة
-            </label>
-            <input
-              type="text"
-              name="source"
-              value={form.source}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              موضوع التحقيق
-            </label>
-            <input
-              type="text"
-              name="subject"
-              value={form.subject}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              رقم القضية
-            </label>
-            <input
-              type="text"
-              name="case_number"
-              value={form.case_number}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+          <div className="space-y-1">
+            <label className={modalLabel}>
               الحالة
             </label>
             <select
               name="status"
               value={form.status}
               onChange={handleChange}
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              className={modalInput}
             >
               <option value="open">مفتوح</option>
               <option value="in_progress">قيد التنفيذ</option>
@@ -130,8 +89,8 @@ export default function InvestigationModal({ isOpen, onClose, onSubmit, initialD
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+          <div className="space-y-1 md:col-span-2">
+            <label className={modalLabel}>
               ملاحظات
             </label>
             <textarea
@@ -139,7 +98,7 @@ export default function InvestigationModal({ isOpen, onClose, onSubmit, initialD
               rows={2}
               value={form.notes}
               onChange={handleChange}
-              className="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              className={`${modalInput} min-h-[110px]`}
             />
           </div>
         </div>

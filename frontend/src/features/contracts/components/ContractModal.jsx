@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import ModalCard from "@/components/common/ModalCard";
+import { modalInput } from "@/components/common/modalStyles";
 import { createContract, updateContract } from "@/services/api/contracts";
 
 const EMPTY_FORM = {
@@ -178,14 +179,13 @@ export default function ContractModal({
     }
   };
 
-  const inputBaseClasses =
-    "w-full p-2 rounded-lg text-sm bg-white dark:bg-zinc-900/60 border transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/70 focus:border-blue-500/70 dark:text-zinc-100";
+  const inputBaseClasses = `${modalInput} text-sm`;
 
   const inputClass = (name) =>
     `${inputBaseClasses} ${
       errors[name]
-        ? "border-red-500 dark:border-red-400 bg-red-50 dark:bg-red-900/30"
-        : "border-gray-300 dark:border-zinc-700"
+        ? "border-destructive focus:ring-destructive/40"
+        : "focus:border-ring"
     }`;
 
   const errorText = (name) =>
