@@ -23,15 +23,14 @@ class DatabaseSeeder extends Seeder
 
 
         $this->call([
- 
-            UsersRolesPermissionsSeeder::class,
+            SetupOrgSeeder::class,
             ContractCategoriesSeeder::class,
             ContractsSeeder::class,
             InvestigationSeeder::class,
             InvestigationActionSeeder::class,
             LegalAdviceSeeder::class,
             LitigationSeeder::class,
-            LitigationActionsSeeder::class
+            LitigationActionsSeeder::class,
         ]);
     }
 }
