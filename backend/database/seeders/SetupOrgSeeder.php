@@ -52,37 +52,78 @@ class SetupOrgSeeder extends Seeder
         ])->map(fn ($grade) => JobGrade::create($grade));
 
         $permissionGroups = Config::get('permissions.permissions', []);
-        $permissionNames = collect($permissionGroups)
+        $configPermissionNames = collect($permissionGroups)
             ->flatMap(fn ($group) => is_array($group) ? $group : [$group])
+            ->unique();
+
+        $legacyModules = [
+            'archive'                 => ['view', 'create', 'edit', 'delete'],
+            'legaladvices'            => ['view', 'create', 'edit', 'delete'],
+            'litigations'             => ['view', 'create', 'edit', 'delete'],
+            'litigation-from'         => ['view', 'create', 'edit', 'delete'],
+            'litigation-from-actions' => ['view', 'create', 'edit', 'delete'],
+            'litigation-against'      => ['view', 'create', 'edit', 'delete'],
+            'litigation-against-actions' => ['view', 'create', 'edit', 'delete'],
+            'contracts'               => ['view', 'create', 'edit', 'delete'],
+            'investigations'          => ['view', 'create', 'edit', 'delete'],
+            'investigation-actions'   => ['view', 'create', 'edit', 'delete'],
+            'users'                   => ['view', 'create', 'edit', 'delete'],
+            'roles'                   => ['view', 'create', 'edit', 'delete'],
+            'permissions'             => ['view', 'create', 'edit', 'delete'],
+            'managment-lists'         => ['view', 'create', 'edit', 'delete'],
+            'reports'                 => ['view', 'create', 'edit', 'delete'],
+            'profile'                 => ['view', 'edit'],
+        ];
+
+        $legacyPermissionNames = collect($legacyModules)
+            ->flatMap(function ($actions, $module) {
+                return collect($actions)->map(fn ($action) => "{$action} {$module}");
+            });
+
+        $permissionNames = $configPermissionNames
+            ->merge($legacyPermissionNames)
             ->unique()
             ->values();
 
-        $permissions = $permissionNames->map(fn ($name) => Permission::create([
+        $permissions = $permissionNames->map(fn ($name) => Permission::firstOrCreate([
             'name' => $name,
             'guard_name' => $guard,
         ]));
 
         $roles = collect(Config::get('permissions.roles', []))
+            ->merge(['Admin', 'Manager', 'User'])
+            ->unique()
             ->mapWithKeys(function ($roleName) use ($guard) {
-                return [$roleName => Role::create([
+                return [$roleName => Role::firstOrCreate([
                     'name' => $roleName,
                     'guard_name' => $guard,
                 ])];
             });
 
         $rolePermissionMap = Config::get('permissions.role_permission_map', []);
+        $legacyRolePermissionMap = [
+            'Admin' => $permissionNames->toArray(),
+            'Manager' => [
+                'view archive', 'view legaladvices', 'view litigations',
+                'view contracts', 'view investigations', 'view reports',
+                'view profile', 'edit profile',
+            ],
+            'User' => [
+                'view legaladvices', 'view contracts', 'view profile', 'edit profile',
+            ],
+        ];
+
         $permissionsByName = $permissions->keyBy('name');
 
-        foreach ($rolePermissionMap as $roleName => $permissionList) {
-            $role = $roles->get($roleName);
-            if (!$role) {
-                continue;
-            }
-
-            $rolePermissions = collect($permissionList)
+        foreach ($roles as $roleName => $role) {
+            $rolePermissions = collect($rolePermissionMap[$roleName] ?? [])
+                ->merge($legacyRolePermissionMap[$roleName] ?? [])
                 ->map(fn ($permName) => $permissionsByName->get($permName))
-                ->filter()
-                ->values();
+                ->filter();
+
+            if ($rolePermissions->isEmpty() && in_array($roleName, ['admin', 'Admin'], true)) {
+                $rolePermissions = $permissions;
+            }
 
             $role->syncPermissions($rolePermissions);
         }
@@ -92,6 +133,7 @@ class SetupOrgSeeder extends Seeder
                 'name' => 'Demo Employee',
                 'email' => 'employee@example.com',
                 'role' => 'employee',
+                'password' => 'password',
                 'department' => 'الشؤون القانونية',
                 'grade' => 'Associate',
                 'legal_specialty' => 'عقود',
@@ -100,6 +142,7 @@ class SetupOrgSeeder extends Seeder
                 'name' => 'Demo Lawyer',
                 'email' => 'lawyer@example.com',
                 'role' => 'lawyer',
+                'password' => 'password',
                 'department' => 'التقاضي',
                 'grade' => 'Senior Associate',
                 'legal_specialty' => 'تقاضي',
@@ -108,6 +151,7 @@ class SetupOrgSeeder extends Seeder
                 'name' => 'Demo Dept Head',
                 'email' => 'dept_head@example.com',
                 'role' => 'dept_head',
+                'password' => 'password',
                 'department' => 'التحقيقات',
                 'grade' => 'Department Head',
                 'legal_specialty' => 'تحقيقات داخلية',
@@ -116,22 +160,65 @@ class SetupOrgSeeder extends Seeder
                 'name' => 'Demo Admin',
                 'email' => 'admin@example.com',
                 'role' => 'admin',
+                'password' => 'password',
                 'department' => 'الاستشارات',
                 'grade' => 'Administrator',
                 'legal_specialty' => 'إدارة النظام',
             ],
         ];
 
+        $legacyUsers = [
+            ...collect([
+                ['name' => 'د. محمد', 'email' => 'mohamed@almadar.ly', 'image' => 'users_images/admin1.png'],
+                ['name' => 'أ. عدنان', 'email' => 'adnan@almadar.ly', 'image' => 'users_images/admin2.jpg'],
+                ['name' => 'أ. سكينة', 'email' => 'sakeena@almadar.ly', 'image' => 'users_images/admin4.png'],
+                ['name' => 'أدمن 4', 'email' => 'admin4@almadar.ly', 'image' => 'users_images/admin3.jpg'],
+                ['name' => 'أدم 5', 'email' => 'admin5@almadar.ly', 'image' => 'users_images/admin5.jpg'],
+            ])->map(fn ($user) => [
+                ...$user,
+                'role' => 'Admin',
+                'password' => 'Askar@1984',
+                'department' => 'الاستشارات',
+                'grade' => 'Administrator',
+                'legal_specialty' => 'إدارة النظام',
+            ])->toArray(),
+            ...collect([
+                ['name' => 'Manager User 1', 'email' => 'manager1@almadar.ly'],
+                ['name' => 'Manager User 2', 'email' => 'manager2@almadar.ly'],
+            ])->map(fn ($user) => [
+                ...$user,
+                'role' => 'Manager',
+                'password' => 'Manager123!',
+                'department' => 'الشؤون القانونية',
+                'grade' => 'Department Head',
+                'legal_specialty' => 'إدارة القسم',
+            ])->toArray(),
+            ...collect([
+                ['name' => 'User 1', 'email' => 'user1@almadar.ly'],
+                ['name' => 'User 2', 'email' => 'user2@almadar.ly'],
+            ])->map(fn ($user) => [
+                ...$user,
+                'role' => 'User',
+                'password' => 'User123!',
+                'department' => 'الشؤون القانونية',
+                'grade' => 'Associate',
+                'legal_specialty' => 'مهام مكتبية',
+            ])->toArray(),
+        ];
+
+        $allSeedUsers = collect($demoUsers)->concat($legacyUsers);
+
         $departmentsByName = $departments->keyBy('name');
         $gradesByName = $jobGrades->keyBy('name');
         $allPermissionModels = $permissions->values();
 
-        foreach ($demoUsers as $userData) {
+        foreach ($allSeedUsers as $userData) {
             $user = User::create([
                 'name' => $userData['name'],
                 'email' => $userData['email'],
-                'password' => Hash::make('password'),
+                'password' => Hash::make($userData['password']),
                 'password_changed' => true,
+                'image' => $userData['image'] ?? null,
             ]);
 
             $role = $roles->get($userData['role']);
@@ -140,10 +227,11 @@ class SetupOrgSeeder extends Seeder
             }
 
             $permsForRole = collect($rolePermissionMap[$userData['role']] ?? [])
+                ->merge($legacyRolePermissionMap[$userData['role']] ?? [])
                 ->map(fn ($permName) => $permissionsByName->get($permName))
                 ->filter();
 
-            if ($role && $permsForRole->isEmpty() && $userData['role'] === 'admin') {
+            if (($role && $permsForRole->isEmpty()) || in_array($userData['role'], ['admin', 'Admin'], true)) {
                 $permsForRole = $allPermissionModels;
             }
 
@@ -155,7 +243,7 @@ class SetupOrgSeeder extends Seeder
                 'user_id' => $user->id,
                 'department_id' => optional($departmentsByName->get($userData['department']))->id,
                 'job_grade_id' => optional($gradesByName->get($userData['grade']))->id,
-                'legal_specialty' => $userData['legal_specialty'],
+                'legal_specialty' => $userData['legal_specialty'] ?? null,
                 'hired_at' => Carbon::now()->toDateString(),
             ]);
         }
@@ -166,6 +254,10 @@ class SetupOrgSeeder extends Seeder
 
         $departmentsByName->get('الاستشارات')?->update([
             'head_user_id' => User::where('email', 'admin@example.com')->value('id'),
+        ]);
+
+        $departmentsByName->get('الشؤون القانونية')?->update([
+            'head_user_id' => User::where('email', 'manager1@almadar.ly')->value('id'),
         ]);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
