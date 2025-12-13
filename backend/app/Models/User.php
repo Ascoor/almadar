@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->morphMany(Notification::class, 'notifiable');
     }
+
+    public function staffProfile()
+    {
+        return $this->hasOne(StaffProfile::class);
+    }
 }
