@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\AdminNotifier;
+use App\Services\AssignmentService;
 
 class LegalAdviceController extends Controller
 {
@@ -34,6 +35,8 @@ class LegalAdviceController extends Controller
     {
         // 1) Validate all incoming fields
         $validated = $this->validateAdvice($request);
+        $assigneeId = $validated['assigned_to_user_id'] ?? null;
+        unset($validated['assigned_to_user_id']);
 
         // 2) If there's an uploaded PDF, save it to storage and record the path in $validated
         if ($request->hasFile('attachment')) {
@@ -50,6 +53,8 @@ class LegalAdviceController extends Controller
 
         // 4) Create the new LegalAdvice
         $advice = LegalAdvice::create($validated);
+
+        AssignmentService::apply($advice, $assigneeId, 'legal_advice', 'topic');
 
         // 5) If we did upload a PDF, store an Archive record
         if (!empty($validated['attachment'])) {
@@ -78,6 +83,8 @@ class LegalAdviceController extends Controller
     {
         // 1) Validate except we pass the current ID so unique rule for advice_number is correct
         $validated = $this->validateAdvice($request, $legalAdvice->id);
+        $assigneeId = $validated['assigned_to_user_id'] ?? null;
+        unset($validated['assigned_to_user_id']);
 
         // 2) If there's a new PDF, delete the old one & save the new one
         if ($request->hasFile('attachment')) {
@@ -95,6 +102,8 @@ class LegalAdviceController extends Controller
 
         // 4) Apply update
         $legalAdvice->update($validated);
+
+        AssignmentService::apply($legalAdvice, $assigneeId, 'legal_advice', 'topic');
 
         // 5) If a fresh PDF was uploaded, store a new archive record
         if (!empty($validated['attachment'])) {
@@ -133,6 +142,20 @@ class LegalAdviceController extends Controller
         ]);
     }
 
+    public function assign(Request $request, LegalAdvice $legalAdvice)
+    {
+        $data = $request->validate([
+            'assigned_to_user_id' => 'nullable|exists:users,id',
+        ]);
+
+        AssignmentService::apply($legalAdvice, $data['assigned_to_user_id'] ?? null, 'legal_advice', 'topic');
+
+        return response()->json([
+            'message' => 'تم تحديث إسناد المشورة.',
+            'advice' => $legalAdvice->fresh('assignedTo'),
+        ]);
+    }
+
     /**
      * Show a single LegalAdvice’s details.
      */
@@ -168,6 +191,7 @@ class LegalAdviceController extends Controller
             'advice_number'   => ['required', 'string', $uniqueRule],
             'notes'           => 'nullable|string',
             'attachment'      => 'nullable|file|mimes:pdf|max:5120',
+            'assigned_to_user_id' => 'nullable|exists:users,id',
         ]);
     }
 
