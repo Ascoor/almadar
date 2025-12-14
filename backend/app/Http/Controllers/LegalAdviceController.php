@@ -11,20 +11,30 @@ use App\Helpers\AdminNotifier;
 
 class LegalAdviceController extends Controller
 {
-                 public function __construct()
-        {
-        $this->middleware('permission:view legaladvices')->only(['index','show']);
-        $this->middleware('permission:create legaladvices')->only('store');
-        $this->middleware('permission:edit legaladvices')->only('update');
-        $this->middleware('permission:delete legaladvices')->only('destroy');
+    public function __construct()
+    {
+        $this->middleware('permission:advice.read')->only(['index', 'show']);
+        $this->middleware('permission:advice.create')->only('store');
+        $this->middleware('permission:advice.update')->only('update');
+        $this->middleware('permission:advice.delete')->only('destroy');
+        $this->middleware('permission:advice.approve')->only('approve');
     }
     /**
      * Display a listing of all legal advices (with their types eager‐loaded).
      */
     public function index()
     {
-        $legalAdvices = LegalAdvice::with('adviceType','updater','creator')->get();
-        return response()->json($legalAdvices);
+        $user = auth()->user();
+
+        $query = LegalAdvice::with('adviceType', 'updater', 'creator');
+
+        if ($user->data_scope === 'SELF') {
+            $query->where('created_by', $user->id);
+        } elseif ($user->data_scope === 'DEPARTMENT') {
+            $query->where('department_id', $user->department_id);
+        }
+
+        return response()->json($query->get());
     }
 
     /**
@@ -47,6 +57,7 @@ class LegalAdviceController extends Controller
 
         // 3) Record who created this advice
         $validated['created_by'] = auth()->id();
+        $validated['department_id'] = auth()->user()->department_id;
 
         // 4) Create the new LegalAdvice
         $advice = LegalAdvice::create($validated);
@@ -76,6 +87,8 @@ class LegalAdviceController extends Controller
      */
     public function update(Request $request, LegalAdvice $legalAdvice)
     {
+        $this->authorize('update', $legalAdvice);
+
         // 1) Validate except we pass the current ID so unique rule for advice_number is correct
         $validated = $this->validateAdvice($request, $legalAdvice->id);
 
@@ -92,6 +105,7 @@ class LegalAdviceController extends Controller
 
         // 3) Record who updated
         $validated['updated_by'] = auth()->id();
+        $validated['department_id'] = auth()->user()->department_id;
 
         // 4) Apply update
         $legalAdvice->update($validated);
@@ -121,6 +135,8 @@ class LegalAdviceController extends Controller
      */
     public function destroy(LegalAdvice $legalAdvice)
     {
+        $this->authorize('delete', $legalAdvice);
+
         // 1) Delete the existing PDF from storage (if any)
         $this->deleteOldAttachment($legalAdvice->attachment);
 
@@ -138,6 +154,8 @@ class LegalAdviceController extends Controller
      */
     public function show(LegalAdvice $legalAdvice)
     {
+        $this->authorize('view', $legalAdvice);
+
         return response()->json($legalAdvice);
     }
 

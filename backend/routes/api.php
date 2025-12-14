@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         'user' => $request->user(),
         'roles' => $request->user()->getRoleNames(),
         'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+        'data_scope' => $request->user()->data_scope,
     ]);
 });
 

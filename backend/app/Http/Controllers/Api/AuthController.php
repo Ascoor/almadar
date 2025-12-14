@@ -57,6 +57,7 @@ public function login(Request $request)
         'token'       => $token,
         'roles'       => $roles,
         'permissions' => $permissions,
+        'data_scope'  => $user->data_scope,
     ]);
 }
 
@@ -71,6 +72,7 @@ public function login(Request $request)
             'user' => $user,
             'roles' => $roles,
             'permissions' => $permissions,
+            'data_scope' => $user->data_scope,
         ]);
     }
 
