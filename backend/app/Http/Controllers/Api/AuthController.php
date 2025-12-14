@@ -44,6 +44,10 @@ public function login(Request $request)
         return response()->json(['message' => 'Bad credentials'], 401);
     }
 
+    if (!$user->is_active) {
+        return response()->json(['message' => 'Account disabled'], 403);
+    }
+
     // إنشاء التوكن
     $token = $user->createToken('api_token')->plainTextToken;
 

@@ -94,7 +94,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $department = Department::firstOrCreate(['name' => 'الإدارة العامة']);
 
-        $admin = User::firstOrCreate(
+        $admin = User::updateOrCreate(
             ['email' => 'admin@almadar.ly'],
             [
                 'name' => 'المشرف العام',
@@ -102,15 +102,11 @@ class RolesAndPermissionsSeeder extends Seeder
                 'password_changed' => true,
                 'department_id' => $department->id,
                 'data_scope' => 'ALL',
+                'is_active' => true,
             ]
         );
-        $admin->assignRole('إدارة');
+        $admin->syncRoles(['إدارة']);
         $admin->syncPermissions($permissions);
-
-        if (!$admin->department_id) {
-            $admin->department_id = $department->id;
-            $admin->save();
-        }
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
