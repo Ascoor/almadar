@@ -112,7 +112,9 @@
   input[type="url"],
   select,
   textarea {
-    @apply w-full rounded-lg border bg-background text-foreground;
+    @apply w-full rounded-lg border;
+    background-color: var(--card);
+    color: var(--fg);
     border-color: var(--border);
     caret-color: var(--primary);
   }
@@ -150,7 +152,12 @@
 
 @layer components {
   /* Optional explicit helpers for consistency */
-  .form-control { @apply w-full rounded-lg border bg-background text-foreground; border-color: var(--border); }
+  .form-control {
+    @apply w-full rounded-lg border;
+    background-color: var(--card);
+    color: var(--fg);
+    border-color: var(--border);
+  }
   .form-control:focus { outline: none; box-shadow: 0 0 0 2px var(--ring); border-color: var(--ring); }
   .form-hint { @apply text-xs; color: var(--muted-foreground); }
   .btn-primary { @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-semibold; color: var(--primary-foreground); background: var(--primary); }
@@ -174,7 +181,7 @@
   ::selection { background: var(--primary); color: var(--primary-foreground); }
   ::-moz-selection { background: var(--primary); color: var(--primary-foreground); }
 
-  select { background-color: var(--background); color: var(--foreground); }
+  select { background-color: var(--card); color: var(--fg); }
   option { background-color: var(--card); color: var(--fg); }
   option:checked, option:focus, option:active { background-color: var(--primary); color: var(--primary-foreground); }
   select[multiple] option:checked { background-color: var(--primary); color: var(--primary-foreground); }
@@ -185,6 +192,49 @@
   [role="listbox"] [role="option"]:hover { background: color-mix(in oklab, var(--primary) 15%, transparent); color: var(--primary-foreground); }
   input[type="checkbox"]:focus-visible,
   input[type="radio"]:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+}
+
+@layer components {
+  /* Archive layout helpers */
+  .archive-grid {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) { .archive-grid { gap: 1.25rem; } }
+  @media (min-width: 1024px) {
+    .archive-grid {
+      grid-template-columns: minmax(260px, 360px) 1fr;
+      align-items: start;
+      gap: 1.5rem;
+    }
+  }
+
+  .archive-list {
+    inline-size: 100%;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    border-radius: calc(var(--radius) + 4px);
+  }
+
+  .archive-main {
+    inline-size: 100%;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    border-radius: calc(var(--radius) + 6px);
+    min-height: 220px;
+  }
+
+  @media (min-width: 1024px) {
+    .archive-main {
+      position: sticky;
+      inset-block-start: calc(var(--header-offset, 72px) + 1rem);
+      align-self: start;
+    }
+  }
 }
 
   /* Subtle neon pulse used in dark mode */

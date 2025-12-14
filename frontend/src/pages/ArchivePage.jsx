@@ -400,9 +400,9 @@ export default function ArchivePage() {
       </Suspense>
 
       {/* Content + preview/editor layout */}
-      <div className="container mx-auto max-w-7xl flex flex-col gap-4 px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+      <div className="container archive-grid mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 lg:px-8">
         {/* قائمة الملفات */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 shadow-[var(--shadow-md)]">
+        <div className="archive-list rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 shadow-[var(--shadow-md)]">
           <div className="max-h-[60vh] overflow-y-auto px-3 pb-4 pt-3 sm:px-5 sm:pt-4">
             {/* Loading state */}
             {loading && (
@@ -500,7 +500,7 @@ export default function ArchivePage() {
           </div>
 
         {/* منطقة المعاينة / المحرر أسفل الأرشيف */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] min-h-[220px] flex flex-col overflow-hidden">
+        <div className="archive-main rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] flex flex-col overflow-hidden">
           {!activeFile ? (
             <div className="flex flex-1 flex-col items-center justify-center text-center p-6">
               <img
