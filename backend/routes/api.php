@@ -21,6 +21,7 @@ use App\Http\Controllers\LitigationActionController;
 use App\Http\Controllers\InvestigationActionTypeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LitigationActionTypeController;
+use App\Http\Controllers\AssignableUserController;
  
 
 
@@ -49,15 +50,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('/assignable-users', [AssignableUserController::class, 'index']);
     
     // Contracts
     Route::apiResource('contracts', ContractController::class);
+    Route::patch('contracts/{contract}/assign', [ContractController::class, 'assign']);
     Route::apiResource('contract-categories', ContractCategoryController::class);
     Route::apiResource('archives', ArchiveController::class);
     Route::apiResource('users', UserController::class);
     
     // Investigations
     Route::apiResource('investigations', InvestigationController::class);
+    Route::patch('investigations/{investigation}/assign', [InvestigationController::class, 'assign']);
     // في ملف routes/api.php أو web.php حسب الحاجة
     
     Route::apiResource('investigation-action-types', InvestigationActionTypeController::class);
@@ -67,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard/get-recent-data', [DashboardController::class, 'getAllRecentData']);
     // Legal Advices
     Route::apiResource('legal-advices', LegalAdviceController::class);
+    Route::patch('legal-advices/{legal_advice}/assign', [LegalAdviceController::class, 'assign']);
     Route::apiResource('advice-types', AdviceTypeController::class);
     Route::apiResource('litigations', LitigationController::class);
 Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
@@ -121,6 +127,7 @@ Route::prefix('users/{userId}')->group(function () {
             Route::post('/', [InvestigationActionController::class, 'store']);
             Route::get('{action}', [InvestigationActionController::class, 'show']);
             Route::put('{action}', [InvestigationActionController::class, 'update']);
+            Route::patch('{action}/assign', [InvestigationActionController::class, 'assign']);
             Route::delete('{action}', [InvestigationActionController::class, 'destroy']);
         });
    
