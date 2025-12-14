@@ -1,5 +1,4 @@
-import axios from 'axios';
-import API_CONFIG from '../../config/config';
+import { api } from '../../lib/api';
 
 // متغير لتخزين الدالة التي يتم استدعاؤها عند 401
 let onUnauthorized = null;
@@ -15,38 +14,11 @@ export const setOnUnauthorized = (callback) => {
   unauthorizedTriggered = false;
 };
 
-// إنشاء instance جديد من axios
-const api = axios.create({
-  baseURL: API_CONFIG.baseURL,
-  withCredentials: true,
-  headers: {
-    Accept: 'application/json',
-  },
-});
-
-/**
- * إدراج التوكن في الهيدر قبل إرسال الطلب
- */
-api.interceptors.request.use((config) => {
-  try {
-    const token = JSON.parse(sessionStorage.getItem('token'));
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  } catch {
-    // تجاهل في حال وجود خطأ
-  }
-  return config;
-});
-
-/**
- * التعامل مع الأخطاء (خصوصًا 401 Unauthorized)
- */
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (
-      error.response?.status === 401 &&
+      error?.response?.status === 401 &&
       typeof onUnauthorized === 'function' &&
       !unauthorizedTriggered
     ) {

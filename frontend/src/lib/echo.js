@@ -9,8 +9,8 @@ let echoInstance = null;
 export function initEcho(config = {}) {
   if (echoInstance) return echoInstance;
 
-  // ✅ اجلب التوكن من sessionStorage أو localStorage
-  const token = JSON.parse(sessionStorage.getItem('token'));
+  // ✅ اجلب التوكن من localStorage
+  const token = localStorage.getItem('token');
 
   const defaultConfig = {
     broadcaster: 'reverb',
