@@ -28,6 +28,9 @@ import API_CONFIG from "@/config/config";
 import { ArchiveSection } from "@/assets/icons";
 import ArchiveCard from "@/features/archives/ArchiveCard";
 import { getFileIcon } from "@/features/archives/fileIcons";
+import { useLanguage } from "@/context/LanguageContext";
+import ThemeToggle from "@/components/common/ThemeToggle";
+import LanguageToggle from "@/components/common/LanguageToggle";
 
 const SectionHeader = lazy(() => import("@/components/common/SectionHeader"));
 const PDFViewer = lazy(() => import("@/components/PDFViewer"));
@@ -35,14 +38,72 @@ const DocumentEditor = lazy(() => import("@/components/editor/DocumentEditor"));
 
 /* ----------------- Helpers ----------------- */
 
-const LABELS = {
-  Contract: "عقود",
-  LegalAdvice: "مشورة أو رأي",
-  Case: "قضايا",
+const TYPE_LABELS = {
+  Contract: { ar: "عقود", en: "Contracts" },
+  LegalAdvice: { ar: "مشورة أو رأي", en: "Legal advice" },
+  Case: { ar: "قضايا", en: "Cases" },
 };
 
-function getLabel(type) {
-  return LABELS[type] || type || "غير معروف";
+const COPY = {
+  title: { ar: "الأرشيف", en: "Archive" },
+  subtitle: {
+    ar: "كل الوثائق المؤرشفة، يمكنك استعراضها وتحرير محتواها في الأسفل.",
+    en: "All archived documents—browse and edit their content below.",
+  },
+  headerLoading: { ar: "تحميل العنوان...", en: "Loading header..." },
+  refresh: { ar: "تحديث", en: "Refresh" },
+  upload: { ar: "رفع ملف", en: "Upload" },
+  uploadToast: {
+    ar: "📂 سيتم إضافة واجهة رفع الملفات لاحقًا.",
+    en: "📂 Upload interface will be added later.",
+  },
+  listRefreshLabel: { ar: "تحديث القائمة", en: "Refresh list" },
+  listUploadLabel: { ar: "رفع ملف جديد", en: "Upload new file" },
+  archiveAlt: { ar: "ملف الأرشيف", en: "Archive file" },
+  untitled: { ar: "ملف بدون عنوان", en: "Untitled file" },
+  viewerLoading: { ar: "جاري تحميل العارض...", en: "Loading viewer..." },
+  searchLabel: { ar: "البحث في الأرشيف", en: "Search archive" },
+  clearSearch: { ar: "مسح البحث", en: "Clear search" },
+  searchPlaceholder: {
+    ar: "ابحث بالاسم أو الملاحظة…",
+    en: "Search by name or note…",
+  },
+  typeLabel: { ar: "نوع الملف", en: "File type" },
+  sortLabel: { ar: "ترتيب الملفات", en: "Sort files" },
+  newest: { ar: "الأحدث أولًا", en: "Newest first" },
+  oldest: { ar: "الأقدم أولًا", en: "Oldest first" },
+  nameAsc: { ar: "الاسم (تصاعدي)", en: "Name (A-Z)" },
+  nameDesc: { ar: "الاسم (تنازلي)", en: "Name (Z-A)" },
+  openAll: { ar: "فتح الكل", en: "Open all" },
+  closeAll: { ar: "غلق الكل", en: "Close all" },
+  statsTotal: { ar: "إجمالي الملفات", en: "Total files" },
+  statsVisible: { ar: "المعروضة حاليًا", en: "Currently visible" },
+  listTitle: { ar: "قائمة الوثائق", en: "Documents list" },
+  listSubtitle: { ar: "المجلدات وملفاتها", en: "Folders & files" },
+  noResults: { ar: "لا توجد نتائج مطابقة", en: "No matching results" },
+  adjustFilters: {
+    ar: "جرّب تعديل البحث أو فلاتر النوع/الترتيب.",
+    en: "Try adjusting the search or type/sort filters.",
+  },
+  selectFileTitle: {
+    ar: "اختر ملفًا من الأرشيف لعرضه أو تحريره هنا",
+    en: "Select a file from the archive to preview or edit here",
+  },
+  selectFileHint: {
+    ar: "اضغط على زر \"عرض التفاصيل\" أسفل أي ملف لفتحه.",
+    en: "Click the \"View details\" button under any file to open it.",
+  },
+  viewDetails: { ar: "عرض التفاصيل", en: "View details" },
+  activeBadge: { ar: "الملف النشط", en: "Active file" },
+  selectedFromArchive: { ar: "ملف مختار من الأرشيف", en: "Selected from archive" },
+  preview: { ar: "معاينة", en: "Preview" },
+  edit: { ar: "تحرير النص", en: "Edit text" },
+  close: { ar: "إغلاق", en: "Close" },
+};
+
+function getLabel(type, lang) {
+  const label = TYPE_LABELS[type];
+  return label ? label[lang] : type || (lang === "ar" ? "غير معروف" : "Unknown");
 }
 
 function groupByType(files = []) {
@@ -69,7 +130,7 @@ function isPdfFile(file) {
   return type === "pdf" || path.endsWith(".pdf");
 }
 
-function buildEditorContent(file) {
+function buildEditorContent(file, lang = "ar") {
   if (file?.html_content) return file.html_content;
 
   if (file?.extracted_text) {
@@ -80,12 +141,15 @@ function buildEditorContent(file) {
     return `<p>${safe.replace(/\n/g, "<br />")}</p>`;
   }
 
-  return "<p>لا يوجد نص مستخرج لهذا الملف حتى الآن.</p>";
+  return lang === "ar"
+    ? "<p>لا يوجد نص مستخرج لهذا الملف حتى الآن.</p>"
+    : "<p>No extracted text is available for this file yet.</p>";
 }
 
 /* ----------------- Page ----------------- */
 
 export default function ArchivePage() {
+  const { lang, dir } = useLanguage();
   const [allFiles, setAllFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -118,14 +182,17 @@ export default function ArchivePage() {
       );
       setOpenFolders(openInit);
 
-      if (withToast) toast.success("✅ تم تحديث الأرشيف بنجاح", { duration: 2000 });
+      if (withToast)
+        toast.success(lang === "ar" ? "✅ تم تحديث الأرشيف بنجاح" : "✅ Archive refreshed", {
+          duration: 2000,
+        });
     } catch (e) {
-      toast.error("❌ فشل تحميل الملفات");
+      toast.error(lang === "ar" ? "❌ فشل تحميل الملفات" : "❌ Failed to load files");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [lang]);
 
   useEffect(() => {
     fetchFiles(false);
@@ -212,7 +279,7 @@ export default function ArchivePage() {
   );
 
   const handleUploadClick = () => {
-    toast.info("📂 سيتم إضافة واجهة رفع الملفات لاحقًا.");
+    toast.info(COPY.uploadToast[lang]);
   };
 
   const fileUrlForPdf = activeFile?.file_path
@@ -230,28 +297,31 @@ export default function ArchivePage() {
   const statsChips = useMemo(
     () => [
       {
-        label: "إجمالي الملفات",
+        label: COPY.statsTotal[lang],
         value: totalCount,
       },
       {
-        label: "المعروضة حاليًا",
+        label: COPY.statsVisible[lang],
         value: filteredCount,
       },
       ...Object.keys(countsByType).map((key) => ({
-        label: getLabel(key),
+        label: getLabel(key, lang),
         value: countsByType[key],
       })),
     ],
-    [countsByType, filteredCount, totalCount]
+    [countsByType, filteredCount, lang, totalCount]
   );
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-[var(--bg)] text-[var(--fg)]">
+    <div
+      className="relative flex min-h-screen w-full flex-col bg-[var(--bg)] text-[var(--fg)]"
+      dir={dir}
+    >
       {/* Header */}
       <Suspense
         fallback={
           <div className="border-b bg-[var(--bg)]/90 px-4 py-4 text-center text-sm text-[var(--muted-foreground)]">
-            تحميل العنوان...
+            {COPY.headerLoading[lang]}
           </div>
         }
       >
@@ -261,13 +331,17 @@ export default function ArchivePage() {
         >
           <div className="container mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
             <SectionHeader
-              listName="الأرشيف"
+              listName={COPY.title[lang]}
               icon={ArchiveSection}
-              subtitle="كل الوثائق المؤرشفة، يمكنك استعراضها وتحرير محتواها في الأسفل."
+              subtitle={COPY.subtitle[lang]}
               showBackButton
               align="start"
               actions={
                 <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--card)] px-2 py-1 shadow-[var(--shadow-sm)]">
+                    <LanguageToggle />
+                    <ThemeToggle />
+                  </div>
                   <button
                     type="button"
                     onClick={() => fetchFiles(true)}
@@ -278,7 +352,7 @@ export default function ArchivePage() {
                       className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
                       aria-hidden="true"
                     />
-                    <span>تحديث</span>
+                    <span>{COPY.refresh[lang]}</span>
                   </button>
 
                   <button
@@ -287,11 +361,14 @@ export default function ArchivePage() {
                     className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--primary)] px-3 py-2 text-xs sm:text-sm font-semibold text-[var(--primary-foreground)] shadow-[var(--shadow-sm)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--primary)]"
                   >
                     <UploadCloud className="h-4 w-4" aria-hidden="true" />
-                    <span>رفع ملف</span>
+                    <span>{COPY.upload[lang]}</span>
                   </button>
                 </div>
               }
-              breadcrumbs={[{ label: "لوحة التحكم", href: "#" }, { label: "الأرشيف" }]}
+              breadcrumbs={[
+                { label: lang === "ar" ? "لوحة التحكم" : "Dashboard", href: "#" },
+                { label: COPY.title[lang] },
+              ]}
             />
           </div>
 
@@ -301,7 +378,7 @@ export default function ArchivePage() {
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
                 <div className="flex-1">
                   <label className="sr-only" htmlFor="archive-search">
-                    البحث في الأرشيف
+                    {COPY.searchLabel[lang]}
                   </label>
                   <div className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3 py-2 shadow-[var(--shadow-xs)] focus-within:ring-2 focus-within:ring-[var(--ring)]">
                     <Search className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
@@ -309,14 +386,14 @@ export default function ArchivePage() {
                       id="archive-search"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      placeholder="ابحث بالاسم أو الملاحظة…"
+                    placeholder={COPY.searchPlaceholder[lang]}
                       className="w-full bg-transparent text-[var(--fg)] placeholder:text-[var(--muted-foreground)] focus:outline-none"
                     />
                     {!!debouncedQuery && (
                       <button
                         onClick={() => setQuery("")}
                         className="rounded-full p-1 text-[var(--muted-foreground)] transition hover:bg-[var(--muted)] hover:text-[var(--fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
-                        aria-label="مسح البحث"
+                        aria-label={COPY.clearSearch[lang]}
                         type="button"
                       >
                         <X className="h-4 w-4" aria-hidden="true" />
@@ -329,7 +406,7 @@ export default function ArchivePage() {
                   <div className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-xs sm:text-sm shadow-[var(--shadow-xs)]">
                     <SlidersHorizontal className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
                     <label htmlFor="type-filter" className="sr-only">
-                      نوع الملف
+                      {COPY.typeLabel[lang]}
                     </label>
                     <select
                       id="type-filter"
@@ -337,10 +414,10 @@ export default function ArchivePage() {
                       onChange={(e) => setTypeFilter(e.target.value)}
                       className="bg-transparent text-[var(--fg)] focus:outline-none"
                     >
-                      <option value="ALL">الكل</option>
+                      <option value="ALL">{lang === "ar" ? "الكل" : "All"}</option>
                       {Object.keys(countsByType).map((t) => (
                         <option key={t} value={t}>
-                          {getLabel(t)} ({countsByType[t]})
+                          {getLabel(t, lang)} ({countsByType[t]})
                         </option>
                       ))}
                     </select>
@@ -349,7 +426,7 @@ export default function ArchivePage() {
                   <div className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-xs sm:text-sm shadow-[var(--shadow-xs)]">
                     <ArrowUpDown className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
                     <label htmlFor="sort-filter" className="sr-only">
-                      ترتيب الملفات
+                      {COPY.sortLabel[lang]}
                     </label>
                     <select
                       id="sort-filter"
@@ -357,10 +434,10 @@ export default function ArchivePage() {
                       onChange={(e) => setSortKey(e.target.value)}
                       className="bg-transparent text-[var(--fg)] focus:outline-none"
                     >
-                      <option value="date_desc">الأحدث أولًا</option>
-                      <option value="date_asc">الأقدم أولًا</option>
-                      <option value="name_asc">الاسم (تصاعدي)</option>
-                      <option value="name_desc">الاسم (تنازلي)</option>
+                      <option value="date_desc">{COPY.newest[lang]}</option>
+                      <option value="date_asc">{COPY.oldest[lang]}</option>
+                      <option value="name_asc">{COPY.nameAsc[lang]}</option>
+                      <option value="name_desc">{COPY.nameDesc[lang]}</option>
                     </select>
                   </div>
 
@@ -369,20 +446,20 @@ export default function ArchivePage() {
                       type="button"
                       onClick={openAll}
                       className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-xs sm:text-sm transition hover:shadow-[var(--shadow-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card)]"
-                      title="فتح كل المجلدات"
+                      title={COPY.openAll[lang]}
                     >
                       <Layers3 className="h-4 w-4" aria-hidden="true" />
-                      <span className="hidden sm:inline">فتح الكل</span>
+                      <span className="hidden sm:inline">{COPY.openAll[lang]}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={closeAll}
                       className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-xs sm:text-sm transition hover:shadow-[var(--shadow-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card)]"
-                      title="غلق كل المجلدات"
+                      title={COPY.closeAll[lang]}
                     >
                       <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
-                      <span className="hidden sm:inline">غلق الكل</span>
+                      <span className="hidden sm:inline">{COPY.closeAll[lang]}</span>
                     </button>
                   </div>
                 </div>
@@ -412,15 +489,15 @@ export default function ArchivePage() {
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 shadow-[var(--shadow-md)]">
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
                 <div className="flex flex-col gap-1">
-                  <p className="text-xs text-[var(--muted-foreground)]">قائمة الوثائق</p>
-                  <h3 className="text-base font-semibold">المجلدات وملفاتها</h3>
+                  <p className="text-xs text-[var(--muted-foreground)]">{COPY.listTitle[lang]}</p>
+                  <h3 className="text-base font-semibold">{COPY.listSubtitle[lang]}</h3>
                 </div>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => fetchFiles(true)}
                     className="rounded-lg border border-[var(--border)] bg-[var(--bg)] p-2 text-[var(--muted-foreground)] transition hover:text-[var(--fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
-                    aria-label="تحديث القائمة"
+                    aria-label={COPY.listRefreshLabel[lang]}
                     disabled={refreshing}
                   >
                     <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} aria-hidden="true" />
@@ -429,7 +506,7 @@ export default function ArchivePage() {
                     type="button"
                     onClick={handleUploadClick}
                     className="rounded-lg border border-[var(--border)] bg-[var(--bg)] p-2 text-[var(--muted-foreground)] transition hover:text-[var(--fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
-                    aria-label="رفع ملف جديد"
+                    aria-label={COPY.listUploadLabel[lang]}
                   >
                     <UploadCloud className="h-4 w-4" aria-hidden="true" />
                   </button>
@@ -451,10 +528,8 @@ export default function ArchivePage() {
                 {!loading && filtered.length === 0 && (
                   <div className="mx-auto flex max-w-xl flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center shadow-[var(--shadow-md)]">
                     <FolderKanban className="mb-3 h-10 w-10 text-[var(--muted-foreground)]" aria-hidden="true" />
-                    <p className="font-semibold text-[var(--fg)]">لا توجد نتائج مطابقة</p>
-                    <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                      جرّب تعديل البحث أو فلاتر النوع/الترتيب.
-                    </p>
+                    <p className="font-semibold text-[var(--fg)]">{COPY.noResults[lang]}</p>
+                    <p className="mt-1 text-sm text-[var(--muted-foreground)]">{COPY.adjustFilters[lang]}</p>
                   </div>
                 )}
 
@@ -477,7 +552,7 @@ export default function ArchivePage() {
                             <FolderKanban className="h-5 w-5 text-[var(--muted-foreground)]" aria-hidden="true" />
                           )}
 
-                          <span className="font-extrabold">{getLabel(type)}</span>
+                          <span className="font-extrabold">{getLabel(type, lang)}</span>
 
                           <span className="ml-2 rounded-full bg-[var(--muted)]/60 px-2 py-0.5 text-xs text-[var(--muted-foreground)]">
                             {files.length}
@@ -510,12 +585,12 @@ export default function ArchivePage() {
                                       }`}
                                     >
                                       <Eye className="h-4 w-4" aria-hidden="true" />
-                                      <span>عرض التفاصيل</span>
+                                      <span>{COPY.viewDetails[lang]}</span>
                                     </button>
 
                                     {activeFile?.id === file.id && (
                                       <span className="rounded-lg bg-[var(--muted)] px-2 py-1 text-[10px] font-semibold text-[var(--muted-foreground)]">
-                                        الملف النشط
+                                        {COPY.activeBadge[lang]}
                                       </span>
                                     )}
                                   </div>
@@ -541,15 +616,11 @@ export default function ArchivePage() {
               <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
                 <img
                   src={ArchiveSection}
-                  alt="ملف الأرشيف"
+                  alt={COPY.archiveAlt[lang]}
                   className="h-12 w-12 text-[var(--muted-foreground)]"
                 />
-                <p className="text-lg font-semibold text-[var(--fg)]">
-                  اختر ملفًا من الأرشيف لعرضه أو تحريره هنا
-                </p>
-                <p className="max-w-xl text-sm text-[var(--muted-foreground)]">
-                  اضغط على زر <span className="font-semibold">"عرض التفاصيل"</span> أسفل أي ملف لفتحه.
-                </p>
+                <p className="text-lg font-semibold text-[var(--fg)]">{COPY.selectFileTitle[lang]}</p>
+                <p className="max-w-xl text-sm text-[var(--muted-foreground)]">{COPY.selectFileHint[lang]}</p>
               </div>
             ) : (
               <>
@@ -562,20 +633,18 @@ export default function ArchivePage() {
                         </span>
                       )}
                       <div className="min-w-0">
-                        <p className="text-xs text-[var(--muted-foreground)]">ملف مختار من الأرشيف</p>
+                        <p className="text-xs text-[var(--muted-foreground)]">{COPY.selectedFromArchive[lang]}</p>
                         <h3 className="truncate text-base font-bold text-[var(--fg)] sm:text-lg">
                           {activeFile.title ||
                             activeFile.original_name ||
                             activeFile.file_name ||
-                            "ملف بدون عنوان"}
+                            COPY.untitled[lang]}
                         </h3>
                       </div>
                     </div>
 
                     <div className="ms-auto flex items-center gap-2 text-xs text-[var(--muted-foreground)] sm:text-sm">
-                      <span className="rounded-full bg-[var(--muted)] px-2 py-1">
-                        {getLabel(activeFile.model_type)}
-                      </span>
+                      <span className="rounded-full bg-[var(--muted)] px-2 py-1">{getLabel(activeFile.model_type, lang)}</span>
                       {activeFile.created_at && <span>{new Date(activeFile.created_at).toLocaleDateString()}</span>}
                     </div>
                   </div>
@@ -592,7 +661,7 @@ export default function ArchivePage() {
                         }`}
                       >
                         <Eye className="h-4 w-4" aria-hidden="true" />
-                        <span>معاينة</span>
+                        <span>{COPY.preview[lang]}</span>
                       </button>
                     )}
 
@@ -606,7 +675,7 @@ export default function ArchivePage() {
                       }`}
                     >
                       <FilePenLine className="h-4 w-4" aria-hidden="true" />
-                      <span>تحرير النص</span>
+                      <span>{COPY.edit[lang]}</span>
                     </button>
 
                     <button
@@ -618,7 +687,7 @@ export default function ArchivePage() {
                       className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-xs sm:text-sm transition hover:shadow-[var(--shadow-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
                     >
                       <X className="h-4 w-4" aria-hidden="true" />
-                      <span>إغلاق</span>
+                      <span>{COPY.close[lang]}</span>
                     </button>
                   </div>
                 </div>
@@ -627,14 +696,14 @@ export default function ArchivePage() {
                   <Suspense
                     fallback={
                       <div className="flex h-40 items-center justify-center text-sm text-[var(--muted-foreground)]">
-                        جاري تحميل العارض...
+                        {COPY.viewerLoading[lang]}
                       </div>
                     }
                   >
                     {currentMode === "preview" && isPdfFile(activeFile) && fileUrlForPdf ? (
                       <PDFViewer fileUrl={fileUrlForPdf} />
                     ) : (
-                      <DocumentEditor initialContent={buildEditorContent(activeFile)} />
+                      <DocumentEditor initialContent={buildEditorContent(activeFile, lang)} />
                     )}
                   </Suspense>
                 </div>
