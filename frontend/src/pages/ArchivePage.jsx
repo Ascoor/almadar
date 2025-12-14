@@ -31,9 +31,7 @@ import { getFileIcon, toneColors } from "@/features/archives/fileIcons";
 
 const SectionHeader = lazy(() => import("@/components/common/SectionHeader"));
 const PDFViewer = lazy(() => import("@/components/PDFViewer"));
-const DocumentEditor = lazy(() =>
-  import("@/components/editor/DocumentEditor")
-);
+const DocumentEditor = lazy(() => import("@/components/editor/DocumentEditor"));
 
 /* ----------------- Helpers ----------------- */
 
@@ -50,8 +48,7 @@ function getLabel(type) {
 function groupByType(files = []) {
   return files.reduce((acc, file) => {
     const key = file.model_type || "OTHER";
-    acc[key] = acc[key] || [];
-    acc[key].push(file);
+    (acc[key] ||= []).push(file);
     return acc;
   }, {});
 }
@@ -68,11 +65,7 @@ function useDebounced(value, delay = 300) {
 function isPdfFile(file) {
   const type = (file?.file_type || "").toLowerCase();
   const path =
-    (file?.file_path ||
-      file?.original_name ||
-      file?.file_name ||
-      "").toLowerCase();
-
+    (file?.file_path || file?.original_name || file?.file_name || "").toLowerCase();
   return type === "pdf" || path.endsWith(".pdf");
 }
 
@@ -80,7 +73,6 @@ function buildEditorContent(file) {
   if (file?.html_content) return file.html_content;
 
   if (file?.extracted_text) {
-    // نحول النص العادي لـ HTML بسيط
     const safe = file.extracted_text
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
@@ -101,32 +93,32 @@ export default function ArchivePage() {
   const [openFolders, setOpenFolders] = useState({});
   const [activeFile, setActiveFile] = useState(null);
   const [viewerMode, setViewerMode] = useState("auto"); // auto | preview | edit
+
   const headerRef = useRef(null);
   const previewRef = useRef(null);
 
   // Filters
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
-  const [sortKey, setSortKey] = useState("date_desc"); // date_desc | date_asc | name_asc | name_desc
+  const [sortKey, setSortKey] = useState("date_desc");
   const debouncedQuery = useDebounced(query, 300);
 
   const fetchFiles = useCallback(async (withToast = false) => {
     try {
-      withToast && setRefreshing(true);
+      if (withToast) setRefreshing(true);
       setLoading(true);
+
       const res = await getArchiveFiles();
       const files = res?.data?.data || [];
       setAllFiles(files);
 
-      const grouped = groupByType(files);
+      const groupedInit = groupByType(files);
       const openInit = Object.fromEntries(
-        Object.keys(grouped).map((k) => [k, true])
+        Object.keys(groupedInit).map((k) => [k, true])
       );
       setOpenFolders(openInit);
 
-      if (withToast) {
-        toast.success("✅ تم تحديث الأرشيف بنجاح", { duration: 2000 });
-      }
+      if (withToast) toast.success("✅ تم تحديث الأرشيف بنجاح", { duration: 2000 });
     } catch (e) {
       toast.error("❌ فشل تحميل الملفات");
     } finally {
@@ -142,12 +134,10 @@ export default function ArchivePage() {
   const filtered = useMemo(() => {
     let rows = [...allFiles];
 
-    // نوع الملف
     if (typeFilter !== "ALL") {
       rows = rows.filter((f) => f.model_type === typeFilter);
     }
 
-    // البحث
     const q = debouncedQuery.trim().toLowerCase();
     if (q) {
       rows = rows.filter((f) => {
@@ -158,7 +148,6 @@ export default function ArchivePage() {
       });
     }
 
-    // الترتيب
     rows.sort((a, b) => {
       const aName = (a?.original_name || a?.file_name || "").toLowerCase();
       const bName = (b?.original_name || b?.file_name || "").toLowerCase();
@@ -185,9 +174,7 @@ export default function ArchivePage() {
 
   const countsByType = useMemo(() => {
     const byType = groupByType(allFiles);
-    return Object.fromEntries(
-      Object.keys(byType).map((k) => [k, byType[k].length])
-    );
+    return Object.fromEntries(Object.keys(byType).map((k) => [k, byType[k].length]));
   }, [allFiles]);
 
   const totalCount = allFiles.length;
@@ -202,9 +189,7 @@ export default function ArchivePage() {
   };
 
   const closeAll = () => {
-    const all = Object.fromEntries(
-      Object.keys(grouped).map((k) => [k, false])
-    );
+    const all = Object.fromEntries(Object.keys(grouped).map((k) => [k, false]));
     setOpenFolders((prev) => ({ ...prev, ...all }));
   };
 
@@ -213,19 +198,13 @@ export default function ArchivePage() {
     const headerHeight = headerRef.current?.offsetHeight ?? 72;
     const rect = previewRef.current.getBoundingClientRect();
     const targetTop = Math.max(rect.top + window.scrollY - headerHeight - 12, 0);
-
     window.scrollTo({ top: targetTop, behavior: "smooth" });
   }, []);
 
   const handleCardPreview = useCallback(
     (file) => {
       setActiveFile(file);
-      if (isPdfFile(file)) {
-        setViewerMode("preview");
-      } else {
-        setViewerMode("edit");
-      }
-
+      setViewerMode(isPdfFile(file) ? "preview" : "edit");
       requestAnimationFrame(scrollToPreview);
     },
     [scrollToPreview]
@@ -238,17 +217,14 @@ export default function ArchivePage() {
   const fileUrlForPdf = activeFile?.file_path
     ? `${API_CONFIG.baseURL}/open-pdf/${activeFile.file_path}`
     : null;
-
-  const previewIcon = activeFile ? getFileIcon(activeFile) : null;
-  const previewTone = previewIcon
-    ? toneColors[previewIcon.tone] || toneColors.slate
-    : toneColors.slate;
-  const PreviewIcon = previewIcon?.icon;
-
-  const currentMode = (() => {
+    const previewIcon = activeFile ? getFileIcon(activeFile) : null;
+    const previewTone = previewIcon
+      ? toneColors[previewIcon.tone] || toneColors.slate
+      : toneColors.slate;
+    const PreviewIcon = previewIcon?.icon;  const currentMode = useMemo(() => {
     if (viewerMode !== "auto") return viewerMode;
     return activeFile && isPdfFile(activeFile) ? "preview" : "edit";
-  })();
+  }, [viewerMode, activeFile]);
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-[var(--bg)] text-[var(--fg)]">
@@ -260,7 +236,10 @@ export default function ArchivePage() {
           </div>
         }
       >
-        <div className="sticky top-0 z-20 border-b bg-[var(--bg)]/90 backdrop-blur-md">
+        <div
+          ref={headerRef}
+          className="sticky top-0 z-20 border-b bg-[var(--bg)]/90 backdrop-blur-md"
+        >
           <div className="container mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
             <SectionHeader
               listName="الأرشيف"
@@ -276,13 +255,10 @@ export default function ArchivePage() {
                     disabled={refreshing}
                     className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-xs sm:text-sm hover:shadow-[var(--shadow-sm)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <RefreshCw
-                      className={`h-4 w-4 ${
-                        refreshing ? "animate-spin" : ""
-                      }`}
-                    />
+                    <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
                     <span className="hidden sm:inline">تحديث</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={handleUploadClick}
@@ -293,10 +269,7 @@ export default function ArchivePage() {
                   </button>
                 </div>
               }
-              breadcrumbs={[
-                { label: "لوحة التحكم", href: "#" },
-                { label: "الأرشيف" },
-              ]}
+              breadcrumbs={[{ label: "لوحة التحكم", href: "#" }, { label: "الأرشيف" }]}
             />
           </div>
 
@@ -370,6 +343,7 @@ export default function ArchivePage() {
                     <Layers3 className="mr-1 h-4 w-4" />
                     <span className="hidden sm:inline">فتح الكل</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={closeAll}
@@ -385,13 +359,11 @@ export default function ArchivePage() {
 
             {/* Meta info */}
             <div className="mt-2 text-xs sm:text-sm text-[var(--muted-foreground)]">
-              إجمالي الملفات:{" "}
-              <b className="text-[var(--fg)]">{totalCount}</b>
+              إجمالي الملفات: <b className="text-[var(--fg)]">{totalCount}</b>
               {typeFilter !== "ALL" && (
                 <>
                   {" "}
-                  • المعروضة حاليًا:{" "}
-                  <b className="text-[var(--fg)]">{filtered.length}</b>
+                  • المعروضة حاليًا: <b className="text-[var(--fg)]">{filtered.length}</b>
                 </>
               )}
             </div>
@@ -404,32 +376,24 @@ export default function ArchivePage() {
         {/* قائمة الملفات */}
         <div className="archive-list rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 shadow-[var(--shadow-md)]">
           <div className="max-h-[60vh] overflow-y-auto px-3 pb-4 pt-3 sm:px-5 sm:pt-4">
-            {/* Loading state */}
             {loading && (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-32 rounded-xl bg-[var(--muted)] animate-pulse"
-                  />
+                  <div key={i} className="h-32 rounded-xl bg-[var(--muted)] animate-pulse" />
                 ))}
               </div>
             )}
 
-            {/* Empty state */}
             {!loading && filtered.length === 0 && (
               <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center shadow-[var(--shadow-md)] max-w-xl mx-auto">
                 <FolderKanban className="mb-3 h-10 w-10 text-[var(--muted-foreground)]" />
-                <p className="font-semibold text-[var(--fg)]">
-                  لا توجد نتائج مطابقة
-                </p>
+                <p className="font-semibold text-[var(--fg)]">لا توجد نتائج مطابقة</p>
                 <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                   جرّب تعديل البحث أو فلاتر النوع/الترتيب.
                 </p>
               </div>
             )}
 
-            {/* Groups */}
             {!loading && Object.keys(grouped).length > 0 && (
               <div className="space-y-5">
                 {Object.entries(grouped).map(([type, files]) => (
@@ -447,10 +411,13 @@ export default function ArchivePage() {
                       ) : (
                         <FolderKanban className="h-5 w-5 text-[var(--muted-foreground)]" />
                       )}
+
                       <span className="font-extrabold">{getLabel(type)}</span>
+
                       <span className="ml-2 text-xs text-[var(--muted-foreground)]">
                         ({files.length})
                       </span>
+
                       <span className="ms-auto text-[var(--muted-foreground)]">
                         {openFolders[type] ? (
                           <ChevronsDown className="h-4 w-4" />
@@ -465,10 +432,8 @@ export default function ArchivePage() {
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                           {files.map((file) => (
                             <div key={file.id} className="flex flex-col gap-2">
-                              <ArchiveCard
-                                file={file}
-                                onPreview={handleCardPreview}
-                              />
+                              <ArchiveCard file={file} onPreview={handleCardPreview} />
+
                               <button
                                 type="button"
                                 onClick={() => handleCardPreview(file)}
@@ -489,18 +454,22 @@ export default function ArchivePage() {
                                 <span>عرض في الأسفل</span>
                               </button>
                             </div>
-                          </div>
-                        )}
-                      </section>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </section>
+                ))}
+              </div>
+            )}
           </div>
+        </div>
 
-        {/* منطقة المعاينة / المحرر أسفل الأرشيف */}
-        <div className="archive-main rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] flex flex-col overflow-hidden">
+        {/* منطقة المعاينة / المحرر */}
+        <div
+          ref={previewRef}
+          className="archive-main rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-lg)] flex flex-col overflow-hidden"
+        >
           {!activeFile ? (
             <div className="flex flex-1 flex-col items-center justify-center text-center p-6">
               <img
@@ -512,19 +481,15 @@ export default function ArchivePage() {
                 اختر ملفًا من الأرشيف لعرضه أو تحريره هنا
               </p>
               <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-                اضغط على زر{" "}
-                <span className="font-semibold">"عرض في الأسفل"</span> أسفل أي
+                اضغط على زر <span className="font-semibold">"عرض في الأسفل"</span> أسفل أي
                 ملف.
               </p>
             </div>
           ) : (
             <>
-              {/* Header for viewer/editor */}
               <div className="flex flex-col gap-3 border-b border-[var(--border)] bg-[var(--card)] px-4 py-3 sm:flex-row sm:items-center sm:gap-3 sm:px-5">
                 <div className="min-w-0">
-                  <p className="text-xs text-[var(--muted-foreground)]">
-                    ملف مختار من الأرشيف
-                  </p>
+                  <p className="text-xs text-[var(--muted-foreground)]">ملف مختار من الأرشيف</p>
                   <h3 className="truncate text-sm font-bold text-[var(--fg)] sm:text-base">
                     {activeFile.title ||
                       activeFile.original_name ||
@@ -584,7 +549,6 @@ export default function ArchivePage() {
                 </div>
               </div>
 
-              {/* Body: PDF preview OR editor */}
               <div className="min-h-[260px] flex-1 overflow-auto">
                 <Suspense
                   fallback={
@@ -596,9 +560,7 @@ export default function ArchivePage() {
                   {currentMode === "preview" && isPdfFile(activeFile) && fileUrlForPdf ? (
                     <PDFViewer fileUrl={fileUrlForPdf} />
                   ) : (
-                    <DocumentEditor
-                      initialContent={buildEditorContent(activeFile)}
-                    />
+                    <DocumentEditor initialContent={buildEditorContent(activeFile)} />
                   )}
                 </Suspense>
               </div>
