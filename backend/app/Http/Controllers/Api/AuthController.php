@@ -44,6 +44,10 @@ public function login(Request $request)
         return response()->json(['message' => 'Bad credentials'], 401);
     }
 
+    if (!$user->is_active) {
+        return response()->json(['message' => 'Account disabled'], 403);
+    }
+
     // إنشاء التوكن
     $token = $user->createToken('api_token')->plainTextToken;
 
@@ -57,6 +61,7 @@ public function login(Request $request)
         'token'       => $token,
         'roles'       => $roles,
         'permissions' => $permissions,
+        'data_scope'  => $user->data_scope,
     ]);
 }
 
@@ -71,6 +76,7 @@ public function login(Request $request)
             'user' => $user,
             'roles' => $roles,
             'permissions' => $permissions,
+            'data_scope' => $user->data_scope,
         ]);
     }
 

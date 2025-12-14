@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Str;
 
 class UserRolePermissionController extends Controller
 {
@@ -83,38 +84,18 @@ public function changeUserPermission(Request $request, $userId)
     $permission = Permission::where('name', $request->permission)->first();
 
     if ($request->action === 'add') {
-        // فقط أضف الصلاحية المطلوبة للمستخدم فقط
         $user->givePermissionTo($permission);
-
     } else {
-        // أزل الصلاحية من المستخدم
         $user->revokePermissionTo($permission);
 
-        // أزل الصلاحية من جميع الأدوار المرتبطة به
-        foreach ($user->roles as $role) {
-            if ($role->hasPermissionTo($permission->name)) {
-                $role->revokePermissionTo($permission->name);
-            }
-        }
+        if (Str::endsWith($permission->name, '.read')) {
+            $section = Str::beforeLast($permission->name, '.read');
+            foreach (['create', 'update', 'delete', 'approve'] as $action) {
+                $related = $section . '.' . $action;
 
-        // إن كانت الصلاحية View، أزل باقي الصلاحيات المرتبطة بالقسم أيضًا
-        if (str_starts_with($permission->name, 'view ')) {
-            $section = explode(' ', $permission->name)[1];
-            foreach (['create', 'edit', 'delete'] as $action) {
-                $related = "$action $section";
-
-                // من المستخدم
-                if ($user->hasPermissionTo($related)) {
+                if ($user->hasDirectPermission($related)) {
                     $user->revokePermissionTo($related);
                 }
-
-                // ومن الأدوار المرتبطة به أيضًا
-                foreach ($user->roles as $role) {
-                    if ($role->hasPermissionTo($related)) {
-                        $role->revokePermissionTo($related);
-                    }
-                }
-                
             }
         }
     }

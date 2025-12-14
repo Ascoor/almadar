@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -7,11 +7,11 @@ import FormField from '@/components/form/FormField';
 import ThemeToggle from '@/components/common/ThemeToggle';
 import LanguageToggle from '@/components/common/LanguageToggle';
 
-import { AuthContext } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
   const { lang } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
