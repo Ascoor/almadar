@@ -11,7 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasRoles, Notifiable,  HasFactory;
+    use HasApiTokens, HasRoles, Notifiable, HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -21,12 +21,17 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-           'image',
+        'image',
         'password',
-        'password_changed'
+        'password_changed',
+        'department_id',
+        'is_active',
+        'data_scope',
     ];
-    protected $guard_name = 'api'; 
-  protected $with = ['roles', 'permissions']; 
+
+    protected $guard_name = 'api';
+
+    protected $with = ['roles', 'permissions'];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -45,10 +50,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_active' => 'boolean',
     ];
        // تعريف العلاقة مع الإشعارات
     public function notifications()
     {
         return $this->morphMany(Notification::class, 'notifiable');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 }
