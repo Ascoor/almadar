@@ -30,7 +30,17 @@ use App\Http\Controllers\LitigationActionTypeController;
 |--------------------------------------------------------------------------
 */ 
 
-Route::post('/register', [AuthController::class, 'register']);
+Route::prefix('auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/user', [AuthController::class, 'user']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
+});
+
+// Legacy compatibility
 Route::post('/login', [AuthController::class, 'login']);
 Route::options('/{any}', function () {
     return response()->json([], 204);
