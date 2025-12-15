@@ -10,6 +10,7 @@ use App\Models\InvestigationActionType;
 use App\Models\LegalAdvice;
 use App\Models\AdviceType;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class DemoDataSeeder extends Seeder
 {
@@ -21,7 +22,13 @@ class DemoDataSeeder extends Seeder
         $investigator = $this->user('investigator@example.test');
         $employee = $this->user('employee@example.test');
 
-        $category = ContractCategory::first() ?? ContractCategory::create(['name' => 'Demo', 'description' => 'Demo']);
+        $categoryAttributes = ['name' => 'Demo'];
+
+        if (Schema::hasColumn('contract_categories', 'description')) {
+            $categoryAttributes['description'] = 'Demo';
+        }
+
+        $category = ContractCategory::first() ?? ContractCategory::create($categoryAttributes);
 
         $procedureType = InvestigationActionType::first() ?? InvestigationActionType::create([
             'name' => 'جمع الاستبيانات',
