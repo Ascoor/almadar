@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { getActionReports } from '@/services/api/reports'; // استيراد دالة الحصول على البيانات من API
 import { toast } from 'sonner';
 import FormField from '@/components/form/FormField';
 import ThemeToggle from '@/components/common/ThemeToggle';
 import LanguageToggle from '@/components/common/LanguageToggle';
+import TableComponent from '@/components/common/TableComponent';
 import { useLanguage } from '@/context/LanguageContext';
 
 const ReportsPage = () => {
@@ -18,6 +19,19 @@ const ReportsPage = () => {
   const [selectedSection, setSelectedSection] = useState('all'); // للتحكم في الفلترة حسب الأقسام
   const { lang } = useLanguage();
 
+  const headers = useMemo(
+    () => [
+      { key: 'company_name', text: 'اسم الشركة' },
+      { key: 'contract_number', text: 'رقم العقد' },
+      { key: 'section', text: 'القسم' },
+      { key: 'action_date', text: 'تاريخ الإجراء' },
+      { key: 'comments', text: 'تعليقات' },
+      { key: 'category_name', text: 'التصنيف' },
+      { key: 'assigned_to_user', text: 'المُسند إليه' },
+    ],
+    [],
+  );
+
   useEffect(() => {
     const loadReports = async () => {
       try {
@@ -31,8 +45,18 @@ const ReportsPage = () => {
           caseStatus,
           selectedSection,
         });
-        setReports(response.data); // وضع البيانات في الحالة
+
+        const payload = response?.data?.data ?? response?.data ?? [];
+
+        if (!Array.isArray(payload)) {
+          console.warn('⚠️ Unexpected reports payload shape', payload);
+          setReports([]);
+          return;
+        }
+
+        setReports(payload); // وضع البيانات في الحالة
       } catch (err) {
+        console.error('Failed to load reports', err);
         toast.error('فشل تحميل البيانات');
       }
     };
@@ -63,6 +87,24 @@ const ReportsPage = () => {
   const handleProcedureTypeChange = (e) => setProcedureType(e.target.value);
   // فلاتر قسم القضايا
   const handleCaseStatusChange = (e) => setCaseStatus(e.target.value);
+
+  const normalizedReports = useMemo(
+    () =>
+      Array.isArray(reports)
+        ? reports.map((report) => ({
+            ...report,
+            company_name:
+              report.company_name || report.companyName || report.company?.name || '—',
+            contract_number:
+              report.contract_number || report.contractNumber || report.contract?.number || '—',
+            section:
+              report.section || report.section_name || report.sectionName || report.section?.name || '—',
+            action_date: report.action_date || report.actionDate || report.date || '—',
+            comments: report.comments || report.comment || '—',
+          }))
+        : [],
+    [reports],
+  );
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-10">
@@ -177,30 +219,15 @@ const ReportsPage = () => {
       )}
 
       {/* عرض التقارير في جدول */}
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 border">اسم الشركة</th>
-              <th className="p-2 border">رقم العقد</th>
-              <th className="p-2 border">القسم</th>
-              <th className="p-2 border">تاريخ الإجراء</th>
-              <th className="p-2 border">تعليقات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reports.map((report) => (
-              <tr key={report.id} className="odd:bg-gray-50">
-                <td className="p-2 border">{report.companyName}</td>
-                <td className="p-2 border">{report.contractNumber}</td>
-                <td className="p-2 border">{report.section}</td>
-                <td className="p-2 border">{report.actionDate}</td>
-                <td className="p-2 border">{report.comments}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <TableComponent
+        data={normalizedReports}
+        headers={headers}
+        customRenderers={{
+          category_name: (row) => row.category?.name || '—',
+          assigned_to_user: (row) =>
+            row.assigned_user?.name || row.assigned_to_user?.name || '—',
+        }}
+      />
     </div>
   );
 };
