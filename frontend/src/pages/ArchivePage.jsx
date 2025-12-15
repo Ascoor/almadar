@@ -29,6 +29,7 @@ import { getFileIcon } from "@/features/archives/fileIcons";
 import { useLanguage } from "@/context/LanguageContext";
 import ThemeToggle from "@/components/common/ThemeToggle";
 import LanguageToggle from "@/components/common/LanguageToggle";
+import SectionHeader from "@/components/common/SectionHeader";
 
 const PDFViewer = lazy(() => import("@/components/PDFViewer"));
 const DocumentEditor = lazy(() => import("@/components/editor/DocumentEditor"));
@@ -142,44 +143,10 @@ function buildEditorContent(file, lang = "ar") {
 
 /* ----------------- Components ----------------- */
 
-function PageHeader({ lang, onRefresh, refreshing }) {
+function PageHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--background)]/85 backdrop-blur">
-      <div className="container mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex items-start gap-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--muted)]/40 shadow-[var(--shadow-sm)]">
-              <img src={ArchiveSection} alt="archive" className="h-7 w-7" />
-            </span>
-            <div className="min-w-0 space-y-1">
-              <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-                {lang === "ar" ? "المكتب الذكي" : "Smart Desk"}
-              </p>
-              <h1 className="text-lg font-bold leading-tight text-[var(--foreground)] sm:text-xl">
-                {COPY.title[lang]}
-              </h1>
-              <p className="text-sm text-[var(--muted-foreground)]">{COPY.subtitle[lang]}</p>
-            </div>
-          </div>
-
-          <div className="ms-auto flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => onRefresh(true)}
-              disabled={refreshing}
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-xs font-medium shadow-[var(--shadow-sm)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card)] disabled:opacity-60"
-            >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} aria-hidden="true" />
-              <span>{COPY.refresh[lang]}</span>
-            </button>
-            <div className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--card)] px-2 py-1 shadow-[var(--shadow-sm)]">
-              <LanguageToggle />
-              <ThemeToggle />
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
+    
+    <SectionHeader   showBackButton listName="قسم الأرشيف" icon={ArchiveSection} />
   );
 }
 
@@ -641,6 +608,7 @@ export default function ArchivePage() {
             )}
           </section>
 
+        </div>
           <section ref={previewRef} className="hidden lg:block lg:sticky lg:top-[96px]">
             <ViewerShell
               lang={lang}
@@ -654,7 +622,6 @@ export default function ArchivePage() {
               fileUrlForPdf={fileUrlForPdf}
             />
           </section>
-        </div>
       </main>
 
       {/* Mobile viewer */}

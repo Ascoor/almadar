@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, ArrowUp } from 'lucide-react';
+
 import { toast } from "sonner";
 import SectionHeader from '@/components/common/SectionHeader';
 import TableComponent from '@/components/common/TableComponent';
@@ -204,7 +205,19 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
       </div>
     ),
   };
-
+  const handleBackToTable = () => {
+    // اقفل عرض التفاصيل
+    setExpandedUserId(null);
+    setSelectedUser(null);
+  
+    // ارجع للجدول بسلاسة
+    setTimeout(() => {
+      if (tableRef.current) {
+        tableRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
+  };
+  
   return (
     <div className="p-6 sm:p-4 lg:p-6 mt-6">
       <motion.div
@@ -293,13 +306,31 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
             <h2 className="text-xl font-semibold text-center text-green-700 dark:text-green-400 mt-4">
               صلاحيات المستخدم
             </h2>
+            <div className="flex justify-start">
+  <motion.button
+    type="button"
+    onClick={handleBackToTable}
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className="w-10 h-10 rounded-full flex items-center justify-center
+               bg-primary hover:bg-destructive text-white shadow
+               border border-green-700/20"
+    aria-label="العودة للجدول"
+    title="العودة للجدول"
+  >
+    <ArrowUp className="w-5 h-5" />
+  </motion.button>
+</div>
+
             <PermissionsSection
               allPermissions={allPerms}
               userPermissions={selectedUser.permissions}
               handlePermissionChange={handlePermChange}
               loading={loading}
             />
+            
           </motion.div>
+
         )}
       </AnimatePresence>
 {showNewUserAlert && (
