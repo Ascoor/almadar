@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contract;
 use App\Models\Archive;
+use App\Services\AssignmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -26,6 +27,10 @@ class ContractController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validateContract($request);
+        $assigneeId = $validated['assigned_to_user_id'] ?? null;
+        unset($validated['assigned_to_user_id']);
+
+        $validated['created_by'] = auth()->id();
 
         $validated['value'] = $this->normalizeValue($validated['value']);
 
@@ -39,6 +44,8 @@ class ContractController extends Controller
         }
 
         $contract = Contract::create($validated);
+
+        AssignmentService::apply($contract, $assigneeId, 'contracts', 'number');
 
         // ✅ إضافة إلى جدول الأرشيف إذا تم رفع مرفق
         if (!empty($validated['attachment'])) {
@@ -60,6 +67,8 @@ AdminNotifier::notifyAll(
 public function update(Request $request, Contract $contract)
 {
     $validated = $this->validateContract($request, $contract->id);
+    $assigneeId = $validated['assigned_to_user_id'] ?? null;
+    unset($validated['assigned_to_user_id']);
 
     $validated['value'] = $this->normalizeValue($validated['value']);
 
@@ -77,6 +86,8 @@ public function update(Request $request, Contract $contract)
     $validated['updated_by'] = auth()->id();
 
     $contract->update($validated);
+
+    AssignmentService::apply($contract, $assigneeId, 'contracts', 'number');
 
     if (!empty($validated['attachment'])) {
         $this->storeArchive($contract);
@@ -106,6 +117,20 @@ public function update(Request $request, Contract $contract)
         ]);
     }
 
+    public function assign(Request $request, Contract $contract)
+    {
+        $data = $request->validate([
+            'assigned_to_user_id' => 'nullable|exists:users,id',
+        ]);
+
+        AssignmentService::apply($contract, $data['assigned_to_user_id'] ?? null, 'contracts', 'number');
+
+        return response()->json([
+            'message' => 'تم تحديث الإسناد.',
+            'contract' => $contract->fresh('assignedTo'),
+        ]);
+    }
+
     // --- Helpers --- //
 
     private function validateContract(Request $request, $contractId = null)
@@ -126,6 +151,7 @@ public function update(Request $request, Contract $contract)
             'notes' => 'nullable|string',
             'status' => 'required|in:active,expired,terminated,pending,cancelled',
             'summary' => 'nullable|string',
+            'assigned_to_user_id' => 'nullable|exists:users,id',
             'attachment' => 'nullable|file|mimes:pdf|max:5120',
         ]);
     }

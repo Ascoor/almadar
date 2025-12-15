@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Investigation;
 use Illuminate\Http\Request;
 use App\Helpers\AdminNotifier;
+use App\Services\AssignmentService;
 
 class InvestigationController extends Controller
 {
@@ -31,11 +32,16 @@ class InvestigationController extends Controller
             'case_number'   => 'nullable|string|max:255',
             'status'        => 'required|in:open,in_progress,closed',
             'notes'         => 'nullable|string',
+            'assigned_to_user_id' => 'nullable|exists:users,id',
         ]);
+        $assigneeId = $validated['assigned_to_user_id'] ?? null;
+        unset($validated['assigned_to_user_id']);
 
         $validated['created_by'] = auth()->id();
 
         $investigation = Investigation::create($validated);
+
+        AssignmentService::apply($investigation, $assigneeId, 'investigations', 'subject');
 
         AdminNotifier::notifyAll(
             '🕵️‍♂️ تحقيق جديد',
@@ -65,11 +71,16 @@ class InvestigationController extends Controller
             'case_number'   => 'nullable|string|max:255',
             'status'        => 'sometimes|in:open,in_progress,closed',
             'notes'         => 'nullable|string',
+            'assigned_to_user_id' => 'nullable|exists:users,id',
         ]);
+        $assigneeId = $validated['assigned_to_user_id'] ?? null;
+        unset($validated['assigned_to_user_id']);
 
         $validated['updated_by'] = auth()->id();
 
         $investigation->update($validated);
+
+        AssignmentService::apply($investigation, $assigneeId, 'investigations', 'subject');
 
         AdminNotifier::notifyAll(
             '✏️ تعديل تحقيق',
@@ -90,6 +101,20 @@ class InvestigationController extends Controller
 
         return response()->json([
             'message' => 'تم حذف التحقيق بنجاح.',
+        ]);
+    }
+
+    public function assign(Request $request, Investigation $investigation)
+    {
+        $data = $request->validate([
+            'assigned_to_user_id' => 'nullable|exists:users,id',
+        ]);
+
+        AssignmentService::apply($investigation, $data['assigned_to_user_id'] ?? null, 'investigations', 'subject');
+
+        return response()->json([
+            'message' => 'تم تحديث إسناد التحقيق.',
+            'investigation' => $investigation->fresh('assignedTo'),
         ]);
     }
 }

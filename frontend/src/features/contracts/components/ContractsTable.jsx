@@ -57,12 +57,15 @@ export default function ContractsTable({ contracts = [], categories = [], reload
           { key: "number", text: "رقم العقد" },
           { key: "category_name", text: "التصنيف" },
           { key: "contract_parties", text: "المتعاقد معه" },
+          { key: "assigned_to_user", text: "المُسند إليه" },
           { key: "value", text: "القيمة" },
           { key: "attachment", text: "المرفق" },
           { key: "status", text: "الحالة" },
         ]}
-        customRenderers={{ 
+        customRenderers={{
           category_name: (row) => row.category?.name || "—",
+          assigned_to_user: (row) =>
+            row.assigned_user?.name || row.assigned_to_user?.name || "—",
         }}
         renderAddButton={{
           action: "create",

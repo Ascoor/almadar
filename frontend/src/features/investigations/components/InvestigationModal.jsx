@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ModalCard from '@/components/common/ModalCard';
 import { modalInput, modalLabel } from '@/components/common/modalStyles';
+import AssigneeSelect from '@/components/common/AssigneeSelect';
 
 export default function InvestigationModal({ isOpen, onClose, onSubmit, initialData }) {
   const [form, setForm] = useState({
@@ -10,12 +11,13 @@ export default function InvestigationModal({ isOpen, onClose, onSubmit, initialD
     case_number: '',
     status: 'open',
     notes: '',
+    assigned_to_user_id: '',
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
-      setForm(initialData);
+      setForm({ ...initialData, assigned_to_user_id: initialData.assigned_to_user_id || initialData.assigned_to_user?.id || '' });
     } else {
       resetForm();
     }
@@ -29,6 +31,7 @@ export default function InvestigationModal({ isOpen, onClose, onSubmit, initialD
       case_number: '',
       status: 'open',
       notes: '',
+      assigned_to_user_id: '',
     });
   };
 
@@ -87,6 +90,20 @@ export default function InvestigationModal({ isOpen, onClose, onSubmit, initialD
               <option value="in_progress">قيد التنفيذ</option>
               <option value="closed">مغلق</option>
             </select>
+          </div>
+
+          <div className="md:col-span-2">
+            <AssigneeSelect
+              context="investigations"
+              value={form.assigned_to_user_id}
+              onChange={(user) =>
+                setForm((prev) => ({
+                  ...prev,
+                  assigned_to_user_id: user?.id || '',
+                }))
+              }
+              allowClear
+            />
           </div>
 
           <div className="space-y-1 md:col-span-2">

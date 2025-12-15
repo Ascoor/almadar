@@ -3,6 +3,8 @@ import { toast } from "sonner";
 import ModalCard from "@/components/common/ModalCard";
 import { modalInput } from "@/components/common/modalStyles";
 import { createContract, updateContract } from "@/services/api/contracts";
+import AssigneeSelect from "@/components/common/AssigneeSelect";
+import { useLanguage } from "@/context/LanguageContext";
 
 const EMPTY_FORM = {
   id: null,
@@ -16,6 +18,7 @@ const EMPTY_FORM = {
   notes: "",
   status: "active",
   summary: "",
+  assigned_to_user_id: "",
   attachment: null,
   oldAttachment: null,
 };
@@ -27,6 +30,7 @@ export default function ContractModal({
   categories = [],
   reloadContracts,
 }) {
+  const { translations } = useLanguage();
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [hasDuration, setHasDuration] = useState(false);
@@ -52,6 +56,8 @@ export default function ContractModal({
         notes: initialData.notes || "",
         status: initialData.status || "active",
         summary: initialData.summary || "",
+        assigned_to_user_id:
+          initialData.assigned_to_user_id || initialData.assigned_to_user?.id || "",
         attachment: null,
         oldAttachment: initialData.attachment || null,
       });
@@ -376,6 +382,20 @@ export default function ContractModal({
             className={inputClass("summary")}
           />
           {errorText("summary")}
+        </div>
+
+        <div className="md:col-span-2">
+          <AssigneeSelect
+            context="contracts"
+            value={form.assigned_to_user_id}
+            onChange={(user) =>
+              setForm((prev) => ({
+                ...prev,
+                assigned_to_user_id: user?.id || "",
+              }))
+            }
+            allowClear
+          />
         </div>
 
         {/* الملاحظات */}

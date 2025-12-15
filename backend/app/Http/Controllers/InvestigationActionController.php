@@ -6,6 +6,7 @@ use App\Models\Investigation;
 use App\Models\InvestigationAction;
 use Illuminate\Http\Request;
 use App\Helpers\AdminNotifier;
+use App\Services\AssignmentService;
 
 class InvestigationActionController extends Controller
 {
@@ -24,11 +25,16 @@ class InvestigationActionController extends Controller
             'requirements'    => 'nullable|string',
             'results'         => 'nullable|string',
             'status'          => 'required|in:pending,in_review,done',
+            'assigned_to_user_id' => 'nullable|exists:users,id',
         ]);
+        $assigneeId = $validated['assigned_to_user_id'] ?? null;
+        unset($validated['assigned_to_user_id']);
 
         $validated['created_by'] = auth()->id();
 
         $action = $investigation->actions()->create($validated);
+
+        AssignmentService::apply($action, $assigneeId, 'procedures', 'officer_name');
 
         AdminNotifier::notifyAll(
             '📌 إجراء جديد',
@@ -65,11 +71,16 @@ class InvestigationActionController extends Controller
             'requirements'    => 'nullable|string',
             'results'         => 'nullable|string',
             'status'          => 'sometimes|in:pending,in_review,done',
+            'assigned_to_user_id' => 'nullable|exists:users,id',
         ]);
+        $assigneeId = $validated['assigned_to_user_id'] ?? null;
+        unset($validated['assigned_to_user_id']);
 
         $validated['updated_by'] = auth()->id();
 
         $action->update($validated);
+
+        AssignmentService::apply($action, $assigneeId, 'procedures', 'officer_name');
 
         AdminNotifier::notifyAll(
             '✏️ تعديل إجراء',
@@ -101,6 +112,24 @@ class InvestigationActionController extends Controller
 
         return response()->json([
             'message' => 'تم حذف الإجراء بنجاح.',
+        ]);
+    }
+
+    public function assign(Request $request, Investigation $investigation, InvestigationAction $action)
+    {
+        if ($action->investigation_id !== $investigation->id) {
+            return response()->json(['message' => 'الإجراء لا يتبع هذا التحقيق.'], 403);
+        }
+
+        $data = $request->validate([
+            'assigned_to_user_id' => 'nullable|exists:users,id',
+        ]);
+
+        AssignmentService::apply($action, $data['assigned_to_user_id'] ?? null, 'procedures', 'officer_name');
+
+        return response()->json([
+            'message' => 'تم تحديث إسناد الإجراء.',
+            'action' => $action->fresh('assignedTo'),
         ]);
     }
 }

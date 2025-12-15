@@ -102,5 +102,18 @@
   "passwordUpdated": "Password updated successfully",
   "passwordChangeFailed": "Password change failed",
   "changePasswordPrompt": "Please change your password",
-  "newPassword": "New Password"
+  "newPassword": "New Password",
+  "assignee": {
+    "label": "Assignee",
+    "placeholder": "Select assignee",
+    "empty": "No eligible users",
+    "assigned_success": "Assignment updated successfully"
+  },
+  "role": {
+    "admin": "Head of Department",
+    "manager": "Manager",
+    "lawyer": "Lawyer",
+    "legal_investigator": "Legal Investigator",
+    "user": "Employee"
+  }
 }
