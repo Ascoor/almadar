@@ -65,7 +65,7 @@ export default function ContractsTable({ contracts = [], categories = [], reload
         customRenderers={{
           category_name: (row) => row.category?.name || "—",
           assigned_to_user: (row) =>
-            row.assigned_user?.name || row.assigned_to_user?.name || "—",
+            row.assigned_to?.name || row.assigned_to?.name || "—",
         }}
         renderAddButton={{
           action: "create",

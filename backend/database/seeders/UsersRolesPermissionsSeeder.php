@@ -129,9 +129,14 @@ class UsersRolesPermissionsSeeder extends Seeder
 
         $seedUsers = [
             'admin' => [
-                ['name' => 'د. محمد', 'email' => 'mohamed@almadar.ly', 'image' => 'users_images/admin1.png'],
-                ['name' => 'أ. عدنان', 'email' => 'adnan@almadar.ly', 'image' => 'users_images/admin2.jpg'],
-            ],
+            
+                    ['name'=>'د. محمد','role' => 'admin','email'=>'mohamed@almadar.ly','image'=>'users_images/admin1.png'],
+                    ['name'=>'أ. عدنان','role' => 'admin','email'=>'adnan@almadar.ly','image'=>'users_images/admin2.jpg'],
+                    ['name'=>'أ. سكينة','role' => 'admin','email'=>'sakeena@almadar.ly','image'=>'users_images/admin4.png'],
+                    ['name'=>'أدمن 4','role' => 'admin','email'=>'admin4@almadar.ly','image'=>'users_images/admin3.jpg'],
+                    ['name'=>'أدمن 5','role' => 'admin','email'=>'admin5@almadar.ly','image'=>'users_images/admin5.jpg'],
+         
+              ],
             'manager' => [
                 ['name' => 'Manager User 1', 'email' => 'manager1@almadar.ly'],
             ],

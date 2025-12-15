@@ -3,8 +3,8 @@ import { toast } from "sonner";
 import ModalCard from "@/components/common/ModalCard";
 import { modalInput } from "@/components/common/modalStyles";
 import { createContract, updateContract } from "@/services/api/contracts";
-import AssigneeSelect from "@/components/common/AssigneeSelect";
 import { useLanguage } from "@/context/LanguageContext";
+import { getRoleUsers } from "@/services/api/users";
 
 const EMPTY_FORM = {
   id: null,
@@ -31,17 +31,22 @@ export default function ContractModal({
   reloadContracts,
 }) {
   const { translations } = useLanguage();
+
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [hasDuration, setHasDuration] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // إعادة تهيئة البيانات عند فتح المودال أو تغيير initialData
+  const [users, setUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+
+  // ✅ تهيئة الفورم عند فتح المودال أو تغيير initialData
   useEffect(() => {
     if (!isOpen) return;
 
     if (initialData) {
       const hasEndDate = Boolean(initialData.end_date);
+
       setForm({
         id: initialData.id || null,
         contract_category_id: initialData.contract_category_id || "",
@@ -57,10 +62,13 @@ export default function ContractModal({
         status: initialData.status || "active",
         summary: initialData.summary || "",
         assigned_to_user_id:
-          initialData.assigned_to_user_id || initialData.assigned_to_user?.id || "",
+          initialData.assigned_to_user_id ||
+          initialData.assigned_to_user?.id ||
+          "",
         attachment: null,
         oldAttachment: initialData.attachment || null,
       });
+
       setHasDuration(hasEndDate);
     } else {
       setForm(EMPTY_FORM);
@@ -70,48 +78,55 @@ export default function ContractModal({
     setErrors({});
   }, [isOpen, initialData]);
 
+  // ✅ جلب Users (role=user فقط) مرة عند فتح المودال
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let mounted = true;
+
+    const fetchUsers = async () => {
+      setUsersLoading(true);
+      try {
+        const res = await getRoleUsers("user");
+
+        // يدعم: array أو {data: []}
+        const list = Array.isArray(res) ? res : res?.data;
+        if (mounted) setUsers(Array.isArray(list) ? list : []);
+      } catch (err) {
+        console.error(err);
+        toast.error("❌ فشل تحميل قائمة المستخدمين");
+        if (mounted) setUsers([]);
+      } finally {
+        if (mounted) setUsersLoading(false);
+      }
+    };
+
+    fetchUsers();
+
+    return () => {
+      mounted = false;
+    };
+  }, [isOpen]);
+
   const validateForm = () => {
     const newErrors = {};
 
-    if (!form.contract_category_id) {
-      newErrors.contract_category_id = "هذا الحقل مطلوب.";
-    }
+    if (!form.contract_category_id) newErrors.contract_category_id = "هذا الحقل مطلوب.";
+    if (!form.number) newErrors.number = "يرجى إدخال رقم العقد.";
 
-    if (!form.number) {
-      newErrors.number = "يرجى إدخال رقم العقد.";
-    }
+    if (!form.value) newErrors.value = "يرجى إدخال قيمة العقد.";
+    else if (Number(form.value) <= 0) newErrors.value = "قيمة العقد يجب أن تكون أكبر من صفر.";
 
-    if (!form.value) {
-      newErrors.value = "يرجى إدخال قيمة العقد.";
-    } else if (Number(form.value) <= 0) {
-      newErrors.value = "قيمة العقد يجب أن تكون أكبر من صفر.";
-    }
+    if (!form.contract_parties) newErrors.contract_parties = "يرجى إدخال أطراف العقد.";
+    if (!form.start_date) newErrors.start_date = "يرجى إدخال تاريخ البداية.";
 
-    if (!form.contract_parties) {
-      newErrors.contract_parties = "يرجى إدخال أطراف العقد.";
-    }
+    if (hasDuration && !form.end_date) newErrors.end_date = "يرجى إدخال تاريخ الانتهاء.";
 
-    if (!form.start_date) {
-      newErrors.start_date = "يرجى إدخال تاريخ البداية.";
-    }
-
-    if (hasDuration && !form.end_date) {
-      newErrors.end_date = "يرجى إدخال تاريخ الانتهاء.";
-    }
-
-    // تحقق أن تاريخ النهاية بعد أو يساوي البداية
-    if (
-      hasDuration &&
-      form.start_date &&
-      form.end_date &&
-      form.end_date < form.start_date
-    ) {
+    if (hasDuration && form.start_date && form.end_date && form.end_date < form.start_date) {
       newErrors.end_date = "تاريخ النهاية يجب أن يكون بعد أو مساوي لتاريخ البداية.";
     }
 
-    if (!form.summary) {
-      newErrors.summary = "يرجى كتابة ملخص للعقد.";
-    }
+    if (!form.summary) newErrors.summary = "يرجى كتابة ملخص للعقد.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -139,7 +154,6 @@ export default function ContractModal({
     setHasDuration(hasDurationValue);
 
     if (!hasDurationValue) {
-      // لو لا يوجد مدة للعقد → امسح تاريخ النهاية وأي خطأ مرتبط به
       setForm((prev) => ({ ...prev, end_date: "" }));
       setErrors((prev) => ({ ...prev, end_date: undefined }));
     }
@@ -157,9 +171,7 @@ export default function ContractModal({
 
       Object.entries(form).forEach(([key, val]) => {
         if (key === "attachment") {
-          if (val instanceof File) {
-            payload.append("attachment", val);
-          }
+          if (val instanceof File) payload.append("attachment", val);
         } else if (key !== "oldAttachment" && val != null) {
           payload.append(key, val);
         }
@@ -325,9 +337,7 @@ export default function ContractModal({
 
         {/* هل للعقد مدة؟ */}
         <div>
-          <label className="block mb-2 text-sm font-medium">
-            هل للعقد مدة؟
-          </label>
+          <label className="block mb-2 text-sm font-medium">هل للعقد مدة؟</label>
           <div className="flex gap-4 items-center">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -367,8 +377,7 @@ export default function ContractModal({
               <option value="cancelled">ملغي</option>
             </select>
           </div>
-        )}
-
+        )} 
         {/* الملخص */}
         <div className="md:col-span-2">
           <label className="block mb-1 text-sm font-medium">
@@ -385,18 +394,26 @@ export default function ContractModal({
         </div>
 
         <div className="md:col-span-2">
-          <AssigneeSelect
-            context="contracts"
-            value={form.assigned_to_user_id}
-            onChange={(user) =>
-              setForm((prev) => ({
-                ...prev,
-                assigned_to_user_id: user?.id || "",
-              }))
-            }
-            allowClear
-          />
-        </div>
+  <label className="block mb-1 text-sm font-medium">
+    المستخدم المسؤول
+  </label>
+
+  <select
+    name="assigned_to_user_id"
+    value={form.assigned_to_user_id || ""}
+    onChange={handleChange}
+    className={inputClass("assigned_to_user_id")}
+  >
+    <option value="">اختر المستخدم</option>
+
+    {users.map((user) => (
+      <option key={user.id} value={user.id}>
+        {user.name} {user.email ? `- ${user.email}` : ""}
+      </option>
+    ))}
+  </select>
+</div>
+
 
         {/* الملاحظات */}
         <div className="md:col-span-2">

@@ -11,7 +11,7 @@ class LitigationActionController extends Controller
 {
     public function index(Litigation $litigation)
     {
-        $actions = $litigation->actions()->with('actionType')->latest()->paginate(10);
+        $actions = $litigation->actions()->with(['assigned_to','actionType'])->latest()->paginate(10);
         return response()->json($actions);
     }
 
@@ -75,14 +75,18 @@ class LitigationActionController extends Controller
     private function validateAction(Request $request)
     {
         return $request->validate([
-            'action_date'     => 'required|date',
-            'action_type_id'  => 'required|exists:litigation_action_types,id',
-            'requirements'    => 'nullable|string',
-            'lawyer_name'     => 'required|string|max:1000',
-            'location'        => 'required|string|max:1000',
-            'notes'           => 'nullable|string',
-            'results'         => 'nullable|string',
-            'status'          => 'required|in:pending,done,in_review',
+            'action_date'        => 'required|date',
+            'action_type_id'     => 'required|exists:litigation_action_types,id',
+            'assigned_to_user_id'=> 'required|exists:users,id',
+            // اختياري لو تبي تتأكد أنه محامي فقط:
+            // 'assigned_to_user_id'=> ['required','exists:users,id', new \App\Rules\UserHasRole('lawyer')],
+    
+            'requirements'       => 'nullable|string',
+            'location'           => 'required|string|max:1000',
+            'notes'              => 'nullable|string',
+            'results'            => 'nullable|string',
+            'status'             => 'required|in:pending,done,in_review',
         ]);
+    
     }
 }

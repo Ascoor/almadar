@@ -64,7 +64,7 @@ $table->unsignedSmallInteger('case_year');
             $table->date('action_date');  // تاريخ الإجراء
             $table->string('requirements')->nullable();  // الطلبات
             $table->string('results')->nullable();  // النتيجة
-            $table->string('lawyer_name');  // اسم المحامي القائم بالإجراء
+ 
             $table->string('location');  // مكان الإجراء
             $table->longText('notes')->nullable();  // ملاحظات المتابعة
             $table->enum('status', ['pending', 'in_review', 'done'])->default('pending');  // حالة الإجراء

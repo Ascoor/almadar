@@ -179,7 +179,7 @@ export default function InvestigationActionsTable({
                     {action.results || "—"}
                   </td>
                   <td className="px-3 py-2 text-xs sm:text-sm">
-                    {action.assigned_user?.name || action.assigned_to_user?.name || "—"}
+                    {action.assigned_to?.name || action.assigned_to_user?.name || "—"}
                   </td>
                   <td className="px-3 py-2">
                     <StatusPill status={action.status} />

@@ -19,9 +19,13 @@ class InvestigationController extends Controller
     }
     public function index()
     {
-        $investigations = Investigation::with('actions.actionType')->latest()->paginate(10);
+        $investigations = Investigation::with(['actions.actionType', 'assignedTo'])
+            ->latest()
+            ->paginate(10);
+    
         return response()->json($investigations);
     }
+    
 
     public function store(Request $request)
     {

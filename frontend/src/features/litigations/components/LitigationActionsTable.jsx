@@ -172,7 +172,7 @@ export default function LitigationActionsTable({
                     {action.action_type?.action_name || "غير محدد"}
                   </td>
                   <td className="px-3 py-2 text-xs sm:text-sm">
-                    {action.lawyer_name}
+                    {action.assigned_to?.name}
                   </td>
                   <td className="px-3 py-2 text-xs sm:text-sm text-muted-foreground">
                     {action.requirements || "—"}

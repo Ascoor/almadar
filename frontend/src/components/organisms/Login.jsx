@@ -80,9 +80,9 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
     >
       <div
         className="
-          glass rounded-2xl md:rounded-3xl
+           rounded-2xl md:rounded-3xl
           shadow-glow border border-border/70
-          bg-gradient-subtle
+ 
           p-6 md:p-8 space-y-6
           hover-scale
         "

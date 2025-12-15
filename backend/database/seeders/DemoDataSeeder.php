@@ -29,13 +29,13 @@ class DemoDataSeeder extends Seeder
         }
 
         $category = ContractCategory::first() ?? ContractCategory::create($categoryAttributes);
-
-        $procedureType = InvestigationActionType::first() ?? InvestigationActionType::create([
-            'name' => 'جمع الاستبيانات',
-        ]);
-
+        $procedureType = InvestigationActionType::updateOrCreate(
+            ['action_name' => 'جمع الاستبيانات'],
+            []
+        );
+        
         $adviceType = AdviceType::first() ?? AdviceType::create([
-            'name' => 'استشارة عقد',
+            'type_name' => 'استشارة عقد',
         ]);
 
         Contract::updateOrCreate(

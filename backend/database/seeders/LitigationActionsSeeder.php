@@ -6,13 +6,14 @@ use Illuminate\Database\Seeder;
 use App\Models\Litigation;
 use App\Models\LitigationAction;
 use App\Models\LitigationActionType;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 
 class LitigationActionsSeeder extends Seeder
 {
     public function run(): void
     {
-        // ✅ أنواع إجراءات ليبية (وإصلاح "نصوير" -> "تصوير")
+        // ✅ أنواع إجراءات قضائية
         $actionTypes = [
             'اطلاع',
             'تصوير',
@@ -25,19 +26,29 @@ class LitigationActionsSeeder extends Seeder
             'جلسة نطق بالحكم',
         ];
 
-        // ✅ تأمين وجود الأنواع بدون تكرار
+        // ✅ تأمين وجود الأنواع
         foreach ($actionTypes as $name) {
             LitigationActionType::firstOrCreate(['action_name' => $name]);
         }
 
-        // ✅ استرجاع القضايا
+        // ✅ جلب القضايا
         $litigations = Litigation::all();
         if ($litigations->isEmpty()) {
-            $this->command->warn('⚠️ لا توجد قضايا في قاعدة البيانات. شغّل LitigationSeeder أولاً.');
+            $this->command->warn('⚠️ لا توجد قضايا. شغّل LitigationSeeder أولاً.');
             return;
         }
 
-        // ✅ أماكن/محاكم ليبية
+        // ✅ جلب المحامين فقط
+        $lawyers = User::whereHas('roles', function ($q) {
+            $q->where('name', 'lawyer');
+        })->pluck('id');
+
+        if ($lawyers->isEmpty()) {
+            $this->command->warn('⚠️ لا يوجد مستخدمون بدور (lawyer).');
+            return;
+        }
+
+        // ✅ محاكم / جهات ليبية
         $libyanCourts = [
             'محكمة طرابلس الابتدائية',
             'محكمة شمال طرابلس الابتدائية',
@@ -53,49 +64,45 @@ class LitigationActionsSeeder extends Seeder
             'محكمة بنغازي التجارية',
         ];
 
-        // ✅ أسماء محامين عيّنة
-        $lawyers = [
-            'المحامي محمد الطرابلسي',
-            'المحامية هدى البنغازية',
-            'الأستاذ علي المصراتي',
-            'الأستاذة سمية السبهاوية',
-            'الأستاذ طارق الزاوي',
-            'الأستاذ عادل السرتاوي',
-            'المحامية مروة البيضاء',
-        ];
-
         foreach ($litigations as $litigation) {
-            // هنعمل 2–6 إجراءات لكل قضية
+            // 2–6 إجراءات لكل قضية
             $actionsCount = rand(2, 6);
 
             for ($i = 0; $i < $actionsCount; $i++) {
                 $actionType = LitigationActionType::inRandomOrder()->first();
 
                 LitigationAction::create([
-                    'litigation_id' => $litigation->id,
-                    'action_type_id' => $actionType->id,
+                    'litigation_id'        => $litigation->id,
+                    'action_type_id'       => $actionType->id,
 
-                    // تاريخ واقعي خلال آخر سنتين
-                    'action_date'   => Carbon::now()->subDays(rand(5, 700))->format('Y-m-d'),
+                    // تاريخ واقعي
+                    'action_date'          => Carbon::now()
+                        ->subDays(rand(5, 700))
+                        ->format('Y-m-d'),
 
-                    // متطلبات/نتائج عربية مختصرة
-                    'requirements'  => fake('ar_SA')->optional()->sentence(6),
-                    'results'       => fake('ar_SA')->optional()->sentence(7),
+                    // بيانات نصية
+                    'requirements'         => fake('ar_SA')->optional()->sentence(6),
+                    'results'              => fake('ar_SA')->optional()->sentence(7),
+                    'notes'                => fake('ar_SA')->optional()->paragraph(2),
 
-                    // محامي وموقع ليبي
-                    'lawyer_name'   => $lawyers[array_rand($lawyers)],
-                    'location'      => $libyanCourts[array_rand($libyanCourts)],
+                    // ✅ التعيين لمحامي مسجّل
+                    'assigned_to_user_id'  => $lawyers->random(),
 
-                    'notes'         => fake('ar_SA')->optional()->paragraph(2),
+                    // جهة / محكمة
+                    'location'             => $libyanCourts[array_rand($libyanCourts)],
 
-                    // حالات مناسبة لسير الإجراءات
-                    'status'        => fake()->randomElement(['pending', 'in_review', 'done']),
+                    // حالة الإجراء
+                    'status'               => fake()->randomElement([
+                        'pending',
+                        'in_review',
+                        'done',
+                    ]),
 
-                    'created_by'    => 1,
+                    'created_by'           => 1,
                 ]);
             }
         }
 
-        $this->command->info('✅ تم إنشاء إجراءات قضائية (ليبيا) عشوائيًا لكل قضية.');
+        $this->command->info('✅ تم إنشاء إجراءات قضائية وربطها بمحامين (lawyer) عشوائيًا.');
     }
 }
