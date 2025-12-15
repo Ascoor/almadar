@@ -31,8 +31,18 @@ const ReportsPage = () => {
           caseStatus,
           selectedSection,
         });
-        setReports(response.data); // وضع البيانات في الحالة
+
+        const payload = response?.data?.data ?? response?.data ?? [];
+
+        if (!Array.isArray(payload)) {
+          console.warn('⚠️ Unexpected reports payload shape', payload);
+          setReports([]);
+          return;
+        }
+
+        setReports(payload); // وضع البيانات في الحالة
       } catch (err) {
+        console.error('Failed to load reports', err);
         toast.error('فشل تحميل البيانات');
       }
     };
