@@ -76,11 +76,14 @@ export default function LegalAdvicePage() {
             { key: "type", text: "نوع المشورة" },
             { key: "topic", text: "الموضوع" },
             { key: "advice_date", text: "تاريخ المشورة" },
+            { key: "assigned_to_user", text: "المُسند إليه" },
             { key: "advice_number", text: "رقم المشورة" },
             { key: "attachment", text: "مرفق" },
           ]}
           customRenderers={{
             type: (row) => getAdviceTypeName(row.advice_type_id),
+            assigned_to_user: (row) =>
+              row.assigned_user?.name || row.assigned_to_user?.name || "—",
             attachment: (row) =>
               row.attachment ? (
                 <a

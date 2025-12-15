@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ModalCard from "@/components/common/ModalCard";
 import { modalInput, modalLabel, modalHelperText } from "@/components/common/modalStyles";
+import AssigneeSelect from "@/components/common/AssigneeSelect";
 
 const EMPTY_FORM = {
   id: null,
@@ -10,6 +11,7 @@ const EMPTY_FORM = {
   requirements: "",
   results: "",
   status: "pending",
+  assigned_to_user_id: "",
 };
 
 export default function InvestigationActionModal({
@@ -28,7 +30,11 @@ export default function InvestigationActionModal({
     if (!isOpen) return;
 
     // عند الفتح، إمّا نملأ البيانات القديمة أو نبدأ فورم جديد
-    setForm(initialData ? { ...EMPTY_FORM, ...initialData } : EMPTY_FORM);
+    setForm(
+      initialData
+        ? { ...EMPTY_FORM, ...initialData, assigned_to_user_id: initialData.assigned_to_user_id || initialData.assigned_to_user?.id || "" }
+        : EMPTY_FORM,
+    );
   }, [isOpen, initialData]);
 
   const handleChange = (e) => {
@@ -154,6 +160,20 @@ export default function InvestigationActionModal({
             onChange={handleChange}
             className={`${modalInput} text-sm`}
             placeholder="مثال: تم التنفيذ، جاري المتابعة، ملاحظات إضافية..."
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <AssigneeSelect
+            context="procedures"
+            value={form.assigned_to_user_id}
+            onChange={(user) =>
+              setForm((prev) => ({
+                ...prev,
+                assigned_to_user_id: user?.id || "",
+              }))
+            }
+            allowClear
           />
         </div>
 

@@ -126,6 +126,7 @@ export default function InvestigationActionsTable({
                 <th className="px-3 py-2">المحامي / المستشار</th>
                 <th className="px-3 py-2">المتطلبات</th>
                 <th className="px-3 py-2">النتيجة</th>
+                <th className="px-3 py-2">المُسند إليه</th>
                 <th className="px-3 py-2">الحالة</th>
               </tr>
             </thead>
@@ -176,6 +177,9 @@ export default function InvestigationActionsTable({
                   </td>
                   <td className="px-3 py-2 text-xs sm:text-sm text-muted-foreground">
                     {action.results || "—"}
+                  </td>
+                  <td className="px-3 py-2 text-xs sm:text-sm">
+                    {action.assigned_user?.name || action.assigned_to_user?.name || "—"}
                   </td>
                   <td className="px-3 py-2">
                     <StatusPill status={action.status} />

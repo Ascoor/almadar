@@ -35,6 +35,7 @@ export default function InvestigationsPage() {
     { key: "employee_name", text: "الموظف" },
     { key: "source", text: "الجهة المحيلة" },
     { key: "subject", text: "الموضوع" },
+    { key: "assigned_to_user", text: "المُسند إليه" },
     { key: "case_number", text: "رقم القضية" },
     { key: "status", text: "الحالة" },
   ];
@@ -46,6 +47,8 @@ export default function InvestigationsPage() {
         {row.status}
       </span>
     ),
+    assigned_to_user: (row) =>
+      row.assigned_user?.name || row.assigned_to_user?.name || "—",
   };
 
   // فتح مودال إضافة جديد

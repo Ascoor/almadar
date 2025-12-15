@@ -5,6 +5,7 @@ import ModalCard from "@/components/common/ModalCard";
 import { modalInput, modalLabel, modalHelperText } from "@/components/common/modalStyles";
 import { createLegalAdvice, updateLegalAdvice } from "@/services/api/legalAdvices";
 import API_CONFIG from "@/config/config";
+import AssigneeSelect from "@/components/common/AssigneeSelect";
 
 const EMPTY_FORM = {
   id: null,
@@ -15,6 +16,7 @@ const EMPTY_FORM = {
   issuer: "",
   advice_date: "",
   advice_number: "",
+  assigned_to_user_id: "",
   attachment: null,
   oldAttachment: null,
 };
@@ -42,6 +44,8 @@ export default function LegalAdviceModal({
         issuer: initialData.issuer || "",
         advice_date: initialData.advice_date?.slice(0, 10) || "",
         advice_number: initialData.advice_number || "",
+        assigned_to_user_id:
+          initialData.assigned_to_user_id || initialData.assigned_to_user?.id || "",
         attachment: null,
         oldAttachment: initialData.attachment || null,
       });
@@ -171,12 +175,26 @@ export default function LegalAdviceModal({
             <a
               href={`${API_CONFIG.baseURL}/storage/${form.oldAttachment}`}
               target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 block text-primary underline"
-            >
-              عرض المرفق الحالي
-            </a>
+            rel="noopener noreferrer"
+            className="mt-1 block text-primary underline"
+          >
+            عرض المرفق الحالي
+          </a>
           ) : null}
+        </div>
+
+        <div className="md:col-span-2">
+          <AssigneeSelect
+            context="legal_advice"
+            value={form.assigned_to_user_id}
+            onChange={(user) =>
+              setForm((prev) => ({
+                ...prev,
+                assigned_to_user_id: user?.id || "",
+              }))
+            }
+            allowClear
+          />
         </div>
       </form>
     </ModalCard>

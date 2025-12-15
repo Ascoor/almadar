@@ -105,5 +105,18 @@
   "passwordUpdated": "تم تحديث كلمة المرور بنجاح",
   "passwordChangeFailed": "فشل تغيير كلمة المرور",
   "changePasswordPrompt": "يرجى تغيير كلمة المرور",
-  "newPassword": "كلمة المرور الجديدة"
+  "newPassword": "كلمة المرور الجديدة",
+  "assignee": {
+    "label": "المُسند إليه",
+    "placeholder": "اختر المكلف",
+    "empty": "لا يوجد مستخدمون متاحون",
+    "assigned_success": "تم إسناد المهمة بنجاح"
+  },
+  "role": {
+    "admin": "رئيس قسم",
+    "manager": "مدير",
+    "lawyer": "محام",
+    "legal_investigator": "باحث قانوني",
+    "user": "موظف"
+  }
 }
