@@ -2,26 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
 
 class NotificationController extends Controller
 {
-       public function getUserNotifications()
+    public function getUserNotifications()
     {
-        $user = auth()->user();  
-        $notifications = $user->notifications; 
-        
-        return response()->json($notifications);
+        $user = auth()->user();
+        return response()->json($user->notifications);
     }
+
     public function markAsRead($notificationId)
-{
-    $notification = Notification::find($notificationId);
-    if ($notification) {
-        $notification->update(['read' => true]);
+    {
+        $user = auth()->user();
+
+        // Make sure the notification belongs to this user
+        $notification = $user->notifications()->where('id', $notificationId)->first();
+
+        if (!$notification) {
+            return response()->json(['message' => 'Notification not found'], 404);
+        }
+
+        $notification->markAsRead(); // sets read_at
         return response()->json(['message' => 'Notification marked as read']);
     }
-    return response()->json(['message' => 'Notification not found'], 404);
-}
-
 }

@@ -18,9 +18,7 @@ class Investigation extends Model
         'notes',
         'created_by',
         'updated_by',
-        'assigned_to_user_id',
-        'assigned_by_user_id',
-        'updated_by_user_id',
+        'assigned_to_user_id', 
     ];
  
     public function creator()
@@ -41,15 +39,5 @@ class Investigation extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to_user_id');
     }
-
-    public function assignedBy()
-    {
-        return $this->belongsTo(User::class, 'assigned_by_user_id');
-    }
-
-    public function lastUpdatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_by_user_id');
-    }
-  
+ 
 }

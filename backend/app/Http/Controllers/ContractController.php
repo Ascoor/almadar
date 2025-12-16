@@ -5,116 +5,174 @@ namespace App\Http\Controllers;
 use App\Models\Contract;
 use App\Models\Archive;
 use App\Services\AssignmentService;
+use App\Helpers\AdminNotifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use App\Helpers\AdminNotifier;
+use Illuminate\Support\Facades\DB;
+
 class ContractController extends Controller
 {
-        public function __construct()
+    public function __construct()
     {
-        $this->middleware('permission:view contracts')->only(['index','show']);
+        $this->middleware('permission:view contracts')->only(['index', 'show']);
         $this->middleware('permission:create contracts')->only('store');
         $this->middleware('permission:edit contracts')->only('update');
         $this->middleware('permission:delete contracts')->only('destroy');
     }
+
     public function index()
     {
-        $contracts = Contract::with('category','updater','creator','assignedTo')->latest()->paginate(50);
+        $contracts = Contract::query()
+            ->with([
+                'category',
+                'creator',
+                'updater',
+                'assignedTo',
+            ])
+            ->latest()
+            ->paginate(50);
+
         return response()->json($contracts);
+    }
+
+    public function show($id)
+    {
+        $contract = Contract::query()
+            ->with([
+                'category',
+                'creator',
+                'updater',
+                'assignedTo',
+            ])
+            ->findOrFail($id);
+
+        return response()->json($contract);
     }
 
     public function store(Request $request)
     {
         $validated = $this->validateContract($request);
+
+        // assignment comes separately (we do it with AssignmentService)
         $assigneeId = $validated['assigned_to_user_id'] ?? null;
         unset($validated['assigned_to_user_id']);
 
-        $validated['created_by'] = auth()->id();
+        $validated['value'] = $this->normalizeValue($validated['value'] ?? null);
 
-        $validated['value'] = $this->normalizeValue($validated['value']);
+        // ✅ creator/updater
+        $userId = auth()->id();
+        $validated['created_by'] = $userId;
+        $validated['updated_by'] = $userId;
 
+        // attachment (store path only, actual store outside transaction is fine)
         if ($request->hasFile('attachment')) {
             try {
-                $validated['attachment'] = $this->storeAttachment($request->file('attachment'), $validated['scope']);
-            } catch (\Exception $e) {
+                $validated['attachment'] = $this->storeAttachment(
+                    $request->file('attachment'),
+                    $validated['scope']
+                );
+            } catch (\Throwable $e) {
                 $this->logAttachmentError($e);
                 return $this->attachmentErrorResponse();
             }
         }
 
-        $contract = Contract::create($validated);
+        $contract = null;
 
-        AssignmentService::apply($contract, $assigneeId, 'contracts', 'number');
+        DB::transaction(function () use (&$contract, $validated, $assigneeId, $userId) {
+            $contract = Contract::create($validated);
 
-        // ✅ إضافة إلى جدول الأرشيف إذا تم رفع مرفق
-        if (!empty($validated['attachment'])) {
-            $this->storeArchive($contract);
-        }
-// بعد إنشاء العقد:
-AdminNotifier::notifyAll(
-    '📄 عقد جديد',
-    'تمت إضافة عقد رقم: ' . $contract->number . ' بواسطة ' . auth()->user()->name,
-    '/contracts/' . $contract->id,
-     auth()->id()
-);
+            // ✅ assignment notification
+            AssignmentService::apply($contract, $assigneeId, 'contracts', 'number');
+
+            // ✅ archive if attachment exists
+            if (!empty($contract->attachment)) {
+                $this->storeArchive($contract);
+            }
+
+            // ✅ notify admins
+            AdminNotifier::notifyAll(
+                '📄 عقد جديد',
+                'تمت إضافة عقد رقم: ' . $contract->number . ' بواسطة ' . (auth()->user()->name ?? 'System'),
+                "/contracts/{$contract->getKey()}",
+                $userId
+            );
+        });
+
         return response()->json([
-            'message' => 'تم إنشاء العقد بنجاح.',
-            'contract' => $contract,
+            'message'  => 'تم إنشاء العقد بنجاح.',
+            'contract' => $contract->load(['category', 'creator:id,name', 'updater:id,name', 'assignedTo:id,name']),
         ], 201);
     }
 
-public function update(Request $request, Contract $contract)
-{
-    $validated = $this->validateContract($request, $contract->id);
-    $assigneeId = $validated['assigned_to_user_id'] ?? null;
-    unset($validated['assigned_to_user_id']);
+    public function update(Request $request, Contract $contract)
+    {
+        $validated = $this->validateContract($request, $contract->getKey());
 
-    $validated['value'] = $this->normalizeValue($validated['value']);
+        $assigneeId = $validated['assigned_to_user_id'] ?? null;
+        unset($validated['assigned_to_user_id']);
 
-    if ($request->hasFile('attachment')) {
-        try {
-            $this->deleteOldAttachment($contract->attachment);
-            $validated['attachment'] = $this->storeAttachment($request->file('attachment'), $validated['scope']);
-        } catch (\Exception $e) {
-            $this->logAttachmentError($e);
-            return $this->attachmentErrorResponse();
+        $validated['value'] = $this->normalizeValue($validated['value'] ?? null);
+
+        // ✅ updater
+        $userId = auth()->id();
+        $validated['updated_by'] = $userId;
+
+        // handle attachment replacement
+        $newAttachmentPath = null;
+        $shouldReplaceAttachment = $request->hasFile('attachment');
+
+        if ($shouldReplaceAttachment) {
+            try {
+                $newAttachmentPath = $this->storeAttachment(
+                    $request->file('attachment'),
+                    $validated['scope'] ?? $contract->scope
+                );
+                $validated['attachment'] = $newAttachmentPath;
+            } catch (\Throwable $e) {
+                $this->logAttachmentError($e);
+                return $this->attachmentErrorResponse();
+            }
         }
+
+        DB::transaction(function () use ($contract, $validated, $assigneeId, $userId) {
+            $contract->update($validated);
+
+            // ✅ assignment notification (only to assignee)
+            AssignmentService::apply($contract, $assigneeId, 'contracts', 'number');
+
+            // ✅ archive if attachment exists
+            if (!empty($contract->attachment)) {
+                $this->storeArchive($contract);
+            }
+
+            // ✅ notify admins
+            AdminNotifier::notifyAll(
+                '✏️ تعديل عقد',
+                'تم تعديل عقد رقم: ' . $contract->number . ' بواسطة ' . (auth()->user()->name ?? 'System'),
+                "/contracts/{$contract->getKey()}",
+                $userId
+            );
+        });
+
+        // ✅ delete old attachment AFTER transaction success
+        if ($shouldReplaceAttachment && $newAttachmentPath) {
+            $this->deleteOldAttachment($contract->getOriginal('attachment'));
+        }
+
+        return response()->json([
+            'message'  => 'تم تحديث العقد بنجاح.',
+            'contract' => $contract->fresh()->load(['category', 'creator:id,name', 'updater:id,name', 'assignedTo:id,name']),
+        ]);
     }
-
-    // ✅ سجل من قام بالتعديل
-    $validated['updated_by'] = auth()->id();
-
-    $contract->update($validated);
-
-    AssignmentService::apply($contract, $assigneeId, 'contracts', 'number');
-
-    if (!empty($validated['attachment'])) {
-        $this->storeArchive($contract);
-    }
-
-    AdminNotifier::notifyAll(
-        '✏️ تعديل عقد',
-        'تم تعديل عقد رقم: ' . $contract->number . ' بواسطة ' . auth()->user()->name,
-        '/contracts/' . $contract->id,
-        auth()->id()
-    );
-
-    return response()->json([
-        'message' => 'تم تحديث العقد بنجاح.',
-        'contract' => $contract,
-    ]);
-}
-
 
     public function destroy(Contract $contract)
     {
         $this->deleteOldAttachment($contract->attachment);
         $contract->delete();
 
-        return response()->json([
-            'message' => 'تم حذف العقد بنجاح.',
-        ]);
+        return response()->json(['message' => 'تم حذف العقد بنجاح.']);
     }
 
     public function assign(Request $request, Contract $contract)
@@ -126,14 +184,16 @@ public function update(Request $request, Contract $contract)
         AssignmentService::apply($contract, $data['assigned_to_user_id'] ?? null, 'contracts', 'number');
 
         return response()->json([
-            'message' => 'تم تحديث الإسناد.',
-            'contract' => $contract->fresh('assignedTo'),
+            'message'  => 'تم تحديث الإسناد.',
+            'contract' => $contract->fresh()->load(['assignedTo:id,name']),
         ]);
     }
 
-    // --- Helpers --- //
+    // -----------------
+    // Helpers
+    // -----------------
 
-    private function validateContract(Request $request, $contractId = null)
+    private function validateContract(Request $request, $contractId = null): array
     {
         $uniqueRule = 'unique:contracts,number';
         if ($contractId) {
@@ -142,28 +202,28 @@ public function update(Request $request, Contract $contract)
 
         return $request->validate([
             'contract_category_id' => 'required|exists:contract_categories,id',
-            'scope' => 'required|in:local,international',
-            'number' => ['required', 'string', $uniqueRule],
-            'contract_parties' => 'required|string',
-            'value' => 'nullable|numeric',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'notes' => 'nullable|string',
-            'status' => 'required|in:active,expired,terminated,pending,cancelled',
-            'summary' => 'nullable|string',
-            'assigned_to_user_id' => 'nullable|exists:users,id',
-            'attachment' => 'nullable|file|mimes:pdf|max:5120',
+            'scope'                => 'required|in:local,international',
+            'number'               => ['required', 'string', $uniqueRule],
+            'contract_parties'     => 'required|string',
+            'value'                => 'nullable|numeric',
+            'start_date'           => 'nullable|date',
+            'end_date'             => 'nullable|date|after_or_equal:start_date',
+            'notes'                => 'nullable|string',
+            'status'               => 'required|in:active,expired,terminated,pending,cancelled',
+            'summary'              => 'nullable|string',
+            'assigned_to_user_id'  => 'nullable|exists:users,id',
+            'attachment'           => 'nullable|file|mimes:pdf|max:5120',
         ]);
     }
 
-    private function normalizeValue($value)
+    private function normalizeValue($value): ?float
     {
         return $value !== null ? (float) $value : null;
     }
 
-    private function storeAttachment($file, $scope)
+    private function storeAttachment($file, string $scope): string
     {
-        $folder = 'attachments/contracts/' . $scope;
+        $folder = "attachments/contracts/{$scope}";
 
         if (!Storage::disk('public')->exists($folder)) {
             Storage::disk('public')->makeDirectory($folder, 0755, true);
@@ -172,20 +232,19 @@ public function update(Request $request, Contract $contract)
         return $file->store($folder, 'public');
     }
 
-    private function deleteOldAttachment($attachmentPath)
+    private function deleteOldAttachment(?string $attachmentPath): void
     {
         if ($attachmentPath && Storage::disk('public')->exists($attachmentPath)) {
             Storage::disk('public')->delete($attachmentPath);
         }
     }
 
-    private function logAttachmentError(\Exception $e)
+    private function logAttachmentError(\Throwable $e): void
     {
         Log::error('Attachment upload failed.', [
             'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString(),
+            'file'  => $e->getFile(),
+            'line'  => $e->getLine(),
         ]);
     }
 
@@ -193,25 +252,20 @@ public function update(Request $request, Contract $contract)
     {
         return response()->json([
             'message' => 'فشل رفع المرفق. راجع سجل الأخطاء.',
-            'errors' => ['attachment' => ['فشل رفع المرفق.']],
+            'errors'  => ['attachment' => ['فشل رفع المرفق.']],
         ], 422);
     }
 
-    /**
-     * ✅ تخزين سجل جديد في جدول الأرشيف
-     */
-    private function storeArchive(Contract $contract)
+    private function storeArchive(Contract $contract): void
     {
-        if (!$contract->attachment) {
-            return;
-        }
+        if (!$contract->attachment) return;
 
         Archive::create([
-            'model_type' => 'Contract',
-            'model_id' => $contract->id,
-            'title' => $contract->category?->name . ' - ' . ($contract->scope === 'local' ? 'محلي' : 'دولي'),
-            'number' => $contract->number,
-            'file_path' => $contract->attachment,
+            'model_type'     => 'Contract',
+            'model_id'       => $contract->getKey(),
+            'title'          => ($contract->category?->name ?? 'Contract') . ' - ' . ($contract->scope === 'local' ? 'محلي' : 'دولي'),
+            'number'         => $contract->number,
+            'file_path'      => $contract->attachment,
             'extracted_text' => $contract->contract_parties,
         ]);
     }

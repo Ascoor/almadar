@@ -1,4 +1,3 @@
-// tailwind.config.js
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 

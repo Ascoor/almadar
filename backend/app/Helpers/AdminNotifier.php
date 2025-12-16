@@ -1,43 +1,33 @@
 <?php
+
 namespace App\Helpers;
 
 use App\Events\AdminNotificationEvent;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use App\Notifications\AdminAlertNotification;
+
 class AdminNotifier
 {
     public static function notifyAll(string $title, string $message, ?string $link = null, ?int $excludeUserId = null)
-{
-    $admins = User::role('Admin')
-        ->when($excludeUserId, fn($query) => $query->where('id', '!=', $excludeUserId))
-        ->get();
+    {
+        $admins = User::role('Admin')
+            ->when($excludeUserId, fn ($q) => $q->where('id', '!=', $excludeUserId))
+            ->get();
 
-    foreach ($admins as $admin) {
-        $payload = [
-            'id' => Str::uuid()->toString(),
-            'title' => $title,
-            'message' => $message,
-            'link' => $link,
-            'created_at' => now()->toDateTimeString(),
-        ];
+        foreach ($admins as $admin) {
 
-        // حفظ الإشعار
-        DB::table('notifications')->insert([
-            'user_id' => $admin->id,
-            'notifiable_id' => $admin->id,
-            'notifiable_type' => User::class,
-            'title' => $title,
-            'message' => $message,
-            'link' => $link,
-            'read' => false,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            // ✅ حفظ في جدول Laravel الافتراضي (notifications)
+            $admin->notify(new AdminAlertNotification($title, $message, $link));
 
-        // بث الإشعار
-        event(new AdminNotificationEvent($payload, $admin->id));
+            $latest = $admin->notifications()->latest()->first();
+            
+            event(new AdminNotificationEvent([
+                'id' => $latest?->id,
+                'title' => $title,
+                'message' => $message,
+                'link' => $link,
+                'created_at' => optional($latest?->created_at)->toDateTimeString() ?? now()->toDateTimeString(),
+            ], $admin->id));
+        }            
     }
-}
-
 }

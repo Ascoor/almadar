@@ -3,7 +3,8 @@ import api from './axiosConfig'; // تأكد أن ملف axiosConfig صحيح
 // ✅ Contracts Endpoints
 export const getContracts = () => api.get('/api/contracts');
 
-export const getContractById = (id) => api.get(`/api/contracts/${id}`);
+export const getContractById = (id, config = {}) => api.get(`/api/contracts/${id}`, config);
+
 
 export const createContract = (formData) => {
   return api.post('/api/contracts', formData, {

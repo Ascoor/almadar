@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\DatabaseNotification;
+
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -47,8 +49,24 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
        // تعريف العلاقة مع الإشعارات
-    public function notifications()
-    {
-        return $this->morphMany(Notification::class, 'notifiable');
-    }
+    
+public function notifications()
+{
+    return $this->morphMany(DatabaseNotification::class, 'notifiable')->latest();
+}
+
+public function readNotifications()
+{
+    return $this->notifications()->whereNotNull('read_at');
+}
+
+public function unreadNotifications()
+{
+    return $this->notifications()->whereNull('read_at');
+}
+public function receivesBroadcastNotificationsOn(): string
+{
+    return "user.{$this->id}";
+}
+
 }

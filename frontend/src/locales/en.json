@@ -115,5 +115,30 @@
     "lawyer": "Lawyer",
     "legal_investigator": "Legal Investigator",
     "user": "Employee"
+  },
+  "notifications": {
+  "default": {
+    "title": "New notification",
+    "message": "You have a new notification"
+  },
+
+  "assignment": {
+    "title": "📌 Assignment Updated",
+    "message": "Assigned {context}: {title}"
+  },
+
+  "permissions": {
+    "title": "New permissions",
+    "message": "New permissions received.",
+    "toast": "Your permissions were updated"
+  },
+
+  "ui": {
+    "header": "Notifications",
+    "markAll": "Mark all as read",
+    "empty": "No notifications"
   }
+}
+
+  
 }

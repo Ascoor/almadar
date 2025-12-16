@@ -6,55 +6,44 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    private array $tables = [
+        'contracts',
+        'investigations',
+        'legal_advices',
+        'litigations',
+        'litigation_actions',
+        'investigation_actions',
+    ];
+
     public function up(): void
     {
-        $tables = [
-            'contracts',
-            'investigations',
-            'legal_advices',
-            'litigations',
-            'litigation_actions',
-            'investigation_actions',
-        ];
-
-        foreach ($tables as $table) {
-            if (!Schema::hasTable($table)) {
+        foreach ($this->tables as $tableName) {
+            if (!Schema::hasTable($tableName)) {
                 continue;
             }
 
-            Schema::table($table, function (Blueprint $table) {
-                $table->foreignId('assigned_to_user_id')->nullable()->after('updated_by')->constrained('users')->nullOnDelete();
-                $table->foreignId('assigned_by_user_id')->nullable()->after('assigned_to_user_id')->constrained('users')->nullOnDelete();
-                $table->foreignId('updated_by_user_id')->nullable()->after('assigned_by_user_id')->constrained('users')->nullOnDelete();
+            Schema::table($tableName, function (Blueprint $table) use ($tableName) {
+                if (!Schema::hasColumn($tableName, 'assigned_to_user_id')) {
+                    $table->foreignId('assigned_to_user_id')
+                        ->nullable()
+                        ->after('updated_by')
+                        ->constrained('users')
+                        ->nullOnDelete();
+                }
             });
         }
     }
 
     public function down(): void
     {
-        $tables = [
-            'contracts',
-            'investigations',
-            'legal_advices',
-            'litigations',
-            'litigation_actions',
-            'investigation_actions',
-        ];
-
-        foreach ($tables as $table) {
-            if (!Schema::hasTable($table)) {
+        foreach ($this->tables as $tableName) {
+            if (!Schema::hasTable($tableName)) {
                 continue;
             }
 
-            Schema::table($table, function (Blueprint $table) {
-                if (Schema::hasColumn($table->getTable(), 'assigned_to_user_id')) {
+            Schema::table($tableName, function (Blueprint $table) use ($tableName) {
+                if (Schema::hasColumn($tableName, 'assigned_to_user_id')) {
                     $table->dropConstrainedForeignId('assigned_to_user_id');
-                }
-                if (Schema::hasColumn($table->getTable(), 'assigned_by_user_id')) {
-                    $table->dropConstrainedForeignId('assigned_by_user_id');
-                }
-                if (Schema::hasColumn($table->getTable(), 'updated_by_user_id')) {
-                    $table->dropConstrainedForeignId('updated_by_user_id');
                 }
             });
         }

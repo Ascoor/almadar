@@ -1,10 +1,18 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import ar from '@/locales/ar.json';
 import en from '@/locales/en.json';
 
 const translations = { ar, en };
+const LanguageContext = createContext(null);
 
-const LanguageContext = createContext();
+// ✅ get nested value by path: "notifications.assignment.title"
+const getByPath = (obj, path) => {
+  if (!obj || !path) return undefined;
+  return path.split('.').reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
+};
+
+const interpolate = (str, params = {}) =>
+  String(str).replace(/\{(\w+)\}/g, (_, k) => (params?.[k] ?? ''));
 
 export const LanguageProvider = ({ children }) => {
   const getInitialLanguage = () => {
@@ -22,18 +30,32 @@ export const LanguageProvider = ({ children }) => {
     localStorage.setItem('lang', lang);
   }, [lang]);
 
-  const toggleLanguage = () => setLang(prev => (prev === 'en' ? 'ar' : 'en'));
-  const translationsMemo = useMemo(() => translations[lang], [lang]);
-  const t = (key) => translationsMemo[key] || key;
+  const toggleLanguage = () => setLang((prev) => (prev === 'en' ? 'ar' : 'en'));
+
+  const translationsMemo = useMemo(() => translations[lang] || translations.en, [lang]);
+
+  // ✅ t(path, params)
+  const t = (path, params) => {
+    const value = getByPath(translationsMemo, path);
+    if (value === undefined) return path;
+    return typeof value === 'string' ? interpolate(value, params) : value;
+  };
+
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
+
   const formatNumber = (num, language = lang) =>
     new Intl.NumberFormat(language === 'ar' ? 'ar-EG' : 'en-US').format(num);
 
   return (
-    <LanguageContext.Provider value={{ lang, dir, translations: translationsMemo, toggleLanguage, t, formatNumber }}>
+
+    <LanguageContext.Provider value={{ lang, dir, toggleLanguage, t, formatNumber, translations: translationsMemo }}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
-export const useLanguage = () => useContext(LanguageContext);
+export const useLanguage = () => {
+  const ctx = useContext(LanguageContext);
+  if (!ctx) throw new Error('useLanguage must be used within LanguageProvider');
+  return ctx;
+};

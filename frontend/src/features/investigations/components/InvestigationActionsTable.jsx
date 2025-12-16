@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { Pencil, Trash2, BookmarkPlus } from "lucide-react";
 import { toast } from "sonner";
 import { AuthContext } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 import InvestigationActionModal from "./InvestigationActionModal";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
@@ -20,6 +21,9 @@ export default function InvestigationActionsTable({
   const [showModal, setShowModal] = useState(false);
   const [editingAction, setEditingAction] = useState(null);
   const [actionToDelete, setActionToDelete] = useState(null);
+  const [selectedAction, setSelectedAction] = useState(null);
+
+  const navigate = useNavigate();
 
   const {
     data: investigationActions = [],
@@ -132,19 +136,27 @@ export default function InvestigationActionsTable({
             </thead>
             <tbody>
               {investigationActions.map((action, idx) => (
-                <tr
-                  key={action.id}
-                  className={`border-t border-border/60 transition-colors hover:bg-muted/40 ${
-                    idx % 2 === 0 ? "bg-card/40" : "bg-card/20"
-                  }`}
-                >
+         <tr
+         key={action.id}
+         onClick={() =>
+           navigate(`/legal/investigation-action/${action.id}`, {
+             state: action, // ✅ يعرض فورًا بدون fetch
+           })
+         }
+         className={`cursor-pointer border-t border-border/60 transition-colors hover:bg-muted/40 ${
+           idx % 2 === 0 ? "bg-card/40" : "bg-card/20"
+         }`}
+       >
+        
+ 
                   {can("edit") && (
                     <td className="px-2 py-2">
-                      <button
-                        onClick={() => {
-                          setEditingAction(action);
-                          setShowModal(true);
-                        }}
+                    <button
+  onClick={(e) => {
+    e.stopPropagation();
+    setEditingAction(action);
+    setShowModal(true);
+  }}
                         className="inline-flex items-center justify-center rounded-full border border-primary/30 bg-primary/5 p-1.5 text-primary transition-colors hover:bg-primary/15"
                         title="تعديل الإجراء"
                       >
@@ -155,8 +167,11 @@ export default function InvestigationActionsTable({
                   {can("delete") && (
                     <td className="px-2 py-2">
                       <button
-                        onClick={() => setActionToDelete(action)}
-                        className="inline-flex items-center justify-center rounded-full border border-destructive/40 bg-destructive/5 p-1.5 text-destructive transition-colors hover:bg-destructive/15"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActionToDelete(action);
+              }}
+               className="inline-flex items-center justify-center rounded-full border border-destructive/40 bg-destructive/5 p-1.5 text-destructive transition-colors hover:bg-destructive/15"
                         title="حذف الإجراء"
                       >
                         <Trash2 className="h-4 w-4" />

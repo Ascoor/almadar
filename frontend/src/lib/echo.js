@@ -34,10 +34,8 @@ export function initEcho(config = {}) {
   echoInstance = new Echo({ ...defaultConfig, ...config });
   return echoInstance;
 }
-
-export function subscribeToUserChannel(userId) {
-  if (!echoInstance) {
-    throw new Error('Echo not initialized');
-  }
-  return echoInstance.private(`user.${userId}`);
+export function subscribeToUserChannel(echo, userId) {
+  if (!echo) throw new Error('Echo not initialized');
+  return echo.private(`user.${userId}`);
 }
+

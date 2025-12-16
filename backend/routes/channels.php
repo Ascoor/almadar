@@ -15,12 +15,10 @@ use Illuminate\Support\Facades\Broadcast;
 
 
 // routes/channels.php
-
-Broadcast::channel('user.{userId}', function ($user, $userId) {
-    // فقط المستخدم صاحب الـ ID نفسه يمكنه الاشتراك
-    return (int) $user->id === (int) $userId;
+Broadcast::channel('user.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('admins.{userId}', function ($user, $userId) {
-    return $user->hasRole('Admin') && $user->id === (int) $userId;
+Broadcast::channel('admins.{id}', function ($user, $id) {
+    return $user->hasRole('Admin') && (int) $user->id === (int) $id;
 });

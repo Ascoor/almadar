@@ -39,7 +39,8 @@ export default function ContractDetails({ selected, onClose }) {
 
         <InfoItem icon={<Calendar />} label="تاريخ الإنشاء" value={selected.created_at} />
         <InfoItem icon={<Calendar />} label="آخر تحديث" value={selected.updated_at} />
-        <InfoItem icon={<UserCheck />} label="منشئ العقد" value={selected.creator?.name} />
+        <InfoItem icon={<UserCheck />} label="محرر البيان" value={selected.creator?.name} />
+        <InfoItem icon={<UserCheck />} label=" مسئول التعاقد " value={selected.assigned_to?.name} />
         <InfoItem icon={<UserCheck />} label="آخر من عدّل العقد" value={selected.updater?.name} />
         <InfoItem icon={<Calendar />} label={hasDuration ? "تاريخ بداية العقد" : "تاريخ العقد"} value={selected.start_date} />
         {hasDuration && (

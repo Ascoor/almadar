@@ -45,7 +45,14 @@ class InvestigationController extends Controller
 
         $investigation = Investigation::create($validated);
 
-        AssignmentService::apply($investigation, $assigneeId, 'investigations', 'subject');
+ 
+     // ✅ assignment notification
+     AssignmentService::apply($investigation, $assigneeId, 'investigations', 'subject');
+
+     // ✅ archive if attachment exists
+     if (!empty($contract->attachment)) {
+         $this->storeArchive($contract);
+     }
 
         AdminNotifier::notifyAll(
             '🕵️‍♂️ تحقيق جديد',

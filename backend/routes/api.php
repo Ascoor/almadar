@@ -78,9 +78,9 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
 Route::post('/users/{id}/first-login-password', [UserController::class, 'firstLoginPassword']);
 
-    Route::get('/notifications', [NotificationController::class, 'getUserNotifications'])->middleware('auth');
-  Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
-
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::put('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
 Route::post('/notifications/mark-all-read', function (Request $request) {
     $user = auth()->user();
     $notifications = Notification::where('user_id', $user->id)->where('read', false);

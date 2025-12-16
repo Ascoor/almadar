@@ -12,7 +12,7 @@ class InvestigationActionController extends Controller
 {
     public function index(Investigation $investigation)
     {
-        $actions = $investigation->actions()->with('actionType','aassigned_to')->latest()->get();
+        $actions = $investigation->actions()->with(['actionType','assignedTo'])->latest()->get();
         return response()->json($actions);
     }
 
