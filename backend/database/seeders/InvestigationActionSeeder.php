@@ -26,9 +26,7 @@ class InvestigationActionSeeder extends Seeder
             ]);
         }
 
-        // إنشاء قائمة الضباط
-        $officers = ['أ. نبيل الزروق', 'أ. مروان الدرسي', 'أ. كوثر بن عمران', 'د. فاطمة الشريف', 'م. عبدالقادر المقريف'];
-
+ 
         // استرجاع جميع التحقيقات من قاعدة البيانات
         $investigations = Investigation::all();
 
@@ -42,7 +40,7 @@ class InvestigationActionSeeder extends Seeder
                     'investigation_id' => $investigations->random()->id,
                     'action_date' => Carbon::now()->subDays(rand(1, 60))->format('Y-m-d'),
                     'action_type_id' => $actionType->id,
-                    'officer_name' => $officers[array_rand($officers)],
+                 
                     'requirements' => 'إرفاق محاضر رسمية وأدلة من مواقع العمل في ليبيا',
                     'results' => rand(0, 1)
                         ? 'تم الاستماع للموظف وتوثيق أقواله في محضر بنغازي'

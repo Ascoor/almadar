@@ -113,8 +113,10 @@ Route::prefix('users/{userId}')->group(function () {
     Route::get('/permissions', [UserRolePermissionController::class, 'permissions']);
     Route::post('/permission/change', [UserRolePermissionController::class, 'changeUserPermission']); // ✅ صح
 });
- 
-    // Investigations actions
+
+    // ✅ flat: لصفحة الإشعار /legal/investigation-action/:id
+    Route::get('investigation-actions/{action}', [InvestigationActionController::class, 'showById']);
+
     Route::prefix('investigations')->group(function () {
         Route::get('/', [InvestigationController::class, 'index']);
         Route::post('/', [InvestigationController::class, 'store']);
@@ -130,6 +132,5 @@ Route::prefix('users/{userId}')->group(function () {
             Route::patch('{action}/assign', [InvestigationActionController::class, 'assign']);
             Route::delete('{action}', [InvestigationActionController::class, 'destroy']);
         });
-   
     });
 });

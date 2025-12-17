@@ -103,9 +103,9 @@ class InvestigationController extends Controller
         return response()->json([
             'message' => 'تم تحديث التحقيق بنجاح.',
             'data'    => $investigation,
-        ]);
-    }
-
+        ]); 
+        }
+        
     public function destroy(Investigation $investigation)
     {
         $investigation->delete();

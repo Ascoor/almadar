@@ -26,9 +26,9 @@ export const deleteInvestigation = (id) =>
 
 export const getInvestigationActions = (investigationId) =>
   api.get(`/api/investigations/${investigationId}/actions`);
+export const getInvestigationActionById = (actionId, config) =>
+  api.get(`/api/investigation-actions/${actionId}`, config);
 
-export const getInvestigationActionById = (investigationId, actionId) =>
-  api.get(`/api/investigations/${investigationId}/actions/${actionId}`);
 
 export const createInvestigationAction = (investigationId, data) =>
   api.post(`/api/investigations/${investigationId}/actions`, data);

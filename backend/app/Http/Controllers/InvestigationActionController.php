@@ -20,8 +20,7 @@ class InvestigationActionController extends Controller
     {
         $validated = $request->validate([
             'action_date'     => 'required|date',
-            'action_type_id'  => 'required|exists:investigation_action_types,id',
-            'officer_name'    => 'required|string|max:255',
+            'action_type_id'  => 'required|exists:investigation_action_types,id', 
             'requirements'    => 'nullable|string',
             'results'         => 'nullable|string',
             'status'          => 'required|in:pending,in_review,done',
@@ -34,7 +33,7 @@ class InvestigationActionController extends Controller
 
         $action = $investigation->actions()->create($validated);
 
-        AssignmentService::apply($action, $assigneeId, 'procedures', 'officer_name');
+        AssignmentService::apply($action, $assigneeId, 'procedures', 'aassignedTo');
 
         AdminNotifier::notifyAll(
             '📌 إجراء جديد',
@@ -49,6 +48,18 @@ class InvestigationActionController extends Controller
         ], 201);
     }
 
+    public function showById(InvestigationAction $action)
+    {
+        $action->load([
+            'actionType:id,action_name',
+            'assignedTo:id,name',   // إذا عندك هذه العلاقة
+            'creator:id,name',
+            'updater:id,name',
+        ]);
+    
+        return response()->json(['data' => $action]);
+    }
+    
     public function show(Investigation $investigation, InvestigationAction $action)
     {
         if ($action->investigation_id !== $investigation->id) {
@@ -66,8 +77,7 @@ class InvestigationActionController extends Controller
 
         $validated = $request->validate([
             'action_date'     => 'sometimes|date',
-            'action_type_id'  => 'sometimes|exists:investigation_action_types,id',
-            'officer_name'    => 'sometimes|string|max:255',
+            'action_type_id'  => 'sometimes|exists:investigation_action_types,id', 
             'requirements'    => 'nullable|string',
             'results'         => 'nullable|string',
             'status'          => 'sometimes|in:pending,in_review,done',
@@ -80,7 +90,7 @@ class InvestigationActionController extends Controller
 
         $action->update($validated);
 
-        AssignmentService::apply($action, $assigneeId, 'procedures', 'officer_name');
+        AssignmentService::apply($action, $assigneeId, 'procedures', 'assignedTo');
 
         AdminNotifier::notifyAll(
             '✏️ تعديل إجراء',
@@ -125,7 +135,7 @@ class InvestigationActionController extends Controller
             'assigned_to_user_id' => 'nullable|exists:users,id',
         ]);
 
-        AssignmentService::apply($action, $data['assigned_to_user_id'] ?? null, 'procedures', 'officer_name');
+        AssignmentService::apply($action, $data['assigned_to_user_id'] ?? null, 'procedures', 'assignedTo');
 
         return response()->json([
             'message' => 'تم تحديث إسناد الإجراء.',

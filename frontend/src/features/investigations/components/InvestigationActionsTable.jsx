@@ -1,11 +1,12 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { Pencil, Trash2, BookmarkPlus } from "lucide-react";
 import { toast } from "sonner";
 import { AuthContext } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 import InvestigationActionModal from "./InvestigationActionModal";
 import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
+import InvestigationActionDetailsCard from "@/features/investigations/components/InvestigationActionDetailsCard";
+
 import {
   deleteInvestigationAction,
   updateInvestigationAction,
@@ -21,16 +22,17 @@ export default function InvestigationActionsTable({
   const [showModal, setShowModal] = useState(false);
   const [editingAction, setEditingAction] = useState(null);
   const [actionToDelete, setActionToDelete] = useState(null);
-  const [selectedAction, setSelectedAction] = useState(null);
 
-  const navigate = useNavigate();
+  // ✅ هنا نعرض التفاصيل داخل نفس الصفحة
+  const [selectedAction, setSelectedAction] = useState(null);
+  const lastScrollY = useRef(0);
 
   const {
     data: investigationActions = [],
     refetch,
   } = useInvestigationActions(investigationId);
-  const { data: investigationActionTypes = [] } =
-    useActionTypes("investigation");
+
+  const { data: investigationActionTypes = [] } = useActionTypes("investigation");
 
   const { hasPermission } = useContext(AuthContext);
   const moduleName = "investigation-actions";
@@ -66,6 +68,19 @@ export default function InvestigationActionsTable({
     } catch {
       toast.error("فشل في حذف الإجراء");
     }
+  };
+
+  const openDetails = (action) => {
+    lastScrollY.current = window.scrollY;
+    setSelectedAction(action);
+    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+  };
+
+  const closeDetails = () => {
+    setSelectedAction(null);
+    requestAnimationFrame(() =>
+      window.scrollTo({ top: lastScrollY.current || 0, behavior: "auto" })
+    );
   };
 
   if (!can("view")) {
@@ -113,6 +128,16 @@ export default function InvestigationActionsTable({
         )}
       </div>
 
+      {/* ✅ التفاصيل تظهر فوق الجدول مباشرة */}
+      {selectedAction ? (
+        <div className="mb-6">
+          <InvestigationActionDetailsCard
+            selected={selectedAction}
+            onClose={closeDetails}
+          />
+        </div>
+      ) : null}
+
       {/* Content */}
       {investigationActions.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border bg-muted/60 px-4 py-6 text-center text-sm text-muted-foreground">
@@ -134,59 +159,54 @@ export default function InvestigationActionsTable({
                 <th className="px-3 py-2">الحالة</th>
               </tr>
             </thead>
+
             <tbody>
               {investigationActions.map((action, idx) => (
-         <tr
-         key={action.id}
-         onClick={() =>
-           navigate(`/legal/investigation-action/${action.id}`, {
-             state: action, // ✅ يعرض فورًا بدون fetch
-           })
-         }
-         className={`cursor-pointer border-t border-border/60 transition-colors hover:bg-muted/40 ${
-           idx % 2 === 0 ? "bg-card/40" : "bg-card/20"
-         }`}
-       >
-        
- 
+                <tr
+                  key={action.id}
+                  onClick={() => openDetails(action)}   // ✅ بدون روابط
+                  className={`cursor-pointer border-t border-border/60 transition-colors hover:bg-muted/40 ${
+                    idx % 2 === 0 ? "bg-card/40" : "bg-card/20"
+                  }`}
+                >
                   {can("edit") && (
                     <td className="px-2 py-2">
-                    <button
-  onClick={(e) => {
-    e.stopPropagation();
-    setEditingAction(action);
-    setShowModal(true);
-  }}
-                        className="inline-flex items-center justify-center rounded-full border border-primary/30 bg-primary/5 p-1.5 text-primary transition-colors hover:bg-primary/15"
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingAction(action);
+                          setShowModal(true);
+                        }}
+                        className="inline-flex items-center justify-center rounded-full border border-border bg-bg/60 p-1.5 text-foreground transition-colors hover:bg-muted"
                         title="تعديل الإجراء"
+                        type="button"
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
                     </td>
                   )}
+
                   {can("delete") && (
                     <td className="px-2 py-2">
                       <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setActionToDelete(action);
-              }}
-               className="inline-flex items-center justify-center rounded-full border border-destructive/40 bg-destructive/5 p-1.5 text-destructive transition-colors hover:bg-destructive/15"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActionToDelete(action);
+                        }}
+                        className="inline-flex items-center justify-center rounded-full border border-border bg-bg/60 p-1.5 text-foreground transition-colors hover:bg-muted"
                         title="حذف الإجراء"
+                        type="button"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </td>
                   )}
-                  <td className="px-3 py-2 text-xs sm:text-sm">
-                    {action.action_date}
-                  </td>
+
+                  <td className="px-3 py-2 text-xs sm:text-sm">{action.action_date}</td>
                   <td className="px-3 py-2 text-xs sm:text-sm">
                     {action.action_type?.action_name || "غير محدد"}
                   </td>
-                  <td className="px-3 py-2 text-xs sm:text-sm">
-                    {action.officer_name}
-                  </td>
+                  <td className="px-3 py-2 text-xs sm:text-sm">{action.officer_name}</td>
                   <td className="px-3 py-2 text-xs sm:text-sm text-muted-foreground">
                     {action.requirements || "—"}
                   </td>
@@ -228,9 +248,6 @@ export default function InvestigationActionsTable({
   );
 }
 
-/**
- * شارة حالة الإجراء — ألوان مربوطة بتوكنز status (success / warning / secondary)
- */
 function StatusPill({ status }) {
   let label = "منجز";
   let tone = "done";
@@ -241,17 +258,23 @@ function StatusPill({ status }) {
   } else if (status === "in_review") {
     label = "قيد المراجعة";
     tone = "review";
+  } else if (status === "cancelled") {
+    label = "ملغي";
+    tone = "cancelled";
   }
 
   const base =
     "inline-flex items-center justify-center rounded-full px-3 py-1 text-[0.7rem] font-medium sm:text-xs border";
 
+  // ✅ token-safe (بدون warning/success لو مش موجودين عندك)
   const toneClass =
     tone === "pending"
-      ? "border-warning/40 text-warning bg-warning/10"
+      ? "border-border bg-muted text-foreground"
       : tone === "review"
-      ? "border-secondary/40 text-secondary bg-secondary/10"
-      : "border-success/40 text-success bg-success/10";
+      ? "border-border bg-bg/70 text-foreground"
+      : tone === "cancelled"
+      ? "border-border bg-bg/60 text-muted-foreground"
+      : "border-border bg-primary/10 text-foreground";
 
   return <span className={`${base} ${toneClass}`}>{label}</span>;
 }

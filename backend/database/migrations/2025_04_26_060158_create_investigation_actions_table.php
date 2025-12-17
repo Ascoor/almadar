@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreignId('action_type_id')        // العلاقة مع جدول أنواع الإجراءات
                   ->constrained('investigation_action_types')
                   ->onDelete('cascade');
-            $table->string('officer_name');            // اسم الضابط القائم بالإجراء
+         // اسم الضابط القائم بالإجراء
             $table->text('requirements')->nullable();  // الطلبات الخاصة بالإجراء
             $table->text('results')->nullable(); 
                         $table->foreignId('created_by')

@@ -11,8 +11,7 @@ import { getRoleLegalInvestigators } from "@/services/api/users";
 const EMPTY_FORM = {
   id: null,
   action_date: "",
-  action_type_id: "",
-  officer_name: "",
+  action_type_id: "", 
   requirements: "",
   results: "",
   status: "pending",
@@ -93,8 +92,7 @@ export default function InvestigationActionModal({
   const validate = () => {
     const e = {};
     if (!form.action_date) e.action_date = "هذا الحقل مطلوب";
-    if (!form.action_type_id) e.action_type_id = "هذا الحقل مطلوب";
-    if (!form.officer_name) e.officer_name = "هذا الحقل مطلوب";
+    if (!form.action_type_id) e.action_type_id = "هذا الحقل مطلوب"; 
     if (!form.assigned_to_user_id) e.assigned_to_user_id = "اختر المستخدم المسؤول";
 
     setErrors(e);
@@ -177,25 +175,7 @@ export default function InvestigationActionModal({
             <p className="text-xs text-red-600">{errors.action_type_id}</p>
           )}
         </div>
-
-        {/* اسم القائم بالإجراء */}
-        <div className="space-y-1">
-          <label className={modalLabel}>اسم القائم بالإجراء</label>
-          <input
-            type="text"
-            name="officer_name"
-            value={form.officer_name || ""}
-            onChange={handleChange}
-            className={inputClass("officer_name")}
-            placeholder="مثال: أ. عبدالله سالم"
-          />
-          <p className={`${modalHelperText} text-[0.78rem]`}>
-            اكتب اسم المحامي أو المستشار المسؤول عن هذا الإجراء.
-          </p>
-          {errors.officer_name && (
-            <p className="text-xs text-red-600">{errors.officer_name}</p>
-          )}
-        </div>
+ 
 
         {/* المتطلبات */}
         <div className="space-y-1">

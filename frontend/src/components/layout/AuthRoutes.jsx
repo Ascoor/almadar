@@ -12,7 +12,7 @@ const Contracts = lazy(() => import('../../pages/ContractsPage.jsx'));
 const ContractDetailsPage = lazy(() => import('../../pages/ContractDetailsPage.jsx'));
 const Investigations = lazy(() => import('../../pages/InvestigationsPage.jsx'));
 const InvestigationDetailsPage = lazy(() => import('../../pages/InvestigationDetailsPage.jsx'));
-const InvestigationActionDetailsPage = lazy(() => import('@/features/investigations/InvestigationActionDetailsPage.jsx'));
+const InvestigationActionDetailsPage = lazy(() => import('@/features/investigations/InvestigationActionDetailsPage'));
 const LegalAdvices = lazy(() => import('../../pages/LegalAdvicePage.jsx'));
 const LegalAdviceDetailsPage = lazy(() => import('../../pages/LegalAdviceDetailsPage.jsx'));
 const Litigations = lazy(() => import('../../pages/LitigationsPage.jsx'));
