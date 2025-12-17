@@ -33,7 +33,9 @@ class DatabaseSeeder extends Seeder
             InvestigationActionSeeder::class,
             LegalAdviceSeeder::class,
             LitigationSeeder::class,
-            LitigationActionsSeeder::class
+            LitigationActionsSeeder::class,
+            LibyaLocationsSeeder::class,
+            AdminUserSeeder::class,
         ]);
     }
 }

@@ -22,6 +22,11 @@ use App\Http\Controllers\InvestigationActionTypeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LitigationActionTypeController;
 use App\Http\Controllers\AssignableUserController;
+use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\AssignmentController;
+use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\NotificationController as ApiNotificationController;
  
 
 
@@ -133,4 +138,17 @@ Route::prefix('users/{userId}')->group(function () {
             Route::delete('{action}', [InvestigationActionController::class, 'destroy']);
         });
     });
+
+    Route::apiResource('services', ServiceController::class);
+    Route::apiResource('orders', OrderController::class);
+    Route::apiResource('assignments', AssignmentController::class);
+
+    Route::get('locations/cities', [LocationController::class, 'cities']);
+    Route::get('locations/cities/{city}', [LocationController::class, 'districts']);
+    Route::get('locations/districts/{district}', [LocationController::class, 'areas']);
+    Route::get('locations/areas/{area}', [LocationController::class, 'area']);
+
+    Route::get('notifications-feed', [ApiNotificationController::class, 'index']);
+    Route::put('notifications-feed/{id}/read', [ApiNotificationController::class, 'markAsRead']);
+    Route::put('notifications-feed/read-all', [ApiNotificationController::class, 'markAllAsRead']);
 });

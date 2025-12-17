@@ -2,6 +2,14 @@
 
 namespace App\Providers;
 
+use App\Events\AssignmentCreated;
+use App\Events\AssignmentStatusUpdated;
+use App\Events\OrderCreated;
+use App\Events\OrderStatusUpdated;
+use App\Listeners\RecordAssignmentAuditLog;
+use App\Listeners\RecordOrderAuditLog;
+use App\Listeners\SendAssignmentNotifications;
+use App\Listeners\SendOrderNotifications;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -17,6 +25,22 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        OrderCreated::class => [
+            RecordOrderAuditLog::class,
+            SendOrderNotifications::class,
+        ],
+        OrderStatusUpdated::class => [
+            RecordOrderAuditLog::class,
+            SendOrderNotifications::class,
+        ],
+        AssignmentCreated::class => [
+            RecordAssignmentAuditLog::class,
+            SendAssignmentNotifications::class,
+        ],
+        AssignmentStatusUpdated::class => [
+            RecordAssignmentAuditLog::class,
+            SendAssignmentNotifications::class,
         ],
     ];
 
