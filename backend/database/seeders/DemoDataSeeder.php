@@ -52,8 +52,8 @@ class DemoDataSeeder extends Seeder
                 'created_by' => $employee?->id,
                 'updated_by' => $employee?->id,
                 'assigned_to_user_id' => $lawyer?->id,
-                'assigned_by_user_id' => $manager?->id,
-            ]
+                
+                ]
         );
 
         $investigation = Investigation::updateOrCreate(
@@ -68,22 +68,21 @@ class DemoDataSeeder extends Seeder
                 'created_by' => $admin?->id,
                 'updated_by' => $admin?->id,
                 'assigned_to_user_id' => $investigator?->id,
-                'assigned_by_user_id' => $admin?->id,
-            ]
+                
+                ]
         );
 
         InvestigationAction::updateOrCreate(
             ['investigation_id' => $investigation->id, 'action_type_id' => $procedureType->id],
             [
-                'action_date' => now()->toDateString(),
-                'officer_name' => 'Karim Investigator',
+                'action_date' => now()->toDateString(), 
                 'requirements' => 'Collect statements',
                 'results' => 'Pending',
                 'status' => 'pending',
                 'created_by' => $investigator?->id,
                 'assigned_to_user_id' => $investigator?->id,
-                'assigned_by_user_id' => $admin?->id,
-            ]
+                
+                ]
         );
 
         LegalAdvice::updateOrCreate(
@@ -98,7 +97,6 @@ class DemoDataSeeder extends Seeder
                 'notes' => 'Demo advice',
                 'created_by' => $manager?->id,
                 'assigned_to_user_id' => $lawyer?->id,
-                'assigned_by_user_id' => $manager?->id,
             ]
         );
     }
