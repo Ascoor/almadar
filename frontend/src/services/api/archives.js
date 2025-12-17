@@ -13,4 +13,4 @@ export const updateArchiveFile = (id, formData) => {
   return api.post(`/api/archive-files/${id}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
-}; 
+};

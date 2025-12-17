@@ -303,7 +303,11 @@ export default function ManagementSettings() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 60, damping: 14 }}
         >
-          <SectionHeader   showBackButton listName="قوائم البيانات" icon={MainProcedures} />
+          <SectionHeader
+            showBackButton
+            listName="قوائم البيانات"
+            icon={MainProcedures}
+          />
         </motion.div>
       </Suspense>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 mt-8">

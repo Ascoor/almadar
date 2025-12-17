@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   FileText,
   CalendarDays,
@@ -8,15 +8,14 @@ import {
   Hash,
   Paperclip,
   XCircle,
-} from "lucide-react";
-import API_CONFIG from "@/config/config";
+} from 'lucide-react';
+import API_CONFIG from '@/config/config';
 
 export default function LegalAdviceDetails({ selected, onClose }) {
   if (!selected) return null;
 
   return (
     <div className="w-full rounded-2xl shadow-xl bg-gradient-primary border border-border p-6 space-y-6 text-sm text-right transition-all">
-
       {/* Header */}
       <div className="flex items-center justify-between border-b pb-4 mb-4 border-dashed">
         <h2 className="text-xl font-bold flex items-center gap-2 text-greenic dark:text-gold">
@@ -33,29 +32,65 @@ export default function LegalAdviceDetails({ selected, onClose }) {
       </div>
 
       {/* Details Grid */}
-   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-  <Detail icon={<FolderOpen />} label="نوع المشورة" value={selected.advice_type?.type_name} />
-  <Detail icon={<FileText />} label="الموضوع" value={selected.topic} />
-  <Detail icon={<User />} label="الجهة الطالبة" value={selected.requester || "—"} />
-  <Detail icon={<Building2 />} label="الجهة المصدرة" value={selected.issuer || "—"} />
-  <Detail icon={<CalendarDays />} label="تاريخ المشورة" value={formatDateTime(selected.advice_date)} />
-  <Detail icon={<Hash />} label="رقم المشورة" value={selected.advice_number} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <Detail
+          icon={<FolderOpen />}
+          label="نوع المشورة"
+          value={selected.advice_type?.type_name}
+        />
+        <Detail icon={<FileText />} label="الموضوع" value={selected.topic} />
+        <Detail
+          icon={<User />}
+          label="الجهة الطالبة"
+          value={selected.requester || '—'}
+        />
+        <Detail
+          icon={<Building2 />}
+          label="الجهة المصدرة"
+          value={selected.issuer || '—'}
+        />
+        <Detail
+          icon={<CalendarDays />}
+          label="تاريخ المشورة"
+          value={formatDateTime(selected.advice_date)}
+        />
+        <Detail
+          icon={<Hash />}
+          label="رقم المشورة"
+          value={selected.advice_number}
+        />
 
-  {/* تاريخ الإنشاء والتحديث */}
-  {selected.created_at && (
-    <Detail icon={<CalendarDays />} label="تاريخ الإنشاء" value={formatDateTime(selected.created_at)} />
-  )}
-  {selected.updated_at && (
-    <Detail icon={<CalendarDays />} label="آخر تحديث" value={formatDateTime(selected.updated_at)} />
-  )}
+        {/* تاريخ الإنشاء والتحديث */}
+        {selected.created_at && (
+          <Detail
+            icon={<CalendarDays />}
+            label="تاريخ الإنشاء"
+            value={formatDateTime(selected.created_at)}
+          />
+        )}
+        {selected.updated_at && (
+          <Detail
+            icon={<CalendarDays />}
+            label="آخر تحديث"
+            value={formatDateTime(selected.updated_at)}
+          />
+        )}
 
-  {/* منشئ السجل والمحدث */}
-  {selected.creator?.name && (
-    <Detail icon={<User />} label="منشئ السجل" value={selected.creator?.name} />
-  )}
-  {selected.updater?.name && (
-    <Detail icon={<User />} label="آخر من عدّل" value={selected.updater?.name} />
-  )} 
+        {/* منشئ السجل والمحدث */}
+        {selected.creator?.name && (
+          <Detail
+            icon={<User />}
+            label="منشئ السجل"
+            value={selected.creator?.name}
+          />
+        )}
+        {selected.updater?.name && (
+          <Detail
+            icon={<User />}
+            label="آخر من عدّل"
+            value={selected.updater?.name}
+          />
+        )}
         {/* Attachment */}
         <div className="sm:col-span-2 flex items-center gap-2">
           <Paperclip className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -81,7 +116,7 @@ export default function LegalAdviceDetails({ selected, onClose }) {
           📄 نص المشورة
         </h3>
         <p className="whitespace-pre-wrap leading-relaxed text-fg">
-          {selected.text || "لا يوجد نص للمشورة."}
+          {selected.text || 'لا يوجد نص للمشورة.'}
         </p>
       </div>
     </div>

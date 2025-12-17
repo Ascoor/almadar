@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
-import { ArrowLeft } from "lucide-react";
-import IconMedallion from "./IconMedallion";
+import React, { useRef, useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
+import IconMedallion from './IconMedallion';
 
 /**
  * Props:
@@ -21,17 +21,17 @@ const SectionHeader = ({
   onBack,
   actions,
   breadcrumbs = [],
-  align = "center",
+  align = 'center',
 }) => {
   const cardRef = useRef(null);
-  const [pos, setPos] = useState({ x: "50%", y: "50%" });
+  const [pos, setPos] = useState({ x: '50%', y: '50%' });
 
   // لمسة ضوء تتحرك مع الماوس/اللمس
   const updatePos = (e) => {
     const rect = cardRef.current?.getBoundingClientRect?.();
     if (!rect) return;
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
     const x = ((clientX - rect.left) / rect.width) * 100;
     const y = ((clientY - rect.top) / rect.height) * 100;
     setPos({ x: `${x}%`, y: `${y}%` });
@@ -42,7 +42,8 @@ const SectionHeader = ({
     else window.history.back();
   };
 
-  const aligned = align === "start" ? "items-start text-start" : "items-center text-center";
+  const aligned =
+    align === 'start' ? 'items-start text-start' : 'items-center text-center';
 
   return (
     <div
@@ -57,12 +58,12 @@ const SectionHeader = ({
         px-5 sm:px-6 md:px-8 py-7 sm:py-9
         transition-all duration-300
       `}
-      aria-label={typeof listName === "string" ? listName : "section header"}
+      aria-label={typeof listName === 'string' ? listName : 'section header'}
     >
       {/* خلفية ناعمة */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.9]"
-        style={{ background: "var(--gradient-subtle)" }}
+        style={{ background: 'var(--gradient-subtle)' }}
         aria-hidden="true"
       />
 
@@ -78,19 +79,19 @@ const SectionHeader = ({
       {/* لمسات لونية خفيفة (blobs) */}
       <div
         className="pointer-events-none absolute -top-24 -right-20 w-72 h-72 rounded-full blur-3xl opacity-20"
-        style={{ background: "var(--map-start)" }}
+        style={{ background: 'var(--map-start)' }}
         aria-hidden="true"
       />
       <div
         className="pointer-events-none absolute -bottom-24 -left-20 w-72 h-72 rounded-full blur-3xl opacity-20"
-        style={{ background: "var(--map-end)" }}
+        style={{ background: 'var(--map-end)' }}
         aria-hidden="true"
       />
 
       {/* شريط علوي رفيع لوني */}
       <div
         className="absolute top-0 inset-x-0 h-1"
-        style={{ background: "var(--gradient-primary)" }}
+        style={{ background: 'var(--gradient-primary)' }}
         aria-hidden="true"
       />
 
@@ -132,10 +133,10 @@ const SectionHeader = ({
         {/* أيقونة */}
         {icon && (
           <IconMedallion size="md" spin={true}>
-            {typeof icon === "string" ? (
+            {typeof icon === 'string' ? (
               <img
                 src={icon}
-                alt={typeof listName === "string" ? listName : "section icon"}
+                alt={typeof listName === 'string' ? listName : 'section icon'}
                 className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
               />
             ) : (
@@ -149,7 +150,7 @@ const SectionHeader = ({
 
         {/* العنوان + أكشنات */}
         <div
-          className={`w-full flex flex-col ${align === "start" ? "sm:flex-row sm:items-center" : "items-center"} gap-3`}
+          className={`w-full flex flex-col ${align === 'start' ? 'sm:flex-row sm:items-center' : 'items-center'} gap-3`}
         >
           <h2
             className="
@@ -158,14 +159,14 @@ const SectionHeader = ({
               bg-clip-text text-transparent
               hover:opacity-95 transition
             "
-            style={{ backgroundImage: "var(--gradient-primary)" }}
+            style={{ backgroundImage: 'var(--gradient-primary)' }}
           >
             {listName}
           </h2>
 
           {/* Actions */}
           {actions && (
-            <div className={`ms-0 ${align === "start" ? "sm:ms-auto" : ""}`}>
+            <div className={`ms-0 ${align === 'start' ? 'sm:ms-auto' : ''}`}>
               {actions}
             </div>
           )}
@@ -180,7 +181,7 @@ const SectionHeader = ({
 
         {/* زر الرجوع */}
         {showBackButton && (
-          <div className={`${align === "start" ? "" : "mx-auto"}`}>
+          <div className={`${align === 'start' ? '' : 'mx-auto'}`}>
             <button
               onClick={handleBack}
               className="
@@ -202,7 +203,7 @@ const SectionHeader = ({
       {/* خط زخرفي متحرك تحت العنوان */}
       <div
         className="absolute left-1/2 -translate-x-1/2 bottom-3 h-[2px] w-24 sm:w-32 rounded-full opacity-70 transition-all duration-300 group-hover:w-40"
-        style={{ background: "var(--gradient-primary)" }}
+        style={{ background: 'var(--gradient-primary)' }}
         aria-hidden="true"
       />
     </div>

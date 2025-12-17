@@ -1,26 +1,29 @@
 // components/LegalAdvices/LegalAdviceModal.jsx
-import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
-import ModalCard from "@/components/common/ModalCard";
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import ModalCard from '@/components/common/ModalCard';
 import {
   modalInput,
   modalLabel,
   modalHelperText,
-} from "@/components/common/modalStyles";
-import { createLegalAdvice, updateLegalAdvice } from "@/services/api/legalAdvices";
-import API_CONFIG from "@/config/config";
-import { getRoleLawyer } from "@/services/api/users";
+} from '@/components/common/modalStyles';
+import {
+  createLegalAdvice,
+  updateLegalAdvice,
+} from '@/services/api/legalAdvices';
+import API_CONFIG from '@/config/config';
+import { getRoleLawyer } from '@/services/api/users';
 
 const EMPTY_FORM = {
   id: null,
-  advice_type_id: "",
-  topic: "",
-  text: "",
-  requester: "",
-  issuer: "",
-  advice_date: "",
-  advice_number: "",
-  assigned_to_user_id: "",
+  advice_type_id: '',
+  topic: '',
+  text: '',
+  requester: '',
+  issuer: '',
+  advice_date: '',
+  advice_number: '',
+  assigned_to_user_id: '',
   attachment: null,
   oldAttachment: null,
 };
@@ -48,18 +51,18 @@ export default function LegalAdviceModal({
       setForm({
         ...EMPTY_FORM,
         id: initialData.id ?? null,
-        advice_type_id: initialData.advice_type_id ?? "",
-        topic: initialData.topic ?? "",
-        text: initialData.text ?? "",
-        requester: initialData.requester ?? "",
-        issuer: initialData.issuer ?? "",
-        advice_date: initialData.advice_date?.slice(0, 10) ?? "",
-        advice_number: initialData.advice_number ?? "",
+        advice_type_id: initialData.advice_type_id ?? '',
+        topic: initialData.topic ?? '',
+        text: initialData.text ?? '',
+        requester: initialData.requester ?? '',
+        issuer: initialData.issuer ?? '',
+        advice_date: initialData.advice_date?.slice(0, 10) ?? '',
+        advice_number: initialData.advice_number ?? '',
         assigned_to_user_id:
           initialData.assigned_to_user_id ||
           initialData.assigned_to_user?.id ||
           initialData.assignedTo?.id ||
-          "",
+          '',
         attachment: null,
         oldAttachment: initialData.attachment ?? null,
       });
@@ -83,7 +86,7 @@ export default function LegalAdviceModal({
         if (mounted) setLawyers(Array.isArray(list) ? list : []);
       } catch (err) {
         console.error(err);
-        toast.error("❌ فشل تحميل قائمة المحامين");
+        toast.error('❌ فشل تحميل قائمة المحامين');
         if (mounted) setLawyers([]);
       } finally {
         if (mounted) setLawyersLoading(false);
@@ -100,10 +103,11 @@ export default function LegalAdviceModal({
   const validate = () => {
     const e = {};
 
-    if (!form.advice_type_id) e.advice_type_id = "نوع المشورة مطلوب";
-    if (!form.topic) e.topic = "الموضوع مطلوب";
-    if (!form.advice_number) e.advice_number = "رقم المشورة مطلوب";
-    if (!form.assigned_to_user_id) e.assigned_to_user_id = "اختر المحامي المسؤول";
+    if (!form.advice_type_id) e.advice_type_id = 'نوع المشورة مطلوب';
+    if (!form.topic) e.topic = 'الموضوع مطلوب';
+    if (!form.advice_number) e.advice_number = 'رقم المشورة مطلوب';
+    if (!form.assigned_to_user_id)
+      e.assigned_to_user_id = 'اختر المحامي المسؤول';
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -112,10 +116,10 @@ export default function LegalAdviceModal({
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
-    if (name === "attachment") {
+    if (name === 'attachment') {
       const file = files?.[0];
-      if (file && file.type !== "application/pdf") {
-        toast.error("الملف يجب أن يكون بصيغة PDF فقط.");
+      if (file && file.type !== 'application/pdf') {
+        toast.error('الملف يجب أن يكون بصيغة PDF فقط.');
         return;
       }
       setForm((prev) => ({ ...prev, attachment: file }));
@@ -130,13 +134,13 @@ export default function LegalAdviceModal({
   const inputClass = (name) =>
     `${modalInput} ${
       errors[name]
-        ? "border-destructive focus:ring-destructive/40"
-        : "focus:border-ring"
+        ? 'border-destructive focus:ring-destructive/40'
+        : 'focus:border-ring'
     }`;
 
   const handleSave = async () => {
     if (!validate()) {
-      toast.warning("⚠️ يرجى تعبئة الحقول الإلزامية.");
+      toast.warning('⚠️ يرجى تعبئة الحقول الإلزامية.');
       return;
     }
 
@@ -145,29 +149,29 @@ export default function LegalAdviceModal({
       const payload = new FormData();
 
       Object.entries(form).forEach(([k, v]) => {
-        if (k === "oldAttachment") return;
-        if (k === "attachment") {
-          if (v instanceof File) payload.append("attachment", v);
+        if (k === 'oldAttachment') return;
+        if (k === 'attachment') {
+          if (v instanceof File) payload.append('attachment', v);
           return;
         }
         if (v != null) payload.append(k, v);
       });
 
-      if (form.id) payload.append("_method", "PUT");
+      if (form.id) payload.append('_method', 'PUT');
 
       if (form.id) {
         await updateLegalAdvice(form.id, payload);
-        toast.success("✅ تم تعديل المشورة بنجاح");
+        toast.success('✅ تم تعديل المشورة بنجاح');
       } else {
         await createLegalAdvice(payload);
-        toast.success("✅ تم إضافة المشورة بنجاح");
+        toast.success('✅ تم إضافة المشورة بنجاح');
       }
 
       reload?.();
       onClose();
     } catch (err) {
       console.error(err);
-      toast.error("❌ حدث خطأ أثناء الحفظ.");
+      toast.error('❌ حدث خطأ أثناء الحفظ.');
     } finally {
       setLoading(false);
     }
@@ -178,13 +182,17 @@ export default function LegalAdviceModal({
   return (
     <ModalCard
       isOpen={isOpen}
-      title={initialData ? "تعديل رأي/مشورة" : "إضافة رأي/مشورة جديد"}
+      title={initialData ? 'تعديل رأي/مشورة' : 'إضافة رأي/مشورة جديد'}
       loading={loading}
       onClose={onClose}
       onSubmit={handleSave}
-      submitLabel={initialData ? "تحديث" : "إضافة"}
+      submitLabel={initialData ? 'تحديث' : 'إضافة'}
     >
-      <form className="space-y-6 text-right" dir="rtl" onSubmit={(e) => e.preventDefault()}>
+      <form
+        className="space-y-6 text-right"
+        dir="rtl"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* نوع المشورة */}
           <div className="space-y-1">
@@ -193,7 +201,7 @@ export default function LegalAdviceModal({
               name="advice_type_id"
               value={form.advice_type_id}
               onChange={handleChange}
-              className={inputClass("advice_type_id")}
+              className={inputClass('advice_type_id')}
             >
               <option value="">-- اختر نوع المشورة --</option>
               {adviceTypes.map((t) => (
@@ -203,7 +211,9 @@ export default function LegalAdviceModal({
               ))}
             </select>
             {errors.advice_type_id && (
-              <p className={`${modalHelperText} text-destructive font-semibold`}>
+              <p
+                className={`${modalHelperText} text-destructive font-semibold`}
+              >
                 {errors.advice_type_id}
               </p>
             )}
@@ -216,10 +226,12 @@ export default function LegalAdviceModal({
               name="topic"
               value={form.topic}
               onChange={handleChange}
-              className={inputClass("topic")}
+              className={inputClass('topic')}
             />
             {errors.topic && (
-              <p className={`${modalHelperText} text-destructive font-semibold`}>
+              <p
+                className={`${modalHelperText} text-destructive font-semibold`}
+              >
                 {errors.topic}
               </p>
             )}
@@ -266,10 +278,12 @@ export default function LegalAdviceModal({
               name="advice_number"
               value={form.advice_number}
               onChange={handleChange}
-              className={inputClass("advice_number")}
+              className={inputClass('advice_number')}
             />
             {errors.advice_number && (
-              <p className={`${modalHelperText} text-destructive font-semibold`}>
+              <p
+                className={`${modalHelperText} text-destructive font-semibold`}
+              >
                 {errors.advice_number}
               </p>
             )}
@@ -280,22 +294,24 @@ export default function LegalAdviceModal({
             <label className={modalLabel}>المحامي المسؤول</label>
             <select
               name="assigned_to_user_id"
-              value={form.assigned_to_user_id || ""}
+              value={form.assigned_to_user_id || ''}
               onChange={handleChange}
-              className={inputClass("assigned_to_user_id")}
+              className={inputClass('assigned_to_user_id')}
               disabled={lawyersLoading}
             >
               <option value="">
-                {lawyersLoading ? "جاري تحميل المحامين..." : "اختر المحامي"}
+                {lawyersLoading ? 'جاري تحميل المحامين...' : 'اختر المحامي'}
               </option>
               {lawyers.map((u) => (
                 <option key={u.id} value={u.id}>
-                  {u.name} {u.email ? `- ${u.email}` : ""}
+                  {u.name} {u.email ? `- ${u.email}` : ''}
                 </option>
               ))}
             </select>
             {errors.assigned_to_user_id && (
-              <p className={`${modalHelperText} text-destructive font-semibold`}>
+              <p
+                className={`${modalHelperText} text-destructive font-semibold`}
+              >
                 {errors.assigned_to_user_id}
               </p>
             )}

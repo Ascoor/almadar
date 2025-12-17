@@ -94,12 +94,23 @@ const ReportsPage = () => {
         ? reports.map((report) => ({
             ...report,
             company_name:
-              report.company_name || report.companyName || report.company?.name || '—',
+              report.company_name ||
+              report.companyName ||
+              report.company?.name ||
+              '—',
             contract_number:
-              report.contract_number || report.contractNumber || report.contract?.number || '—',
+              report.contract_number ||
+              report.contractNumber ||
+              report.contract?.number ||
+              '—',
             section:
-              report.section || report.section_name || report.sectionName || report.section?.name || '—',
-            action_date: report.action_date || report.actionDate || report.date || '—',
+              report.section ||
+              report.section_name ||
+              report.sectionName ||
+              report.section?.name ||
+              '—',
+            action_date:
+              report.action_date || report.actionDate || report.date || '—',
             comments: report.comments || report.comment || '—',
           }))
         : [],
@@ -154,10 +165,22 @@ const ReportsPage = () => {
               onChange={handleSectionChange}
               label={{ ar: 'القسم', en: 'Section' }}
               options={[
-                { value: 'all', label: { ar: 'كل الأقسام', en: 'All sections' } },
-                { value: 'contracts', label: { ar: 'العقود', en: 'Contracts' } },
-                { value: 'investigations', label: { ar: 'التحقيقات', en: 'Investigations' } },
-                { value: 'litigations', label: { ar: 'القضايا', en: 'Litigations' } },
+                {
+                  value: 'all',
+                  label: { ar: 'كل الأقسام', en: 'All sections' },
+                },
+                {
+                  value: 'contracts',
+                  label: { ar: 'العقود', en: 'Contracts' },
+                },
+                {
+                  value: 'investigations',
+                  label: { ar: 'التحقيقات', en: 'Investigations' },
+                },
+                {
+                  value: 'litigations',
+                  label: { ar: 'القضايا', en: 'Litigations' },
+                },
               ]}
               className="flex-1"
             />
@@ -177,7 +200,10 @@ const ReportsPage = () => {
             options={[
               { value: 'all', label: { ar: 'الكل', en: 'All' } },
               { value: 'local', label: { ar: 'محلي', en: 'Local' } },
-              { value: 'international', label: { ar: 'دولي', en: 'International' } },
+              {
+                value: 'international',
+                label: { ar: 'دولي', en: 'International' },
+              },
             ]}
           />
         </div>

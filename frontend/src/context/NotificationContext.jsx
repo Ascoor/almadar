@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { initEcho, subscribeToUserChannel } from '@/lib/echo';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -8,7 +15,10 @@ const NotificationContext = createContext(null);
 
 export function useNotifications() {
   const ctx = useContext(NotificationContext);
-  if (!ctx) throw new Error('useNotifications must be used within NotificationProvider');
+  if (!ctx)
+    throw new Error(
+      'useNotifications must be used within NotificationProvider',
+    );
   return ctx;
 }
 
@@ -60,16 +70,14 @@ export function NotificationProvider({ children }) {
       message: data?.message ?? t('notifications.default.message'),
       icon: data?.icon ?? '🔔',
     };
-  };const normalize = (raw) => {
+  };
+  const normalize = (raw) => {
     const data = raw?.data ?? raw ?? {};
     const id = raw?.id ?? data?.id;
     if (!id) return null;
-  
-    const direct =
-      raw?.link ||
-      data?.link ||
-      data?.params?.link;
-  
+
+    const direct = raw?.link || data?.link || data?.params?.link;
+
     const entityId =
       data?.entityId ||
       data?.entity_id ||
@@ -79,21 +87,26 @@ export function NotificationProvider({ children }) {
       data?.params?.entity_id ||
       data?.params?.contractId ||
       data?.params?.contract_id;
-  
+
     const link = direct
-      ? (direct.startsWith("/") ? direct : `/${direct.replace(/^\/+/, "")}`)
-      : (entityId ? `/contracts/${entityId}` : null);
-  
+      ? direct.startsWith('/')
+        ? direct
+        : `/${direct.replace(/^\/+/, '')}`
+      : entityId
+        ? `/contracts/${entityId}`
+        : null;
+
     return {
       id,
-      created_at: raw?.created_at ?? data?.created_at ?? new Date().toISOString(),
-      read: Boolean(raw?.read_at) || Boolean(data?.read_at) || Boolean(data?.read),
+      created_at:
+        raw?.created_at ?? data?.created_at ?? new Date().toISOString(),
+      read:
+        Boolean(raw?.read_at) || Boolean(data?.read_at) || Boolean(data?.read),
       link,
       key: data?.key ?? null,
       data,
     };
   };
-  
 
   const add = (n) => {
     setNotifications((prev) => [{ ...n, read: n.read ?? false }, ...prev]);
@@ -145,7 +158,9 @@ export function NotificationProvider({ children }) {
     let adminChannel = null;
     if (user.roles?.some((r) => r.name === 'Admin')) {
       adminChannel = echo.private(`admins.${user.id}`);
-      adminChannel.listen('.NotificationAdmin', (e) => handleIncoming(e?.notification));
+      adminChannel.listen('.NotificationAdmin', (e) =>
+        handleIncoming(e?.notification),
+      );
     }
 
     return () => {
@@ -174,7 +189,6 @@ export function NotificationProvider({ children }) {
       return next;
     });
   };
-  
 
   const markAllAsRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
@@ -182,7 +196,14 @@ export function NotificationProvider({ children }) {
   };
 
   return (
-    <NotificationContext.Provider value={{ notifications: viewNotifications, hasNew, markRead, markAllAsRead }}>
+    <NotificationContext.Provider
+      value={{
+        notifications: viewNotifications,
+        hasNew,
+        markRead,
+        markAllAsRead,
+      }}
+    >
       {children}
       <audio ref={audioRef} src="/sounds/notif.mp3" preload="auto" />
     </NotificationContext.Provider>

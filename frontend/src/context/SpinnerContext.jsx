@@ -1,4 +1,4 @@
-import  { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer } from 'react';
 import GlobalSpinner from '../components/common/Spinners/GlobalSpinner';
 
 const SpinnerContext = createContext();

@@ -13,9 +13,9 @@ export const REGIONS = [
   { code: 'DER', nameEn: 'Derna', nameAr: 'درنة' },
 ];
 
-const byEn = new Map(REGIONS.map(r => [r.nameEn.toLowerCase(), r.code]));
-const byAr = new Map(REGIONS.map(r => [r.nameAr, r.code]));
-const byCode = new Map(REGIONS.map(r => [r.code, r]));
+const byEn = new Map(REGIONS.map((r) => [r.nameEn.toLowerCase(), r.code]));
+const byAr = new Map(REGIONS.map((r) => [r.nameAr, r.code]));
+const byCode = new Map(REGIONS.map((r) => [r.code, r]));
 
 export function getRegionCodeByName(name) {
   if (!name) return undefined;
@@ -28,4 +28,3 @@ export function getLocalizedNameByCode(code, lang = 'ar') {
   if (!r) return undefined;
   return lang === 'ar' ? r.nameAr : r.nameEn;
 }
-

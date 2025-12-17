@@ -68,7 +68,9 @@ export default function UserModalForm({
         name: selectedUser.name || '',
         role: roleName, // استخدم اسم الدور الحقيقي
         emailPrefix: prefix,
-        image: selectedUser.image ? `${API_CONFIG.baseURL}/${selectedUser.image}` : null,
+        image: selectedUser.image
+          ? `${API_CONFIG.baseURL}/${selectedUser.image}`
+          : null,
       });
     } else {
       setFormData({ name: '', role: '', emailPrefix: '', image: null });
@@ -119,10 +121,8 @@ export default function UserModalForm({
 
       if (isEdit) {
         await updateUser(selectedUser.id, payload);
-  
       } else {
         await createUser(payload);
- 
       }
 
       await refreshUsers();
@@ -186,10 +186,14 @@ export default function UserModalForm({
                 disabled={isSubmitting}
                 className="flex-1 bg-transparent p-2.5 text-fg placeholder:text-muted-foreground/80 focus:outline-none"
               />
-              <span className="p-2.5 bg-muted text-xs select-none text-fg">@almadar.ly</span>
+              <span className="p-2.5 bg-muted text-xs select-none text-fg">
+                @almadar.ly
+              </span>
             </div>
             {validationErrors.emailPrefix && (
-              <p className="text-red-600 mt-1 text-xs">يرجى إدخال البريد الإلكتروني</p>
+              <p className="text-red-600 mt-1 text-xs">
+                يرجى إدخال البريد الإلكتروني
+              </p>
             )}
           </div>
 

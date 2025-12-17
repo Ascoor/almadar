@@ -1,18 +1,27 @@
-import API_CONFIG from "@/config/config";
+import API_CONFIG from '@/config/config';
 import {
-  FileText, File, UserCheck, ShieldCheck, Calendar,
-  BadgeDollarSign, Layers, Globe, XCircle, Notebook
+  FileText,
+  File,
+  UserCheck,
+  ShieldCheck,
+  Calendar,
+  BadgeDollarSign,
+  Layers,
+  Globe,
+  XCircle,
+  Notebook,
 } from 'lucide-react';
 
 export default function ContractDetails({ selected, onClose }) {
   if (!selected) return null;
 
   const hasDuration = !!selected.end_date;
-  const formattedValue = selected.value ? `${selected.value.toLocaleString()} ريال` : '—';
+  const formattedValue = selected.value
+    ? `${selected.value.toLocaleString()} ريال`
+    : '—';
 
   return (
     <div className="relative bg-gradient-to-br from-white to-gray-50 dark:from-zinc-950 dark:to-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl p-6 md:p-10 mt-4 transition-all duration-300 hover:shadow-2xl">
-
       {/* زر الإغلاق */}
       <button
         onClick={onClose}
@@ -32,19 +41,63 @@ export default function ContractDetails({ selected, onClose }) {
       {/* معلومات العقد */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
         <InfoItem icon={<File />} label="رقم العقد" value={selected.number} />
-        <InfoItem icon={<Globe />} label="نوع العقد" value={selected.scope === 'local' ? 'محلي' : 'دولي'} />
-        <InfoItem icon={<Layers />} label="تصنيف العقد" value={selected.category?.name} />
-        <InfoItem icon={<ShieldCheck />} label="الحالة" value={selected.status} />
-        <InfoItem icon={<BadgeDollarSign />} label="قيمة العقد" value={formattedValue} />
+        <InfoItem
+          icon={<Globe />}
+          label="نوع العقد"
+          value={selected.scope === 'local' ? 'محلي' : 'دولي'}
+        />
+        <InfoItem
+          icon={<Layers />}
+          label="تصنيف العقد"
+          value={selected.category?.name}
+        />
+        <InfoItem
+          icon={<ShieldCheck />}
+          label="الحالة"
+          value={selected.status}
+        />
+        <InfoItem
+          icon={<BadgeDollarSign />}
+          label="قيمة العقد"
+          value={formattedValue}
+        />
 
-        <InfoItem icon={<Calendar />} label="تاريخ الإنشاء" value={selected.created_at} />
-        <InfoItem icon={<Calendar />} label="آخر تحديث" value={selected.updated_at} />
-        <InfoItem icon={<UserCheck />} label="محرر البيان" value={selected.creator?.name} />
-        <InfoItem icon={<UserCheck />} label=" مسئول التعاقد " value={selected.assigned_to?.name} />
-        <InfoItem icon={<UserCheck />} label="آخر من عدّل العقد" value={selected.updater?.name} />
-        <InfoItem icon={<Calendar />} label={hasDuration ? "تاريخ بداية العقد" : "تاريخ العقد"} value={selected.start_date} />
+        <InfoItem
+          icon={<Calendar />}
+          label="تاريخ الإنشاء"
+          value={selected.created_at}
+        />
+        <InfoItem
+          icon={<Calendar />}
+          label="آخر تحديث"
+          value={selected.updated_at}
+        />
+        <InfoItem
+          icon={<UserCheck />}
+          label="محرر البيان"
+          value={selected.creator?.name}
+        />
+        <InfoItem
+          icon={<UserCheck />}
+          label=" مسئول التعاقد "
+          value={selected.assigned_to?.name}
+        />
+        <InfoItem
+          icon={<UserCheck />}
+          label="آخر من عدّل العقد"
+          value={selected.updater?.name}
+        />
+        <InfoItem
+          icon={<Calendar />}
+          label={hasDuration ? 'تاريخ بداية العقد' : 'تاريخ العقد'}
+          value={selected.start_date}
+        />
         {hasDuration && (
-          <InfoItem icon={<Calendar />} label="تاريخ نهاية العقد" value={selected.end_date} />
+          <InfoItem
+            icon={<Calendar />}
+            label="تاريخ نهاية العقد"
+            value={selected.end_date}
+          />
         )}
 
         {/* المرفق */}
@@ -63,19 +116,21 @@ export default function ContractDetails({ selected, onClose }) {
               عرض الملف
             </a>
           ) : (
-            <span className="text-gray-400 dark:text-gray-500 ml-1 mt-1 block">لا يوجد</span>
+            <span className="text-gray-400 dark:text-gray-500 ml-1 mt-1 block">
+              لا يوجد
+            </span>
           )}
         </div>
       </div>
 
       {/* ملخص العقد */}
       <SectionCard icon={<UserCheck size={18} />} title="ملخص العقد">
-        {selected.summary || "لا يوجد ملخص متاح."}
+        {selected.summary || 'لا يوجد ملخص متاح.'}
       </SectionCard>
 
       {/* ملاحظات */}
       <SectionCard icon={<Notebook size={18} />} title="ملاحظات">
-        {selected.notes || "لا توجد ملاحظات."}
+        {selected.notes || 'لا توجد ملاحظات.'}
       </SectionCard>
     </div>
   );
@@ -85,10 +140,16 @@ export default function ContractDetails({ selected, onClose }) {
 function InfoItem({ icon, label, value }) {
   return (
     <div className="flex items-start gap-3 text-gray-800 dark:text-gray-100">
-      <div className="pt-1 text-blue-500 dark:text-blue-300 shrink-0">{icon}</div>
+      <div className="pt-1 text-blue-500 dark:text-blue-300 shrink-0">
+        {icon}
+      </div>
       <div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</div>
-        <div className={`font-semibold ${!value ? 'text-gray-400 dark:text-zinc-500' : ''}`}>
+        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+          {label}
+        </div>
+        <div
+          className={`font-semibold ${!value ? 'text-gray-400 dark:text-zinc-500' : ''}`}
+        >
           {value || '—'}
         </div>
       </div>

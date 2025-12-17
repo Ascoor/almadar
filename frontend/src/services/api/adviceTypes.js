@@ -1,7 +1,7 @@
 import api from './axiosConfig'; // تأكد أن ملف axiosConfig صحيح
 
 // ✅ legal-advices  Endpoints
-export const getAdviceTypes = () => api.get('/api/advice-types'); 
+export const getAdviceTypes = () => api.get('/api/advice-types');
 
 export const createAdviceType = (formData) => {
   return api.post('/api/advice-types', formData, {

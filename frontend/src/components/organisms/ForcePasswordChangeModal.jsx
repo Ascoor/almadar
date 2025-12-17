@@ -8,7 +8,11 @@ import { Button } from '@/components/ui/button';
 import { firstLoginPassword } from '@/services/api/users';
 import { AuthContext } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { modalOverlay, modalContainer, modalHeading } from '@/components/common/modalStyles';
+import {
+  modalOverlay,
+  modalContainer,
+  modalHeading,
+} from '@/components/common/modalStyles';
 
 const ForcePasswordChangeModal = ({ onClose }) => {
   const { user, updateUserContext } = useContext(AuthContext);
@@ -61,11 +65,7 @@ const ForcePasswordChangeModal = ({ onClose }) => {
           onChange={(e) => setConfirmPassword(e.target.value)}
           className="mb-2"
         />
-        <Button
-          disabled={submitting}
-          onClick={handleSubmit}
-          className="w-full"
-        >
+        <Button disabled={submitting} onClick={handleSubmit} className="w-full">
           {submitting ? t('loading') : t('update')}
         </Button>
       </div>

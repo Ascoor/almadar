@@ -79,9 +79,7 @@ export default function ProfilePage() {
 
   if (!user)
     return (
-      <div className="mt-10 text-center text-muted">
-        تحميل البيانات...
-      </div>
+      <div className="mt-10 text-center text-muted">تحميل البيانات...</div>
     );
 
   return (

@@ -1,4 +1,4 @@
-import  { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const SidebarContext = createContext();

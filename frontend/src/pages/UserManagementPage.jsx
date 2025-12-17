@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Edit2, Trash2, ArrowUp } from 'lucide-react';
 
-import { toast } from "sonner";
+import { toast } from 'sonner';
 import SectionHeader from '@/components/common/SectionHeader';
 import TableComponent from '@/components/common/TableComponent';
 import UserModalForm from '@/features/users/components/UserModalForm';
@@ -28,9 +28,12 @@ export default function UsersManagementPage() {
   const [modalMode, setModalMode] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [loading, setLoading] = useState(false);
- const [showNewUserAlert, setShowNewUserAlert] = useState(false);
-const [newUserDetails, setNewUserDetails] = useState({ name: '', password: 'الان12345678' });
- 
+  const [showNewUserAlert, setShowNewUserAlert] = useState(false);
+  const [newUserDetails, setNewUserDetails] = useState({
+    name: '',
+    password: 'الان12345678',
+  });
+
   const permissionsRef = useRef(null);
   const tableRef = useRef(null);
 
@@ -39,7 +42,7 @@ const [newUserDetails, setNewUserDetails] = useState({ name: '', password: 'ال
     isLoading: usersLoading,
     refetch: refetchUsers,
   } = useUsers();
-const { data: rolesData = [], isLoading: rolesLoading } = useRoles();
+  const { data: rolesData = [], isLoading: rolesLoading } = useRoles();
 
   const { data: allPerms = [] } = usePermissions();
 
@@ -51,7 +54,7 @@ const { data: rolesData = [], isLoading: rolesLoading } = useRoles();
           setSelectedUser(null);
         }
       },
-      { root: null, threshold: 0.5 }
+      { root: null, threshold: 0.5 },
     );
 
     const el = tableRef.current;
@@ -62,22 +65,21 @@ const { data: rolesData = [], isLoading: rolesLoading } = useRoles();
     };
   }, [modalMode]);
 
- const handleCreate = async (formData) => {
-  setLoading(true);
-  try {
-    const newUser = await createUser(formData);
-    toast('تم إضافة المستخدم');
-    setNewUserDetails({ name: newUser.name, password: 'الان12345678' });
-    setShowNewUserAlert(true);
-    await refetchUsers();
-    setModalMode(null);
-  } catch {
-    toast('فشل إضافة المستخدم');
-  } finally {
-    setLoading(false);
-  }
-};
-
+  const handleCreate = async (formData) => {
+    setLoading(true);
+    try {
+      const newUser = await createUser(formData);
+      toast('تم إضافة المستخدم');
+      setNewUserDetails({ name: newUser.name, password: 'الان12345678' });
+      setShowNewUserAlert(true);
+      await refetchUsers();
+      setModalMode(null);
+    } catch {
+      toast('فشل إضافة المستخدم');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleUpdate = async (id, formData) => {
     setLoading(true);
@@ -91,56 +93,58 @@ const { data: rolesData = [], isLoading: rolesLoading } = useRoles();
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
-const handlePermChange = async (permName, shouldEnable, options = {}) => {
-  setLoading(true);
-  try {
-    await changeUserPermission(
-      selectedUser.id,
-      permName,
-      shouldEnable ? 'add' : 'remove'
-    );
-
-    if (!options?.batch) {
-      toast('تم تحديث الصلاحية');
-    }
-
-    const [action, ...sectionParts] = permName.toLowerCase().split(' ');
-    const sectionPrefix = sectionParts.join(' ');
-
-    let updatedPermissions;
-
-    if (action === 'view' && !shouldEnable) {
-      updatedPermissions = selectedUser.permissions.filter(
-        p => !p.name.toLowerCase().includes(sectionPrefix)
+  const handlePermChange = async (permName, shouldEnable, options = {}) => {
+    setLoading(true);
+    try {
+      await changeUserPermission(
+        selectedUser.id,
+        permName,
+        shouldEnable ? 'add' : 'remove',
       );
-    } else {
-      const index = selectedUser.permissions.findIndex(p => p.name === permName);
-      if (index > -1) {
-        updatedPermissions = selectedUser.permissions.map(p =>
-          p.name === permName ? { ...p, enabled: shouldEnable } : p
+
+      if (!options?.batch) {
+        toast('تم تحديث الصلاحية');
+      }
+
+      const [action, ...sectionParts] = permName.toLowerCase().split(' ');
+      const sectionPrefix = sectionParts.join(' ');
+
+      let updatedPermissions;
+
+      if (action === 'view' && !shouldEnable) {
+        updatedPermissions = selectedUser.permissions.filter(
+          (p) => !p.name.toLowerCase().includes(sectionPrefix),
         );
       } else {
-        updatedPermissions = [...selectedUser.permissions, { name: permName, enabled: shouldEnable }];
+        const index = selectedUser.permissions.findIndex(
+          (p) => p.name === permName,
+        );
+        if (index > -1) {
+          updatedPermissions = selectedUser.permissions.map((p) =>
+            p.name === permName ? { ...p, enabled: shouldEnable } : p,
+          );
+        } else {
+          updatedPermissions = [
+            ...selectedUser.permissions,
+            { name: permName, enabled: shouldEnable },
+          ];
+        }
       }
+
+      setSelectedUser((prev) => ({
+        ...prev,
+        permissions: updatedPermissions,
+      }));
+
+      await refetchUsers();
+    } catch (error) {
+      toast('فشل في تحديث الصلاحية');
+    } finally {
+      setLoading(false);
     }
-
-    setSelectedUser(prev => ({
-      ...prev,
-      permissions: updatedPermissions,
-    }));
-
-    await refetchUsers();
-  } catch (error) {
-    toast('فشل في تحديث الصلاحية');
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-
+  };
 
   const handleDelete = async () => {
     setLoading(true);
@@ -209,7 +213,7 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
     // اقفل عرض التفاصيل
     setExpandedUserId(null);
     setSelectedUser(null);
-  
+
     // ارجع للجدول بسلاسة
     setTimeout(() => {
       if (tableRef.current) {
@@ -217,7 +221,7 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
       }
     }, 50);
   };
-  
+
   return (
     <div className="p-6 sm:p-4 lg:p-6 mt-6">
       <motion.div
@@ -227,7 +231,11 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
         exit={{ opacity: 0, y: -40 }}
         transition={{ type: 'spring', stiffness: 60, damping: 18, delay: 0.1 }}
       >
-        <SectionHeader   showBackButton icon={UsersIcon} listName="إدارة المستخدمين والصلاحيات" />
+        <SectionHeader
+          showBackButton
+          icon={UsersIcon}
+          listName="إدارة المستخدمين والصلاحيات"
+        />
       </motion.div>
 
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-zinc-700">
@@ -253,23 +261,42 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
               customRenderers={customRenderers}
               renderAddButton={{
                 render: () => (
-                  <Button variant="default" onClick={() => {
-                    setSelectedUser(null);
-                    setModalMode('add');
-                  }}>
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      setSelectedUser(null);
+                      setModalMode('add');
+                    }}
+                  >
                     إضافة مستخدم
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4 ml-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4v16m8-8H4"
+                      />
                     </svg>
                   </Button>
                 ),
               }}
               onRowClick={(user) => {
-                setExpandedUserId((prevId) => (prevId === user.id ? null : user.id));
+                setExpandedUserId((prevId) =>
+                  prevId === user.id ? null : user.id,
+                );
                 setSelectedUser(user);
                 setTimeout(() => {
                   if (permissionsRef.current) {
-                    permissionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    permissionsRef.current.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'start',
+                    });
                   }
                 }, 300);
               }}
@@ -285,7 +312,7 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
           selectedUser={modalMode === 'edit' ? selectedUser : null}
           createUser={handleCreate}
           updateUser={handleUpdate}
-  roles={rolesData} // التعديل هنا 👈
+          roles={rolesData} // التعديل هنا 👈
           refreshUsers={refetchUsers}
         />
       )}
@@ -307,20 +334,20 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
               صلاحيات المستخدم
             </h2>
             <div className="flex justify-start">
-  <motion.button
-    type="button"
-    onClick={handleBackToTable}
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    className="w-10 h-10 rounded-full flex items-center justify-center
+              <motion.button
+                type="button"
+                onClick={handleBackToTable}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-10 h-10 rounded-full flex items-center justify-center
                bg-primary hover:bg-destructive text-white shadow
                border border-green-700/20"
-    aria-label="العودة للجدول"
-    title="العودة للجدول"
-  >
-    <ArrowUp className="w-5 h-5" />
-  </motion.button>
-</div>
+                aria-label="العودة للجدول"
+                title="العودة للجدول"
+              >
+                <ArrowUp className="w-5 h-5" />
+              </motion.button>
+            </div>
 
             <PermissionsSection
               allPermissions={allPerms}
@@ -328,23 +355,27 @@ const handlePermChange = async (permName, shouldEnable, options = {}) => {
               handlePermissionChange={handlePermChange}
               loading={loading}
             />
-            
           </motion.div>
-
         )}
       </AnimatePresence>
-{showNewUserAlert && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-      <h2 className="text-xl font-semibold mb-4">تم إضافة المستخدم الجديد</h2>
-      <p className="mb-2">اسم المستخدم: <strong>{newUserDetails.name}</strong></p>
-      <p className="mb-4">كلمة المرور الافتراضية: <strong>{newUserDetails.password}</strong></p>
-      <Button onClick={() => setShowNewUserAlert(false)} className="mt-4">
-        غلق
-      </Button>
-    </div>
-  </div>
-)}
+      {showNewUserAlert && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-xl font-semibold mb-4">
+              تم إضافة المستخدم الجديد
+            </h2>
+            <p className="mb-2">
+              اسم المستخدم: <strong>{newUserDetails.name}</strong>
+            </p>
+            <p className="mb-4">
+              كلمة المرور الافتراضية: <strong>{newUserDetails.password}</strong>
+            </p>
+            <Button onClick={() => setShowNewUserAlert(false)} className="mt-4">
+              غلق
+            </Button>
+          </div>
+        </div>
+      )}
 
       {showDelete && (
         <GlobalConfirmDeleteModal

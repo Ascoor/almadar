@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { getContractById } from "@/services/api/contracts";
-import ContractDetails from "@/features/contracts/components/ContractDetails";
-import GlobalSpinner from "@/components/common/Spinners/GlobalSpinner";
+import { useEffect, useRef, useState } from 'react';
+import { getContractById } from '@/services/api/contracts';
+import ContractDetails from '@/features/contracts/components/ContractDetails';
+import GlobalSpinner from '@/components/common/Spinners/GlobalSpinner';
 
 export default function ContractDetailsSmart({ id, selected, onClose }) {
   const [current, setCurrent] = useState(selected ?? null);
@@ -34,7 +34,8 @@ export default function ContractDetailsSmart({ id, selected, onClose }) {
         setCurrent(res.data?.data ?? res.data);
       })
       .catch((err) => {
-        if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
+        if (err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED')
+          return;
         setError(true);
         setCurrent(null);
       })

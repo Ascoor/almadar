@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import Notifications from '../common/DropdownNotifications';
 import UserMenu from '../common/DropdownProfile';
 import ThemeToggle from '../common/ThemeToggle';
@@ -11,7 +11,10 @@ export default function Header({ isOpen, user, onToggleSidebar }) {
   const { dir } = useLanguage();
   const [isDark] = useState(() => {
     const root = document.documentElement;
-    return root.classList.contains('dark') || root.getAttribute('data-theme') === 'dark';
+    return (
+      root.classList.contains('dark') ||
+      root.getAttribute('data-theme') === 'dark'
+    );
   });
 
   const marginClass = isOpen
@@ -25,12 +28,12 @@ export default function Header({ isOpen, user, onToggleSidebar }) {
   return (
     <nav
       dir={dir}
-     style={{
-  boxShadow: isDark
-    ? '0 10px 30px -10px rgba(34,211,238,0.35)'  // إضاءة للأسفل فقط
-    : '0 6px 12px -4px rgba(0,0,0,0.1)'          // ظل خفيف للأسفل فقط
-}}
- className={`
+      style={{
+        boxShadow: isDark
+          ? '0 10px 30px -10px rgba(34,211,238,0.35)' // إضاءة للأسفل فقط
+          : '0 6px 12px -4px rgba(0,0,0,0.1)', // ظل خفيف للأسفل فقط
+      }}
+      className={`
         fixed top-0 left-0 right-0
         transition-all duration-300
         ${marginClass}

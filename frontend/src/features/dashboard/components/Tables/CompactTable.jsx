@@ -1,45 +1,55 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Calendar, MapPin, CheckCircle, Clock, XCircle } from "lucide-react";
-import {  useLanguage } from "@/context/LanguageContext";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Calendar, MapPin, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const statusIcons = {
-  "Open": Clock,
-  "InProgress": Clock,
-  "Closed": CheckCircle,
-  "Won": CheckCircle,
-  "Lost": XCircle
+  Open: Clock,
+  InProgress: Clock,
+  Closed: CheckCircle,
+  Won: CheckCircle,
+  Lost: XCircle,
 };
 
 const statusColors = {
-  "Open": "text-amber-500",
-  "InProgress": "text-blue-500", 
-  "Closed": "text-gray-500",
-  "Won": "text-emerald-500",
-  "Lost": "text-red-500"
+  Open: 'text-amber-500',
+  InProgress: 'text-blue-500',
+  Closed: 'text-gray-500',
+  Won: 'text-emerald-500',
+  Lost: 'text-red-500',
 };
 
 export default function CompactTable({ rows = [] }) {
-  const { lang, dir ,t} = useLanguage();
+  const { lang, dir, t } = useLanguage();
   return (
     <div className="glass rounded-2xl overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border/50">
-              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+              <th
+                className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}
+              >
                 {t('title_header', lang)}
               </th>
-              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+              <th
+                className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}
+              >
                 {t('type', lang)}
               </th>
-              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+              <th
+                className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}
+              >
                 {t('region', lang)}
               </th>
-              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+              <th
+                className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}
+              >
                 {t('status', lang)}
               </th>
-              <th className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}>
+              <th
+                className={`${dir === 'rtl' ? 'text-right' : 'text-left'} p-4 font-semibold text-muted-foreground`}
+              >
                 {t('date', lang)}
               </th>
             </tr>
@@ -47,10 +57,10 @@ export default function CompactTable({ rows = [] }) {
           <tbody>
             {rows.map((row, index) => {
               const StatusIcon = statusIcons[row.status] || Clock;
-              const statusColor = statusColors[row.status] || "text-gray-500";
-              
+              const statusColor = statusColors[row.status] || 'text-gray-500';
+
               return (
-                <motion.tr 
+                <motion.tr
                   key={row.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}

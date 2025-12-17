@@ -12,4 +12,3 @@ export function usePrefersReducedMotion() {
   }, []);
   return reduced;
 }
-

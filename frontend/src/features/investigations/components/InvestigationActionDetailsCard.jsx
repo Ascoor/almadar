@@ -5,29 +5,48 @@ import {
   UserCheck,
   FileText,
   ClipboardList,
-} from "lucide-react";
+} from 'lucide-react';
 
 function getStatusMeta(status) {
-  const s = String(status || "").toLowerCase();
+  const s = String(status || '').toLowerCase();
 
-  if (s === "pending") {
-    return { label: "معلّق", dot: "bg-warning", tone: "text-warning border-warning/40 bg-warning/10" };
+  if (s === 'pending') {
+    return {
+      label: 'معلّق',
+      dot: 'bg-warning',
+      tone: 'text-warning border-warning/40 bg-warning/10',
+    };
   }
 
-  if (s === "in_review") {
-    return { label: "قيد المراجعة", dot: "bg-secondary", tone: "text-secondary border-secondary/40 bg-secondary/10" };
+  if (s === 'in_review') {
+    return {
+      label: 'قيد المراجعة',
+      dot: 'bg-secondary',
+      tone: 'text-secondary border-secondary/40 bg-secondary/10',
+    };
   }
 
-  if (s === "done") {
-    return { label: "منجز", dot: "bg-success", tone: "text-success border-success/40 bg-success/10" };
+  if (s === 'done') {
+    return {
+      label: 'منجز',
+      dot: 'bg-success',
+      tone: 'text-success border-success/40 bg-success/10',
+    };
   }
 
-  if (s === "cancelled" || s === "canceled") {
-    return { label: "ملغي", dot: "bg-destructive", tone: "text-destructive border-destructive/40 bg-destructive/10" };
+  if (s === 'cancelled' || s === 'canceled') {
+    return {
+      label: 'ملغي',
+      dot: 'bg-destructive',
+      tone: 'text-destructive border-destructive/40 bg-destructive/10',
+    };
   }
 
-  
-  return { label: "—", dot: "bg-muted-foreground", tone: "text-muted-foreground border-border bg-bg/70" };
+  return {
+    label: '—',
+    dot: 'bg-muted-foreground',
+    tone: 'text-muted-foreground border-border bg-bg/70',
+  };
 }
 
 export default function InvestigationActionDetailsCard({ selected, onClose }) {
@@ -35,34 +54,33 @@ export default function InvestigationActionDetailsCard({ selected, onClose }) {
   return (
     <section className="relative mt-4 overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
       {/* Background: token-driven gradient + soft blobs */}
-      
+
       <button
-  type="button"
-  aria-label="إغلاق"
-  className="absolute top-3 start-3 inline-flex items-center justify-center rounded-2xl p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-  onClick={(e) => {
-    e.preventDefault();
-    e.stopPropagation();
+        type="button"
+        aria-label="إغلاق"
+        className="absolute top-3 start-3 inline-flex items-center justify-center rounded-2xl p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
 
-    if (typeof onClose === "function") {
-      onClose();
-      return;
-    }
-    
-    // fallback لو onClose غير موجود
-    if (window.history.length > 1) window.history.back();
-    else window.location.href = "/"; // عدّلها لمسار مناسب عندك
-  }}
->
-  <XCircle className="size-5" />
-</button>
-  <div className="pointer-events-none absolute inset-0 bg-gradient-subtle opacity-60" />
-  <div className="pointer-events-none absolute -top-28 -end-28 size-72 rounded-full bg-primary/15 blur-3xl" />
-  <div className="pointer-events-none absolute -bottom-28 -start-28 size-72 rounded-full bg-accent/20 blur-3xl" />
+          if (typeof onClose === 'function') {
+            onClose();
+            return;
+          }
 
-  {/* Close */}
+          // fallback لو onClose غير موجود
+          if (window.history.length > 1) window.history.back();
+          else window.location.href = '/'; // عدّلها لمسار مناسب عندك
+        }}
+      >
+        <XCircle className="size-5" />
+      </button>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-subtle opacity-60" />
+      <div className="pointer-events-none absolute -top-28 -end-28 size-72 rounded-full bg-primary/15 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-28 -start-28 size-72 rounded-full bg-accent/20 blur-3xl" />
 
- 
+      {/* Close */}
+
       <div className="relative p-6 md:p-10">
         {/* Header */}
         <header className="mb-6 flex flex-wrap items-start gap-3">
@@ -98,20 +116,21 @@ export default function InvestigationActionDetailsCard({ selected, onClose }) {
             value={
               selected.action_type?.action_name ||
               selected.action_type_name ||
-              "—"
+              '—'
             }
           />
-<InfoItem
-  icon={<ShieldCheck className="size-4" />}
-  label="الحالة"
-  value={getStatusMeta(selected.status).label}
-/>
-
+          <InfoItem
+            icon={<ShieldCheck className="size-4" />}
+            label="الحالة"
+            value={getStatusMeta(selected.status).label}
+          />
 
           <InfoItem
             icon={<UserCheck className="size-4" />}
             label="المسؤول"
-            value={selected.assigned_to?.name || selected.created_by?.name || "—"}
+            value={
+              selected.assigned_to?.name || selected.created_by?.name || '—'
+            }
           />
 
           {/* Mobile status */}
@@ -130,7 +149,7 @@ export default function InvestigationActionDetailsCard({ selected, onClose }) {
             subtitle="ما الذي يلزم لتنفيذ الإجراء"
             icon={<FileText className="size-4" />}
           >
-            {selected.requirements || "—"}
+            {selected.requirements || '—'}
           </SectionCard>
 
           <SectionCard
@@ -138,7 +157,7 @@ export default function InvestigationActionDetailsCard({ selected, onClose }) {
             subtitle="ماذا تم الوصول إليه بعد الإجراء"
             icon={<ShieldCheck className="size-4" />}
           >
-            {selected.results || "—"}
+            {selected.results || '—'}
           </SectionCard>
         </div>
       </div>
@@ -147,8 +166,8 @@ export default function InvestigationActionDetailsCard({ selected, onClose }) {
 }
 
 function InfoItem({ icon, label, value }) {
-  const empty = value === null || value === undefined || value === "";
-  const shown = empty ? "—" : value;
+  const empty = value === null || value === undefined || value === '';
+  const shown = empty ? '—' : value;
 
   return (
     <div className="group relative rounded-2xl border border-border bg-bg/60 p-4 shadow-sm transition hover:bg-muted/40">
@@ -164,9 +183,9 @@ function InfoItem({ icon, label, value }) {
           <div className="mb-1 text-xs text-muted-foreground">{label}</div>
           <div
             className={[
-              "truncate font-semibold",
-              empty ? "text-muted-foreground" : "text-foreground",
-            ].join(" ")}
+              'truncate font-semibold',
+              empty ? 'text-muted-foreground' : 'text-foreground',
+            ].join(' ')}
             title={String(shown)}
           >
             {shown}
@@ -208,10 +227,11 @@ function StatusPill({ value }) {
   const meta = getStatusMeta(value);
 
   return (
-    <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold border shadow-sm ${meta.tone}`}>
+    <span
+      className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold border shadow-sm ${meta.tone}`}
+    >
       <span className={`size-2 rounded-full ${meta.dot}`} />
       {meta.label}
     </span>
   );
 }
-

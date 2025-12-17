@@ -1,9 +1,13 @@
 // src/router/AppRouter.jsx
 import React, { lazy, Suspense } from 'react';
-import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+  Outlet,
+} from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
- 
 
 const Login = lazy(() => import('@/components/organisms/Login'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));

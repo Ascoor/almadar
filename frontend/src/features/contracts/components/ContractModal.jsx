@@ -1,26 +1,26 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+import React, { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
-import ModalCard from "@/components/common/ModalCard";
-import { modalInput } from "@/components/common/modalStyles";
-import { createContract, updateContract } from "@/services/api/contracts";
-import { useLanguage } from "@/context/LanguageContext";
-import { getRoleUsers } from "@/services/api/users";
-import { useAuth } from "@/context/AuthContext";
+import ModalCard from '@/components/common/ModalCard';
+import { modalInput } from '@/components/common/modalStyles';
+import { createContract, updateContract } from '@/services/api/contracts';
+import { useLanguage } from '@/context/LanguageContext';
+import { getRoleUsers } from '@/services/api/users';
+import { useAuth } from '@/context/AuthContext';
 
 const buildEmptyForm = (user) => ({
   id: null,
-  contract_category_id: "",
-  scope: "local",
-  number: "",
-  value: "",
-  contract_parties: "",
-  start_date: "",
-  end_date: "",
-  notes: "",
-  status: "active",
-  summary: "",
-  assigned_to_user_id: "",
+  contract_category_id: '',
+  scope: 'local',
+  number: '',
+  value: '',
+  contract_parties: '',
+  start_date: '',
+  end_date: '',
+  notes: '',
+  status: 'active',
+  summary: '',
+  assigned_to_user_id: '',
   updated_by: user?.id ?? null,
   attachment: null,
   oldAttachment: null,
@@ -54,20 +54,22 @@ export default function ContractModal({
       setForm((prev) => ({
         ...buildEmptyForm(user),
         id: initialData.id ?? null,
-        contract_category_id: initialData.contract_category_id ?? "",
-        scope: initialData.scope ?? "local",
-        number: initialData.number ?? "",
-        value: initialData.value != null ? initialData.value : "",
-        contract_parties: initialData.contract_parties ?? "",
-        start_date: initialData.start_date ? initialData.start_date.slice(0, 10) : "",
-        end_date: initialData.end_date ? initialData.end_date.slice(0, 10) : "",
-        notes: initialData.notes ?? "",
-        status: initialData.status ?? "active",
-        summary: initialData.summary ?? "",
+        contract_category_id: initialData.contract_category_id ?? '',
+        scope: initialData.scope ?? 'local',
+        number: initialData.number ?? '',
+        value: initialData.value != null ? initialData.value : '',
+        contract_parties: initialData.contract_parties ?? '',
+        start_date: initialData.start_date
+          ? initialData.start_date.slice(0, 10)
+          : '',
+        end_date: initialData.end_date ? initialData.end_date.slice(0, 10) : '',
+        notes: initialData.notes ?? '',
+        status: initialData.status ?? 'active',
+        summary: initialData.summary ?? '',
         assigned_to_user_id:
           initialData.assigned_to_user_id ??
           initialData.assigned_to_user?.id ??
-          "",
+          '',
         attachment: null,
         oldAttachment: initialData.attachment ?? null,
         updated_by: user?.id ?? prev.updated_by ?? null,
@@ -91,12 +93,12 @@ export default function ContractModal({
     const fetchUsers = async () => {
       setUsersLoading(true);
       try {
-        const res = await getRoleUsers("user");
+        const res = await getRoleUsers('user');
         const list = Array.isArray(res) ? res : res?.data;
         if (mounted) setUsers(Array.isArray(list) ? list : []);
       } catch (err) {
         console.error(err);
-        toast.error("❌ فشل تحميل قائمة المستخدمين");
+        toast.error('❌ فشل تحميل قائمة المستخدمين');
         if (mounted) setUsers([]);
       } finally {
         if (mounted) setUsersLoading(false);
@@ -112,16 +114,21 @@ export default function ContractModal({
   const validateForm = () => {
     const newErrors = {};
 
-    if (!form.contract_category_id) newErrors.contract_category_id = "هذا الحقل مطلوب.";
-    if (!form.number) newErrors.number = "يرجى إدخال رقم العقد.";
+    if (!form.contract_category_id)
+      newErrors.contract_category_id = 'هذا الحقل مطلوب.';
+    if (!form.number) newErrors.number = 'يرجى إدخال رقم العقد.';
 
-    if (!form.value && form.value !== 0) newErrors.value = "يرجى إدخال قيمة العقد.";
-    else if (Number(form.value) <= 0) newErrors.value = "قيمة العقد يجب أن تكون أكبر من صفر.";
+    if (!form.value && form.value !== 0)
+      newErrors.value = 'يرجى إدخال قيمة العقد.';
+    else if (Number(form.value) <= 0)
+      newErrors.value = 'قيمة العقد يجب أن تكون أكبر من صفر.';
 
-    if (!form.contract_parties) newErrors.contract_parties = "يرجى إدخال أطراف العقد.";
-    if (!form.start_date) newErrors.start_date = "يرجى إدخال تاريخ البداية.";
+    if (!form.contract_parties)
+      newErrors.contract_parties = 'يرجى إدخال أطراف العقد.';
+    if (!form.start_date) newErrors.start_date = 'يرجى إدخال تاريخ البداية.';
 
-    if (hasDuration && !form.end_date) newErrors.end_date = "يرجى إدخال تاريخ الانتهاء.";
+    if (hasDuration && !form.end_date)
+      newErrors.end_date = 'يرجى إدخال تاريخ الانتهاء.';
 
     if (
       hasDuration &&
@@ -129,10 +136,11 @@ export default function ContractModal({
       form.end_date &&
       form.end_date < form.start_date
     ) {
-      newErrors.end_date = "تاريخ النهاية يجب أن يكون بعد أو مساوي لتاريخ البداية.";
+      newErrors.end_date =
+        'تاريخ النهاية يجب أن يكون بعد أو مساوي لتاريخ البداية.';
     }
 
-    if (!form.summary) newErrors.summary = "يرجى كتابة ملخص للعقد.";
+    if (!form.summary) newErrors.summary = 'يرجى كتابة ملخص للعقد.';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -141,10 +149,10 @@ export default function ContractModal({
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
-    if (name === "attachment") {
+    if (name === 'attachment') {
       const file = files?.[0];
-      if (file && file.type !== "application/pdf") {
-        toast.error("📄 الملف يجب أن يكون بصيغة PDF فقط.");
+      if (file && file.type !== 'application/pdf') {
+        toast.error('📄 الملف يجب أن يكون بصيغة PDF فقط.');
         return;
       }
       setForm((prev) => ({ ...prev, attachment: file }));
@@ -160,14 +168,14 @@ export default function ContractModal({
     setHasDuration(value);
 
     if (!value) {
-      setForm((prev) => ({ ...prev, end_date: "" }));
+      setForm((prev) => ({ ...prev, end_date: '' }));
       setErrors((prev) => ({ ...prev, end_date: undefined }));
     }
   };
 
   const handleSave = async () => {
     if (!validateForm()) {
-      toast.warning("⚠️ يرجى تعبئة الحقول الإلزامية بشكل صحيح.");
+      toast.warning('⚠️ يرجى تعبئة الحقول الإلزامية بشكل صحيح.');
       return;
     }
 
@@ -182,22 +190,22 @@ export default function ContractModal({
       };
 
       Object.entries(dataToSend).forEach(([key, val]) => {
-        if (key === "attachment") {
-          if (val instanceof File) payload.append("attachment", val);
+        if (key === 'attachment') {
+          if (val instanceof File) payload.append('attachment', val);
           return;
         }
-        if (key === "oldAttachment") return;
+        if (key === 'oldAttachment') return;
 
         if (val != null) payload.append(key, val);
       });
 
       if (dataToSend.id) {
-        payload.append("_method", "PUT");
+        payload.append('_method', 'PUT');
         await updateContract(dataToSend.id, payload);
-        toast.success("✅ تم تعديل العقد بنجاح.");
+        toast.success('✅ تم تعديل العقد بنجاح.');
       } else {
         await createContract(payload);
-        toast.success("✅ تم إضافة العقد بنجاح.");
+        toast.success('✅ تم إضافة العقد بنجاح.');
       }
 
       reloadContracts?.();
@@ -207,7 +215,7 @@ export default function ContractModal({
       setErrors({});
     } catch (err) {
       console.error(err);
-      toast.error("❌ حدث خطأ أثناء حفظ العقد.");
+      toast.error('❌ حدث خطأ أثناء حفظ العقد.');
     } finally {
       setLoading(false);
     }
@@ -217,23 +225,25 @@ export default function ContractModal({
   const inputClass = (name) =>
     `${inputBaseClasses} ${
       errors[name]
-        ? "border-destructive focus:ring-destructive/40"
-        : "focus:border-ring"
+        ? 'border-destructive focus:ring-destructive/40'
+        : 'focus:border-ring'
     }`;
 
   const errorText = (name) =>
     errors[name] ? (
-      <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors[name]}</p>
+      <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+        {errors[name]}
+      </p>
     ) : null;
 
   return (
     <ModalCard
       isOpen={isOpen}
-      title={initialData ? "تعديل العقد" : "إضافة عقد جديد"}
+      title={initialData ? 'تعديل العقد' : 'إضافة عقد جديد'}
       loading={loading}
       onClose={onClose}
       onSubmit={handleSave}
-      submitLabel={initialData ? "تحديث" : "إضافة"}
+      submitLabel={initialData ? 'تحديث' : 'إضافة'}
     >
       <div className="grid grid-cols-1 gap-4 rounded-xl bg-white p-4 text-right text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 md:grid-cols-2">
         {/* التصنيف */}
@@ -245,7 +255,7 @@ export default function ContractModal({
             name="contract_category_id"
             value={form.contract_category_id}
             onChange={handleChange}
-            className={inputClass("contract_category_id")}
+            className={inputClass('contract_category_id')}
             required
           >
             <option value="">اختر تصنيف</option>
@@ -255,7 +265,7 @@ export default function ContractModal({
               </option>
             ))}
           </select>
-          {errorText("contract_category_id")}
+          {errorText('contract_category_id')}
         </div>
 
         {/* النوع */}
@@ -265,7 +275,7 @@ export default function ContractModal({
             name="scope"
             value={form.scope}
             onChange={handleChange}
-            className={inputClass("scope")}
+            className={inputClass('scope')}
           >
             <option value="local">محلي</option>
             <option value="international">دولي</option>
@@ -281,9 +291,9 @@ export default function ContractModal({
             name="number"
             value={form.number}
             onChange={handleChange}
-            className={inputClass("number")}
+            className={inputClass('number')}
           />
-          {errorText("number")}
+          {errorText('number')}
         </div>
 
         {/* القيمة */}
@@ -296,9 +306,9 @@ export default function ContractModal({
             name="value"
             value={form.value}
             onChange={handleChange}
-            className={inputClass("value")}
+            className={inputClass('value')}
           />
-          {errorText("value")}
+          {errorText('value')}
         </div>
 
         {/* الأطراف */}
@@ -311,15 +321,15 @@ export default function ContractModal({
             value={form.contract_parties}
             onChange={handleChange}
             rows={2}
-            className={inputClass("contract_parties")}
+            className={inputClass('contract_parties')}
           />
-          {errorText("contract_parties")}
+          {errorText('contract_parties')}
         </div>
 
         {/* البداية – النهاية */}
         <div>
           <label className="mb-1 block text-sm font-medium">
-            {hasDuration ? "تاريخ بداية العقد" : "تاريخ العقد"}
+            {hasDuration ? 'تاريخ بداية العقد' : 'تاريخ العقد'}
             <span className="text-red-500">*</span>
           </label>
           <input
@@ -327,9 +337,9 @@ export default function ContractModal({
             name="start_date"
             value={form.start_date}
             onChange={handleChange}
-            className={inputClass("start_date")}
+            className={inputClass('start_date')}
           />
-          {errorText("start_date")}
+          {errorText('start_date')}
 
           {hasDuration && (
             <div className="mt-2">
@@ -341,16 +351,18 @@ export default function ContractModal({
                 name="end_date"
                 value={form.end_date}
                 onChange={handleChange}
-                className={inputClass("end_date")}
+                className={inputClass('end_date')}
               />
-              {errorText("end_date")}
+              {errorText('end_date')}
             </div>
           )}
         </div>
 
         {/* هل للعقد مدة؟ */}
         <div>
-          <label className="mb-2 block text-sm font-medium">هل للعقد مدة؟</label>
+          <label className="mb-2 block text-sm font-medium">
+            هل للعقد مدة؟
+          </label>
           <div className="flex items-center gap-4">
             <label className="flex cursor-pointer items-center gap-2">
               <input
@@ -381,7 +393,7 @@ export default function ContractModal({
               name="status"
               value={form.status}
               onChange={handleChange}
-              className={inputClass("status")}
+              className={inputClass('status')}
             >
               <option value="active">ساري</option>
               <option value="expired">منتهي</option>
@@ -402,29 +414,31 @@ export default function ContractModal({
             value={form.summary}
             onChange={handleChange}
             rows={3}
-            className={inputClass("summary")}
+            className={inputClass('summary')}
           />
-          {errorText("summary")}
+          {errorText('summary')}
         </div>
 
         {/* المستخدم المسؤول */}
         <div className="md:col-span-2">
-          <label className="mb-1 block text-sm font-medium">المستخدم المسؤول</label>
+          <label className="mb-1 block text-sm font-medium">
+            المستخدم المسؤول
+          </label>
 
           <select
             name="assigned_to_user_id"
-            value={form.assigned_to_user_id || ""}
+            value={form.assigned_to_user_id || ''}
             onChange={handleChange}
-            className={inputClass("assigned_to_user_id")}
+            className={inputClass('assigned_to_user_id')}
             disabled={usersLoading}
           >
             <option value="">
-              {usersLoading ? "جاري تحميل المستخدمين..." : "اختر المستخدم"}
+              {usersLoading ? 'جاري تحميل المستخدمين...' : 'اختر المستخدم'}
             </option>
 
             {users.map((u) => (
               <option key={u.id} value={u.id}>
-                {u.name} {u.email ? `- ${u.email}` : ""}
+                {u.name} {u.email ? `- ${u.email}` : ''}
               </option>
             ))}
           </select>
@@ -432,25 +446,29 @@ export default function ContractModal({
 
         {/* الملاحظات */}
         <div className="md:col-span-2">
-          <label className="mb-1 block text-sm font-medium">ملاحظات (اختياري)</label>
+          <label className="mb-1 block text-sm font-medium">
+            ملاحظات (اختياري)
+          </label>
           <textarea
             name="notes"
             value={form.notes}
             onChange={handleChange}
             rows={2}
-            className={inputClass("notes")}
+            className={inputClass('notes')}
           />
         </div>
 
         {/* المرفقات */}
         <div className="md:col-span-2">
-          <label className="mb-1 block text-sm font-medium">مرفق العقد (PDF فقط)</label>
+          <label className="mb-1 block text-sm font-medium">
+            مرفق العقد (PDF فقط)
+          </label>
           <input
             type="file"
             name="attachment"
             accept="application/pdf"
             onChange={handleChange}
-            className={inputClass("attachment")}
+            className={inputClass('attachment')}
           />
 
           {form.attachment ? (

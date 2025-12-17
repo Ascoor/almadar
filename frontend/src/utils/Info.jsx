@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import Transition from './Transition';
 
 function Info({ children, className, containerClassName }) {

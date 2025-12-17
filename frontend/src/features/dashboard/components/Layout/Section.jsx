@@ -1,16 +1,16 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React from 'react';
+import { motion } from 'framer-motion';
 
-export default function Section({ 
-  title, 
-  description, 
-  actions, 
-  children, 
-  className = "",
-  delay = 0 
+export default function Section({
+  title,
+  description,
+  actions,
+  children,
+  className = '',
+  delay = 0,
 }) {
   return (
-    <motion.section 
+    <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
@@ -28,9 +28,7 @@ export default function Section({
               <p className="text-sm text-muted-foreground">{description}</p>
             )}
           </div>
-          {actions && (
-            <div className="flex items-center gap-2">{actions}</div>
-          )}
+          {actions && <div className="flex items-center gap-2">{actions}</div>}
         </div>
       )}
       {children}

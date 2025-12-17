@@ -1,24 +1,24 @@
-import { useState, lazy, Suspense } from "react";
-import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useState, lazy, Suspense } from 'react';
+import { toast } from 'sonner';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
-import TableComponent from "@/components/common/TableComponent";
-import SectionHeader from "@/components/common/SectionHeader";
-import { Button } from "@/components/ui/button";
-import { InvestigationSection } from "@/assets/icons";
-import { useInvestigations } from "@/hooks/dataHooks";
+import TableComponent from '@/components/common/TableComponent';
+import SectionHeader from '@/components/common/SectionHeader';
+import { Button } from '@/components/ui/button';
+import { InvestigationSection } from '@/assets/icons';
+import { useInvestigations } from '@/hooks/dataHooks';
 import {
   createInvestigation,
   updateInvestigation,
   deleteInvestigation,
-} from "@/services/api/investigations";
+} from '@/services/api/investigations';
 
-const InvestigationModal = lazy(() =>
-  import("@/features/investigations/components/InvestigationModal")
+const InvestigationModal = lazy(
+  () => import('@/features/investigations/components/InvestigationModal'),
 );
-const GlobalConfirmDeleteModal = lazy(() =>
-  import("@/components/common/GlobalConfirmDeleteModal")
+const GlobalConfirmDeleteModal = lazy(
+  () => import('@/components/common/GlobalConfirmDeleteModal'),
 );
 
 export default function InvestigationsPage() {
@@ -32,12 +32,12 @@ export default function InvestigationsPage() {
 
   // جدول الأعمدة
   const headers = [
-    { key: "employee_name", text: "الموظف" },
-    { key: "source", text: "الجهة المحيلة" },
-    { key: "subject", text: "الموضوع" },
-    { key: "assigned_to_user", text: "المحقق" },
-    { key: "case_number", text: "رقم القضية" },
-    { key: "status", text: "الحالة" },
+    { key: 'employee_name', text: 'الموظف' },
+    { key: 'source', text: 'الجهة المحيلة' },
+    { key: 'subject', text: 'الموضوع' },
+    { key: 'assigned_to_user', text: 'المحقق' },
+    { key: 'case_number', text: 'رقم القضية' },
+    { key: 'status', text: 'الحالة' },
   ];
 
   // render مخصص لبعض الأعمدة
@@ -48,7 +48,7 @@ export default function InvestigationsPage() {
       </span>
     ),
     assigned_to_user: (row) =>
-      row.assigned_to?.name || row.assigned_to?.name || "—",
+      row.assigned_to?.name || row.assigned_to?.name || '—',
   };
 
   // فتح مودال إضافة جديد
@@ -68,16 +68,16 @@ export default function InvestigationsPage() {
     try {
       if (editingItem?.id) {
         await updateInvestigation(editingItem.id, formData);
-        toast.success("تم تحديث التحقيق بنجاح");
+        toast.success('تم تحديث التحقيق بنجاح');
       } else {
         await createInvestigation(formData);
-        toast.success("تمت إضافة التحقيق بنجاح");
+        toast.success('تمت إضافة التحقيق بنجاح');
       }
       setIsModalOpen(false);
       setEditingItem(null);
       await refetch();
     } catch {
-      toast.error("حدث خطأ أثناء الحفظ");
+      toast.error('حدث خطأ أثناء الحفظ');
     }
   };
 
@@ -86,11 +86,11 @@ export default function InvestigationsPage() {
     if (!toDelete) return;
     try {
       await deleteInvestigation(toDelete.id);
-      toast.success("تم حذف التحقيق بنجاح");
+      toast.success('تم حذف التحقيق بنجاح');
       setToDelete(null);
       await refetch();
     } catch {
-      toast.error("فشل حذف التحقيق");
+      toast.error('فشل حذف التحقيق');
     }
   };
 
@@ -102,7 +102,7 @@ export default function InvestigationsPage() {
         initial={{ opacity: 0, y: -100 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -40 }}
-        transition={{ type: "spring", stiffness: 70, damping: 14 }}
+        transition={{ type: 'spring', stiffness: 70, damping: 14 }}
       >
         <SectionHeader
           showBackButton
@@ -116,7 +116,7 @@ export default function InvestigationsPage() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 60 }}
-        transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.1 }}
+        transition={{ type: 'spring', stiffness: 60, damping: 14, delay: 0.1 }}
         className="rounded-xl bg-card text-fg p-4 shadow-md"
       >
         <TableComponent
@@ -137,7 +137,11 @@ export default function InvestigationsPage() {
                   stroke="currentColor"
                   strokeWidth={2}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
               </Button>
             ),
@@ -171,7 +175,7 @@ export default function InvestigationsPage() {
             onConfirm={handleDelete}
             title="تأكيد حذف التحقيق"
             description={`هل تريد حذف تحقيق الموظف ${
-              toDelete.employee_name ?? ""
+              toDelete.employee_name ?? ''
             }؟ لا يمكن التراجع عن هذه العملية.`}
             confirmText="حذف"
             cancelText="إلغاء"

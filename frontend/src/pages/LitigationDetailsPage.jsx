@@ -1,10 +1,10 @@
-import { lazy, Suspense, useState } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useLitigations } from "@/hooks/dataHooks";
+import { lazy, Suspense, useState } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useLitigations } from '@/hooks/dataHooks';
 
-const LitigationActionsTable = lazy(() =>
-  import("@/features/litigations/components/LitigationActionsTable")
+const LitigationActionsTable = lazy(
+  () => import('@/features/litigations/components/LitigationActionsTable'),
 );
 
 export default function LitigationDetailsPage() {
@@ -22,7 +22,6 @@ export default function LitigationDetailsPage() {
   if (!current) {
     return <div className="p-4">لا توجد بيانات</div>;
   }
-
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
@@ -62,7 +61,6 @@ export default function LitigationDetailsPage() {
           reloadLitigations={refetch}
         />
       </Suspense>
-
     </div>
   );
 }

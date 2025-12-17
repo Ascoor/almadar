@@ -18,9 +18,9 @@ export function initEcho(config = {}) {
     cluster: import.meta.env.VITE_REVERB_CLUSTER,
     wsHost: import.meta.env.VITE_REVERB_HOST,
     wsPort: import.meta.env.VITE_REVERB_PORT,
-    forceTLS: false,  
+    forceTLS: false,
     encrypted: false,
-    
+
     disableStats: true,
     enabledTransports: ['ws'],
     authEndpoint: `${import.meta.env.VITE_API_BASE_URL}/broadcasting/auth`,
@@ -38,4 +38,3 @@ export function subscribeToUserChannel(echo, userId) {
   if (!echo) throw new Error('Echo not initialized');
   return echo.private(`user.${userId}`);
 }
-

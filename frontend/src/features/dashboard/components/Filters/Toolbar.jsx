@@ -1,28 +1,32 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Calendar, MapPin, Filter, RotateCcw } from "lucide-react";
- 
-import   {DashboardClock}   from "@/features/dashboard/components";
-import { useLanguage } from "@/context/LanguageContext";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Calendar, MapPin, Filter, RotateCcw } from 'lucide-react';
+
+import { DashboardClock } from '@/features/dashboard/components';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function Toolbar({ value, onChange }) {
-  const { lang,t} = useLanguage();
-  const [local, setLocal] = React.useState(value ?? { 
-    period: "last-12m", 
-    region: "ALL", 
-    status: "ALL" 
-  });
+  const { lang, t } = useLanguage();
+  const [local, setLocal] = React.useState(
+    value ?? {
+      period: 'last-12m',
+      region: 'ALL',
+      status: 'ALL',
+    },
+  );
 
   React.useEffect(() => {
     onChange && onChange(local);
   }, [local, onChange]);
 
-  const selectClass = "select rounded-xl px-4 py-2 text-sm transition-all";
-  const buttonClass = "btn-primary rounded-xl px-4 py-2 text-sm transition-all flex items-center gap-2";
-  const resetClass = "btn-primary rounded-xl px-4 py-2 text-sm font-medium transition-all flex items-center gap-2";
+  const selectClass = 'select rounded-xl px-4 py-2 text-sm transition-all';
+  const buttonClass =
+    'btn-primary rounded-xl px-4 py-2 text-sm transition-all flex items-center gap-2';
+  const resetClass =
+    'btn-primary rounded-xl px-4 py-2 text-sm font-medium transition-all flex items-center gap-2';
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -33,10 +37,10 @@ export default function Toolbar({ value, onChange }) {
       </div>
       <div className="flex items-center gap-2 w-full sm:w-auto">
         <Calendar className="w-4 h-4 text-primary" />
-        <select 
+        <select
           className={selectClass}
-          value={local.period} 
-          onChange={e => setLocal(v => ({...v, period: e.target.value}))}
+          value={local.period}
+          onChange={(e) => setLocal((v) => ({ ...v, period: e.target.value }))}
         >
           <option value="last-12m">{t('last12Months', lang)}</option>
           <option value="ytd">{t('yearToDate', lang)}</option>
@@ -46,10 +50,10 @@ export default function Toolbar({ value, onChange }) {
 
       <div className="flex items-center gap-2 w-full sm:w-auto">
         <MapPin className="w-4 h-4 text-primary" />
-        <select 
+        <select
           className={selectClass}
-          value={local.region} 
-          onChange={e => setLocal(v => ({...v, region: e.target.value}))}
+          value={local.region}
+          onChange={(e) => setLocal((v) => ({ ...v, region: e.target.value }))}
         >
           <option value="ALL">{t('allRegions', lang)}</option>
           <option value="TRP">{t('tripoli', lang)}</option>
@@ -62,10 +66,10 @@ export default function Toolbar({ value, onChange }) {
 
       <div className="flex items-center gap-2 w-full sm:w-auto">
         <Filter className="w-4 h-4 text-primary" />
-        <select 
+        <select
           className={selectClass}
-          value={local.status} 
-          onChange={e => setLocal(v => ({...v, status: e.target.value}))}
+          value={local.status}
+          onChange={(e) => setLocal((v) => ({ ...v, status: e.target.value }))}
         >
           <option value="ALL">{t('allStatuses', lang)}</option>
           <option value="Open">{t('open', lang)}</option>
@@ -77,9 +81,11 @@ export default function Toolbar({ value, onChange }) {
       </div>
 
       <div className="flex items-center gap-2 ml-auto w-full sm:w-auto justify-end">
-        <button 
+        <button
           className={resetClass}
-          onClick={() => setLocal({period: "last-12m", region: "ALL", status: "ALL"})}
+          onClick={() =>
+            setLocal({ period: 'last-12m', region: 'ALL', status: 'ALL' })
+          }
         >
           <RotateCcw className="w-4 h-4" />
           {t('reset', lang)}

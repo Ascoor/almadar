@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
-import ModalCard from "@/components/common/ModalCard";
-import { modalInput, modalLabel } from "@/components/common/modalStyles";
-import { getRoleLegalInvestigators } from "@/services/api/users";
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import ModalCard from '@/components/common/ModalCard';
+import { modalInput, modalLabel } from '@/components/common/modalStyles';
+import { getRoleLegalInvestigators } from '@/services/api/users';
 
 const EMPTY_FORM = {
-  employee_name: "",
-  source: "",
-  subject: "",
-  case_number: "",
-  status: "open",
-  notes: "",
-  assigned_to_user_id: "",
+  employee_name: '',
+  source: '',
+  subject: '',
+  case_number: '',
+  status: 'open',
+  notes: '',
+  assigned_to_user_id: '',
 };
 
 export default function InvestigationModal({
@@ -37,7 +37,9 @@ export default function InvestigationModal({
         ...EMPTY_FORM,
         ...initialData,
         assigned_to_user_id:
-          initialData.assigned_to_user_id || initialData.assigned_to_user?.id || "",
+          initialData.assigned_to_user_id ||
+          initialData.assigned_to_user?.id ||
+          '',
       });
     } else {
       setForm(EMPTY_FORM);
@@ -59,7 +61,7 @@ export default function InvestigationModal({
         if (mounted) setUsers(Array.isArray(list) ? list : []);
       } catch (err) {
         console.error(err);
-        toast.error("❌ فشل تحميل قائمة المحققين القانونيين");
+        toast.error('❌ فشل تحميل قائمة المحققين القانونيين');
         if (mounted) setUsers([]);
       } finally {
         if (mounted) setUsersLoading(false);
@@ -77,15 +79,16 @@ export default function InvestigationModal({
   const inputClass = (name) =>
     `${inputBaseClasses} ${
       errors[name]
-        ? "border-destructive focus:ring-destructive/40"
-        : "focus:border-ring"
+        ? 'border-destructive focus:ring-destructive/40'
+        : 'focus:border-ring'
     }`;
 
   const validate = () => {
     const e = {};
-    if (!form.employee_name) e.employee_name = "هذا الحقل مطلوب";
-    if (!form.subject) e.subject = "هذا الحقل مطلوب";
-    if (!form.assigned_to_user_id) e.assigned_to_user_id = "اختر المستخدم المسؤول";
+    if (!form.employee_name) e.employee_name = 'هذا الحقل مطلوب';
+    if (!form.subject) e.subject = 'هذا الحقل مطلوب';
+    if (!form.assigned_to_user_id)
+      e.assigned_to_user_id = 'اختر المستخدم المسؤول';
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -99,7 +102,7 @@ export default function InvestigationModal({
 
   const handleFormSubmit = async () => {
     if (!validate()) {
-      toast.warning("⚠️ يرجى تعبئة الحقول الإلزامية.");
+      toast.warning('⚠️ يرجى تعبئة الحقول الإلزامية.');
       return;
     }
 
@@ -108,8 +111,8 @@ export default function InvestigationModal({
       await onSubmit(form);
       onClose();
     } catch (error) {
-      console.error("❌ Error saving investigation:", error);
-      toast.error("❌ حدث خطأ أثناء الحفظ");
+      console.error('❌ Error saving investigation:', error);
+      toast.error('❌ حدث خطأ أثناء الحفظ');
       throw error;
     } finally {
       setLoading(false);
@@ -121,7 +124,7 @@ export default function InvestigationModal({
   return (
     <ModalCard
       isOpen={isOpen}
-      title={initialData ? "تعديل تحقيق" : "إضافة تحقيق"}
+      title={initialData ? 'تعديل تحقيق' : 'إضافة تحقيق'}
       onClose={onClose}
       onSubmit={handleFormSubmit}
       loading={loading}
@@ -133,9 +136,9 @@ export default function InvestigationModal({
             <label className={modalLabel}>اسم الموظف</label>
             <input
               name="employee_name"
-              value={form.employee_name || ""}
+              value={form.employee_name || ''}
               onChange={handleChange}
-              className={inputClass("employee_name")}
+              className={inputClass('employee_name')}
             />
             {errors.employee_name && (
               <p className="text-xs text-red-600">{errors.employee_name}</p>
@@ -147,7 +150,7 @@ export default function InvestigationModal({
             <label className={modalLabel}>المصدر</label>
             <input
               name="source"
-              value={form.source || ""}
+              value={form.source || ''}
               onChange={handleChange}
               className={modalInput}
             />
@@ -158,9 +161,9 @@ export default function InvestigationModal({
             <label className={modalLabel}>الموضوع</label>
             <input
               name="subject"
-              value={form.subject || ""}
+              value={form.subject || ''}
               onChange={handleChange}
-              className={inputClass("subject")}
+              className={inputClass('subject')}
             />
             {errors.subject && (
               <p className="text-xs text-red-600">{errors.subject}</p>
@@ -172,7 +175,7 @@ export default function InvestigationModal({
             <label className={modalLabel}>رقم القضية</label>
             <input
               name="case_number"
-              value={form.case_number || ""}
+              value={form.case_number || ''}
               onChange={handleChange}
               className={modalInput}
             />
@@ -183,7 +186,7 @@ export default function InvestigationModal({
             <label className={modalLabel}>الحالة</label>
             <select
               name="status"
-              value={form.status || "open"}
+              value={form.status || 'open'}
               onChange={handleChange}
               className={modalInput}
             >
@@ -198,23 +201,25 @@ export default function InvestigationModal({
             <label className={modalLabel}>المستخدم المسؤول (محقق قانوني)</label>
             <select
               name="assigned_to_user_id"
-              value={form.assigned_to_user_id || ""}
+              value={form.assigned_to_user_id || ''}
               onChange={handleChange}
-              className={inputClass("assigned_to_user_id")}
+              className={inputClass('assigned_to_user_id')}
               disabled={usersLoading}
             >
               <option value="">
-                {usersLoading ? "جاري تحميل القائمة..." : "اختر المستخدم"}
+                {usersLoading ? 'جاري تحميل القائمة...' : 'اختر المستخدم'}
               </option>
 
               {users.map((u) => (
                 <option key={u.id} value={u.id}>
-                  {u.name} {u.email ? `- ${u.email}` : ""}
+                  {u.name} {u.email ? `- ${u.email}` : ''}
                 </option>
               ))}
             </select>
             {errors.assigned_to_user_id && (
-              <p className="text-xs text-red-600">{errors.assigned_to_user_id}</p>
+              <p className="text-xs text-red-600">
+                {errors.assigned_to_user_id}
+              </p>
             )}
           </div>
 
@@ -224,7 +229,7 @@ export default function InvestigationModal({
             <textarea
               name="notes"
               rows={2}
-              value={form.notes || ""}
+              value={form.notes || ''}
               onChange={handleChange}
               className={`${modalInput} min-h-[110px]`}
             />

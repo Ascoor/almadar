@@ -1,6 +1,6 @@
-import React, { useEffect, useContext } from "react";
-import { AuthContext } from "@/context/AuthContext";
-import { initEcho } from "@/lib/echo";
+import React, { useEffect, useContext } from 'react';
+import { AuthContext } from '@/context/AuthContext';
+import { initEcho } from '@/lib/echo';
 
 export default function EchoInitializer({ children }) {
   const { token } = useContext(AuthContext);

@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
-import ModalCard from "@/components/common/ModalCard";
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import ModalCard from '@/components/common/ModalCard';
 import {
   modalInput,
   modalLabel,
   modalHelperText,
-} from "@/components/common/modalStyles";
-import { getRoleLegalInvestigators } from "@/services/api/users";
+} from '@/components/common/modalStyles';
+import { getRoleLegalInvestigators } from '@/services/api/users';
 
 const EMPTY_FORM = {
   id: null,
-  action_date: "",
-  action_type_id: "", 
-  requirements: "",
-  results: "",
-  status: "pending",
-  assigned_to_user_id: "",
+  action_date: '',
+  action_type_id: '',
+  requirements: '',
+  results: '',
+  status: 'pending',
+  assigned_to_user_id: '',
 };
 
 export default function InvestigationActionModal({
@@ -46,9 +46,9 @@ export default function InvestigationActionModal({
             assigned_to_user_id:
               initialData.assigned_to_user_id ||
               initialData.assigned_to_user?.id ||
-              "",
+              '',
           }
-        : EMPTY_FORM
+        : EMPTY_FORM,
     );
 
     setErrors({});
@@ -67,7 +67,7 @@ export default function InvestigationActionModal({
         if (mounted) setUsers(Array.isArray(list) ? list : []);
       } catch (err) {
         console.error(err);
-        toast.error("❌ فشل تحميل قائمة المحققين القانونيين");
+        toast.error('❌ فشل تحميل قائمة المحققين القانونيين');
         if (mounted) setUsers([]);
       } finally {
         if (mounted) setUsersLoading(false);
@@ -85,15 +85,16 @@ export default function InvestigationActionModal({
   const inputClass = (name) =>
     `${inputBaseClasses} ${
       errors[name]
-        ? "border-destructive focus:ring-destructive/40"
-        : "focus:border-ring"
+        ? 'border-destructive focus:ring-destructive/40'
+        : 'focus:border-ring'
     }`;
 
   const validate = () => {
     const e = {};
-    if (!form.action_date) e.action_date = "هذا الحقل مطلوب";
-    if (!form.action_type_id) e.action_type_id = "هذا الحقل مطلوب"; 
-    if (!form.assigned_to_user_id) e.assigned_to_user_id = "اختر المستخدم المسؤول";
+    if (!form.action_date) e.action_date = 'هذا الحقل مطلوب';
+    if (!form.action_type_id) e.action_type_id = 'هذا الحقل مطلوب';
+    if (!form.assigned_to_user_id)
+      e.assigned_to_user_id = 'اختر المستخدم المسؤول';
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -107,7 +108,7 @@ export default function InvestigationActionModal({
 
   const handleSave = async () => {
     if (!validate()) {
-      toast.warning("⚠️ يرجى تعبئة الحقول الإلزامية.");
+      toast.warning('⚠️ يرجى تعبئة الحقول الإلزامية.');
       return;
     }
 
@@ -116,8 +117,8 @@ export default function InvestigationActionModal({
       await onSubmit(form);
       onClose();
     } catch (error) {
-      console.error("InvestigationActionModal Save Error:", error);
-      toast.error("❌ حدث خطأ أثناء الحفظ");
+      console.error('InvestigationActionModal Save Error:', error);
+      toast.error('❌ حدث خطأ أثناء الحفظ');
       throw error;
     } finally {
       setLoading(false);
@@ -130,8 +131,8 @@ export default function InvestigationActionModal({
     <ModalCard
       isOpen={isOpen}
       onClose={onClose}
-      title={isEdit ? "تعديل إجراء تحقيق" : "إضافة إجراء تحقيق"}
-      submitLabel={isEdit ? "تحديث" : "إضافة"}
+      title={isEdit ? 'تعديل إجراء تحقيق' : 'إضافة إجراء تحقيق'}
+      submitLabel={isEdit ? 'تحديث' : 'إضافة'}
       onSubmit={handleSave}
       loading={loading}
     >
@@ -146,9 +147,9 @@ export default function InvestigationActionModal({
           <input
             type="date"
             name="action_date"
-            value={form.action_date || ""}
+            value={form.action_date || ''}
             onChange={handleChange}
-            className={inputClass("action_date")}
+            className={inputClass('action_date')}
           />
           {errors.action_date && (
             <p className="text-xs text-red-600">{errors.action_date}</p>
@@ -160,9 +161,9 @@ export default function InvestigationActionModal({
           <label className={modalLabel}>نوع الإجراء</label>
           <select
             name="action_type_id"
-            value={form.action_type_id || ""}
+            value={form.action_type_id || ''}
             onChange={handleChange}
-            className={inputClass("action_type_id")}
+            className={inputClass('action_type_id')}
           >
             <option value="">اختر النوع</option>
             {actionTypes.map((type) => (
@@ -175,7 +176,6 @@ export default function InvestigationActionModal({
             <p className="text-xs text-red-600">{errors.action_type_id}</p>
           )}
         </div>
- 
 
         {/* المتطلبات */}
         <div className="space-y-1">
@@ -183,7 +183,7 @@ export default function InvestigationActionModal({
           <input
             type="text"
             name="requirements"
-            value={form.requirements || ""}
+            value={form.requirements || ''}
             onChange={handleChange}
             className={modalInput}
             placeholder="مثال: مستندات إضافية، شهود، تقارير..."
@@ -196,7 +196,7 @@ export default function InvestigationActionModal({
           <input
             type="text"
             name="results"
-            value={form.results || ""}
+            value={form.results || ''}
             onChange={handleChange}
             className={modalInput}
             placeholder="مثال: تم التنفيذ، جاري المتابعة..."
@@ -208,17 +208,17 @@ export default function InvestigationActionModal({
           <label className={modalLabel}>القائم بالإجراء</label>
           <select
             name="assigned_to_user_id"
-            value={form.assigned_to_user_id || ""}
+            value={form.assigned_to_user_id || ''}
             onChange={handleChange}
-            className={inputClass("assigned_to_user_id")}
+            className={inputClass('assigned_to_user_id')}
             disabled={usersLoading}
           >
             <option value="">
-              {usersLoading ? "جاري تحميل القائمة..." : "اختر المستخدم"}
+              {usersLoading ? 'جاري تحميل القائمة...' : 'اختر المستخدم'}
             </option>
             {users.map((u) => (
               <option key={u.id} value={u.id}>
-                {u.name} {u.email ? `- ${u.email}` : ""}
+                {u.name} {u.email ? `- ${u.email}` : ''}
               </option>
             ))}
           </select>
@@ -232,7 +232,7 @@ export default function InvestigationActionModal({
           <label className={modalLabel}>الحالة</label>
           <select
             name="status"
-            value={form.status || "pending"}
+            value={form.status || 'pending'}
             onChange={handleChange}
             className={modalInput}
           >

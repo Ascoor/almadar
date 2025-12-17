@@ -9,4 +9,3 @@ export const assignEntity = (entityType, id, assignedToUserId) =>
   api.patch(`/api/${entityType}/${id}/assign`, {
     assigned_to_user_id: assignedToUserId,
   });
-

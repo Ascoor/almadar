@@ -7,7 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 
 const EXPORT_LABELS = {
   excel: { en: '📁 Excel', ar: '📁 إكسل' },
-  csv: { en: '🧾 CSV', ar: '🧾 CSV' }
+  csv: { en: '🧾 CSV', ar: '🧾 CSV' },
 };
 
 export default function TableComponent({
@@ -21,7 +21,6 @@ export default function TableComponent({
   renderAddButton,
   onRowClick,
 }) {
-  
   const { hasPermission } = useContext(AuthContext);
   const { lang, translations } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,10 +35,12 @@ export default function TableComponent({
     const sample = data.find((d) => d[key] !== undefined && d[key] !== null);
     if (!sample) return false;
     const v = sample[key];
-    return typeof v === 'number' || (!isNaN(Number(v)) && v !== '' && v !== null);
+    return (
+      typeof v === 'number' || (!isNaN(Number(v)) && v !== '' && v !== null)
+    );
   };
 
-  // Parse and test numeric filter expressions: 
+  // Parse and test numeric filter expressions:
   // supports ">=10", "< 25", "= 5", "10-20" (range), or plain number (equals)
   const matchNumeric = (val, expr) => {
     const value = Number(val);
@@ -59,11 +60,17 @@ export default function TableComponent({
       const op = opMatch[1] || '=';
       const num = Number(opMatch[2]);
       switch (op) {
-        case '>': return value > num;
-        case '<': return value < num;
-        case '>=': return value >= num;
-        case '<=': return value <= num;
-        case '=': default: return value === num;
+        case '>':
+          return value > num;
+        case '<':
+          return value < num;
+        case '>=':
+          return value >= num;
+        case '<=':
+          return value <= num;
+        case '=':
+        default:
+          return value === num;
       }
     }
     return false;
@@ -91,19 +98,28 @@ export default function TableComponent({
     if (tokens.length === 0) return data;
 
     // Each token must match at least one column.
-    return data.filter((item) => tokens.every((tk) => {
-      // numeric token detection
-      const numericExpr = /^(>=|<=|>|<|=)?\s*\-?\d+(?:\.\d+)?(?:\s*[-–]\s*\-?\d+(?:\.\d+)?)?$/;
-      const isNumericTk = numericExpr.test(tk.replace(/\s+/g, ''));
+    return data.filter((item) =>
+      tokens.every((tk) => {
+        // numeric token detection
+        const numericExpr =
+          /^(>=|<=|>|<|=)?\s*\-?\d+(?:\.\d+)?(?:\s*[-–]\s*\-?\d+(?:\.\d+)?)?$/;
+        const isNumericTk = numericExpr.test(tk.replace(/\s+/g, ''));
 
-      if (isNumericTk) {
-        // match against any numeric column
-        return headers.some((h) => isNumericColumn(h.key) && matchNumeric(item[h.key], tk));
-      }
-      // text token: match against any column string
-      const low = tk.toLowerCase();
-      return headers.some((h) => String(item[h.key] ?? '').toLowerCase().includes(low));
-    }));
+        if (isNumericTk) {
+          // match against any numeric column
+          return headers.some(
+            (h) => isNumericColumn(h.key) && matchNumeric(item[h.key], tk),
+          );
+        }
+        // text token: match against any column string
+        const low = tk.toLowerCase();
+        return headers.some((h) =>
+          String(item[h.key] ?? '')
+            .toLowerCase()
+            .includes(low),
+        );
+      }),
+    );
   }, [searchQuery, data, headers]);
 
   const sortedData = useMemo(() => {
@@ -215,7 +231,6 @@ export default function TableComponent({
                 <th className="p-3">إجراءات</th>
               ) : null}
             </tr>
-            
           </thead>
           <tbody className="divide-y divide-border">
             {paginatedData.map((row) => (
@@ -224,71 +239,69 @@ export default function TableComponent({
                 className="transition cursor-pointer hover:bg-secondary/30"
                 onClick={() => onRowClick?.(row)}
               >
-                  <td className="p-2 text-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(row.id)}
-                      onChange={() => toggleSelectRow(row.id)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </td>
-                  {headers.map((h) => (
-                    <td key={h.key} className="p-2 text-center">
-                      {h.key === 'attachment' ? (
-                        row.attachment ? (
-                          <a
-                            href={`${API_CONFIG.baseURL}/storage/${row.attachment}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline text-accent hover:text-"
-                          >
-                            عرض المرفق
-                          </a>
-                        ) : (
-                          <span className="text-muted text-xs">
-                            لا يوجد
-                          </span>
-                        )
+                <td className="p-2 text-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(row.id)}
+                    onChange={() => toggleSelectRow(row.id)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </td>
+                {headers.map((h) => (
+                  <td key={h.key} className="p-2 text-center">
+                    {h.key === 'attachment' ? (
+                      row.attachment ? (
+                        <a
+                          href={`${API_CONFIG.baseURL}/storage/${row.attachment}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline text-accent hover:text-"
+                        >
+                          عرض المرفق
+                        </a>
                       ) : (
-                        (customRenderers[h.key]?.(row) ?? row[h.key] ?? '—')
-                      )}
-                    </td>
-                  ))}
-                  <td className="p-2 space-x-1 text-center">
-                    {onView && can('view') && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onView(row);
-                        }}
-                        className="text-accent hover:text-"
-                      >
-                        <Eye size={16} />
-                      </button>
-                    )}
-                    {onEdit && can('edit') && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEdit(row);
-                        }}
-                        className="text-secondary hover:text-"
-                      >
-                        <Edit size={16} />
-                      </button>
-                    )}
-                    {onDelete && can('delete') && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDelete(row);
-                        }}
-                        className="text-destructive hover:text-destructive/90"
-                      >
-                        <Trash size={16} />
-                      </button>
+                        <span className="text-muted text-xs">لا يوجد</span>
+                      )
+                    ) : (
+                      (customRenderers[h.key]?.(row) ?? row[h.key] ?? '—')
                     )}
                   </td>
+                ))}
+                <td className="p-2 space-x-1 text-center">
+                  {onView && can('view') && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onView(row);
+                      }}
+                      className="text-accent hover:text-"
+                    >
+                      <Eye size={16} />
+                    </button>
+                  )}
+                  {onEdit && can('edit') && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(row);
+                      }}
+                      className="text-secondary hover:text-"
+                    >
+                      <Edit size={16} />
+                    </button>
+                  )}
+                  {onDelete && can('delete') && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(row);
+                      }}
+                      className="text-destructive hover:text-destructive/90"
+                    >
+                      <Trash size={16} />
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

@@ -1,7 +1,18 @@
 import React, { useMemo } from 'react';
-import { ResponsiveContainer, RadialBarChart, RadialBar, Legend, Tooltip } from 'recharts';
+import {
+  ResponsiveContainer,
+  RadialBarChart,
+  RadialBar,
+  Legend,
+  Tooltip,
+} from 'recharts';
 import { useLanguage } from '@/context/LanguageContext';
-import { getPalette, tooltipStyle, legendStyle, chartMargin } from './chartTheme';
+import {
+  getPalette,
+  tooltipStyle,
+  legendStyle,
+  chartMargin,
+} from './chartTheme';
 
 // Radial bars alternative to the pie — same data idea, unique look
 // Tokenized colors, RTL-safe rendering, and AR/EN demo labels
@@ -54,12 +65,15 @@ export default function LegalCaseCategorysChart({ height = '100%' }) {
               position: 'insideStart',
               fill: 'var(--fg)',
               fontSize: 11,
-              formatter: (v) => (typeof v === 'number' ? formatNumber(v, lang) : v),
+              formatter: (v) =>
+                typeof v === 'number' ? formatNumber(v, lang) : v,
             }}
           />
           <Tooltip
             contentStyle={tooltipStyle}
-            formatter={(v) => (typeof v === 'number' ? formatNumber(v, lang) : v)}
+            formatter={(v) =>
+              typeof v === 'number' ? formatNumber(v, lang) : v
+            }
           />
           <Legend
             verticalAlign="bottom"
@@ -72,4 +86,3 @@ export default function LegalCaseCategorysChart({ height = '100%' }) {
     </div>
   );
 }
-

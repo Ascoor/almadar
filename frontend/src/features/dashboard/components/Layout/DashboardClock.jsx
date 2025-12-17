@@ -1,9 +1,6 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 
-export default function ClassicHindiClock({
-  size = 240,
-  sweepSeconds = true,
-}) {
+export default function ClassicHindiClock({ size = 240, sweepSeconds = true }) {
   const [now, setNow] = useState(new Date());
   const rafRef = useRef();
 
@@ -39,8 +36,18 @@ export default function ClassicHindiClock({
   const numerR = faceR * 0.82;
 
   const arabicNums = {
-    1: "١", 2: "٢", 3: "٣", 4: "٤", 5: "٥", 6: "٦",
-    7: "٧", 8: "٨", 9: "٩", 10: "١٠", 11: "١١", 12: "١٢",
+    1: '١',
+    2: '٢',
+    3: '٣',
+    4: '٤',
+    5: '٥',
+    6: '٦',
+    7: '٧',
+    8: '٨',
+    9: '٩',
+    10: '١٠',
+    11: '١١',
+    12: '١٢',
   };
 
   return (
@@ -49,7 +56,7 @@ export default function ClassicHindiClock({
       style={{
         width: d,
         height: d,
-        filter: "drop-shadow(0 10px 24px var(--shadow-dark))",
+        filter: 'drop-shadow(0 10px 24px var(--shadow-dark))',
       }}
     >
       <svg width={d} height={d} viewBox={`0 0 ${d} ${d}`}>
@@ -66,7 +73,7 @@ export default function ClassicHindiClock({
         {/* الأرقام الهندية */}
         {Array.from({ length: 12 }).map((_, i) => {
           const n = i + 1;
-          const a = ((n * 30) - 90) * Math.PI / 180;
+          const a = ((n * 30 - 90) * Math.PI) / 180;
           const x = cx + numerR * Math.cos(a);
           const y = cy + numerR * Math.sin(a);
           return (
@@ -77,10 +84,10 @@ export default function ClassicHindiClock({
               textAnchor="middle"
               fontFamily="var(--font-heading)"
               style={{
-                fill:"var(--neon-title)",
+                fill: 'var(--neon-title)',
                 fontSize: `clamp(12px, ${d * 0.12}px, 20px)`,
                 fontWeight: 700,
-             
+
                 opacity: 0.95,
               }}
             >
@@ -93,8 +100,8 @@ export default function ClassicHindiClock({
         <line
           x1={cx}
           y1={cy}
-          x2={cx + faceR * 0.5 * Math.cos((hourAngle - 90) * Math.PI / 180)}
-          y2={cy + faceR * 0.5 * Math.sin((hourAngle - 90) * Math.PI / 180)}
+          x2={cx + faceR * 0.5 * Math.cos(((hourAngle - 90) * Math.PI) / 180)}
+          y2={cy + faceR * 0.5 * Math.sin(((hourAngle - 90) * Math.PI) / 180)}
           stroke="var(--accent)"
           strokeWidth={4}
           strokeLinecap="round"
@@ -104,8 +111,8 @@ export default function ClassicHindiClock({
         <line
           x1={cx}
           y1={cy}
-          x2={cx + faceR * 0.7 * Math.cos((minAngle - 90) * Math.PI / 180)}
-          y2={cy + faceR * 0.7 * Math.sin((minAngle - 90) * Math.PI / 180)}
+          x2={cx + faceR * 0.7 * Math.cos(((minAngle - 90) * Math.PI) / 180)}
+          y2={cy + faceR * 0.7 * Math.sin(((minAngle - 90) * Math.PI) / 180)}
           stroke="var(--fg)"
           strokeWidth={3}
           strokeLinecap="round"
@@ -115,8 +122,8 @@ export default function ClassicHindiClock({
         <line
           x1={cx}
           y1={cy}
-          x2={cx + faceR * 0.8 * Math.cos((secAngle - 90) * Math.PI / 180)}
-          y2={cy + faceR * 0.8 * Math.sin((secAngle - 90) * Math.PI / 180)}
+          x2={cx + faceR * 0.8 * Math.cos(((secAngle - 90) * Math.PI) / 180)}
+          y2={cy + faceR * 0.8 * Math.sin(((secAngle - 90) * Math.PI) / 180)}
           stroke="var(--neon-title)"
           strokeWidth={1.5}
           strokeLinecap="round"

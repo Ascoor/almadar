@@ -16,11 +16,11 @@ export default function ThemeProvider({ children }) {
 
   useEffect(() => {
     if (theme === 'light') {
-      document.documentElement.classList.remove('dark');  // Remove dark class for light theme
-      document.documentElement.style.colorScheme = 'light';  // Set color scheme to light
+      document.documentElement.classList.remove('dark'); // Remove dark class for light theme
+      document.documentElement.style.colorScheme = 'light'; // Set color scheme to light
     } else {
-      document.documentElement.classList.add('dark');  // Add dark class for dark theme
-      document.documentElement.style.colorScheme = 'dark';  // Set color scheme to dark
+      document.documentElement.classList.add('dark'); // Add dark class for dark theme
+      document.documentElement.style.colorScheme = 'dark'; // Set color scheme to dark
     }
   }, [theme]); // Trigger effect when theme changes
 

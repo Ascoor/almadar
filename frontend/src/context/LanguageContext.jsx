@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import ar from '@/locales/ar.json';
 import en from '@/locales/en.json';
 
@@ -8,11 +14,16 @@ const LanguageContext = createContext(null);
 // ✅ get nested value by path: "notifications.assignment.title"
 const getByPath = (obj, path) => {
   if (!obj || !path) return undefined;
-  return path.split('.').reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
+  return path
+    .split('.')
+    .reduce(
+      (acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined),
+      obj,
+    );
 };
 
 const interpolate = (str, params = {}) =>
-  String(str).replace(/\{(\w+)\}/g, (_, k) => (params?.[k] ?? ''));
+  String(str).replace(/\{(\w+)\}/g, (_, k) => params?.[k] ?? '');
 
 export const LanguageProvider = ({ children }) => {
   const getInitialLanguage = () => {
@@ -32,7 +43,10 @@ export const LanguageProvider = ({ children }) => {
 
   const toggleLanguage = () => setLang((prev) => (prev === 'en' ? 'ar' : 'en'));
 
-  const translationsMemo = useMemo(() => translations[lang] || translations.en, [lang]);
+  const translationsMemo = useMemo(
+    () => translations[lang] || translations.en,
+    [lang],
+  );
 
   // ✅ t(path, params)
   const t = (path, params) => {
@@ -47,8 +61,16 @@ export const LanguageProvider = ({ children }) => {
     new Intl.NumberFormat(language === 'ar' ? 'ar-EG' : 'en-US').format(num);
 
   return (
-
-    <LanguageContext.Provider value={{ lang, dir, toggleLanguage, t, formatNumber, translations: translationsMemo }}>
+    <LanguageContext.Provider
+      value={{
+        lang,
+        dir,
+        toggleLanguage,
+        t,
+        formatNumber,
+        translations: translationsMemo,
+      }}
+    >
       {children}
     </LanguageContext.Provider>
   );

@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { toast } from "sonner";
-import ModalCard from "@/components/common/ModalCard";
-import { modalInput, modalLabel, modalHelperText } from "@/components/common/modalStyles";
-import { createLitigation, updateLitigation } from "@/services/api/litigations";
+import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import ModalCard from '@/components/common/ModalCard';
+import {
+  modalInput,
+  modalLabel,
+  modalHelperText,
+} from '@/components/common/modalStyles';
+import { createLitigation, updateLitigation } from '@/services/api/litigations';
 
 const EMPTY_FORM = {
   id: null,
-  case_number: "",
-  case_year: "",
-  court: "",
-  opponent: "",
-  scope: "from",
-  subject: "",
-  filing_date: "",
-  status: "open",
-  notes: "",
+  case_number: '',
+  case_year: '',
+  court: '',
+  opponent: '',
+  scope: 'from',
+  subject: '',
+  filing_date: '',
+  status: 'open',
+  notes: '',
 };
 
 export default function LitigationModal({
@@ -34,7 +38,7 @@ export default function LitigationModal({
       setForm({
         ...EMPTY_FORM,
         ...initialData,
-        filing_date: initialData.filing_date?.slice(0, 10) || "",
+        filing_date: initialData.filing_date?.slice(0, 10) || '',
       });
     } else {
       setForm(EMPTY_FORM);
@@ -46,21 +50,21 @@ export default function LitigationModal({
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "case_year" ? String(value) : value,
+      [name]: name === 'case_year' ? String(value) : value,
     }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!form.scope) newErrors.scope = "الرجاء تحديد صفة الشركة";
-    if (!form.case_number) newErrors.case_number = "رقم الدعوى مطلوب";
-    if (!form.case_year) newErrors.case_year = "سنة الدعوى مطلوبة";
-    if (!form.court) newErrors.court = "اسم المحكمة مطلوب";
-    if (!form.opponent) newErrors.opponent = "اسم الخصم مطلوب";
-    if (!form.subject) newErrors.subject = "موضوع الدعوى مطلوب";
-    if (!form.filing_date) newErrors.filing_date = "تاريخ رفع الدعوى مطلوب";
-    if (!form.status) newErrors.status = "حالة الدعوى مطلوبة";
+    if (!form.scope) newErrors.scope = 'الرجاء تحديد صفة الشركة';
+    if (!form.case_number) newErrors.case_number = 'رقم الدعوى مطلوب';
+    if (!form.case_year) newErrors.case_year = 'سنة الدعوى مطلوبة';
+    if (!form.court) newErrors.court = 'اسم المحكمة مطلوب';
+    if (!form.opponent) newErrors.opponent = 'اسم الخصم مطلوب';
+    if (!form.subject) newErrors.subject = 'موضوع الدعوى مطلوب';
+    if (!form.filing_date) newErrors.filing_date = 'تاريخ رفع الدعوى مطلوب';
+    if (!form.status) newErrors.status = 'حالة الدعوى مطلوبة';
     return newErrors;
   };
 
@@ -68,7 +72,7 @@ export default function LitigationModal({
     const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      toast.error("يرجى تصحيح الأخطاء في النموذج");
+      toast.error('يرجى تصحيح الأخطاء في النموذج');
       return;
     }
 
@@ -78,10 +82,10 @@ export default function LitigationModal({
 
       if (form.id) {
         await updateLitigation(form.id, payload);
-        toast.success("✅ تم تعديل الدعوى بنجاح");
+        toast.success('✅ تم تعديل الدعوى بنجاح');
       } else {
         await createLitigation(payload);
-        toast.success("✅ تمت إضافة الدعوى بنجاح");
+        toast.success('✅ تمت إضافة الدعوى بنجاح');
       }
 
       reloadLitigations?.();
@@ -96,7 +100,7 @@ export default function LitigationModal({
         });
         setErrors(backendErrors);
       } else {
-        toast.error("❌ فشل الحفظ. تحقق من البيانات.");
+        toast.error('❌ فشل الحفظ. تحقق من البيانات.');
       }
     } finally {
       setLoading(false);
@@ -108,11 +112,11 @@ export default function LitigationModal({
   return (
     <ModalCard
       isOpen={isOpen}
-      title={initialData ? "تعديل دعوى" : "إضافة دعوى"}
+      title={initialData ? 'تعديل دعوى' : 'إضافة دعوى'}
       loading={loading}
       onClose={onClose}
       onSubmit={handleSave}
-      submitLabel={initialData ? "تحديث" : "إضافة"}
+      submitLabel={initialData ? 'تحديث' : 'إضافة'}
     >
       <form
         dir="rtl"
@@ -128,9 +132,9 @@ export default function LitigationModal({
           onChange={handleChange}
           error={errors.scope}
           options={[
-            { value: "", label: "اختر صفة الشركة" },
-            { value: "from", label: "من الشركة" },
-            { value: "against", label: "ضد الشركة" },
+            { value: '', label: 'اختر صفة الشركة' },
+            { value: 'from', label: 'من الشركة' },
+            { value: 'against', label: 'ضد الشركة' },
           ]}
         />
 
@@ -203,20 +207,18 @@ export default function LitigationModal({
           onChange={handleChange}
           error={errors.status}
           options={[
-            { value: "open", label: "مفتوحة" },
-            { value: "in_progress", label: "قيد التنفيذ" },
-            { value: "closed", label: "مغلقة" },
+            { value: 'open', label: 'مفتوحة' },
+            { value: 'in_progress', label: 'قيد التنفيذ' },
+            { value: 'closed', label: 'مغلقة' },
           ]}
         />
 
         {/* ملاحظات */}
         <div className="md:col-span-2 space-y-1">
-          <label className={modalLabel}>
-            ملاحظات
-          </label>
+          <label className={modalLabel}>ملاحظات</label>
           <textarea
             name="notes"
-            value={form.notes || ""}
+            value={form.notes || ''}
             onChange={handleChange}
             rows={3}
             className={`${modalInput} min-h-[110px]`}
@@ -234,7 +236,7 @@ export default function LitigationModal({
 function Field({
   label,
   name,
-  type = "text",
+  type = 'text',
   value,
   onChange,
   error,
@@ -243,19 +245,17 @@ function Field({
 }) {
   return (
     <div className="space-y-1">
-      <label className={modalLabel}>
-        {label}
-      </label>
+      <label className={modalLabel}>{label}</label>
 
-      {type === "select" ? (
+      {type === 'select' ? (
         <select
           name={name}
-          value={value ?? ""}
+          value={value ?? ''}
           onChange={onChange}
           className={`${modalInput} ${
             error
-              ? "border-destructive focus:ring-destructive/40"
-              : "focus:border-ring"
+              ? 'border-destructive focus:ring-destructive/40'
+              : 'focus:border-ring'
           }`}
         >
           {options.map((opt) => (
@@ -268,13 +268,13 @@ function Field({
         <input
           type={type}
           name={name}
-          value={value ?? ""}
+          value={value ?? ''}
           onChange={onChange}
           placeholder={placeholder}
           className={`${modalInput} ${
             error
-              ? "border-destructive focus:ring-destructive/40"
-              : "focus:border-ring"
+              ? 'border-destructive focus:ring-destructive/40'
+              : 'focus:border-ring'
           }`}
         />
       )}

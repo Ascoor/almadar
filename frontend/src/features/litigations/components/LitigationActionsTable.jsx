@@ -1,17 +1,17 @@
-import { useState, useContext } from "react";
-import { Pencil, Trash2, BookmarkPlus } from "lucide-react";
-import { toast } from "sonner";
-import { AuthContext } from "@/context/AuthContext";
+import { useState, useContext } from 'react';
+import { Pencil, Trash2, BookmarkPlus } from 'lucide-react';
+import { toast } from 'sonner';
+import { AuthContext } from '@/context/AuthContext';
 
-import LitigationActionModal from "./LitigationActionModal";
-import GlobalConfirmDeleteModal from "@/components/common/GlobalConfirmDeleteModal";
+import LitigationActionModal from './LitigationActionModal';
+import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteModal';
 import {
   deleteLitigationAction,
   updateLitigationAction,
   createLitigationAction,
-} from "@/services/api/litigations";
+} from '@/services/api/litigations';
 
-import { useLitigationActions, useActionTypes } from "@/hooks/dataHooks";
+import { useLitigationActions, useActionTypes } from '@/hooks/dataHooks';
 
 export default function LitigationActionsTable({
   litigationId,
@@ -22,34 +22,30 @@ export default function LitigationActionsTable({
   const [editingAction, setEditingAction] = useState(null);
   const [actionToDelete, setActionToDelete] = useState(null);
 
-  const {
-    data: litigationActions = [],
-    refetch,
-  } = useLitigationActions(litigationId);
-  const { data: litigationActionTypes = [] } = useActionTypes("litigation");
+  const { data: litigationActions = [], refetch } =
+    useLitigationActions(litigationId);
+  const { data: litigationActionTypes = [] } = useActionTypes('litigation');
 
   const { hasPermission } = useContext(AuthContext);
   const moduleName =
-    scope === "from"
-      ? "litigation-from-actions"
-      : "litigation-against-actions";
+    scope === 'from' ? 'litigation-from-actions' : 'litigation-against-actions';
   const can = (action) => hasPermission(`${action} ${moduleName}`);
 
   const handleSave = async (data) => {
     try {
       if (editingAction) {
         await updateLitigationAction(litigationId, editingAction.id, data);
-        toast.success("✅ تم تعديل الإجراء");
+        toast.success('✅ تم تعديل الإجراء');
       } else {
         await createLitigationAction(litigationId, data);
-        toast.success("✅ تمت إضافة الإجراء");
+        toast.success('✅ تمت إضافة الإجراء');
       }
       setShowModal(false);
       await refetch();
       reloadLitigations();
     } catch (error) {
-      console.error("Litigation action save error:", error);
-      toast.error("❌ فشل في حفظ الإجراء");
+      console.error('Litigation action save error:', error);
+      toast.error('❌ فشل في حفظ الإجراء');
     }
   };
 
@@ -57,17 +53,17 @@ export default function LitigationActionsTable({
     if (!actionToDelete) return;
     try {
       await deleteLitigationAction(litigationId, actionToDelete.id);
-      toast.success("تم حذف الإجراء");
+      toast.success('تم حذف الإجراء');
       setActionToDelete(null);
       refetch();
       reloadLitigations();
     } catch (error) {
-      console.error("Litigation action delete error:", error);
-      toast.error("فشل في حذف الإجراء");
+      console.error('Litigation action delete error:', error);
+      toast.error('فشل في حذف الإجراء');
     }
   };
 
-  if (!can("view")) {
+  if (!can('view')) {
     return (
       <div
         dir="rtl"
@@ -96,7 +92,7 @@ export default function LitigationActionsTable({
           </p>
         </div>
 
-        {can("create") && (
+        {can('create') && (
           <div className="flex w-full justify-end sm:w-auto">
             <button
               onClick={() => {
@@ -122,8 +118,8 @@ export default function LitigationActionsTable({
           <table className="w-full border-collapse text-center text-xs text-foreground/90 sm:text-sm">
             <thead className="bg-muted/80 text-xs font-semibold text-muted-foreground">
               <tr>
-                {can("edit") && <th className="px-3 py-2">تعديل</th>}
-                {can("delete") && <th className="px-3 py-2">حذف</th>}
+                {can('edit') && <th className="px-3 py-2">تعديل</th>}
+                {can('delete') && <th className="px-3 py-2">حذف</th>}
                 <th className="px-3 py-2">تاريخ الإجراء</th>
                 <th className="px-3 py-2">نوع الإجراء</th>
                 <th className="px-3 py-2">المحامي / المستشار</th>
@@ -137,10 +133,10 @@ export default function LitigationActionsTable({
                 <tr
                   key={action.id}
                   className={`border-t border-border/60 transition-colors hover:bg-muted/40 ${
-                    idx % 2 === 0 ? "bg-card/40" : "bg-card/20"
+                    idx % 2 === 0 ? 'bg-card/40' : 'bg-card/20'
                   }`}
                 >
-                  {can("edit") && (
+                  {can('edit') && (
                     <td className="px-2 py-2">
                       <button
                         onClick={() => {
@@ -154,7 +150,7 @@ export default function LitigationActionsTable({
                       </button>
                     </td>
                   )}
-                  {can("delete") && (
+                  {can('delete') && (
                     <td className="px-2 py-2">
                       <button
                         onClick={() => setActionToDelete(action)}
@@ -169,16 +165,16 @@ export default function LitigationActionsTable({
                     {action.action_date}
                   </td>
                   <td className="px-3 py-2 text-xs sm:text-sm">
-                    {action.action_type?.action_name || "غير محدد"}
+                    {action.action_type?.action_name || 'غير محدد'}
                   </td>
                   <td className="px-3 py-2 text-xs sm:text-sm">
                     {action.assigned_to?.name}
                   </td>
                   <td className="px-3 py-2 text-xs sm:text-sm text-muted-foreground">
-                    {action.requirements || "—"}
+                    {action.requirements || '—'}
                   </td>
                   <td className="px-3 py-2 text-xs sm:text-sm text-muted-foreground">
-                    {action.results || "—"}
+                    {action.results || '—'}
                   </td>
                   <td className="px-3 py-2">
                     <StatusPill status={action.status} />
@@ -206,7 +202,7 @@ export default function LitigationActionsTable({
         isOpen={!!actionToDelete}
         onClose={() => setActionToDelete(null)}
         onConfirm={handleConfirmDelete}
-        itemName={actionToDelete?.action_type?.action_name || "الإجراء"}
+        itemName={actionToDelete?.action_type?.action_name || 'الإجراء'}
       />
     </section>
   );
@@ -216,26 +212,26 @@ export default function LitigationActionsTable({
  * شارة حالة الإجراء — متناسقة مع ألوان الـ tokens (success / warning / secondary)
  */
 function StatusPill({ status }) {
-  let label = "منجز";
-  let tone = "done";
+  let label = 'منجز';
+  let tone = 'done';
 
-  if (status === "pending") {
-    label = "معلّق";
-    tone = "pending";
-  } else if (status === "in_review") {
-    label = "قيد المراجعة";
-    tone = "review";
+  if (status === 'pending') {
+    label = 'معلّق';
+    tone = 'pending';
+  } else if (status === 'in_review') {
+    label = 'قيد المراجعة';
+    tone = 'review';
   }
 
   const base =
-    "inline-flex items-center justify-center rounded-full px-3 py-1 text-[0.7rem] font-medium sm:text-xs border";
+    'inline-flex items-center justify-center rounded-full px-3 py-1 text-[0.7rem] font-medium sm:text-xs border';
 
   const toneClass =
-    tone === "pending"
-      ? "border-warning/40 text-warning bg-warning/10"
-      : tone === "review"
-      ? "border-secondary/40 text-secondary bg-secondary/10"
-      : "border-success/40 text-success bg-success/10";
+    tone === 'pending'
+      ? 'border-warning/40 text-warning bg-warning/10'
+      : tone === 'review'
+        ? 'border-secondary/40 text-secondary bg-secondary/10'
+        : 'border-success/40 text-success bg-success/10';
 
   return <span className={`${base} ${toneClass}`}>{label}</span>;
 }

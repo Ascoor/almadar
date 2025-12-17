@@ -33,11 +33,14 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
       const { success, message } = await login(email.trim(), password);
 
       if (success) {
-        toast.success(isArabic ? '✅ تم تسجيل الدخول بنجاح' : '✅ Logged in successfully', {
-          description: isArabic
-            ? 'تم الدخول إلى النظام بنجاح.'
-            : 'You have been signed in successfully.',
-        });
+        toast.success(
+          isArabic ? '✅ تم تسجيل الدخول بنجاح' : '✅ Logged in successfully',
+          {
+            description: isArabic
+              ? 'تم الدخول إلى النظام بنجاح.'
+              : 'You have been signed in successfully.',
+          },
+        );
         onAuthComplete?.(true);
       } else {
         const errorMsg =
@@ -48,14 +51,21 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
             : message;
 
         toast.error(isArabic ? '❌ فشل تسجيل الدخول' : '❌ Login failed', {
-          description: errorMsg || (isArabic ? 'حدث خطأ في التحقق.' : 'Authentication failed.'),
+          description:
+            errorMsg ||
+            (isArabic ? 'حدث خطأ في التحقق.' : 'Authentication failed.'),
         });
         onAuthComplete?.(false);
       }
     } catch (error) {
-      toast.error(isArabic ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred', {
-        description: error?.message || (isArabic ? 'يرجى المحاولة مرة أخرى.' : 'Please try again.'),
-      });
+      toast.error(
+        isArabic ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred',
+        {
+          description:
+            error?.message ||
+            (isArabic ? 'يرجى المحاولة مرة أخرى.' : 'Please try again.'),
+        },
+      );
       onAuthComplete?.(false);
     } finally {
       setIsSubmitting(false);
@@ -88,7 +98,9 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
         "
       >
         {/* Top bar: language + theme */}
-        <div className={`flex items-center justify-between gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+        <div
+          className={`flex items-center justify-between gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}
+        >
           <div className="text-xs text-muted-foreground truncate">
             {isArabic ? 'منصة ليبيا القانونية' : 'Libya Legal Dashboard'}
           </div>
@@ -162,8 +174,8 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
                   ? 'جاري التحقق...'
                   : 'Signing in...'
                 : isArabic
-                ? '🚀 دخول'
-                : '🚀 Login'}
+                  ? '🚀 دخول'
+                  : '🚀 Login'}
             </Button>
 
             <button

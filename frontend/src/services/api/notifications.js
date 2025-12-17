@@ -5,7 +5,7 @@ export const getNotifications = async () => {
   try {
     const response = await api.get('/api/notifications');
     if (response.data) {
-      console.log('Fetched notifications:', response.data);  // تحقق من البيانات المستلمة
+      console.log('Fetched notifications:', response.data); // تحقق من البيانات المستلمة
       return response.data;
     } else {
       console.error('No notifications found');

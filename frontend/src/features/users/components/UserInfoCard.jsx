@@ -1,10 +1,10 @@
-import { Mail, Phone } from "lucide-react";
-import API_CONFIG from "@/config/config";
+import { Mail, Phone } from 'lucide-react';
+import API_CONFIG from '@/config/config';
 
 const roleLabels = {
-  admin: "أدمن",
-  staff: "موظف",
-  user: "مستخدم",
+  admin: 'أدمن',
+  staff: 'موظف',
+  user: 'مستخدم',
 };
 
 const getDisplayRoles = (user) => {
@@ -19,9 +19,9 @@ const getDisplayRoles = (user) => {
   return [];
 };
 
-const getInitials = (name = "") => {
-  const parts = name.trim().split(" ").filter(Boolean);
-  if (!parts.length) return "؟";
+const getInitials = (name = '') => {
+  const parts = name.trim().split(' ').filter(Boolean);
+  if (!parts.length) return '؟';
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 };
@@ -70,7 +70,7 @@ const UserInfoCard = ({ user }) => {
                 <img
                   src={`${API_CONFIG.baseURL}/${user.image}`}
                   className="h-full w-full object-cover"
-                  alt={`صورة ${user.name || "المستخدم"}`}
+                  alt={`صورة ${user.name || 'المستخدم'}`}
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-muted">
@@ -94,7 +94,7 @@ const UserInfoCard = ({ user }) => {
               "
             >
               <span className="bg-gradient-to-l from-primary to-secondary bg-clip-text text-transparent">
-                {user.name || "مستخدم بدون اسم"}
+                {user.name || 'مستخدم بدون اسم'}
               </span>
             </h3>
 
@@ -117,11 +117,11 @@ const UserInfoCard = ({ user }) => {
 
             {user.created_at && (
               <p className="text-xs text-muted-foreground">
-                تم الإنشاء في{" "}
-                {new Date(user.created_at).toLocaleDateString("ar-EG", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
+                تم الإنشاء في{' '}
+                {new Date(user.created_at).toLocaleDateString('ar-EG', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
                 })}
               </p>
             )}

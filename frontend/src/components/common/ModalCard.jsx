@@ -40,15 +40,12 @@ export default function ModalCard({
         )}
 
         {/* Title */}
-        <h2 className={`${modalHeading} mb-6 border-b border-border pb-2`}
-        >
+        <h2 className={`${modalHeading} mb-6 border-b border-border pb-2`}>
           {t(title)}
         </h2>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto space-y-4">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto space-y-4">{children}</div>
 
         {/* Footer Buttons */}
         <div className="mt-6 flex justify-end gap-3 flex-col sm:flex-row">

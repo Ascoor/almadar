@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { toast } from "sonner";
-import ModalCard from "@/components/common/ModalCard";
-import { useActionTypes } from "@/hooks/dataHooks";
-import { getRoleLawyers } from "@/services/api/users";
+import React, { useState, useEffect, useMemo } from 'react';
+import { toast } from 'sonner';
+import ModalCard from '@/components/common/ModalCard';
+import { useActionTypes } from '@/hooks/dataHooks';
+import { getRoleLawyers } from '@/services/api/users';
 
 const EMPTY_FORM = {
   id: null,
-  action_date: "",
-  action_type_id: "",
-  lawyer_name: "",              // ✅ اختياري (لو الباك محتاجه)
-  assigned_to_user_id: "",      // ✅ الجديد
-  requirements: "",
-  location: "",
-  notes: "",
-  results: "",
-  status: "pending",
+  action_date: '',
+  action_type_id: '',
+  lawyer_name: '', // ✅ اختياري (لو الباك محتاجه)
+  assigned_to_user_id: '', // ✅ الجديد
+  requirements: '',
+  location: '',
+  notes: '',
+  results: '',
+  status: 'pending',
 };
 
 export default function LitigationActionModal({
@@ -27,7 +27,7 @@ export default function LitigationActionModal({
   const [loading, setLoading] = useState(false);
 
   const { data: actionTypes = [], isLoading: actionTypesLoading } =
-    useActionTypes("litigation");
+    useActionTypes('litigation');
 
   const [lawyers, setLawyers] = useState([]);
   const [lawyersLoading, setLawyersLoading] = useState(false);
@@ -48,9 +48,9 @@ export default function LitigationActionModal({
               initialData.assigned_to_user_id ||
               initialData.assignedTo?.id ||
               initialData.assigned_to?.id ||
-              "",
+              '',
           }
-        : EMPTY_FORM
+        : EMPTY_FORM,
     );
   }, [isOpen, initialData]);
 
@@ -67,7 +67,7 @@ export default function LitigationActionModal({
         if (mounted) setLawyers(Array.isArray(list) ? list : []);
       } catch (err) {
         console.error(err);
-        toast.error("❌ فشل تحميل قائمة المحامين");
+        toast.error('❌ فشل تحميل قائمة المحامين');
         if (mounted) setLawyers([]);
       } finally {
         if (mounted) setLawyersLoading(false);
@@ -91,12 +91,12 @@ export default function LitigationActionModal({
     const { name, value } = e.target;
 
     // ✅ لو اختر محامي: خزّن id + (اختياري) عبّي lawyer_name تلقائي
-    if (name === "assigned_to_user_id") {
+    if (name === 'assigned_to_user_id') {
       const u = lawyerById.get(String(value));
       setForm((prev) => ({
         ...prev,
         assigned_to_user_id: value,
-        lawyer_name: u?.name || "", // اختياري
+        lawyer_name: u?.name || '', // اختياري
       }));
       return;
     }
@@ -106,8 +106,14 @@ export default function LitigationActionModal({
 
   const handleSave = async () => {
     // ✅ تحقق أساسي
-    if (!form.action_date || !form.action_type_id || !form.assigned_to_user_id) {
-      toast.error("فضلاً أكمل الحقول الأساسية (التاريخ، نوع الإجراء، المحامي المسؤول).");
+    if (
+      !form.action_date ||
+      !form.action_type_id ||
+      !form.assigned_to_user_id
+    ) {
+      toast.error(
+        'فضلاً أكمل الحقول الأساسية (التاريخ، نوع الإجراء، المحامي المسؤول).',
+      );
       return;
     }
 
@@ -116,8 +122,8 @@ export default function LitigationActionModal({
       await onSubmit(form);
       onClose();
     } catch (err) {
-      console.error("LitigationActionModal save error:", err);
-      toast.error("فشل في حفظ الإجراء");
+      console.error('LitigationActionModal save error:', err);
+      toast.error('فشل في حفظ الإجراء');
     } finally {
       setLoading(false);
     }
@@ -128,11 +134,11 @@ export default function LitigationActionModal({
   return (
     <ModalCard
       isOpen={isOpen}
-      title={isEdit ? "تعديل إجراء" : "إضافة إجراء"}
+      title={isEdit ? 'تعديل إجراء' : 'إضافة إجراء'}
       onClose={onClose}
       onSubmit={handleSave}
       loading={loading}
-      submitLabel={isEdit ? "تحديث" : "إضافة"}
+      submitLabel={isEdit ? 'تحديث' : 'إضافة'}
     >
       <form
         dir="rtl"
@@ -171,7 +177,7 @@ export default function LitigationActionModal({
           type="select"
           options={lawyers.map((u) => ({
             value: u.id,
-            label: `${u.name}${u.email ? ` - ${u.email}` : ""}`,
+            label: `${u.name}${u.email ? ` - ${u.email}` : ''}`,
           }))}
           value={form.assigned_to_user_id}
           onChange={handleChange}
@@ -229,7 +235,7 @@ export default function LitigationActionModal({
           </label>
           <textarea
             name="notes"
-            value={form.notes ?? ""}
+            value={form.notes ?? ''}
             onChange={handleChange}
             className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
             rows={2}
@@ -243,9 +249,9 @@ export default function LitigationActionModal({
           name="status"
           type="select"
           options={[
-            { value: "pending", label: "معلق" },
-            { value: "in_review", label: "قيد المراجعة" },
-            { value: "done", label: "منجز" },
+            { value: 'pending', label: 'معلق' },
+            { value: 'in_review', label: 'قيد المراجعة' },
+            { value: 'done', label: 'منجز' },
           ]}
           value={form.status}
           onChange={handleChange}
@@ -269,23 +275,27 @@ function Field({
   helper,
 }) {
   const baseCls =
-    "w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm " +
-    "placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-70";
+    'w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm ' +
+    'placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-70';
 
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-foreground">{label}</label>
+      <label className="block text-sm font-medium text-foreground">
+        {label}
+      </label>
 
-      {type === "select" ? (
+      {type === 'select' ? (
         <select
           name={name}
-          value={value ?? ""}
+          value={value ?? ''}
           onChange={onChange}
           disabled={disabled}
           className={baseCls}
           required={required}
         >
-          <option value="">{disabled ? "جاري التحميل..." : `اختر ${label}`}</option>
+          <option value="">
+            {disabled ? 'جاري التحميل...' : `اختر ${label}`}
+          </option>
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
@@ -296,7 +306,7 @@ function Field({
         <input
           type={type}
           name={name}
-          value={value ?? ""}
+          value={value ?? ''}
           onChange={onChange}
           className={baseCls}
           placeholder={placeholder}
@@ -305,7 +315,9 @@ function Field({
         />
       )}
 
-      {helper && <p className="text-[0.7rem] text-muted-foreground">{helper}</p>}
+      {helper && (
+        <p className="text-[0.7rem] text-muted-foreground">{helper}</p>
+      )}
     </div>
   );
 }

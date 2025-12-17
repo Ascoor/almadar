@@ -9,7 +9,9 @@ import { AppWithQuery } from '@/hooks/dataHooks';
 
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'));
 const AuthRoutes = lazy(() => import('@/components/layout/AuthRoutes'));
-const ForcePasswordChangeModal = lazy(() => import('@/components/organisms/ForcePasswordChangeModal'));
+const ForcePasswordChangeModal = lazy(
+  () => import('@/components/organisms/ForcePasswordChangeModal'),
+);
 
 const DashboardContent = () => {
   const { user } = useContext(AuthContext);
@@ -26,8 +28,17 @@ const DashboardContent = () => {
       </Suspense>
       <AnimatePresence>
         {forcePasswordModal && (
-          <Suspense fallback={<div className="text-center mt-16 p-4"><AuthSpinner />تحميل نافذة تغيير كلمة المرور...</div>}>
-            <ForcePasswordChangeModal onClose={() => setForcePasswordModal(false)} />
+          <Suspense
+            fallback={
+              <div className="text-center mt-16 p-4">
+                <AuthSpinner />
+                تحميل نافذة تغيير كلمة المرور...
+              </div>
+            }
+          >
+            <ForcePasswordChangeModal
+              onClose={() => setForcePasswordModal(false)}
+            />
           </Suspense>
         )}
       </AnimatePresence>

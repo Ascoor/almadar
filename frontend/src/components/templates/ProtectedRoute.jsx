@@ -4,8 +4,8 @@ import { AuthContext } from '@/context/AuthContext';
 
 /**
  * @param {string|string[]} permission
- * @param {ReactNode} children - 
- * @param {boolean} superAdminOnly - 
+ * @param {ReactNode} children -
+ * @param {boolean} superAdminOnly -
  */
 const ProtectedRoute = ({ permission, children, superAdminOnly = false }) => {
   const { hasPermission, user } = useContext(AuthContext);

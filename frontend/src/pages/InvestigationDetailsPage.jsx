@@ -1,10 +1,11 @@
-import { lazy, Suspense } from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import InvestigationDetailsSmart from "@/features/investigations/components/InvestigationDetailsSmart";
+import { lazy, Suspense } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import InvestigationDetailsSmart from '@/features/investigations/components/InvestigationDetailsSmart';
 
-const InvestigationActionsTable = lazy(() =>
-  import("@/features/investigations/components/InvestigationActionsTable")
+const InvestigationActionsTable = lazy(
+  () =>
+    import('@/features/investigations/components/InvestigationActionsTable'),
 );
 
 export default function InvestigationDetailsPage() {
@@ -24,12 +25,30 @@ export default function InvestigationDetailsPage() {
 
           <div className="mb-6 p-4 bg-card text-fg rounded-xl shadow">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div><span className="font-semibold">الموظف: </span>{current.employee_name}</div>
-              <div><span className="font-semibold">الجهة المحيلة: </span>{current.source}</div>
-              <div><span className="font-semibold">الموضوع: </span>{current.subject}</div>
-              <div><span className="font-semibold">رقم القضية: </span>{current.case_number}</div>
-              <div><span className="font-semibold">الحالة: </span>{current.status}</div>
-              <div><span className="font-semibold">المحقق: </span>{current.assigned_to?.name || "—"}</div>
+              <div>
+                <span className="font-semibold">الموظف: </span>
+                {current.employee_name}
+              </div>
+              <div>
+                <span className="font-semibold">الجهة المحيلة: </span>
+                {current.source}
+              </div>
+              <div>
+                <span className="font-semibold">الموضوع: </span>
+                {current.subject}
+              </div>
+              <div>
+                <span className="font-semibold">رقم القضية: </span>
+                {current.case_number}
+              </div>
+              <div>
+                <span className="font-semibold">الحالة: </span>
+                {current.status}
+              </div>
+              <div>
+                <span className="font-semibold">المحقق: </span>
+                {current.assigned_to?.name || '—'}
+              </div>
             </div>
           </div>
 

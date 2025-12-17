@@ -12,7 +12,9 @@ export default function AppLayout({ children, user }) {
   const { dir } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isTablet, setIsTablet] = useState(
-    typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1024
+    typeof window !== 'undefined' &&
+      window.innerWidth >= 768 &&
+      window.innerWidth < 1024,
   );
   const location = useLocation();
 
@@ -28,22 +30,27 @@ export default function AppLayout({ children, user }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const toggleSidebar = () => setSidebarOpen(prev => !prev);
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   const marginProp = dir === 'rtl' ? 'marginRight' : 'marginLeft';
   const mainStyles = {
-    paddingTop: isMobile ? (isStandalone ? `${safeAreaInsets.top + 80}px` : '80px') : '112px',
-    paddingBottom: isStandalone && isMobile ? `${safeAreaInsets.bottom + 32}px` : '32px',
+    paddingTop: isMobile
+      ? isStandalone
+        ? `${safeAreaInsets.top + 80}px`
+        : '80px'
+      : '112px',
+    paddingBottom:
+      isStandalone && isMobile ? `${safeAreaInsets.bottom + 32}px` : '32px',
     [marginProp]: !isMobile
       ? isTablet
         ? sidebarOpen
           ? '0'
           : '64px'
         : sidebarOpen
-        ? '260px'
-        : '64px'
+          ? '260px'
+          : '64px'
       : '0',
-    minHeight: isMobile ? 'calc(var(--vh, 1vh) * 100)' : '100vh'
+    minHeight: isMobile ? 'calc(var(--vh, 1vh) * 100)' : '100vh',
   };
 
   return (
@@ -63,7 +70,11 @@ export default function AppLayout({ children, user }) {
       </Suspense>
       <div className="flex-1 flex flex-col transition-all duration-300">
         <Suspense fallback={null}>
-          <Header user={user} isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
+          <Header
+            user={user}
+            isOpen={sidebarOpen}
+            onToggleSidebar={toggleSidebar}
+          />
         </Suspense>
         <main
           className={`

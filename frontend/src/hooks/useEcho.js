@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { initEcho, subscribeToUserChannel } from "@/lib/echo";
+import { useEffect, useState } from 'react';
+import { initEcho, subscribeToUserChannel } from '@/lib/echo';
 
 export function useEcho({ userId = null, autoInit = true, config = {} } = {}) {
   const [initialized, setInitialized] = useState(false);
@@ -22,10 +22,10 @@ export function useEcho({ userId = null, autoInit = true, config = {} } = {}) {
     setUserChannel(channel);
 
     const handler = (evt) => setLastEvent(evt);
-    channel.listen("UserActivityEvent", handler);
+    channel.listen('UserActivityEvent', handler);
 
     return () => {
-      channel.stopListening("UserActivityEvent", handler);
+      channel.stopListening('UserActivityEvent', handler);
     };
   }, [initialized, userId]);
 

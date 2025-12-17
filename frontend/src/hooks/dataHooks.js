@@ -1,13 +1,17 @@
 // ✅ react-query implementation to replace DataContext
 import React from 'react';
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query';
 
 import * as adviceTypesApi from '@/services/api/adviceTypes';
 import * as legalAdvicesApi from '@/services/api/legalAdvices';
 import * as dashboardApi from '@/services/api/dashboard';
 
 import * as notificationsApi from '@/services/api/notifications';
-import * as usersApi from '@/services/api/users'; 
+import * as usersApi from '@/services/api/users';
 import * as contractsApi from '@/services/api/contracts';
 import * as investigationsApi from '@/services/api/investigations';
 import * as litigationsApi from '@/services/api/litigations';
@@ -23,7 +27,7 @@ export const useContractCategories = () => {
   return useQuery({
     queryKey: ['contractCategories'],
     queryFn: contractsApi.getContractCategories,
-    select: (res) => Array.isArray(res?.data?.data) ? res.data.data : [],
+    select: (res) => (Array.isArray(res?.data?.data) ? res.data.data : []),
   });
 };
 
@@ -31,7 +35,7 @@ export const useAdviceTypes = () => {
   return useQuery({
     queryKey: ['adviceTypes'],
     queryFn: adviceTypesApi.getAdviceTypes,
-    select: (res) => Array.isArray(res?.data) ? res.data : [],
+    select: (res) => (Array.isArray(res?.data) ? res.data : []),
   });
 };
 
@@ -40,14 +44,14 @@ export const useLegalAdvices = () => {
     queryKey: ['legalAdvices'],
     queryFn: legalAdvicesApi.getLegalAdvices, // ✅ الحرف A كبير هنا
   });
-}; 
-export const useDashboardStats  = () => {
+};
+export const useDashboardStats = () => {
   return useQuery({
     queryKey: ['dashboardStatus'],
     queryFn: dashboardApi.getDashboardCounts, // ✅ الحرف A كبير هنا
   });
 };
-export const useRecentData  = () => {
+export const useRecentData = () => {
   return useQuery({
     queryKey: ['allRecentData'],
     queryFn: dashboardApi.getAllRecentData, // ✅ الحرف A كبير هنا
@@ -60,7 +64,7 @@ export const useActionTypes = (type) => {
       type === 'litigation'
         ? litigationsApi.getLitigationActionTypes()
         : investigationsApi.getInvestigationActionTypes(),
-    select: (res) => Array.isArray(res?.data) ? res.data : [],
+    select: (res) => (Array.isArray(res?.data) ? res.data : []),
   });
 };
 
@@ -68,21 +72,19 @@ export const useLitigationActions = (litigationId) => {
   return useQuery({
     queryKey: ['litigationActions', litigationId],
     queryFn: () => litigationsApi.getLitigationActions(litigationId),
-    select: (res) => Array.isArray(res?.data?.data) ? res.data.data : [],
+    select: (res) => (Array.isArray(res?.data?.data) ? res.data.data : []),
     enabled: !!litigationId, // يتأكد أن id موجود قبل الجلب
   });
 };
 
- 
 export const useInvestigationActions = (investigationId) => {
   return useQuery({
     queryKey: ['investigationActions', investigationId],
     queryFn: () => investigationsApi.getInvestigationActions(investigationId),
-    select: (res) => Array.isArray(res?.data) ? res.data : [],  // ✅ التعديل هنا
+    select: (res) => (Array.isArray(res?.data) ? res.data : []), // ✅ التعديل هنا
     enabled: !!investigationId,
   });
 };
- 
 
 // 🧑‍⚖️ الأدوار
 export const useRoles = () => {
@@ -138,4 +140,3 @@ export const useLitigations = () => {
   });
   return { data, isLoading, refetch };
 };
- 

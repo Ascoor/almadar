@@ -31,9 +31,13 @@ export default function DropdownNotifications() {
     if (typeof n?.link === 'string' && n.link.startsWith('/')) return n.link;
 
     const linkFromData = n?.data?.link;
-    if (typeof linkFromData === 'string' && linkFromData.startsWith('/')) return linkFromData;
+    if (typeof linkFromData === 'string' && linkFromData.startsWith('/'))
+      return linkFromData;
 
-    const id = n?.data?.entityId || n?.data?.params?.entityId || n?.data?.params?.contract_id;
+    const id =
+      n?.data?.entityId ||
+      n?.data?.params?.entityId ||
+      n?.data?.params?.contract_id;
     if (id) return `/contracts/${id}`;
 
     return null;
@@ -53,7 +57,11 @@ export default function DropdownNotifications() {
 
   return (
     <div className="relative" dir={lang === 'ar' ? 'rtl' : 'ltr'} ref={ref}>
-      <IconButton onClick={() => setOpen((o) => !o)} active={open} className="relative">
+      <IconButton
+        onClick={() => setOpen((o) => !o)}
+        active={open}
+        className="relative"
+      >
         <Bell className="w-6 h-6" />
         {hasNew && (
           <>
@@ -74,7 +82,9 @@ export default function DropdownNotifications() {
           "
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-            <span className="text-sm font-semibold">{t('notifications.ui.header')}</span>
+            <span className="text-sm font-semibold">
+              {t('notifications.ui.header')}
+            </span>
 
             {notifications.length > 0 && (
               <button
@@ -117,10 +127,13 @@ export default function DropdownNotifications() {
                         </div>
 
                         <div className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-500">
-                          {new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-US', {
-                            dateStyle: 'short',
-                            timeStyle: 'short',
-                          }).format(new Date(n.created_at))}
+                          {new Intl.DateTimeFormat(
+                            lang === 'ar' ? 'ar-EG' : 'en-US',
+                            {
+                              dateStyle: 'short',
+                              timeStyle: 'short',
+                            },
+                          ).format(new Date(n.created_at))}
                         </div>
 
                         {to && (
@@ -141,6 +154,6 @@ export default function DropdownNotifications() {
           </ul>
         </div>
       )}
-    </div> 
+    </div>
   );
 }

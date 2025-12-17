@@ -10,7 +10,7 @@ export const tooltipStyle = {
   border: '1px solid var(--border)',
   borderRadius: 12,
   boxShadow: 'var(--glass-shadow)',
-  color: 'var(--fg)'
+  color: 'var(--fg)',
 };
 
 export const legendStyle = { color: 'var(--muted-foreground)', fontSize: 12 };
@@ -22,4 +22,3 @@ export const getPalette = (n = 8) =>
 export const makeTickFormatter = (formatNumber, lang) => (v) => {
   return typeof v === 'number' ? formatNumber(v, lang) : v;
 };
-

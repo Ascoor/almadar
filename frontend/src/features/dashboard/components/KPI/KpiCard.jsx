@@ -1,20 +1,20 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
-export default function KpiCard({ 
-  title, 
-  value, 
-  delta, 
-  miniSeries = [], 
+export default function KpiCard({
+  title,
+  value,
+  delta,
+  miniSeries = [],
   delay = 0,
-  icon: Icon
+  icon: Icon,
 }) {
   const isPositive = delta >= 0;
-  
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay }}
@@ -34,16 +34,16 @@ export default function KpiCard({
             </h3>
           </div>
         </div>
-        
-        {typeof delta === "number" && (
-          <motion.div 
+
+        {typeof delta === 'number' && (
+          <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: delay + 0.3, type: "spring" }}
+            transition={{ delay: delay + 0.3, type: 'spring' }}
             className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-medium ${
-              isPositive 
-                ? "bg-primary/10 text-[color:var(--primary)]" 
-                : "bg-destructive/10 text-[color:var(--destructive)]"
+              isPositive
+                ? 'bg-primary/10 text-[color:var(--primary)]'
+                : 'bg-destructive/10 text-[color:var(--destructive)]'
             }`}
           >
             {isPositive ? (
@@ -59,11 +59,11 @@ export default function KpiCard({
       <div className="h-12 w-full min-w-0" dir="ltr">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={miniSeries}>
-            <Line 
-              type="monotone" 
-              dataKey="y" 
-              dot={false} 
-              stroke="var(--primary)" 
+            <Line
+              type="monotone"
+              dataKey="y"
+              dot={false}
+              stroke="var(--primary)"
               strokeWidth={3}
               strokeDasharray="0"
             />

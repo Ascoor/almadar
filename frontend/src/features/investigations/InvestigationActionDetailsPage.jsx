@@ -1,8 +1,8 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import InvestigationActionDetailsSmart from "@/features/investigations/components/InvestigationActionDetailsSmart";
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import InvestigationActionDetailsSmart from '@/features/investigations/components/InvestigationActionDetailsSmart';
 
 export default function InvestigationActionDetailsPage() {
-  const  { id } = useParams();
+  const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -15,15 +15,14 @@ export default function InvestigationActionDetailsPage() {
       return;
     }
     if (window.history.length > 1) navigate(-1);
-    else navigate("/legal/investigations");
+    else navigate('/legal/investigations');
   };
 
   return (
-
-<InvestigationActionDetailsSmart
-  actionId={id}
-  selected={initialSelected}
-  onClose={handleClose}
-/>
+    <InvestigationActionDetailsSmart
+      actionId={id}
+      selected={initialSelected}
+      onClose={handleClose}
+    />
   );
 }

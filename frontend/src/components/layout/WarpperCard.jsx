@@ -1,22 +1,45 @@
-import React, { useEffect, useState } from "react";
-import DashboardClock from "@/components/common/DashboardClock";
+import React, { useEffect, useState } from 'react';
+import DashboardClock from '@/components/common/DashboardClock';
 
 const arabicMonths = [
-  "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
-  "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+  'يناير',
+  'فبراير',
+  'مارس',
+  'أبريل',
+  'مايو',
+  'يونيو',
+  'يوليو',
+  'أغسطس',
+  'سبتمبر',
+  'أكتوبر',
+  'نوفمبر',
+  'ديسمبر',
 ];
 
 const arabicWeekdays = [
-  "الأحد", "الاثنين", "الثلاثاء", "الأربعاء",
-  "الخميس", "الجمعة", "السبت"
+  'الأحد',
+  'الاثنين',
+  'الثلاثاء',
+  'الأربعاء',
+  'الخميس',
+  'الجمعة',
+  'السبت',
 ];
 
 function toHinduNumerals(str) {
   const numerals = {
-    0: "٠", 1: "١", 2: "٢", 3: "٣", 4: "٤",
-    5: "٥", 6: "٦", 7: "٧", 8: "٨", 9: "٩"
+    0: '٠',
+    1: '١',
+    2: '٢',
+    3: '٣',
+    4: '٤',
+    5: '٥',
+    6: '٦',
+    7: '٧',
+    8: '٨',
+    9: '٩',
   };
-  return str.toString().replace(/[0-9]/g, d => numerals[d]);
+  return str.toString().replace(/[0-9]/g, (d) => numerals[d]);
 }
 export default function WrapperCard() {
   const [date, setDate] = useState(new Date());
@@ -26,9 +49,9 @@ export default function WrapperCard() {
     return () => clearInterval(id);
   }, []);
 
-  const day     = toHinduNumerals(date.getDate());
-  const month   = arabicMonths[date.getMonth()];
-  const year    = toHinduNumerals(date.getFullYear());
+  const day = toHinduNumerals(date.getDate());
+  const month = arabicMonths[date.getMonth()];
+  const year = toHinduNumerals(date.getFullYear());
   const weekday = arabicWeekdays[date.getDay()];
 
   return (

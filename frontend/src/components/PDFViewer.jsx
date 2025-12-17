@@ -3,7 +3,14 @@
 import React, { useState } from 'react';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, Download } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
+  Download,
+} from 'lucide-react';
 
 export default function PDFViewer({ fileUrl, isRtl = true }) {
   const [pageNumber, setPageNumber] = useState(1);
@@ -27,7 +34,7 @@ export default function PDFViewer({ fileUrl, isRtl = true }) {
             disabled={pageNumber <= 1}
             className="text-gray-700 hover:text-blue-600"
           >
-         <ChevronRight />  
+            <ChevronRight />
           </button>
           <span className="text-sm px-2">
             {isRtl ? `الصفحة ${pageNumber}` : `Page ${pageNumber}`}
@@ -36,7 +43,7 @@ export default function PDFViewer({ fileUrl, isRtl = true }) {
             onClick={() => setPageNumber((p) => p + 1)}
             className="text-gray-700 hover:text-blue-600"
           >
-             <ChevronLeft />
+            <ChevronLeft />
           </button>
         </div>
 
@@ -70,12 +77,10 @@ export default function PDFViewer({ fileUrl, isRtl = true }) {
 
       {/* PDF Document */}
       <div className="bg-white p-4 border rounded shadow-md overflow-auto">
-        <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
-          <Viewer
-            fileUrl={fileUrl}
-            defaultScale={scale}
-            rotation={rotation}
-          />
+        <Worker
+          workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}
+        >
+          <Viewer fileUrl={fileUrl} defaultScale={scale} rotation={rotation} />
         </Worker>
       </div>
     </div>

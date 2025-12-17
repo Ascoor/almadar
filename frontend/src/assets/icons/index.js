@@ -1,4 +1,3 @@
- 
 export { default as ArchiveSection } from './archives-icon.png';
 export { default as CaseIcon } from './legcases-icon.png';
 export { default as Contracts } from './contracts-icon.png';
@@ -6,11 +5,11 @@ export { default as ContractSection } from './contract-main.png';
 export { default as DocIcon } from './doc-icon.png';
 export { default as MainLegalCases } from '../icons/legcases-icon.png';
 export { default as ServiceIcon } from './service-icon.png';
-export { default as DoceIcon } from './doce-icon.png'; 
+export { default as DoceIcon } from './doce-icon.png';
 export { default as InvestigationSection } from './inv-icon.png';
 export { default as InterIcon } from './inter-icon.png';
 export { default as LegalAdviceIcon } from './legal-advice.png';
-export { default as InternationalIcon } from './international-icon.png'; 
+export { default as InternationalIcon } from './international-icon.png';
 export { default as LocalIcon } from './local-icon.png';
 export { default as LocalContractIcon } from './local-contract-icon.png';
 export { default as MainProcedures } from './procedures-icon.png';
