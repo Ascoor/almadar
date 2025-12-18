@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contract;
 use App\Models\Archive;
 use App\Services\AssignmentService;
-use App\Helpers\AdminNotifier;
+use App\Events\EntityActivityRecorded;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -29,6 +29,7 @@ class ContractController extends Controller
                 'creator',
                 'updater',
                 'assignedTo',
+                'assignedBy',
             ])
             ->latest()
             ->paginate(50);
@@ -44,6 +45,7 @@ class ContractController extends Controller
                 'creator',
                 'updater',
                 'assignedTo',
+                'assignedBy',
             ])
             ->findOrFail($id);
 
@@ -91,13 +93,15 @@ class ContractController extends Controller
                 $this->storeArchive($contract);
             }
 
-            // ✅ notify admins
-            AdminNotifier::notifyAll(
-                '📄 عقد جديد',
-                'تمت إضافة عقد رقم: ' . $contract->number . ' بواسطة ' . (auth()->user()->name ?? 'System'),
-                "/contracts/{$contract->getKey()}",
-                $userId
-            );
+            event(new EntityActivityRecorded(
+                entity: $contract,
+                section: 'contracts',
+                event: 'created',
+                actorId: $userId,
+                actorName: auth()->user()?->name,
+                title: 'New contracts created',
+                actionUrl: "/contracts/{$contract->getKey()}",
+            ));
         });
 
         return response()->json([
@@ -147,13 +151,15 @@ class ContractController extends Controller
                 $this->storeArchive($contract);
             }
 
-            // ✅ notify admins
-            AdminNotifier::notifyAll(
-                '✏️ تعديل عقد',
-                'تم تعديل عقد رقم: ' . $contract->number . ' بواسطة ' . (auth()->user()->name ?? 'System'),
-                "/contracts/{$contract->getKey()}",
-                $userId
-            );
+            event(new EntityActivityRecorded(
+                entity: $contract,
+                section: 'contracts',
+                event: 'updated',
+                actorId: $userId,
+                actorName: auth()->user()?->name,
+                title: 'contracts updated',
+                actionUrl: "/contracts/{$contract->getKey()}",
+            ));
         });
 
         // ✅ delete old attachment AFTER transaction success

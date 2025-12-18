@@ -33,16 +33,16 @@ class UsersRolesPermissionsSeeder extends Seeder
         }
 
         $modules = [
-            'archive'                   => ['view', 'create', 'edit', 'delete'],
-            'legaladvices'              => ['view', 'create', 'edit', 'delete'],
-            'litigations'               => ['view', 'create', 'edit', 'delete'],
-            'litigation-from'           => ['view', 'create', 'edit', 'delete'],
-            'litigation-from-actions'   => ['view', 'create', 'edit', 'delete'],
-            'litigation-against'        => ['view', 'create', 'edit', 'delete'],
-            'litigation-against-actions'=> ['view', 'create', 'edit', 'delete'],
-            'contracts'                 => ['view', 'create', 'edit', 'delete'],
-            'investigations'            => ['view', 'create', 'edit', 'delete'],
-            'investigation-actions'     => ['view', 'create', 'edit', 'delete'],
+            'archive'                   => ['view', 'create', 'edit', 'delete', 'listen'],
+            'legaladvices'              => ['view', 'create', 'edit', 'delete', 'listen'],
+            'litigations'               => ['view', 'create', 'edit', 'delete', 'listen'],
+            'litigation-from'           => ['view', 'create', 'edit', 'delete', 'listen'],
+            'litigation-from-actions'   => ['view', 'create', 'edit', 'delete', 'listen'],
+            'litigation-against'        => ['view', 'create', 'edit', 'delete', 'listen'],
+            'litigation-against-actions'=> ['view', 'create', 'edit', 'delete', 'listen'],
+            'contracts'                 => ['view', 'create', 'edit', 'delete', 'listen'],
+            'investigations'            => ['view', 'create', 'edit', 'delete', 'listen'],
+            'investigation-actions'     => ['view', 'create', 'edit', 'delete', 'listen'],
             'users'                     => ['view', 'create', 'edit', 'delete'],
             'roles'                     => ['view', 'create', 'edit', 'delete'],
             'permissions'               => ['view', 'create', 'edit', 'delete'],
@@ -95,6 +95,7 @@ class UsersRolesPermissionsSeeder extends Seeder
             'view archive', 'view legaladvices', 'view litigations',
             'view contracts', 'view investigations', 'view reports',
             'view profile', 'edit profile',
+            'listen archive', 'listen legaladvices', 'listen litigations', 'listen contracts', 'listen investigations', 'listen investigation-actions',
         ])->get();
 
         $userPermissions = Permission::whereIn('name', [

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Litigation;
 use Illuminate\Http\Request;
-use App\Helpers\AdminNotifier;
+use App\Events\EntityActivityRecorded;
 use Spatie\Permission\Models\Permission;
 
 class LitigationController extends Controller
@@ -73,12 +73,14 @@ class LitigationController extends Controller
 
         $lit = Litigation::create($validated);
 
-        AdminNotifier::notifyAll(
-            '📄 قضية جديدة',
-            'تمت إضافة قضية برقم: ' . $lit->case_number,
-            "/litigations/{$lit->id}",
-            auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $lit,
+            section: 'litigations',
+            event: 'created',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: "/litigations/{$lit->id}",
+        ));
 
         return response()->json([
             'message' => 'تم إنشاء القضية بنجاح.',
@@ -95,12 +97,14 @@ class LitigationController extends Controller
 
         $litigation->update($validated);
 
-        AdminNotifier::notifyAll(
-            '✏️ تعديل قضية',
-            'تم تعديل القضية رقم: ' . $litigation->case_number,
-            "/litigations/{$litigation->id}",
-            auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $litigation,
+            section: 'litigations',
+            event: 'updated',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: "/litigations/{$litigation->id}",
+        ));
 
         return response()->json([
             'message' => 'تم تحديث القضية بنجاح.',

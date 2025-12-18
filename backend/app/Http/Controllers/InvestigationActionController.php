@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Investigation;
 use App\Models\InvestigationAction;
 use Illuminate\Http\Request;
-use App\Helpers\AdminNotifier;
 use App\Services\AssignmentService;
+use App\Events\EntityActivityRecorded;
 
 class InvestigationActionController extends Controller
 {
@@ -35,12 +35,14 @@ class InvestigationActionController extends Controller
 
         AssignmentService::apply($action, $assigneeId, 'procedures', 'aassignedTo');
 
-        AdminNotifier::notifyAll(
-            '📌 إجراء جديد',
-            'تمت إضافة إجراء بواسطة ' . auth()->user()->name,
-            '/investigations/' . $investigation->id,
-     auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $action,
+            section: 'investigation-actions',
+            event: 'created',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: '/investigations/' . $investigation->id,
+        ));
 
         return response()->json([
             'message' => 'تم إضافة الإجراء بنجاح.',
@@ -92,12 +94,14 @@ class InvestigationActionController extends Controller
 
         AssignmentService::apply($action, $assigneeId, 'procedures', 'assignedTo');
 
-        AdminNotifier::notifyAll(
-            '✏️ تعديل إجراء',
-            'تم تعديل إجراء  بالتحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id,
-     auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $action,
+            section: 'investigation-actions',
+            event: 'updated',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: '/investigations/' . $investigation->id,
+        ));
 
         return response()->json([
             'message' => 'تم تحديث الإجراء بنجاح.',
@@ -112,13 +116,6 @@ class InvestigationActionController extends Controller
         }
 
         $action->delete();
-
-        AdminNotifier::notifyAll(
-            '🗑️ حذف إجراء',
-            'تم حذف إجراء من التحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id,
-     auth()->id()
-        );
 
         return response()->json([
             'message' => 'تم حذف الإجراء بنجاح.',

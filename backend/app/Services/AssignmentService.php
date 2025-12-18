@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Notifications\AssignmentUpdatedNotification;
+use App\Events\AssignmentUpdated;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
@@ -42,28 +42,34 @@ class AssignmentService
 
         // ✅ تحقق من صلاحية المُسند إليه (null = فك الإسناد)
         $assignee = $assignedToId ? self::validateAssignee($assignedToId, $context) : null;
+        $assignedBy = auth()->id();
 
         // ✅ تحديث الإسناد فقط (بدون أي أعمدة إضافية)
-        $entity->forceFill([
+        $payload = [
             'assigned_to_user_id' => $assignedToId,
-        ])->save();
+        ];
+
+        if ($entity->isFillable('assigned_by_user_id')) {
+            $payload['assigned_by_user_id'] = $assignedBy;
+        }
+
+        $entity->forceFill($payload)->save();
 
         // ✅ إذا تم فك الإسناد لا ترسل إشعار
         if (!$assignee) {
             return;
         }
 
-        $assignedBy = auth()->id(); // قد تكون null لو بدون auth
         $title = (string) (data_get($entity, $titleField) ?? class_basename($entity));
         $link  = self::makeLink($context, (int) $entity->id);
 
-        $assignee->notify(new AssignmentUpdatedNotification(
-            context: $context,
-            entityTitle: $title,
-            link: $link,
-            entityId: (int) $entity->id,
-            entityType: get_class($entity),
+        event(new AssignmentUpdated(
+            entity: $entity,
+            section: $context,
+            assignee: $assignee,
             assignedBy: $assignedBy,
+            title: $title,
+            link: $link,
         ));
     }
 
