@@ -21,7 +21,6 @@ class InvestigationAction extends Model
         'created_by',
         'updated_by',
         'assigned_to_user_id',
-        'assigned_by_user_id',
     ];
     public function creator()
 {

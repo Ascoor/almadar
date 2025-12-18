@@ -16,7 +16,6 @@ class AssignmentUpdatedNotification extends Notification
         public ?string $link = null,
         public ?int $entityId = null,
         public ?string $entityType = null,
-        public ?int $assignedBy = null,
     ) {}
 
     public function via($notifiable): array
@@ -39,7 +38,6 @@ class AssignmentUpdatedNotification extends Notification
             'meta' => [
                 'entity_id'   => $this->entityId,
                 'entity_type' => $this->entityType,
-                'assigned_by' => $this->assignedBy,
             ],
         ];
     }

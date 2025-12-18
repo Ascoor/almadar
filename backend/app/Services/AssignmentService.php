@@ -49,10 +49,6 @@ class AssignmentService
             'assigned_to_user_id' => $assignedToId,
         ];
 
-        if ($entity->isFillable('assigned_by_user_id')) {
-            $payload['assigned_by_user_id'] = $assignedBy;
-        }
-
         $entity->forceFill($payload)->save();
 
         // ✅ إذا تم فك الإسناد لا ترسل إشعار
@@ -67,7 +63,6 @@ class AssignmentService
             entity: $entity,
             section: $context,
             assignee: $assignee,
-            assignedBy: $assignedBy,
             title: $title,
             link: $link,
         ));

@@ -25,8 +25,7 @@ class Contract extends Model
             'created_by',
             'updated_by',
             'assigned_to_user_id',
-            'assigned_by_user_id',
-            
+
     ];
 public function notifications()
     {
@@ -61,11 +60,6 @@ public function updater()
     public function assignedTo()
     {
         return $this->belongsTo(User::class, 'assigned_to_user_id');
-    }
-
-    public function assignedBy()
-    {
-        return $this->belongsTo(User::class, 'assigned_by_user_id');
     }
 
 

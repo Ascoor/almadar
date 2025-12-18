@@ -16,7 +16,6 @@ class AssignmentUpdated
         public Model $entity,
         public string $section,
         public User $assignee,
-        public ?int $assignedBy,
         public string $title,
         public ?string $link = null,
     ) {
