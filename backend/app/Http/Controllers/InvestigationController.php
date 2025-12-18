@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Investigation;
 use Illuminate\Http\Request;
-use App\Helpers\AdminNotifier;
 use App\Services\AssignmentService;
+use App\Events\EntityActivityRecorded;
 
 class InvestigationController extends Controller
 {
@@ -45,21 +45,16 @@ class InvestigationController extends Controller
 
         $investigation = Investigation::create($validated);
 
- 
-     // ✅ assignment notification
-     AssignmentService::apply($investigation, $assigneeId, 'investigations', 'subject');
+        AssignmentService::apply($investigation, $assigneeId, 'investigations', 'subject');
 
-     // ✅ archive if attachment exists
-     if (!empty($contract->attachment)) {
-         $this->storeArchive($contract);
-     }
-
-        AdminNotifier::notifyAll(
-            '🕵️‍♂️ تحقيق جديد',
-            'تمت إضافة تحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id,
-     auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $investigation,
+            section: 'investigations',
+            event: 'created',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: '/investigations/' . $investigation->id,
+        ));
 
         return response()->json([
             'message' => 'تم إنشاء التحقيق بنجاح.',
@@ -93,12 +88,14 @@ class InvestigationController extends Controller
 
         AssignmentService::apply($investigation, $assigneeId, 'investigations', 'subject');
 
-        AdminNotifier::notifyAll(
-            '✏️ تعديل تحقيق',
-            'تم تعديل التحقيق: ' . $investigation->subject,
-            '/investigations/' . $investigation->id,
-     auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $investigation,
+            section: 'investigations',
+            event: 'updated',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: '/investigations/' . $investigation->id,
+        ));
 
         return response()->json([
             'message' => 'تم تحديث التحقيق بنجاح.',

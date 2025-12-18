@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class InvestigationAction extends Model
 {
@@ -19,7 +20,8 @@ class InvestigationAction extends Model
 
         'created_by',
         'updated_by',
-        'assigned_to_user_id', 
+        'assigned_to_user_id',
+        'assigned_by_user_id',
     ];
     public function creator()
 {
@@ -34,6 +36,11 @@ public function updater()
     public function assignedTo()
     {
         return $this->belongsTo(User::class, 'assigned_to_user_id');
+    }
+
+    public function assignedBy()
+    {
+        return $this->belongsTo(User::class, 'assigned_by_user_id');
     }
  
 
