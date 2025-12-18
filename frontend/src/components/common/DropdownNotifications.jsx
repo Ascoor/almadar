@@ -3,7 +3,6 @@ import { Bell } from 'lucide-react';
 import { useNotifications } from '@/context/NotificationContext';
 import { useLanguage } from '@/context/LanguageContext';
 import IconButton from './iconButton';
-import { markAsRead as apiMarkAsRead } from '@/services/api/notifications';
 import { useNavigate } from 'react-router-dom';
 
 export default function DropdownNotifications() {
@@ -44,10 +43,7 @@ export default function DropdownNotifications() {
   };
 
   const onClickNotif = async (n) => {
-    markRead(n.id);
-    try {
-      await apiMarkAsRead(n.id);
-    } catch (_) {}
+    await markRead(n.id);
 
     setOpen(false);
 

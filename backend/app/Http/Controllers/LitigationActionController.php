@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Litigation;
 use App\Models\LitigationAction;
 use Illuminate\Http\Request;
-use App\Helpers\AdminNotifier;
+use App\Events\EntityActivityRecorded;
 
 class LitigationActionController extends Controller
 {
@@ -22,12 +22,14 @@ class LitigationActionController extends Controller
 
         $action = $litigation->actions()->create($validated);
 
-        AdminNotifier::notifyAll(
-            '📄 إجراء قضائي جديد',
-            'تمت إضافة إجراء على القضية: ' . $litigation->case_number,
-            '/litigations/' . $litigation->id,
-     auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $action,
+            section: 'litigation-actions',
+            event: 'created',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: '/litigations/' . $litigation->id,
+        ));
 
         return response()->json([
             'message' => 'تم إضافة الإجراء القضائي بنجاح.',
@@ -46,12 +48,14 @@ class LitigationActionController extends Controller
 
         $action->update($validated);
 
-        AdminNotifier::notifyAll(
-            '✏️ تعديل إجراء قضائي',
-            'تم تعديل إجراء في القضية: ' . $litigation->case_number,
-            '/litigations/' . $litigation->id,
-     auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $action,
+            section: 'litigation-actions',
+            event: 'updated',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: '/litigations/' . $litigation->id,
+        ));
 
         return response()->json([
             'message' => 'تم تحديث الإجراء القضائي.',
