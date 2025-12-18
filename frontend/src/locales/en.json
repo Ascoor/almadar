@@ -1,243 +1,101 @@
 {
-  "home": "Home",
-  "editor": "Editor",
-  "dashboard": "Dashboard",
-  "contracts": "Contracts",
-  "investigations": "Investigations",
-  "legalAdvices": "Legal Advices",
-  "litigations": "Litigations",
-  "management": "App Management",
-  "lists": "Lists",
-  "users": "Users",
-  "usersManagement": "Users Management",
-  "usersList": "Users",
-  "archive": "Archive",
-  "fatwa": "Fatwa",
-  "title": "Main Dashboard",
-  "subtitle": "Advanced legal case management and tracking system",
-  "totalCases": "Total Cases",
-  "wonCases": "Won Cases",
-  "lostCases": "Lost Cases",
-  "successRate": "Success Rate",
-  "contractsVolume": "Contracts Volume",
-  "activeSessions": "Active Sessions",
-  "monthlyCases": "Monthly Cases",
-  "monthlyDescription": "Number of cases registered each month",
-  "geographicDistribution": "Geographic Distribution",
-  "geoDescription": "Number of cases by region",
-  "caseOutcomes": "Case Outcomes",
-  "outcomesDescription": "Distribution of closed case results",
-  "courtSessions": "Court Sessions",
-  "sessionsDescription": "Number of sessions held monthly",
-  "recentCases": "Recent Cases",
-  "recentDescription": "Latest cases registered in the system",
-  "topRegions": "Top Regions",
-  "tripoli": "Tripoli",
-  "benghazi": "Benghazi",
-  "misrata": "Misrata",
-  "zawiya": "Zawiya",
-  "sebha": "Sebha",
-  "open": "Open",
-  "inProgress": "In Progress",
-  "won": "Won",
-  "lost": "Lost",
-  "closed": "Closed",
-  "allRegions": "All Regions",
-  "allStatuses": "All Statuses",
-  "last12Months": "Last 12 Months",
-  "yearToDate": "Year to Date",
-  "last90Days": "Last 90 Days",
-  "reset": "Reset",
-  "download": "Download",
-  "upload": "Upload",
-  "export": "Export",
-  "import": "Import",
-  "filter": "Filter",
-  "applyFilters": "Apply Filters",
-  "resetFilters": "Reset Filters",
-  "view": "View",
-  "edit": "Edit",
-  "save": "Save",
-  "submit": "Submit",
-  "cancel": "Cancel",
-  "delete": "Delete",
-  "update": "Update",
-  "add": "Add",
-  "addAction": "Add Action",
-  "editAction": "Edit Action",
-  "remove": "Remove",
-  "close": "Close",
-  "confirm": "Confirm",
-  "ok": "OK",
-  "yes": "Yes",
-  "no": "No",
-  "back": "Back",
-  "next": "Next",
-  "previous": "Previous",
-  "search": "Search",
-  "search_placeholder": "Search...",
-  "loading": "Loading...",
-  "title_header": "Title",
-  "type": "Type",
-  "region": "Region",
-  "status": "Status",
-  "date": "Date",
-  "email": "Email",
-  "password": "Password",
-  "confirmPassword": "Confirm Password",
-  "username": "Username",
-  "name": "Name",
-  "phone": "Phone",
-  "address": "Address",
-  "city": "City",
-  "country": "Country",
-  "signIn": "Sign In",
-  "signOut": "Sign Out",
-  "signUp": "Sign Up",
-  "profile": "Profile",
-  "language": "Language",
-  "arabic": "Arabic",
-  "english": "English",
-  "passwordMismatch": "Passwords do not match",
-  "passwordUpdated": "Password updated successfully",
-  "passwordChangeFailed": "Password change failed",
-  "changePasswordPrompt": "Please change your password",
-  "newPassword": "New Password",
-  "assignee": {
-    "label": "Assignee",
-    "placeholder": "Select assignee",
-    "empty": "No eligible users",
-    "assigned_success": "Assignment updated successfully"
-  },
-  "role": {
-    "admin": "Head of Department",
-    "manager": "Manager",
-    "lawyer": "Lawyer",
-    "legal_investigator": "Legal Investigator",
-    "user": "Employee"
-  },
-  "notifications": {
-    "default": {
-      "title": "New notification",
-      "message": "You have a new notification"
-    },
-    "assignment": {
-      "title": "📌 Assignment Updated",
-      "message": "Assigned {context}: {title}"
-    },
-    "permissions": {
-      "title": "New permissions",
-      "message": "New permissions received.",
-      "toast": "Your permissions were updated"
-    },
-    "events": {
-      "created": {
-        "title": "New {section} created",
-        "message": "{actor_name} created a new {entity_type} (#{entity_id})."
-      },
-      "updated": {
-        "title": "{section} updated",
-        "message": "{actor_name} updated {entity_type} (#{entity_id})."
-      },
-      "assigned": {
-        "title": "You have been assigned",
-        "message": "You were assigned to {entity_type} (#{entity_id}) by {actor_name}."
-      },
-      "generic": {
-        "title": "Notification",
-        "message": "{message}"
-      }
-    },
-    "details": {
-      "entity": "Entity",
-      "id": "Record ID"
-    },
-    "ui": {
-      "header": "Notifications",
-      "description": "Review your latest updates across modules",
-      "markAll": "Mark all as read",
-      "markRead": "Mark as read",
-      "open": "Open",
-      "openDetails": "Open details",
-      "empty": "No notifications",
-      "all": "All",
-      "unread": "Unread",
-      "read": "Read"
-    }
-  },
-  "assignments": {
-    "title": "Assignment",
-    "selectAssignee": "Select assignee",
-    "assign": "Assign"
-  },
-  "common": {
+  "nav.home": "Home",
+  "nav.features": "Features",
+  "nav.about": "About",
+  "nav.signin": "Sign In",
+  "nav.getStarted": "Get Started",
+
+  "hero.badge": "Enterprise Legal Management",
+  "hero.title": "Transform Your Legal Operations",
+  "hero.titleHighlight": "With Intelligence",
+  "hero.description": "A comprehensive legal management platform that streamlines contracts, investigations, and litigation with powerful automation and real-time collaboration.",
+  "hero.cta.primary": "Start Free Trial",
+  "hero.cta.secondary": "Watch Demo",
+  "hero.stats.contracts": "Contracts Managed",
+  "hero.stats.users": "Active Users",
+  "hero.stats.efficiency": "Efficiency Gain",
+
+  "features.badge": "Capabilities",
+  "features.title": "Everything You Need",
+  "features.subtitle": "Powerful modules designed for modern legal teams",
+
+  "features.contracts.title": "Contract Management",
+  "features.contracts.description": "Draft, review, and manage contracts with AI-powered templates and automated workflows.",
+
+  "features.investigations.title": "Investigations",
+  "features.investigations.description": "Track and manage investigations with comprehensive case management tools.",
+
+  "features.litigation.title": "Litigation Support",
+  "features.litigation.description": "Handle litigation matters efficiently with deadline tracking and document management.",
+
+  "features.archives.title": "Digital Archives",
+  "features.archives.description": "Secure document storage with advanced search and retrieval capabilities.",
+
+  "features.notifications.title": "Smart Notifications",
+  "features.notifications.description": "Stay informed with intelligent alerts for deadlines, updates, and assignments.",
+
+  "features.assignments.title": "Task Assignments",
+  "features.assignments.description": "Delegate and track tasks across teams with clear accountability and progress tracking.",
+
+  "howItWorks.badge": "Simple Process",
+  "howItWorks.title": "How It Works",
+  "howItWorks.subtitle": "Get started in minutes, not months",
+
+  "howItWorks.step1.title": "Connect Your Data",
+  "howItWorks.step1.description": "Import existing contracts, cases, and documents seamlessly into the platform.",
+
+  "howItWorks.step2.title": "Automate Workflows",
+  "howItWorks.step2.description": "Set up automated processes for approvals, notifications, and task assignments.",
+
+  "howItWorks.step3.title": "Gain Insights",
+  "howItWorks.step3.description": "Access real-time analytics and reports to make data-driven decisions.",
+
+  "trust.badge": "Trusted Platform",
+  "trust.title": "Built for Enterprise",
+  "trust.subtitle": "Security and compliance at every level",
+
+  "trust.security.title": "Bank-Grade Security",
+  "trust.security.description": "End-to-end encryption with SOC 2 Type II compliance.",
+
+  "trust.uptime.title": "99.9% Uptime",
+  "trust.uptime.description": "Enterprise SLA with guaranteed availability.",
+
+  "trust.support.title": "24/7 Support",
+  "trust.support.description": "Dedicated support team ready to help anytime.",
+
+  "cta.title": "Ready to Transform Your Legal Operations?",
+  "cta.description": "Join thousands of legal professionals who trust our platform.",
+  "cta.button": "Start Your Free Trial",
+
+  "footer.description": "Enterprise legal management platform for modern organizations.",
+  "footer.product": "Product",
+  "footer.company": "Company",
+  "footer.legal": "Legal",
+  "footer.features": "Features",
+  "footer.pricing": "Pricing",
+  "footer.integrations": "Integrations",
+  "footer.about": "About",
+  "footer.careers": "Careers",
+  "footer.contact": "Contact",
+  "footer.privacy": "Privacy Policy",
+  "footer.terms": "Terms of Service",
+  "footer.copyright": "© 2024 LegalHub. All rights reserved.",
+
+  "login": {
+    "brand": "Libya Legal Dashboard",
+    "title": "Welcome Back",
+    "subtitle": "Sign in to your account",
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Sign In",
+    "loading": "Signing in...",
+    "cancel": "Cancel",
+    "forgot": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "register": "Create account",
+    "hint": "By signing in, you agree to our terms of use and privacy policy.",
     "close": "Close"
-  },
-  "landing": {
-    "media": {
-      "alt": "Libya legal platform background",
-      "logoAlt": "Libya Legal Dashboard logo"
-    },
-    "badge": "Libya Legal Intelligence",
-    "title": "Modernize contracts, litigations, and investigations",
-    "description": "Unified control center for ministries and legal teams with bilingual workflows and verifiable trails.",
-    "primaryCta": "Sign in",
-    "secondaryCta": "Explore platform",
-    "secureNote": "Secure SSO access with auditable activity.",
-    "highlights": {
-      "access": "Role-based secure access",
-      "updates": "Live case updates",
-      "bilingual": "Arabic & English ready"
-    },
-    "panel": {
-      "title": "Trusted operations cockpit",
-      "description": "Stay in control of sensitive legal data with compliant storage, granular permissions, and guided workflows.",
-      "cta": "Open secure session",
-      "meta": {
-        "uptime": "Availability",
-        "uptimeValue": "99.9% monitored",
-        "support": "Priority support"
-      }
-    },
-    "features": {
-      "matterHub": {
-        "title": "Unified matter hub",
-        "description": "Track contracts, investigations, and litigations in one coherent timeline."
-      },
-      "automation": {
-        "title": "Automated follow-ups",
-        "description": "Smart reminders, due dates, and assignee prompts to prevent delays."
-      },
-      "insights": {
-        "title": "Real-time intelligence",
-        "description": "Dashboards powered by token-driven theming for immediate clarity."
-      },
-      "collaboration": {
-        "title": "Secure collaboration",
-        "description": "Share briefs, evidence, and notes with guided permissions."
-      }
-    },
-    "stats": {
-      "activeCases": "Active cases",
-      "contracts": "Contracts under review",
-      "response": "Avg. response"
-    },
-    "steps": {
-      "title": "How it works",
-      "connect": {
-        "title": "Connect",
-        "description": "Sign in securely and sync existing matters without friction."
-      },
-      "organize": {
-        "title": "Organize",
-        "description": "Structure cases, contracts, and notifications with guided templates."
-      },
-      "monitor": {
-        "title": "Monitor",
-        "description": "Follow timelines, hearings, and KPIs with bilingual reports."
-      }
-    }
   }
-
-
 }
