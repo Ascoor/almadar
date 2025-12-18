@@ -172,7 +172,72 @@
   },
   "common": {
     "close": "Close"
+  },
+  "landing": {
+    "media": {
+      "alt": "Libya legal platform background",
+      "logoAlt": "Libya Legal Dashboard logo"
+    },
+    "badge": "Libya Legal Intelligence",
+    "title": "Modernize contracts, litigations, and investigations",
+    "description": "Unified control center for ministries and legal teams with bilingual workflows and verifiable trails.",
+    "primaryCta": "Sign in",
+    "secondaryCta": "Explore platform",
+    "secureNote": "Secure SSO access with auditable activity.",
+    "highlights": {
+      "access": "Role-based secure access",
+      "updates": "Live case updates",
+      "bilingual": "Arabic & English ready"
+    },
+    "panel": {
+      "title": "Trusted operations cockpit",
+      "description": "Stay in control of sensitive legal data with compliant storage, granular permissions, and guided workflows.",
+      "cta": "Open secure session",
+      "meta": {
+        "uptime": "Availability",
+        "uptimeValue": "99.9% monitored",
+        "support": "Priority support"
+      }
+    },
+    "features": {
+      "matterHub": {
+        "title": "Unified matter hub",
+        "description": "Track contracts, investigations, and litigations in one coherent timeline."
+      },
+      "automation": {
+        "title": "Automated follow-ups",
+        "description": "Smart reminders, due dates, and assignee prompts to prevent delays."
+      },
+      "insights": {
+        "title": "Real-time intelligence",
+        "description": "Dashboards powered by token-driven theming for immediate clarity."
+      },
+      "collaboration": {
+        "title": "Secure collaboration",
+        "description": "Share briefs, evidence, and notes with guided permissions."
+      }
+    },
+    "stats": {
+      "activeCases": "Active cases",
+      "contracts": "Contracts under review",
+      "response": "Avg. response"
+    },
+    "steps": {
+      "title": "How it works",
+      "connect": {
+        "title": "Connect",
+        "description": "Sign in securely and sync existing matters without friction."
+      },
+      "organize": {
+        "title": "Organize",
+        "description": "Structure cases, contracts, and notifications with guided templates."
+      },
+      "monitor": {
+        "title": "Monitor",
+        "description": "Follow timelines, hearings, and KPIs with bilingual reports."
+      }
+    }
   }
 
-  
+
 }

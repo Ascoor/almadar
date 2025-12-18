@@ -30,5 +30,17 @@ return new class extends Migration
                 $table->dropConstrainedForeignId('created_by');
             }
         });
+
+        foreach ($this->assignmentTables as $tableName) {
+            if (!Schema::hasTable($tableName)) {
+                continue;
+            }
+
+            Schema::table($tableName, function (Blueprint $table) use ($tableName) {
+                if (Schema::hasColumn($tableName, 'assigned_by_user_id')) {
+                    $table->dropConstrainedForeignId('assigned_by_user_id');
+                }
+            });
+        }
     }
 };

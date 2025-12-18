@@ -42,6 +42,7 @@ class AssignmentService
 
         // ✅ تحقق من صلاحية المُسند إليه (null = فك الإسناد)
         $assignee = $assignedToId ? self::validateAssignee($assignedToId, $context) : null;
+        $assignedBy = auth()->id();
 
         // ✅ تحديث الإسناد فقط (بدون أي أعمدة إضافية)
         $payload = [
