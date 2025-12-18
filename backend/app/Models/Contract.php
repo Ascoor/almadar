@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Contract extends Model
 {
@@ -23,8 +24,8 @@ class Contract extends Model
             'summary',
             'created_by',
             'updated_by',
-            'assigned_to_user_id', 
-            
+            'assigned_to_user_id',
+
     ];
 public function notifications()
     {
@@ -60,6 +61,6 @@ public function updater()
     {
         return $this->belongsTo(User::class, 'assigned_to_user_id');
     }
- 
+
 
 }

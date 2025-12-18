@@ -7,8 +7,9 @@ use App\Models\Archive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use App\Helpers\AdminNotifier;
 use App\Services\AssignmentService;
+use App\Events\EntityActivityRecorded;
+use App\Events\EntityActivityRecorded;
 
 class LegalAdviceController extends Controller
 {
@@ -61,13 +62,14 @@ class LegalAdviceController extends Controller
             $this->storeArchive($advice);
         }
 
-        // 6) Notify all admins in real‐time (and save in notifications table)
-        AdminNotifier::notifyAll(
-            '📄 مشورة جديدة',
-            'تمت إضافة مشورة بعنوان: ' . $advice->topic,
-            '/legal-advices/' . $advice->id,
-     auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $advice,
+            section: 'legaladvices',
+            event: 'created',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: '/legal-advices/' . $advice->id,
+        ));
 
         // 7) Return JSON response
         return response()->json([
@@ -110,13 +112,14 @@ class LegalAdviceController extends Controller
             $this->storeArchive($legalAdvice);
         }
 
-        // 6) Notify admins
-        AdminNotifier::notifyAll(
-            '✏️ تعديل مشورة',
-            'تم تعديل مشورة بعنوان: ' . $legalAdvice->topic,
-            '/legal-advices/' . $legalAdvice->id,
-     auth()->id()
-        );
+        event(new EntityActivityRecorded(
+            entity: $legalAdvice,
+            section: 'legaladvices',
+            event: 'updated',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: '/legal-advices/' . $legalAdvice->id,
+        ));
 
         // 7) Return JSON
         return response()->json([

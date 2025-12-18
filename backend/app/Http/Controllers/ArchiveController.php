@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Archive;
+use App\Events\EntityActivityRecorded;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,7 +40,18 @@ class ArchiveController extends Controller
             'title' => $validated['title'],
             'file_path' => $path,
             'extracted_text' => null, // بدون استخراج نص
+            'created_by' => auth()->id(),
+            'updated_by' => auth()->id(),
         ]);
+
+        event(new EntityActivityRecorded(
+            entity: $archive,
+            section: 'archive',
+            event: 'created',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: "/archives/{$archive->getKey()}",
+        ));
 
         return response()->json([
             'message' => 'تم حفظ الملف في الأرشيف بنجاح.',
@@ -78,12 +90,25 @@ class ArchiveController extends Controller
             $archive->update([
                 'file_path' => $path,
                 'extracted_text' => null, // لا حاجة للنص
+                'updated_by' => auth()->id(),
             ]);
         }
 
         if (isset($validated['title'])) {
-            $archive->update(['title' => $validated['title']]);
+            $archive->update([
+                'title' => $validated['title'],
+                'updated_by' => auth()->id(),
+            ]);
         }
+
+        event(new EntityActivityRecorded(
+            entity: $archive,
+            section: 'archive',
+            event: 'updated',
+            actorId: auth()->id(),
+            actorName: auth()->user()?->name,
+            actionUrl: "/archives/{$archive->getKey()}",
+        ));
 
         return response()->json([
             'message' => 'تم تحديث بيانات الأرشيف بنجاح.',
