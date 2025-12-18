@@ -6,10 +6,15 @@ import {
   useRef,
   useState,
 } from 'react';
+import { toast } from 'sonner';
 import { initEcho, subscribeToUserChannel } from '@/lib/echo';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { toast } from 'sonner';
+import { formatNotification } from '@/utils/formatNotification';
+import {
+  getNotifications,
+  markAsRead as markNotificationRead,
+} from '@/services/api/notifications';
 
 const NotificationContext = createContext(null);
 
@@ -46,31 +51,6 @@ export function NotificationProvider({ children }) {
     audioRef.current?.play().catch(() => {});
   };
 
-  const renderNotificationText = (data) => {
-    if (data?.key === 'assignment.updated') {
-      return {
-        title: t('notifications.assignment.title'),
-        message: t('notifications.assignment.message')
-          .replace('{context}', data?.params?.context ?? '')
-          .replace('{title}', data?.params?.title ?? ''),
-        icon: '📌',
-      };
-    }
-
-    if (data?.key === 'permissions.updated') {
-      return {
-        title: t('notifications.permissions.title'),
-        message: t('notifications.permissions.message'),
-        icon: '🔐',
-      };
-    }
-
-    return {
-      title: data?.title ?? t('notifications.default.title'),
-      message: data?.message ?? t('notifications.default.message'),
-      icon: data?.icon ?? '🔔',
-    };
-  };
   const normalize = (raw) => {
     const data = raw?.data ?? raw ?? {};
     const id = raw?.id ?? data?.id;
@@ -122,6 +102,32 @@ export function NotificationProvider({ children }) {
     add(n);
     playSound();
   };
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await getNotifications();
+        const list = Array.isArray(res?.data) ? res.data : res;
+        if (!mounted || !Array.isArray(list)) return;
+        const normalized = list
+          .map((item) => normalize(item))
+          .filter(Boolean);
+
+        setNotifications(normalized);
+        normalized.forEach((n) => seenIds.current.add(n.id));
+        setHasNew(normalized.some((n) => !n.read));
+      } catch (err) {
+        console.error('Failed to load notifications', err);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [user?.id]);
 
   // ✅ الاشتراك في Echo مرة واحدة فقط: يعتمد على user.id + token فقط
   useEffect(() => {
@@ -176,18 +182,23 @@ export function NotificationProvider({ children }) {
 
   // ✅ عرض الإشعارات مترجمة حسب اللغة بدون reload
   const viewNotifications = useMemo(() => {
-    return notifications.map((n) => {
-      const text = renderNotificationText(n.data);
-      return { ...n, ...text };
-    });
+    return notifications
+      .map((n) => {
+        const formatted = formatNotification(n, t, lang);
+        return formatted ? { ...n, ...formatted } : null;
+      })
+      .filter(Boolean);
   }, [notifications, lang]); // يتغير فورًا عند تغيير اللغة
 
-  const markRead = (id) => {
+  const markRead = async (id) => {
     setNotifications((prev) => {
       const next = prev.map((n) => (n.id === id ? { ...n, read: true } : n));
       setHasNew(next.some((n) => !n.read));
       return next;
     });
+    try {
+      await markNotificationRead(id);
+    } catch (_) {}
   };
 
   const markAllAsRead = () => {

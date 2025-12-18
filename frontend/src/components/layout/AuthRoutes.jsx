@@ -27,6 +27,9 @@ const Litigations = lazy(() => import('../../pages/LitigationsPage.jsx'));
 const LitigationDetailsPage = lazy(
   () => import('../../pages/LitigationDetailsPage.jsx'),
 );
+const NotificationsPage = lazy(
+  () => import('../../pages/NotificationsPage.jsx'),
+);
 const UserManagementPage = lazy(
   () => import('../../pages/UserManagementPage.jsx'),
 );
@@ -158,6 +161,10 @@ const AuthRoutes = () => {
             }
           />
           <Route path="/reports-page" element={<ReportsPage />} />
+          <Route
+            path="/notifications"
+            element={<NotificationsPage />}
+          />
           <Route path="/forbidden" element={<Forbidden />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
