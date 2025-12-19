@@ -154,7 +154,8 @@
       "session": "session",
       "case": "case",
       "consultation": "consultation",
-      "investigation": "investigation"
+      "investigation": "investigation",
+      "procedure": "investigation action"
     },
     "details": {
       "entity": "Entity",

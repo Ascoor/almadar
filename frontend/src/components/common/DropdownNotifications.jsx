@@ -4,6 +4,7 @@ import { useNotifications } from '@/context/NotificationContext';
 import { useLanguage } from '@/context/LanguageContext';
 import IconButton from './iconButton';
 import { useNavigate } from 'react-router-dom';
+import { buildNotificationLink } from '@/utils/formatNotification';
 
 export default function DropdownNotifications() {
   const { notifications, hasNew, markRead, markAllAsRead } = useNotifications();
@@ -27,19 +28,11 @@ export default function DropdownNotifications() {
 
   // ✅ لازم تكون موجودة لأنك تستخدمها في map + navigation
   const getNotifLink = (n) => {
-    if (typeof n?.link === 'string' && n.link.startsWith('/')) return n.link;
+    const directLink = buildNotificationLink(n) || buildNotificationLink(n?.data);
+    if (!directLink) return null;
 
-    const linkFromData = n?.data?.link;
-    if (typeof linkFromData === 'string' && linkFromData.startsWith('/'))
-      return linkFromData;
-
-    const id =
-      n?.data?.entityId ||
-      n?.data?.params?.entityId ||
-      n?.data?.params?.contract_id;
-    if (id) return `/contracts/${id}`;
-
-    return null;
+    if (/^https?:\/\//i.test(directLink)) return directLink;
+    return directLink.startsWith('/') ? directLink : `/${directLink}`;
   };
 
   const onClickNotif = async (n) => {
@@ -48,7 +41,13 @@ export default function DropdownNotifications() {
     setOpen(false);
 
     const to = getNotifLink(n);
-    if (to) navigate(to);
+    if (!to) return;
+
+    if (/^https?:\/\//i.test(to)) {
+      window.location.assign(to);
+    } else {
+      navigate(to);
+    }
   };
 
   return (
