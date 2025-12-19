@@ -197,6 +197,10 @@ const HomePage = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-bg/90 via-bg/85 to-bg" aria-hidden />
           <div className="absolute inset-0 bg-gradient-subtle opacity-70 mix-blend-multiply" aria-hidden />
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -left-10 -top-10 h-72 w-72 rounded-full bg-primary/15 blur-3xl" aria-hidden />
+            <div className="absolute bottom-10 right-0 h-80 w-80 rounded-full bg-accent/20 blur-3xl" aria-hidden />
+          </div>
         </div>
 
         <header className="sticky top-0 z-30 border-b border-border/80 bg-card/80 backdrop-blur-xl">
@@ -280,7 +284,7 @@ const HomePage = () => {
 
         <main className="relative z-10">
           <section id="hero" className="scroll-mt-24">
-            <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-16 pt-14 sm:px-6 lg:grid-cols-[1.3fr_1fr] lg:px-8">
+            <div className="mx-auto grid max-w-6xl items-center gap-10 rounded-[32px] border border-border/70 bg-card/50 px-4 pb-16 pt-14 shadow-2xl shadow-primary/5 sm:px-6 lg:grid-cols-[1.3fr_1fr] lg:px-8">
               <MotionDiv className="space-y-6" {...heroAnimation}>
                 <span className="inline-flex w-fit items-center gap-2 rounded-full bg-muted/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground border border-border">
                   {t('landing.hero.eyebrow')}
@@ -408,9 +412,10 @@ const HomePage = () => {
                   return (
                     <MotionDiv
                       key={feature.title}
-                      className="flex h-full flex-col gap-3 rounded-2xl border border-border bg-card/80 p-5 shadow-md"
+                      className="group relative flex h-full flex-col gap-3 overflow-hidden rounded-2xl border border-border bg-card/80 p-5 shadow-md"
                       {...REVEAL_PROPS}
                     >
+                      <div className="pointer-events-none absolute -right-6 -top-10 h-32 w-32 rounded-full bg-primary/10 blur-3xl transition duration-500 group-hover:scale-110" aria-hidden />
                       <div className="flex items-center gap-3">
                         <span className="grid h-12 w-12 place-items-center rounded-xl bg-muted/70 text-primary shadow-sm">
                           <Icon className="h-5 w-5" aria-hidden />
@@ -418,6 +423,10 @@ const HomePage = () => {
                         <p className="text-base font-semibold text-foreground">{feature.title}</p>
                       </div>
                       <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
+                      <div className="mt-auto flex items-center gap-2 text-xs font-semibold text-primary">
+                        <span className="h-1 w-1 rounded-full bg-primary" />
+                        {t('landing.hero.supporting')}
+                      </div>
                     </MotionDiv>
                   );
                 })}
@@ -433,14 +442,19 @@ const HomePage = () => {
                 eyebrow={t('landing.nav.how')}
                 align="center"
               />
-              <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="relative mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div
+                  className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-primary/0 via-primary/40 to-primary/0 md:block"
+                  aria-hidden
+                />
                 {steps.map((step, index) => (
                   <MotionDiv
                     key={step.title}
-                    className="h-full rounded-2xl border border-border bg-card/80 p-5 shadow-md"
+                    className="relative h-full overflow-hidden rounded-2xl border border-border bg-card/80 p-5 shadow-md"
                     {...REVEAL_PROPS}
                     transition={{ ...REVEAL_PROPS.transition, delay: shouldReduceMotion ? 0 : index * 0.05 }}
                   >
+                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" aria-hidden />
                     <div className="flex items-center gap-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/70 text-primary font-semibold">
                         {index + 1}
@@ -498,10 +512,11 @@ const HomePage = () => {
                 {testimonials.map((item, index) => (
                   <MotionDiv
                     key={item.name}
-                    className="flex h-full flex-col gap-3 rounded-2xl border border-border bg-card/80 p-5 shadow-md"
+                    className="relative flex h-full flex-col gap-3 overflow-hidden rounded-2xl border border-border bg-card/80 p-5 shadow-md"
                     {...REVEAL_PROPS}
                     transition={{ ...REVEAL_PROPS.transition, delay: shouldReduceMotion ? 0 : index * 0.05 }}
                   >
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/10" aria-hidden />
                     <Sparkles className="h-5 w-5 text-primary" aria-hidden />
                     <p className="flex-1 text-sm leading-relaxed text-foreground">{item.quote}</p>
                     <div className="space-y-1">
@@ -526,9 +541,10 @@ const HomePage = () => {
                 {plans.map((plan) => (
                   <MotionDiv
                     key={plan.name}
-                    className="flex h-full flex-col gap-4 rounded-2xl border border-border bg-card/85 p-6 shadow-md"
+                    className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-border bg-card/85 p-6 shadow-md"
                     {...REVEAL_PROPS}
                   >
+                    <div className="pointer-events-none absolute inset-x-6 top-0 h-24 rounded-b-full bg-gradient-to-b from-primary/20 via-primary/5 to-transparent opacity-70 transition duration-500 group-hover:opacity-100" aria-hidden />
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-lg font-semibold text-foreground">{plan.name}</p>
@@ -584,7 +600,8 @@ const HomePage = () => {
 
           <section id="contact" className="scroll-mt-24 bg-card/40 py-16">
             <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-              <div className="rounded-3xl border border-border bg-card/90 p-8 shadow-lg lg:p-12">
+              <div className="relative overflow-hidden rounded-3xl border border-border bg-card/90 p-8 shadow-lg lg:p-12">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/15" aria-hidden />
                 <HeaderBlock
                   title={t('landing.contact.title')}
                   subtitle={t('landing.contact.subtitle')}
@@ -666,6 +683,7 @@ const AccordionItem = ({
   delay: number;
 }) => {
   const [open, setOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
   return (
     <MotionDiv
       className="rounded-2xl border border-border bg-card/80 p-4 shadow-sm"
@@ -678,7 +696,12 @@ const AccordionItem = ({
         className="flex w-full items-center justify-between gap-3 text-left"
       >
         <span className="text-sm font-semibold text-foreground">{question}</span>
-        <span className="text-primary">{open ? '−' : '+'}</span>
+        <motion.span
+          animate={{ rotate: open && !reduceMotion ? 90 : 0 }}
+          className="text-primary"
+        >
+          {open ? '−' : '+'}
+        </motion.span>
       </button>
       {open && <p className="mt-2 text-sm text-muted-foreground">{answer}</p>}
     </MotionDiv>
