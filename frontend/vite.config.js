@@ -42,10 +42,9 @@ export default defineConfig(({ mode }) => {
       dedupe: ['react', 'react-dom'],
     },
     server: {
-  
-    host: '::',
-    port: 3000,
-  },
+      host: '::',
+      port: 3000,
+    },
     optimizeDeps: {
       // 👇 خليه يـpre-bundle للمكتبات اللي تعمل مشاكل وقت التشغيل
       include: ['react', 'react-dom', 'lucide-react'],
@@ -76,12 +75,30 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 800,
       rollupOptions: {
         output: {
-             manualChunks: { 
-          react: ['react', 'react-dom', 'lucide-react'],
-          pdf: ['@react-pdf-viewer/core', 'pdfjs-dist', '@/components/PDFViewer'],
- 
-          vendor: ['socket.io-client', 'laravel-echo'],
-        },
+          manualChunks: {
+            react: ['react', 'react-dom', 'lucide-react'],
+            pdf: ['@react-pdf-viewer/core', 'pdfjs-dist'],
+            cesium: ['cesium', 'resium'],
+            deckgl: ['@deck.gl/react', '@deck.gl/layers'],
+            tiptap: [
+              '@tiptap/react',
+              '@tiptap/starter-kit',
+              '@tiptap/extension-link',
+              '@tiptap/extension-image',
+              '@tiptap/extension-table',
+              '@tiptap/extension-table-cell',
+              '@tiptap/extension-table-header',
+              '@tiptap/extension-table-row',
+              '@tiptap/extension-text-align',
+              '@tiptap/extension-text-style',
+              '@tiptap/extension-underline',
+              '@tiptap/extension-color',
+              '@tiptap/extension-font-family',
+              '@tiptap/extension-highlight',
+            ],
+            realtime: ['socket.io-client', 'laravel-echo', 'pusher-js'],
+            workbox: ['workbox-window'],
+          },
         },
       },
     },
