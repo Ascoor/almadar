@@ -148,6 +148,14 @@
         "message": "{message}"
       }
     },
+    "entities": {
+      "item": "item",
+      "contract": "contract",
+      "session": "session",
+      "case": "case",
+      "consultation": "consultation",
+      "investigation": "investigation"
+    },
     "details": {
       "entity": "Entity",
       "id": "Record ID"

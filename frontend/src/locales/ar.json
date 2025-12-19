@@ -151,6 +151,14 @@
         "message": "{message}"
       }
     },
+    "entities": {
+      "item": "عنصر",
+      "contract": "عقد",
+      "session": "جلسة",
+      "case": "قضية",
+      "consultation": "مشورة",
+      "investigation": "تحقيق"
+    },
     "details": {
       "entity": "الكيان",
       "id": "رقم السجل"
