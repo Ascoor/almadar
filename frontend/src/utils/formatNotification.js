@@ -54,10 +54,16 @@ export const buildNotificationLink = (payload = {}) => {
   if (directLink) return cleanPath(directLink);
 
   const sectionKey =
-    payload.section || payload.entity_type || payload?.data?.entity_type;
+    payload.section ||
+    payload.entity_type ||
+    payload.entityType ||
+    payload?.data?.entity_type ||
+    payload?.data?.entityType ||
+    payload.type;
   const entityId =
     payload.entity_id ||
     payload.entityId ||
+    payload.entity ||
     payload?.data?.entity_id ||
     payload?.data?.entityId ||
     payload?.params?.entity_id ||
@@ -75,7 +81,14 @@ export function formatNotification(notification, t, lang = 'en') {
   if (!notification) return null;
 
   const payload = { ...defaultPayload, ...(notification.data || notification) };
-  const sectionKey = String(payload.section || payload.entity_type || 'item');
+  const sectionKey = String(
+    payload.section ||
+      payload.entity_type ||
+      payload.entityType ||
+      payload.entity ||
+      payload.type ||
+      'item',
+  );
   const meta = entityDictionary[sectionKey.toLowerCase()];
   const sectionLabelKey = meta?.labelKey || 'notifications.entities.item';
   const sectionLabelRaw = t(sectionLabelKey);
@@ -116,6 +129,7 @@ export function formatNotification(notification, t, lang = 'en') {
   const entityId =
     payload.entity_id ||
     payload.entityId ||
+    payload.entity ||
     payload.contractId ||
     payload.contract_id ||
     payload?.params?.entityId ||
