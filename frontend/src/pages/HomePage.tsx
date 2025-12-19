@@ -68,6 +68,15 @@ const REVEAL_PROPS = {
   transition: { duration: 0.5, ease: 'easeOut' },
 };
 
+const FLOATING_KEYWORD_POSITIONS = [
+  { x: '12%', y: '18%' },
+  { x: '68%', y: '12%' },
+  { x: '22%', y: '62%' },
+  { x: '70%', y: '58%' },
+  { x: '38%', y: '32%' },
+  { x: '52%', y: '72%' },
+];
+
 const HomePage = () => {
   const { dir, t, lang, formatNumber } = useLanguage();
   const shouldReduceMotion = useReducedMotion();
@@ -118,6 +127,16 @@ const HomePage = () => {
 
   const plans: PlanItem[] = useMemo(
     () => (t('landing.pricing.plans') as unknown as PlanItem[]) || [],
+    [t],
+  );
+
+  const floatingKeywords = useMemo(
+    () => (t('landing.hero.keywords') as unknown as string[]) || [],
+    [t],
+  );
+
+  const heroHighlights = useMemo(
+    () => (t('landing.hero.highlights') as unknown as string[]) || [],
     [t],
   );
 
@@ -340,6 +359,18 @@ const HomePage = () => {
                     </div>
                   ))}
                 </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {heroHighlights.map((highlight) => (
+                    <div
+                      key={highlight}
+                      className="flex items-center gap-3 rounded-2xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur-lg"
+                    >
+                      <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 via-accent/30 to-primary/10 shadow-inner" />
+                      <p className="text-sm font-semibold text-foreground">{highlight}</p>
+                    </div>
+                  ))}
+                </div>
               </MotionDiv>
 
               <MotionDiv
@@ -362,6 +393,29 @@ const HomePage = () => {
                 </div>
 
                 <div className="relative space-y-5">
+                  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                    {floatingKeywords.map((word, index) => {
+                      const position = FLOATING_KEYWORD_POSITIONS[index % FLOATING_KEYWORD_POSITIONS.length];
+                      const horizontalStyle = isRTL ? { right: position.x } : { left: position.x };
+
+                      return (
+                        <motion.span
+                          key={word}
+                          className="absolute rounded-full border border-border bg-card/80 px-3 py-1 text-xs font-semibold text-muted-foreground shadow-sm backdrop-blur-md"
+                          style={{ top: position.y, ...horizontalStyle }}
+                          animate={
+                            shouldReduceMotion
+                              ? undefined
+                              : { y: [0, -6, 0], opacity: [0.65, 1, 0.65], scale: [1, 1.03, 1] }
+                          }
+                          transition={{ duration: 6 + index * 0.4, repeat: Infinity, ease: 'easeInOut' }}
+                        >
+                          {word}
+                        </motion.span>
+                      );
+                    })}
+                  </div>
+
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
                       <p className="text-sm font-semibold text-foreground">{t('landing.social.label')}</p>
