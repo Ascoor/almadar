@@ -10,7 +10,7 @@ import { markAllNotificationsRead } from '../api';
 export default function NotificationsList() {
   const { notifications, markRead, markAllAsRead } = useNotifications();
   const { t } = useLanguage();
-  const [selected, setSelected] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
 
   const filtered = useMemo(() => {
@@ -18,11 +18,16 @@ export default function NotificationsList() {
     return notifications;
   }, [notifications, activeTab]);
 
+  const selectedNotification = useMemo(() => {
+    if (!selectedId) return null;
+    return notifications.find((n) => n.id === selectedId) || null;
+  }, [notifications, selectedId]);
+
   useEffect(() => {
-    if (selected && notifications.every((n) => n.id !== selected.id)) {
-      setSelected(null);
+    if (selectedId && notifications.every((n) => n.id !== selectedId)) {
+      setSelectedId(null);
     }
-  }, [notifications, selected]);
+  }, [notifications, selectedId]);
 
   const handleMarkAll = async () => {
     markAllAsRead();
@@ -61,7 +66,7 @@ export default function NotificationsList() {
             <NotificationCard
               key={n.id}
               notification={n}
-              onOpen={(item) => setSelected(item)}
+              onOpen={(item) => setSelectedId(item.id)}
               onMarkRead={(item) => markRead(item.id)}
             />
           ))}
@@ -77,17 +82,17 @@ export default function NotificationsList() {
             <NotificationCard
               key={n.id}
               notification={n}
-              onOpen={(item) => setSelected(item)}
+              onOpen={(item) => setSelectedId(item.id)}
               onMarkRead={(item) => markRead(item.id)}
             />
           ))}
         </TabsContent>
       </Tabs>
 
-      {selected && (
+      {selectedNotification && (
         <NotificationDetailsCard
-          notification={selected}
-          onClose={() => setSelected(null)}
+          notification={selectedNotification}
+          onClose={() => setSelectedId(null)}
         />
       )}
     </div>
