@@ -8,7 +8,7 @@ import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import TrustSection from "@/components/landing/TrustSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
-import LoginModal from "@/components/organisms/Login";
+import LoginModal from "@/components/organisms/Login.tsx";
 import AuthSpinner from "@/components/common/Spinners/AuthSpinner";
 
 const HomePage = () => {
