@@ -181,71 +181,221 @@
   "common": {
     "close": "Close"
   },
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Enter your credentials to access the Libya Legal Dashboard.",
+    "brand": "Libya Legal Dashboard",
+    "email": "Email",
+    "password": "Password",
+    "remember": "Remember me",
+    "show": "Show",
+    "hide": "Hide",
+    "submit": "🚀 Sign in",
+    "submitting": "Signing in...",
+    "cancel": "Cancel",
+    "terms": "By signing in, you agree to our terms of use and privacy policy.",
+    "successTitle": "✅ Logged in successfully",
+    "successDescription": "You have been signed in successfully.",
+    "errorTitle": "❌ Login failed",
+    "errorDescription": "Please double-check your email and password.",
+    "errorFallback": "Authentication failed.",
+    "unexpected": "An unexpected error occurred",
+    "unexpectedDescription": "Please try again."
+  },
   "landing": {
-    "media": {
-      "alt": "Libya legal platform background",
-      "logoAlt": "Libya Legal Dashboard logo"
+    "brand": "Almadar Legal OS",
+    "nav": {
+      "hero": "Overview",
+      "features": "Features",
+      "how": "How it works",
+      "screens": "Screens",
+      "testimonials": "Testimonials",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "contact": "Contact"
     },
-    "badge": "Libya Legal Intelligence",
-    "title": "Modernize contracts, litigations, and investigations",
-    "description": "Unified control center for ministries and legal teams with bilingual workflows and verifiable trails.",
-    "primaryCta": "Sign in",
-    "secondaryCta": "Explore platform",
-    "secureNote": "Secure SSO access with auditable activity.",
-    "highlights": {
-      "access": "Role-based secure access",
-      "updates": "Live case updates",
-      "bilingual": "Arabic & English ready"
-    },
-    "panel": {
-      "title": "Trusted operations cockpit",
-      "description": "Stay in control of sensitive legal data with compliant storage, granular permissions, and guided workflows.",
-      "cta": "Open secure session",
-      "meta": {
-        "uptime": "Availability",
-        "uptimeValue": "99.9% monitored",
-        "support": "Priority support"
-      }
-    },
-    "features": {
-      "matterHub": {
-        "title": "Unified matter hub",
-        "description": "Track contracts, investigations, and litigations in one coherent timeline."
-      },
-      "automation": {
-        "title": "Automated follow-ups",
-        "description": "Smart reminders, due dates, and assignee prompts to prevent delays."
-      },
-      "insights": {
-        "title": "Real-time intelligence",
-        "description": "Dashboards powered by token-driven theming for immediate clarity."
-      },
-      "collaboration": {
-        "title": "Secure collaboration",
-        "description": "Share briefs, evidence, and notes with guided permissions."
-      }
+    "hero": {
+      "eyebrow": "Libya legal intelligence",
+      "title": "Modernize contracts, litigations, and investigations",
+      "subtitle": "Unified control center for ministries and legal teams with bilingual workflows and verifiable trails.",
+      "primaryCta": "Get started",
+      "secondaryCta": "View platform",
+      "supporting": "Secure SSO access with auditable activity."
     },
     "stats": {
-      "activeCases": "Active cases",
-      "contracts": "Contracts under review",
-      "response": "Avg. response"
+      "title": "Impact at a glance",
+      "items": [
+        {
+          "label": "Active cases",
+          "value": 1280,
+          "suffix": "+",
+          "description": "Tracked across ministries"
+        },
+        {
+          "label": "Response time",
+          "value": 2,
+          "suffix": "h",
+          "description": "Average assignment handoff"
+        },
+        {
+          "label": "User satisfaction",
+          "value": 98,
+          "suffix": "%",
+          "description": "Service rating"
+        }
+      ]
     },
-    "steps": {
+    "social": {
+      "label": "Trusted teams",
+      "items": [
+        "Justice ministry teams",
+        "Government compliance units",
+        "Municipal legal offices"
+      ]
+    },
+    "features": {
+      "title": "All your legal work in one workspace",
+      "subtitle": "Token-driven UI keeps contrast strong in Arabic and English alike.",
+      "items": [
+        {
+          "title": "Unified matter hub",
+          "description": "Track contracts, investigations, and litigations in one coherent timeline.",
+          "icon": "Layers"
+        },
+        {
+          "title": "Automated follow-ups",
+          "description": "Smart reminders and due dates to prevent delays.",
+          "icon": "Clock3"
+        },
+        {
+          "title": "Real-time intelligence",
+          "description": "Dashboards powered by token-driven theming for immediate clarity.",
+          "icon": "Sparkles"
+        },
+        {
+          "title": "Secure collaboration",
+          "description": "Share briefs, evidence, and notes with guided permissions.",
+          "icon": "ShieldCheck"
+        },
+        {
+          "title": "Bilingual by design",
+          "description": "RTL/LTR aware layouts, translation-aware formatting, and mirrored navigation.",
+          "icon": "ArrowLeftRight"
+        },
+        {
+          "title": "Audit ready",
+          "description": "Traceable actions with exportable reports and printable summaries.",
+          "icon": "CheckCircle2"
+        }
+      ]
+    },
+    "how": {
       "title": "How it works",
-      "connect": {
-        "title": "Connect",
-        "description": "Sign in securely and sync existing matters without friction."
-      },
-      "organize": {
-        "title": "Organize",
-        "description": "Structure cases, contracts, and notifications with guided templates."
-      },
-      "monitor": {
-        "title": "Monitor",
-        "description": "Follow timelines, hearings, and KPIs with bilingual reports."
-      }
-    }
+      "subtitle": "Lean onboarding, structured capture, and guided follow-through.",
+      "steps": [
+        {
+          "title": "Connect",
+          "description": "Sign in securely and sync existing matters without friction."
+        },
+        {
+          "title": "Organize",
+          "description": "Structure cases, contracts, and notifications with guided templates."
+        },
+        {
+          "title": "Monitor",
+          "description": "Follow timelines, hearings, and KPIs with bilingual reports."
+        }
+      ]
+    },
+    "screens": {
+      "title": "A cockpit built for clarity",
+      "subtitle": "Token-first components keep contrast, spacing, and typography consistent in every mode.",
+      "highlights": [
+        "Role-based dashboards for cases, contracts, and investigations",
+        "Timeline view for hearings and submissions",
+        "Inline editing with autosave and audit history"
+      ]
+    },
+    "testimonials": {
+      "title": "Teams stay aligned",
+      "subtitle": "Departments across Libya rely on synchronized updates and mirrored interfaces.",
+      "items": [
+        {
+          "quote": "“The bilingual layout keeps our mixed teams aligned without extra training.”",
+          "name": "Hadia Ben Salem",
+          "role": "Head of Legal Operations"
+        },
+        {
+          "quote": "“Dashboards surface overdue hearings instantly, even on mobile.”",
+          "name": "Yousef Al Koni",
+          "role": "Senior Litigator"
+        },
+        {
+          "quote": "“Audit-ready exports cut prep time for ministerial reviews.”",
+          "name": "Sara Al Mansour",
+          "role": "Compliance Lead"
+        }
+      ]
+    },
+    "pricing": {
+      "title": "Choose an onboarding path",
+      "subtitle": "Start lean then scale with secure collaboration.",
+      "plans": [
+        {
+          "name": "Pilot",
+          "price": "$0",
+          "period": "30 days",
+          "description": "Guided access for a focused team.",
+          "features": [
+            "Up to 10 users",
+            "Guided setup session",
+            "Email support"
+          ],
+          "badge": "Most popular"
+        },
+        {
+          "name": "Operations",
+          "price": "$49",
+          "period": "per user / month",
+          "description": "For departments that need bilingual workflows and audit trails.",
+          "features": [
+            "Unlimited matters",
+            "Priority chat support",
+            "Role-based permissions",
+            "Export-ready reports"
+          ]
+        }
+      ],
+      "note": "Need a tailored deployment? We can align with your security checklist."
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "subtitle": "Clear answers for bilingual teams.",
+      "items": [
+        {
+          "question": "Does the platform support RTL fully?",
+          "answer": "Yes. Navigation, layouts, and typography flip automatically when Arabic is active."
+        },
+        {
+          "question": "How is access secured?",
+          "answer": "Single sign-on, audit logs, and token-driven theming keep the experience consistent with security controls."
+        },
+        {
+          "question": "Can we export evidence and timelines?",
+          "answer": "Yes. Structured exports and printable summaries are available from dashboards."
+        },
+        {
+          "question": "Do you offer onboarding in Arabic?",
+          "answer": "Interactive tours, tooltips, and email support are localized for Arabic teams."
+        }
+      ]
+    },
+    "contact": {
+      "title": "Ready to modernize your legal operations?",
+      "subtitle": "Our team will help you connect existing matters and migrate safely.",
+      "primary": "Book a demo",
+      "secondary": "Talk to an expert"
+    },
+    "loginCta": "Sign in"
   }
-
-
 }

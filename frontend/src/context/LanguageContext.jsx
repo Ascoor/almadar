@@ -26,6 +26,7 @@ const interpolate = (str, params = {}) =>
   String(str).replace(/\{(\w+)\}/g, (_, k) => params?.[k] ?? '');
 
 export const LanguageProvider = ({ children }) => {
+  // Source of truth for language, dir, and <html> attributes
   const getInitialLanguage = () => {
     if (typeof window === 'undefined') return 'en';
     const storedLang = localStorage.getItem('lang');
