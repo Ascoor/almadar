@@ -1,52 +1,34 @@
 // src/pages/HomePage.tsx
-import { useState } from "react";
-
-import Navbar from "@/components/landing/Navbar";
-import HeroSection from "@/components/landing/HeroSection";
-import FeaturesSection from "@/components/landing/FeaturesSection";
-import HowItWorksSection from "@/components/landing/HowItWorksSection";
-import TrustSection from "@/components/landing/TrustSection";
-import CTASection from "@/components/landing/CTASection";
-import Footer from "@/components/landing/Footer";
-import LoginModal from "@/components/organisms/Login.tsx";
-import AuthSpinner from "@/components/common/Spinners/AuthSpinner";
+import Navbar from '@/components/landing/Navbar'
+import HeroSection from '@/components/landing/HeroSection'
+import FeaturesSection from '@/components/landing/FeaturesSection'
+import HowItWorksSection from '@/components/landing/HowItWorksSection'
+import TrustSection from '@/components/landing/TrustSection'
+import CTASection from '@/components/landing/CTASection'
+import Footer from '@/components/landing/Footer'
+import PricingSection from '@/components/landing/PricingSection'
+import FAQSection from '@/components/landing/FAQSection'
+import { useNavigate } from 'react-router-dom'
 
 const HomePage = () => {
-  const [showLoginForm, setShowLoginForm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSignInClick = () => setShowLoginForm(true);
-  const handleCloseLogin = () => setShowLoginForm(false);
-
-  const handleLoginSubmit = async (email: string, password: string) => {
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
-    setShowLoginForm(false);
-    console.log("Login attempt:", { email, password });
-  };
-
-  if (isLoading) return <AuthSpinner />;
+  const navigate = useNavigate()
+  const handleSignInClick = () => navigate('/login')
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground">
       <Navbar onSignInClick={handleSignInClick} />
-      <main>
+      <main className="space-y-6">
         <HeroSection onSignInClick={handleSignInClick} />
         <FeaturesSection />
         <HowItWorksSection />
+        <PricingSection />
         <TrustSection />
+        <FAQSection />
         <CTASection onSignInClick={handleSignInClick} />
       </main>
       <Footer />
-      <LoginModal
-        isOpen={showLoginForm}
-        onClose={handleCloseLogin}
-        isLoading={isLoading}
-        onSubmit={handleLoginSubmit}
-      />
     </div>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default HomePage

@@ -1,131 +1,178 @@
-import { useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { Scale, Menu, X, Globe } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/context/LanguageContext";
+import { useEffect, useMemo, useState } from 'react'
+import { Menu, MoonStar, Scale, SunMedium, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import LanguageToggle from '@/components/common/LanguageToggle'
+import useI18n from '@/hooks/useI18n'
+import { useTheme } from '@/hooks/useTheme'
+import { useNavigate } from 'react-router-dom'
 
 interface NavbarProps {
-  onSignInClick: () => void;
+  onSignInClick?: () => void
 }
 
+const sections = ['hero', 'features', 'workflow', 'preview', 'pricing', 'testimonials', 'faq', 'contact'] as const
+
 const Navbar = ({ onSignInClick }: NavbarProps) => {
-  const { t, language, setLanguage, isRTL } = useLanguage();
-  const shouldReduceMotion = useReducedMotion();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t, lang, dir } = useI18n()
+  const navigate = useNavigate()
+  const { resolvedTheme, toggleTheme } = useTheme()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState<typeof sections[number]>('hero')
 
-  const navLinks = [
-    { key: "nav.home" as const, href: "#" },
-    { key: "nav.features" as const, href: "#features" },
-    { key: "nav.about" as const, href: "#about" },
-  ];
+  const navLinks = useMemo(
+    () =>
+      sections.map((id) => ({
+        id,
+        label: t(`nav.links.${id}`),
+      })),
+    [t],
+  )
 
-  const toggleLanguage = () => {
-    setLanguage(language === "en" ? "ar" : "en");
-  };
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const sectionId = entry.target.getAttribute('id') as typeof sections[number]
+            if (sectionId) setActiveSection(sectionId)
+          }
+        })
+      },
+      {
+        rootMargin: '-40% 0px -40% 0px',
+        threshold: 0.25,
+      },
+    )
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  const handleNavClick = (id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setIsMobileMenuOpen(false)
+    }
+  }
+
+  const handleLogin = () => {
+    if (onSignInClick) onSignInClick()
+    navigate('/login')
+    setIsMobileMenuOpen(false)
+  }
+
+  const isDark = resolvedTheme === 'dark'
 
   return (
-    <motion.nav
-      className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30"
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
-    >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-              <Scale className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="font-heading text-xl font-bold">LegalHub</span>
+    <header className="fixed inset-x-0 top-0 z-40 backdrop-blur-xl bg-background/80 border-b border-border/60">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
+            <Scale className="h-5 w-5" />
+          </span>
+          <div className="flex flex-col">
+            <span className="font-heading text-lg font-semibold leading-tight">{t('nav.brand')}</span>
+            <span className="text-xs text-muted-foreground">{t('hero.badge')}</span>
           </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.key}
-                href={link.href}
-                className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
-              >
-                {t(link.key)}
-              </a>
-            ))}
-          </div>
-
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-4">
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-card/50"
-              aria-label="Toggle language"
-            >
-              <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">
-                {language === "en" ? "العربية" : "English"}
-              </span>
-            </button>
-            <Button onClick={onSignInClick} size="sm">
-              {t("nav.signin")}
-            </Button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
         </div>
+
+        <nav className="hidden items-center gap-2 md:flex" aria-label={t('nav.language')} dir={dir}>
+          {navLinks.map((link) => (
+            <button
+              key={link.id}
+              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                activeSection === link.id
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
+              onClick={() => handleNavClick(link.id)}
+            >
+              {link.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-2 md:flex" dir={dir}>
+          <LanguageToggle />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={isDark ? t('nav.day') : t('nav.night')}
+            className="rounded-full border border-border/60 bg-card text-foreground hover:bg-muted"
+            onClick={toggleTheme}
+          >
+            {isDark ? <SunMedium className="h-5 w-5" /> : <MoonStar className="h-5 w-5" />}
+          </Button>
+          <Button
+            variant="outline"
+            className="border-border bg-card text-foreground"
+            onClick={handleLogin}
+          >
+            {t('nav.login')}
+          </Button>
+          <Button onClick={() => handleNavClick('contact')} className="bg-primary text-primary-foreground">
+            {t('nav.getStarted')}
+          </Button>
+        </div>
+
+        <button
+          type="button"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 bg-card text-foreground md:hidden"
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            className="md:hidden glass-card border-t border-border/30"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
-          >
-            <div className="container mx-auto px-4 py-4 space-y-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.key}
-                  href={link.href}
-                  className="block text-muted-foreground hover:text-foreground transition-colors text-sm font-medium py-2"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {t(link.key)}
-                </a>
-              ))}
-              <div className="flex flex-col gap-3 pt-4 border-t border-border/30">
-                <button
-                  onClick={toggleLanguage}
-                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2"
-                >
-                  <Globe className="w-4 h-4" />
-                  <span className="text-sm font-medium">
-                    {language === "en" ? "العربية" : "English"}
-                  </span>
-                </button>
-                <Button onClick={onSignInClick} className="w-full">
-                  {t("nav.signin")}
-                </Button>
-              </div>
+      {isMobileMenuOpen && (
+        <div className="border-t border-border/60 bg-background/95 backdrop-blur-lg md:hidden" dir={dir}>
+          <div className="space-y-2 px-4 py-4">
+            {navLinks.map((link) => (
+              <button
+                key={link.id}
+                className={`w-full rounded-xl px-4 py-3 text-start text-sm font-medium transition-colors ${
+                  activeSection === link.id
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'text-foreground hover:bg-muted'
+                }`}
+                onClick={() => handleNavClick(link.id)}
+              >
+                {link.label}
+              </button>
+            ))}
+            <div className="flex items-center justify-between gap-3 pt-2">
+              <LanguageToggle />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={isDark ? t('nav.day') : t('nav.night')}
+                className="rounded-full border border-border/60 bg-card text-foreground hover:bg-muted"
+                onClick={toggleTheme}
+              >
+                {isDark ? <SunMedium className="h-5 w-5" /> : <MoonStar className="h-5 w-5" />}
+              </Button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
-  );
-};
+            <div className="flex flex-col gap-2 pt-2">
+              <Button variant="outline" className="border-border bg-card text-foreground" onClick={handleLogin}>
+                {t('nav.login')}
+              </Button>
+              <Button className="bg-primary text-primary-foreground" onClick={() => handleNavClick('contact')}>
+                {t('nav.getStarted')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </header>
+  )
+}
 
-export default Navbar;
+export default Navbar

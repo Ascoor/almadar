@@ -1,34 +1,57 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 const ThemeContext = createContext({
   currentTheme: 'light',
   changeCurrentTheme: () => {},
-});
+})
 
-export default function ThemeProvider({ children }) {
-  const persistedTheme = localStorage.getItem('theme');
-  const [theme, setTheme] = useState(persistedTheme || 'light'); // Default to 'light' theme
-
-  const changeCurrentTheme = (newTheme) => {
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme); // Persist theme change to localStorage
-  };
-
-  useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.remove('dark'); // Remove dark class for light theme
-      document.documentElement.style.colorScheme = 'light'; // Set color scheme to light
-    } else {
-      document.documentElement.classList.add('dark'); // Add dark class for dark theme
-      document.documentElement.style.colorScheme = 'dark'; // Set color scheme to dark
-    }
-  }, [theme]); // Trigger effect when theme changes
-
-  return (
-    <ThemeContext.Provider value={{ currentTheme: theme, changeCurrentTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+const getPreferredTheme = () => {
+  if (typeof window === 'undefined') return 'light'
+  const stored = localStorage.getItem('theme')
+  if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-export const useThemeProvider = () => useContext(ThemeContext);
+export default function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState(getPreferredTheme)
+
+  const resolvedTheme = useMemo(() => {
+    if (theme === 'system') {
+      if (typeof window === 'undefined') return 'light'
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    return theme
+  }, [theme])
+
+  useEffect(() => {
+    const root = document.documentElement
+    if (resolvedTheme === 'light') {
+      root.classList.remove('dark')
+      root.style.colorScheme = 'light'
+    } else {
+      root.classList.add('dark')
+      root.style.colorScheme = 'dark'
+    }
+    localStorage.setItem('theme', theme)
+  }, [theme, resolvedTheme])
+
+  const changeCurrentTheme = (newTheme) => {
+    setTheme(newTheme)
+  }
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+  }
+
+  return (
+    <ThemeContext.Provider
+      value={{ currentTheme: theme, resolvedTheme, changeCurrentTheme, toggleTheme }}
+    >
+      {children}
+    </ThemeContext.Provider>
+  )
+}
+
+export const useThemeProvider = () => useContext(ThemeContext)

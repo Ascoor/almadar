@@ -1,184 +1,108 @@
-import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Play, Scale, FileText, Shield } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/context/LanguageContext";
-import {heroBackground} from "@/assets/images";
+import useI18n from '@/hooks/useI18n'
+import { Button } from '@/components/ui/button'
+import { ArrowRight, ShieldCheck, Sparkles } from 'lucide-react'
 
-interface HeroSectionProps {
-  onSignInClick: () => void;
+interface HeroProps {
+  onSignInClick?: () => void
 }
 
-const HeroSection = ({ onSignInClick }: HeroSectionProps) => {
-  const { t, isRTL } = useLanguage();
-  const shouldReduceMotion = useReducedMotion();
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: shouldReduceMotion ? 0 : 0.15,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const },
-    },
-  };
-
-  const floatingIcons = [
-    { Icon: Scale, delay: 0, x: -200, y: -100 },
-    { Icon: FileText, delay: 2, x: 180, y: -80 },
-    { Icon: Shield, delay: 4, x: -150, y: 120 },
-  ];
-
-  const stats = [
-    { value: "50K+", label: t("hero.stats.contracts") },
-    { value: "10K+", label: t("hero.stats.users") },
-    { value: "40%", label: t("hero.stats.efficiency") },
-  ];
+const HeroSection = ({ onSignInClick }: HeroProps) => {
+  const { t, dir } = useI18n()
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={heroBackground}
-          alt="Legal technology background"
-          className="w-full h-full object-cover"
-          loading="eager"
-        />
-        <div className="hero-overlay absolute inset-0" />
+    <section
+      id="hero"
+      className="relative overflow-hidden bg-gradient-to-b from-background via-background to-card pb-20 pt-28 md:pt-32"
+    >
+      <div className="pointer-events-none absolute inset-0 opacity-60">
+        <div className="absolute left-1/2 top-10 h-64 w-64 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
+        <div className="absolute bottom-0 right-10 h-48 w-48 rounded-full bg-accent/15 blur-3xl" />
       </div>
 
-      {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 grid-pattern z-[1] opacity-30" />
-
-      {/* Floating Icons - Only show if reduced motion is not preferred */}
-      {!shouldReduceMotion && (
-        <div className="absolute inset-0 z-[2] pointer-events-none hidden lg:block">
-          {floatingIcons.map(({ Icon, delay, x, y }, index) => (
-            <motion.div
-              key={index}
-              className="absolute top-1/2 left-1/2"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: [0.3, 0.6, 0.3],
-                scale: [0.8, 1, 0.8],
-                x: [x, x + 20, x],
-                y: [y, y - 15, y],
-              }}
-              transition={{
-                duration: 6,
-                delay,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <div className="glass-card p-4 rounded-xl">
-                <Icon className="w-8 h-8 text-primary" />
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      )}
-
-      {/* Content */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-24 pb-16">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Badge */}
-          <motion.div variants={itemVariants} className="mb-6">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-sm font-medium text-foreground/80">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              {t("hero.badge")}
-            </span>
-          </motion.div>
-
-          {/* Main Title */}
-          <motion.h1
-            variants={itemVariants}
-            className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-shadow"
-          >
-            {t("hero.title")}
-            <br />
-            <span className="gradient-text">{t("hero.titleHighlight")}</span>
-          </motion.h1>
-
-          {/* Description */}
-          <motion.p
-            variants={itemVariants}
-            className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
-          >
-            {t("hero.description")}
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            variants={itemVariants}
-            className={`flex flex-col sm:flex-row gap-4 justify-center ${
-              isRTL ? "sm:flex-row-reverse" : ""
-            }`}
-          >
-            <Button
-              size="lg"
-              onClick={onSignInClick}
-              className="group relative overflow-hidden px-8 py-6 text-lg font-semibold glow-primary"
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                {t("hero.cta.primary")}
-                <ArrowRight
-                  className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${
-                    isRTL ? "rotate-180 group-hover:-translate-x-1" : ""
-                  }`}
-                />
-              </span>
+      <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 md:px-6">
+        <div className="flex flex-col gap-6 text-center" dir={dir}>
+          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-4 py-2 text-sm text-foreground shadow-md">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span>{t('hero.badge')}</span>
+          </div>
+          <div className="space-y-4">
+            <h1 className="font-heading text-3xl font-extrabold leading-tight text-foreground md:text-5xl">
+              {t('hero.title')}
+            </h1>
+            <p className="mx-auto max-w-3xl text-lg text-muted-foreground md:text-xl">
+              {t('hero.subtitle')}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3" dir={dir}>
+            <Button className="bg-primary text-primary-foreground shadow-lg" size="lg" onClick={onSignInClick}>
+              <span>{t('hero.primary')}</span>
+              <ArrowRight className="h-5 w-5" />
             </Button>
             <Button
               variant="outline"
               size="lg"
-              className="group px-8 py-6 text-lg font-medium border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50"
+              className="border-border bg-card text-foreground"
+              onClick={() => {
+                const section = document.getElementById('preview')
+                if (section) section.scrollIntoView({ behavior: 'smooth' })
+              }}
             >
-              <Play className="w-5 h-5 mr-2" />
-              {t("hero.cta.secondary")}
+              {t('hero.secondary')}
             </Button>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            variants={itemVariants}
-            className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto"
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="text-center"
-                whileHover={{ scale: shouldReduceMotion ? 1 : 1.05 }}
-              >
-                <div className="stat-value gradient-text">{stat.value}</div>
-                <div className="text-sm text-muted-foreground mt-1">
-                  {stat.label}
-                </div>
-              </motion.div>
+          </div>
+          <div className="grid grid-cols-1 gap-4 rounded-2xl border border-border/70 bg-card/60 p-4 shadow-lg sm:grid-cols-3">
+            {t('hero.stats').map((stat: { label: string; value: string }) => (
+              <div key={stat.label} className="rounded-xl bg-background/70 p-4 text-center">
+                <div className="text-2xl font-semibold text-foreground">{stat.value}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              </div>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
+
+        <div className="relative rounded-3xl border border-border/60 bg-card/70 p-6 shadow-xl" dir={dir}>
+          <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-primary/10 via-accent/10 to-secondary/10" />
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-xl space-y-3">
+              <h3 className="text-xl font-semibold text-foreground">
+                {t('preview.title')}
+              </h3>
+              <p className="text-muted-foreground">{t('preview.subtitle')}</p>
+              <div className="flex flex-wrap gap-2">
+                {t('preview.highlights').map((highlight: string) => (
+                  <span
+                    key={highlight}
+                    className="rounded-full bg-background px-3 py-1 text-xs text-muted-foreground border border-border/60"
+                  >
+                    {highlight}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-1 items-center justify-center">
+              <div className="w-full max-w-md rounded-2xl border border-border bg-background/80 p-4 shadow-lg">
+                <div className="mb-4 flex items-center justify-between rounded-xl bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+                  <span className="font-medium text-foreground">{t('nav.brand')}</span>
+                  <ShieldCheck className="h-4 w-4 text-primary" />
+                </div>
+                <div className="space-y-3">
+                  <div className="h-3 rounded-full bg-muted" />
+                  <div className="h-3 w-5/6 rounded-full bg-muted" />
+                  <div className="grid grid-cols-3 gap-2 pt-2">
+                    <div className="h-20 rounded-xl bg-muted" />
+                    <div className="h-20 rounded-xl bg-muted" />
+                    <div className="h-20 rounded-xl bg-muted" />
+                  </div>
+                  <div className="h-3 w-2/3 rounded-full bg-muted" />
+                  <div className="h-3 w-1/2 rounded-full bg-muted" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* Bottom Gradient Fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-[5]" />
     </section>
-  );
-};
+  )
+}
 
-export default HeroSection;
+export default HeroSection

@@ -1,21 +1,21 @@
-import { useThemeProvider } from '@/context/ThemeContext';
-import { SunMedium, MoonStar } from 'lucide-react';
-import IconButton from './iconButton';
+import { MoonStar, SunMedium } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useTheme } from '@/hooks/useTheme'
 
-export default function ThemeToggle() {
-  const { currentTheme, changeCurrentTheme } = useThemeProvider();
+export default function ThemeToggle({ label }) {
+  const { theme, toggleTheme, resolvedTheme } = useTheme()
+  const isDark = (resolvedTheme || theme) === 'dark'
 
   return (
-    <IconButton
-      onClick={() =>
-        changeCurrentTheme(currentTheme === 'light' ? 'dark' : 'light')
-      }
+    <Button
+      type="button"
+      size="icon"
+      variant="ghost"
+      aria-label={label || (isDark ? 'Switch to light' : 'Switch to dark')}
+      className="rounded-full border border-border/60 bg-card text-foreground hover:bg-muted"
+      onClick={toggleTheme}
     >
-      {currentTheme === 'light' ? (
-        <SunMedium className="w-5 h-5" />
-      ) : (
-        <MoonStar className="w-5 h-5" />
-      )}
-    </IconButton>
-  );
+      {isDark ? <SunMedium className="h-5 w-5" /> : <MoonStar className="h-5 w-5" />}
+    </Button>
+  )
 }

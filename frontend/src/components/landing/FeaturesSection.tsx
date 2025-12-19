@@ -1,136 +1,40 @@
-import { motion, useReducedMotion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
-import {
-  FileSignature,
-  Search,
-  Scale,
-  Archive,
-  Bell,
-  Users,
-} from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
+import useI18n from '@/hooks/useI18n'
+import { CheckCircle2, Layers, Shield, Workflow } from 'lucide-react'
+
+const icons = [Layers, Workflow, CheckCircle2, Shield]
 
 const FeaturesSection = () => {
-  const { t, isRTL } = useLanguage();
-  const shouldReduceMotion = useReducedMotion();
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  const features = [
-    {
-      icon: FileSignature,
-      titleKey: "features.contracts.title" as const,
-      descKey: "features.contracts.description" as const,
-      color: "text-primary",
-    },
-    {
-      icon: Search,
-      titleKey: "features.investigations.title" as const,
-      descKey: "features.investigations.description" as const,
-      color: "text-accent",
-    },
-    {
-      icon: Scale,
-      titleKey: "features.litigation.title" as const,
-      descKey: "features.litigation.description" as const,
-      color: "text-primary",
-    },
-    {
-      icon: Archive,
-      titleKey: "features.archives.title" as const,
-      descKey: "features.archives.description" as const,
-      color: "text-accent",
-    },
-    {
-      icon: Bell,
-      titleKey: "features.notifications.title" as const,
-      descKey: "features.notifications.description" as const,
-      color: "text-primary",
-    },
-    {
-      icon: Users,
-      titleKey: "features.assignments.title" as const,
-      descKey: "features.assignments.description" as const,
-      color: "text-accent",
-    },
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: shouldReduceMotion ? 0 : 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
-    },
-  };
+  const { t, dir } = useI18n()
+  const items = t('features.items') as { title: string; description: string }[]
 
   return (
-    <section ref={ref} className="py-24 section-gradient relative">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-sm font-medium text-foreground/80 mb-4">
-            {t("features.badge")}
-          </span>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-            {t("features.title")}
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t("features.subtitle")}
-          </p>
-        </motion.div>
+    <section id="features" className="bg-background py-16 md:py-20" dir={dir}>
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
+        <div className="text-center">
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary">{t('features.title')}</p>
+          <h2 className="mt-3 text-3xl font-bold text-foreground md:text-4xl">{t('features.subtitle')}</h2>
+        </div>
 
-        {/* Features Grid */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              variants={cardVariants}
-              whileHover={
-                shouldReduceMotion
-                  ? {}
-                  : { y: -5, transition: { duration: 0.2 } }
-              }
-              className="glass-card-hover p-6 group"
-            >
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((feature, index) => {
+            const Icon = icons[index % icons.length]
+            return (
               <div
-                className={`w-14 h-14 rounded-xl bg-card flex items-center justify-center mb-5 transition-all duration-300 group-hover:glow-primary ${feature.color}`}
+                key={feature.title}
+                className="flex h-full flex-col gap-3 rounded-2xl border border-border/60 bg-card/70 p-5 shadow-lg"
               >
-                <feature.icon className="w-7 h-7" />
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="text-xl font-semibold text-foreground">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
               </div>
-              <h3 className="font-heading text-xl font-semibold mb-3 text-foreground">
-                {t(feature.titleKey)}
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {t(feature.descKey)}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
+            )
+          })}
+        </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default FeaturesSection;
+export default FeaturesSection
