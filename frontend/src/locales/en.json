@@ -221,7 +221,21 @@
       "subtitle": "Unified control center for ministries and legal teams with bilingual workflows and verifiable trails.",
       "primaryCta": "Get started",
       "secondaryCta": "View platform",
-      "supporting": "Secure SSO access with auditable activity."
+      "supporting": "Secure SSO access with auditable activity.",
+      "keywords": [
+        "Arabic-first",
+        "English-ready",
+        "Responsive",
+        "Token colors",
+        "Calm layout",
+        "Adaptive motion"
+      ],
+      "highlights": [
+        "Hero cover optimized for ministries",
+        "Live bilingual preview without clutter",
+        "Soft gradients guided by design tokens",
+        "Motion that respects accessibility"
+      ]
     },
     "stats": {
       "title": "Impact at a glance",
