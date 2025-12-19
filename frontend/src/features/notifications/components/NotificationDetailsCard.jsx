@@ -34,14 +34,18 @@ export default function NotificationDetailsCard({ notification, onClose }) {
         {formatted.formattedDate && <span>{formatted.formattedDate}</span>}
       </div>
 
-      {formatted.raw?.data?.entity_id && (
+      {(formatted.entityId || formatted.entityLabel) && (
         <div className="text-sm space-y-1">
-          <div>
-            {t('notifications.details.entity')}: {formatted.raw.data.entity_type}
-          </div>
-          <div>
-            {t('notifications.details.id')}: {formatted.raw.data.entity_id}
-          </div>
+          {formatted.entityLabel && (
+            <div>
+              {t('notifications.details.entity')}: {formatted.entityLabel}
+            </div>
+          )}
+          {formatted.entityId && (
+            <div>
+              {t('notifications.details.id')}: {formatted.entityId}
+            </div>
+          )}
         </div>
       )}
 

@@ -10,7 +10,10 @@ import { toast } from 'sonner';
 import { initEcho, subscribeToUserChannel } from '@/lib/echo';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { formatNotification } from '@/utils/formatNotification';
+import {
+  buildNotificationLink,
+  formatNotification,
+} from '@/utils/formatNotification';
 import {
   getNotifications,
   markAsRead as markNotificationRead,
@@ -56,25 +59,7 @@ export function NotificationProvider({ children }) {
     const id = raw?.id ?? data?.id;
     if (!id) return null;
 
-    const direct = raw?.link || data?.link || data?.params?.link;
-
-    const entityId =
-      data?.entityId ||
-      data?.entity_id ||
-      data?.contractId ||
-      data?.contract_id ||
-      data?.params?.entityId ||
-      data?.params?.entity_id ||
-      data?.params?.contractId ||
-      data?.params?.contract_id;
-
-    const link = direct
-      ? direct.startsWith('/')
-        ? direct
-        : `/${direct.replace(/^\/+/, '')}`
-      : entityId
-        ? `/contracts/${entityId}`
-        : null;
+    const link = buildNotificationLink({ ...data, ...raw });
 
     return {
       id,
