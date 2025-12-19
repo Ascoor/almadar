@@ -6,7 +6,8 @@ import api from './axiosConfig';
 
 export const getLitigations = () => api.get('/api/litigations');
 
-export const getLitigationById = (id) => api.get(`/api/litigations/${id}`);
+export const getLitigationById = (id, config = {}) =>
+  api.get(`/api/litigations/${id}`, config);
 
 export const createLitigation = (data) => api.post('/api/litigations', data);
 

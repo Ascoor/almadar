@@ -1,7 +1,9 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLitigations } from '@/hooks/dataHooks';
+import { getLitigationById } from '@/services/api/litigations';
+import GlobalSpinner from '@/components/common/Spinners/GlobalSpinner';
 
 const LitigationActionsTable = lazy(
   () => import('@/features/litigations/components/LitigationActionsTable'),
@@ -17,10 +19,44 @@ export default function LitigationDetailsPage() {
   const initialLitigation =
     location.state || litigations.find((l) => l.id === Number(id));
 
-  const [current] = useState(initialLitigation);
+  const [current, setCurrent] = useState(initialLitigation || null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const lastFetchedId = useRef(null);
+
+  useEffect(() => {
+    if (initialLitigation) setCurrent(initialLitigation);
+  }, [initialLitigation]);
+
+  useEffect(() => {
+    if (!id) return;
+    if (current?.id && String(current.id) === String(id)) return;
+
+    const sid = String(id);
+    if (lastFetchedId.current === sid) return;
+    lastFetchedId.current = sid;
+
+    const controller = new AbortController();
+    setLoading(true);
+    setError('');
+
+    getLitigationById(id, { signal: controller.signal })
+      .then((res) => setCurrent(res.data?.data ?? res.data))
+      .catch((err) => {
+        if (err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED')
+          return;
+        setCurrent(null);
+        setError('لا توجد بيانات لهذه القضية أو لا تملك صلاحية.');
+      })
+      .finally(() => setLoading(false));
+
+    return () => controller.abort();
+  }, [id, current]);
+
+  if (loading && !current) return <GlobalSpinner />;
 
   if (!current) {
-    return <div className="p-4">لا توجد بيانات</div>;
+    return <div className="p-4 text-center text-red-500">{error || 'لا توجد بيانات'}</div>;
   }
 
   return (

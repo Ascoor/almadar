@@ -17,16 +17,17 @@ const entityDictionary = {
   contracts: { labelKey: 'notifications.entities.contract', path: 'contracts' },
   session: { labelKey: 'notifications.entities.session', path: 'sessions' },
   hearing: { labelKey: 'notifications.entities.session', path: 'sessions' },
-  case: { labelKey: 'notifications.entities.case', path: 'cases' },
-  lawsuit: { labelKey: 'notifications.entities.case', path: 'cases' },
+  case: { labelKey: 'notifications.entities.case', path: 'legal/litigations' },
+  lawsuit: { labelKey: 'notifications.entities.case', path: 'legal/litigations' },
   consultation: {
     labelKey: 'notifications.entities.consultation',
-    path: 'consultations',
+    path: 'legal/legal-advices',
   },
   investigation: {
     labelKey: 'notifications.entities.investigation',
-    path: 'investigations',
+    path: 'legal/investigations',
   },
+  litigation: { labelKey: 'notifications.entities.case', path: 'legal/litigations' },
   procedures: {
     labelKey: 'notifications.entities.procedure',
     path: 'legal/investigation-action',

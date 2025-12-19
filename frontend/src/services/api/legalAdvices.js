@@ -3,6 +3,9 @@ import api from './axiosConfig'; // تأكد أن ملف axiosConfig صحيح
 // ✅ legal-advices  Endpoints
 export const getLegalAdvices = () => api.get('/api/legal-advices');
 
+export const getLegalAdviceById = (id, config = {}) =>
+  api.get(`/api/legal-advices/${id}`, config);
+
 export const createLegalAdvice = (formData) => {
   return api.post('/api/legal-advices', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
