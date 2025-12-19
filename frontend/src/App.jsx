@@ -1,25 +1,31 @@
 // src/App.jsx
 import '@/styles/tokens.css';
 import '@/styles/index.css';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import AuthWrapper from './pages/DashboardPage';
-import HomePage from './pages/HomePage';
+import Home from './pages/Home';
+import Login from './pages/Login';
 import { SpinnerProvider } from './context/SpinnerContext';
 import { AuthContext } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const App = () => {
   const { user, token } = useContext(AuthContext);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user || !token) {
-      navigate('/'); // أو navigate('/login') إذا كنت تريد فرض صفحة تسجيل الدخول
-    }
-  }, [user, token]);
+  const isAuthenticated = Boolean(user && token);
 
   return (
-    <SpinnerProvider>{user ? <AuthWrapper /> : <HomePage />}</SpinnerProvider>
+    <SpinnerProvider>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/dashboard/*"
+          element={isAuthenticated ? <AuthWrapper /> : <Navigate to="/" replace />}
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </SpinnerProvider>
   );
 };
 
