@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 
 class AssigneeNotification extends Notification
 {
@@ -20,10 +21,10 @@ class AssigneeNotification extends Notification
 
     public function via($notifiable): array
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
-    public function toDatabase($notifiable): array
+    public function toArray($notifiable): array
     {
         return [
             'title' => 'You have been assigned',
@@ -34,5 +35,20 @@ class AssigneeNotification extends Notification
             'section' => $this->section,
             'event' => 'assigned',
         ];
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        return $this->toArray($notifiable);
+    }
+
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage($this->toArray($notifiable) + [
+            'id' => $this->id,
+            'created_at' => now()->toISOString(),
+            'read_at' => null,
+            'read' => false,
+        ]);
     }
 }

@@ -157,7 +157,8 @@
       "session": "جلسة",
       "case": "قضية",
       "consultation": "مشورة",
-      "investigation": "تحقيق"
+      "investigation": "تحقيق",
+      "procedure": "إجراء تحقيق"
     },
     "details": {
       "entity": "الكيان",

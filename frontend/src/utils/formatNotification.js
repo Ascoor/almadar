@@ -27,6 +27,14 @@ const entityDictionary = {
     labelKey: 'notifications.entities.investigation',
     path: 'investigations',
   },
+  procedures: {
+    labelKey: 'notifications.entities.procedure',
+    path: 'legal/investigation-action',
+  },
+  'investigation-action': {
+    labelKey: 'notifications.entities.procedure',
+    path: 'legal/investigation-action',
+  },
 };
 
 const cleanPath = (path) => {
