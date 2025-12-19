@@ -2,10 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================
+   Base
+========================= */
 @layer base {
   :root { color-scheme: light dark; }
   html { -webkit-font-smoothing: antialiased; }
   html, body { transition: background-color .2s ease, color .2s ease; }
+
   body { @apply bg-bg text-fg font-body antialiased; }
   h1,h2,h3,h4,h5,h6 { @apply font-heading; }
 
@@ -13,9 +17,107 @@
   html[lang="ar"] { --font-map: 'Cairo', var(--font-body); }
   html[lang="en"] { --font-map: 'Roboto', var(--font-body); }
 
+  /* Selection (token-driven) */
+  ::selection { background: var(--primary); color: var(--primary-foreground); }
+  ::-moz-selection { background: var(--primary); color: var(--primary-foreground); }
+
+  /* Token-driven form styles (unified across app) */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    @apply w-full rounded-lg border;
+    background-color: var(--card);
+    color: var(--fg);
+    border-color: var(--border);
+    caret-color: var(--primary);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground);
+    opacity: .8;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ring);
+    border-color: var(--ring);
+  }
+
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    @apply opacity-60 cursor-not-allowed;
+    background: color-mix(in oklab, var(--muted) 80%, transparent);
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--primary);
+  }
+
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  label {
+    @apply text-sm font-medium;
+    color: var(--fg);
+  }
+
+  select { background-color: var(--card); color: var(--fg); }
+  option { background-color: var(--card); color: var(--fg); }
+  option:checked,
+  option:focus,
+  option:active {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  select[multiple] option:checked {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  [role="listbox"] {
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+  }
+  [role="listbox"] [role="option"] { padding: .5rem .75rem; cursor: pointer; }
+  [role="listbox"] [role="option"][aria-selected="true"] {
+    background: color-mix(in oklab, var(--primary) 24%, transparent);
+    color: var(--primary-foreground);
+  }
+  [role="listbox"] [role="option"]:hover {
+    background: color-mix(in oklab, var(--primary) 15%, transparent);
+    color: var(--primary-foreground);
+  }
+}
+
+/* =========================
+   Components
+========================= */
+@layer components {
   /* Reusable container styles */
-  .card { @apply bg-card text-fg border border-border rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out; }
-  .chart-container { @apply bg-card p-6 md:p-8 rounded-2xl shadow-md border border-border overflow-hidden min-w-0; }
+  .card {
+    @apply bg-card text-fg border border-border rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out;
+  }
+  .card-p { @apply p-4 md:p-6; }
+
+  .chart-container {
+    @apply bg-card p-6 md:p-8 rounded-2xl shadow-md border border-border overflow-hidden min-w-0;
+  }
 
   /* Glass morphism helpers */
   .glass {
@@ -35,122 +137,35 @@
     background-clip: text;
     color: transparent;
   }
-}
 
-@layer utilities {
-  /* Responsive chart height utility using app tokens */
-  .chart-h { height: 220px; }
-  @screen sm { .chart-h { height: 240px; } }
-  @screen md { .chart-h { height: 260px; } }
-  @screen xl { .chart-h { height: 300px; } }
-
-  /* Height equal to two stacked charts plus gap (~24px) */
-  .chart-2h { height: calc(220px * 2 + 24px); }
-  @screen sm { .chart-2h { height: calc(240px * 2 + 24px); } }
-  @screen md { .chart-2h { height: calc(260px * 2 + 24px); } }
-  @screen xl { .chart-2h { height: calc(300px * 2 + 24px); } }
-
-  /* Consistent card padding */
-  .card-p { @apply p-4 md:p-6; }
-
-  /* Map helpers */
-  .map-container { @apply w-full h-full flex items-center justify-center; }
-  .map-label {
-    font-family: var(--font-map);
-    font-weight: 700;
-    /* reduce to avoid overlaps; scale with viewport */
-    font-size: clamp(11px, 1.2vw, 16px);
-    fill: var(--fg);
-    stroke: var(--bg);
-    stroke-width: 2px;
-    paint-order: stroke fill;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    user-select: none;
-  }
-  .map-label-city {
-    font-size: clamp(10px, 1vw, 14px);
+  /* Status pills (TOKEN-DRIVEN ONLY) */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
     font-weight: 600;
-}
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  border: 1px solid transparent;
-}
-
-.status-pill--pending {
-  background-color: hsla(40, 95%, 55%, 0.12); /* warning bg */
-  color: var(--warning);
-  border-color: hsla(40, 95%, 55%, 0.4);
-}
-
-.status-pill--review {
-  background-color: hsla(205, 50%, 48%, 0.12); /* secondary bg */
-  color: var(--secondary);
-  border-color: hsla(205, 50%, 48%, 0.4);
-}
-
-.status-pill--done {
-  background-color: var(--kpi-positive-bg);
-  color: var(--kpi-positive);
-  border-color: hsla(156, 72%, 35%, 0.4);
-}
-
-/* Token-driven form styles (unified across app) */
-@layer base {
-  /* Text inputs, selects, textareas */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="url"],
-  select,
-  textarea {
-    @apply w-full rounded-lg border;
-    background-color: var(--card);
-    color: var(--fg);
-    border-color: var(--border);
-    caret-color: var(--primary);
+    border: 1px solid transparent;
   }
-  input::placeholder,
-  textarea::placeholder {
-    color: var(--muted-foreground);
-    opacity: .8;
+  /* requires tokens: --warning, --secondary, --kpi-positive, --kpi-positive-bg */
+  .status-pill--pending {
+    background: color-mix(in oklab, var(--warning) 14%, transparent);
+    color: var(--warning);
+    border-color: color-mix(in oklab, var(--warning) 42%, transparent);
   }
-  input:focus,
-  select:focus,
-  textarea:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--ring);
-    border-color: var(--ring);
+  .status-pill--review {
+    background: color-mix(in oklab, var(--secondary) 14%, transparent);
+    color: var(--secondary);
+    border-color: color-mix(in oklab, var(--secondary) 42%, transparent);
   }
-  input:disabled,
-  select:disabled,
-  textarea:disabled {
-    @apply opacity-60 cursor-not-allowed;
-    background: color-mix(in oklab, var(--muted) 80%, transparent);
+  .status-pill--done {
+    background-color: var(--kpi-positive-bg);
+    color: var(--kpi-positive);
+    border-color: color-mix(in oklab, var(--kpi-positive) 42%, transparent);
   }
 
-  /* Checkboxes & radios */
-  input[type="checkbox"],
-  input[type="radio"] {
-    accent-color: var(--primary);
-  }
-
-  /* Labels */
-  label {
-    @apply text-sm font-medium;
-    color: var(--fg);
-  }
-}
-
-@layer components {
   /* Optional explicit helpers for consistency */
   .form-control {
     @apply w-full rounded-lg border;
@@ -160,7 +175,12 @@
   }
   .form-control:focus { outline: none; box-shadow: 0 0 0 2px var(--ring); border-color: var(--ring); }
   .form-hint { @apply text-xs; color: var(--muted-foreground); }
-  .btn-primary { @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-semibold; color: var(--primary-foreground); background: var(--primary); }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-semibold;
+    color: var(--primary-foreground);
+    background: var(--primary);
+  }
   .btn-primary:hover { filter: brightness(1.03); }
 
   /* Dashboard clock styling via tokens */
@@ -174,32 +194,9 @@
   .dashboard-clock__hand--hour { background: var(--accent); }
   .dashboard-clock__hand--minute { background: var(--fg); box-shadow: 0 0 0 1px var(--card); }
   .dashboard-clock__hand--second { background: var(--neon-title); }
-}
 
-/* Extend forms: selection, option/listbox colors via tokens */
-@layer base {
-  ::selection { background: var(--primary); color: var(--primary-foreground); }
-  ::-moz-selection { background: var(--primary); color: var(--primary-foreground); }
-
-  select { background-color: var(--card); color: var(--fg); }
-  option { background-color: var(--card); color: var(--fg); }
-  option:checked, option:focus, option:active { background-color: var(--primary); color: var(--primary-foreground); }
-  select[multiple] option:checked { background-color: var(--primary); color: var(--primary-foreground); }
-
-  [role="listbox"] { background: var(--card); color: var(--fg); border: 1px solid var(--border); border-radius: .75rem; }
-  [role="listbox"] [role="option"] { padding: .5rem .75rem; cursor: pointer; }
-  [role="listbox"] [role="option"][aria-selected="true"] { background: color-mix(in oklab, var(--primary) 24%, transparent); color: var(--primary-foreground); }
-  [role="listbox"] [role="option"]:hover { background: color-mix(in oklab, var(--primary) 15%, transparent); color: var(--primary-foreground); }
-  input[type="checkbox"]:focus-visible,
-  input[type="radio"]:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
-}
-
-@layer components {
   /* Archive layout helpers */
-  .archive-grid {
-    display: grid;
-    gap: 1rem;
-  }
+  .archive-grid { display: grid; gap: 1rem; }
   @media (min-width: 640px) { .archive-grid { gap: 1.25rem; } }
   @media (min-width: 1024px) {
     .archive-grid {
@@ -235,79 +232,6 @@
       align-self: start;
     }
   }
-}
-
-  /* Subtle neon pulse used in dark mode */
-  @keyframes neonPulse {
-    0%, 100% { box-shadow: 0 0 30px rgba(0,128,128,0.35), 0 0 60px rgba(0,128,128,0.15); }
-    50% { box-shadow: 0 0 45px rgba(0,128,128,0.55), 0 0 80px rgba(0,128,128,0.25); }
-  }
-  .neon-pulse-dark {
-    animation: neonPulse 3s ease-in-out infinite;
-  }
-
-  /* Section heading (light: clean & simple, dark: neon 3D override below) */
-  .section-title {
-    color: var(--primary);
-    /* Light mode: keep very subtle depth for a clean, matte look */
-    text-shadow: 0 1px 0 rgba(0,0,0,0.12);
-    letter-spacing: 0.2px;
-    font-family: 'Cairo', var(--font-heading);
-  }
-  /* Dark mode: stronger neon green with layered 3D glow */
-  .dark .section-title {
-    color: var(--neon-title);
-  
-    /* Soft neon glow */
-    text-shadow:
-      0 0 2px  rgba(127,255,212,0.35),
-      0 0 6px  rgba(127,255,212,0.25),
-      0 0 12px rgba(127,255,212,0.18),
-      0 0 20px rgba(127,255,212,0.12);
-  
-    letter-spacing: 0.5px;
-    font-weight: 600;
-  }
-  
-  
-
-  /* Stronger, lighter neon backlight specifically for chart cards */
-  .dark .chart-card .section-title {
-    text-shadow:
-      0 0 14px rgba(80, 255, 190, 0.60),
-      0 0 30px rgba(80, 255, 190, 0.40),
-      0 0 48px rgba(80, 255, 190, 0.22),
-      0 2px 0 rgba(0,0,0,0.5),
-      0 10px 22px rgba(0,0,0,0.40);
-  }
-
-  /* Slightly brighter pulse for chart titles */
-  .dark .chart-card .section-title-animate { animation: neonTitlePulse 3s ease-in-out infinite; }
-
-  /* Page header title/subtitle (bolder than section titles) */
-  .page-title {
-    font-family: var(--font-heading);
-    line-height: 1.1;
-    letter-spacing: 0.2px;
-    color: var(--primary);
-    text-shadow:
-      0 0 6px rgba(50,255,170,0.20),
-      0 2px 0 rgba(0,0,0,0.30);
-  }
-  .dark .page-title {
-    color: var(--neon-title);
-    text-shadow:
-      0 0 16px rgba(50,255,170,0.55),
-      0 0 36px rgba(50,255,170,0.35),
-      0 3px 0 rgba(0,0,0,0.5),
-      0 12px 26px rgba(0,0,0,0.45);
-  }
-  .page-title-animate { animation: neonTitlePulse 3.4s ease-in-out infinite; }
-
-  .page-subtitle {
-    color: var(--muted-foreground);
-    text-shadow: 0 1px 0 rgba(0,0,0,0.25);
-  }
 
   /* Mini-sidebar item helpers (light + dark) */
   .mini-sidebar-item {
@@ -316,17 +240,18 @@
     position: relative;
     transition: background-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
   }
+
   .mini-sidebar-item:hover {
     background: color-mix(in oklab, var(--primary) 12%, transparent);
   }
+
   .mini-sidebar-item.active {
     background: color-mix(in oklab, var(--primary) 18%, transparent);
     outline: 2px solid color-mix(in oklab, var(--primary) 30%, transparent);
-    box-shadow: 0 6px 18px rgba(0,0,0,.12);
+    box-shadow: 0 6px 18px color-mix(in oklab, var(--fg) 12%, transparent);
     transform: translateX(2px);
   }
 
-  /* Left (logical start) active bar with motion */
   .mini-sidebar-item::before {
     content: '';
     position: absolute;
@@ -340,58 +265,139 @@
     transform-origin: left center;
     transition: transform .18s ease-out, background-color .2s ease;
   }
+
   .mini-sidebar-item:hover::before,
   .mini-sidebar-item.active::before {
     transform: scaleX(1);
   }
 
-  /* Dark mode: special neon-y hover/active without being too bright */
   .dark .mini-sidebar-item:hover {
     background: color-mix(in oklab, var(--neon-title) 10%, transparent);
-    box-shadow: 0 0 14px rgba(50,255,170,0.12);
+    box-shadow: 0 0 14px color-mix(in oklab, var(--neon-title) 18%, transparent);
   }
   .dark .mini-sidebar-item.active {
     background: color-mix(in oklab, var(--neon-title) 16%, transparent);
     outline: 2px solid color-mix(in oklab, var(--neon-title) 28%, transparent);
-    box-shadow: 0 0 18px rgba(50,255,170,0.18), 0 8px 22px rgba(0,0,0,.35);
+    box-shadow:
+      0 0 18px color-mix(in oklab, var(--neon-title) 22%, transparent),
+      0 8px 22px color-mix(in oklab, var(--fg) 18%, transparent);
     transform: translateX(3px);
   }
   .dark .mini-sidebar-item::before {
     background: color-mix(in oklab, var(--neon-title) 55%, transparent);
   }
 
-  /* Animated neon pulse for titles in dark mode */
+  /* Section/page titles (token-driven) */
+  .section-title {
+    color: var(--primary);
+    text-shadow: 0 1px 0 color-mix(in oklab, var(--fg) 12%, transparent);
+    letter-spacing: 0.2px;
+    font-family: var(--font-heading);
+  }
+
+  .dark .section-title {
+    color: var(--neon-title);
+    text-shadow:
+      0 0 2px  color-mix(in oklab, var(--neon-title) 35%, transparent),
+      0 0 6px  color-mix(in oklab, var(--neon-title) 25%, transparent),
+      0 0 12px color-mix(in oklab, var(--neon-title) 18%, transparent),
+      0 0 20px color-mix(in oklab, var(--neon-title) 12%, transparent);
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  .page-title {
+    font-family: var(--font-heading);
+    line-height: 1.1;
+    letter-spacing: 0.2px;
+    color: var(--primary);
+    text-shadow:
+      0 0 6px color-mix(in oklab, var(--primary) 20%, transparent),
+      0 2px 0 color-mix(in oklab, var(--fg) 20%, transparent);
+  }
+
+  .dark .page-title {
+    color: var(--neon-title);
+    text-shadow:
+      0 0 16px color-mix(in oklab, var(--neon-title) 55%, transparent),
+      0 0 36px color-mix(in oklab, var(--neon-title) 35%, transparent),
+      0 3px 0 color-mix(in oklab, var(--fg) 24%, transparent),
+      0 12px 26px color-mix(in oklab, var(--fg) 22%, transparent);
+  }
+
+  .page-subtitle {
+    color: var(--muted-foreground);
+    text-shadow: 0 1px 0 color-mix(in oklab, var(--fg) 10%, transparent);
+  }
+}
+
+/* =========================
+   Utilities
+========================= */
+@layer utilities {
+  /* Responsive chart height utility */
+  .chart-h { height: 220px; }
+  @screen sm { .chart-h { height: 240px; } }
+  @screen md { .chart-h { height: 260px; } }
+  @screen xl { .chart-h { height: 300px; } }
+
+  .chart-2h { height: calc(220px * 2 + 24px); }
+  @screen sm { .chart-2h { height: calc(240px * 2 + 24px); } }
+  @screen md { .chart-2h { height: calc(260px * 2 + 24px); } }
+  @screen xl { .chart-2h { height: calc(300px * 2 + 24px); } }
+
+  /* Map helpers */
+  .map-container { @apply w-full h-full flex items-center justify-center; }
+
+  .map-label {
+    font-family: var(--font-map);
+    font-weight: 700;
+    font-size: clamp(11px, 1.2vw, 16px);
+    fill: var(--fg);
+    stroke: var(--bg);
+    stroke-width: 2px;
+    paint-order: stroke fill;
+    text-shadow: 0 1px 2px color-mix(in oklab, var(--fg) 18%, transparent);
+    user-select: none;
+  }
+
+  .map-label-city {
+    font-size: clamp(10px, 1vw, 14px);
+    font-weight: 600;
+  }
+
+  /* Subtle neon pulse used in dark mode */
+  @keyframes neonPulse {
+    0%, 100% {
+      box-shadow:
+        0 0 30px color-mix(in oklab, var(--neon-title) 35%, transparent),
+        0 0 60px color-mix(in oklab, var(--neon-title) 15%, transparent);
+    }
+    50% {
+      box-shadow:
+        0 0 45px color-mix(in oklab, var(--neon-title) 55%, transparent),
+        0 0 80px color-mix(in oklab, var(--neon-title) 25%, transparent);
+    }
+  }
+  .neon-pulse-dark { animation: neonPulse 3s ease-in-out infinite; }
+
   @keyframes neonTitlePulse {
     0%, 100% {
       text-shadow:
-        0 0 8px rgba(50, 255, 170, 0.40),
-        0 0 18px rgba(50, 255, 170, 0.25),
-        0 2px 0 rgba(0,0,0,0.45),
-        0 8px 18px rgba(0,0,0,0.35);
+        0 0 8px  color-mix(in oklab, var(--neon-title) 40%, transparent),
+        0 0 18px color-mix(in oklab, var(--neon-title) 25%, transparent),
+        0 2px 0  color-mix(in oklab, var(--fg) 22%, transparent),
+        0 8px 18px color-mix(in oklab, var(--fg) 18%, transparent);
     }
     50% {
       text-shadow:
-        0 0 14px rgba(50, 255, 170, 0.55),
-        0 0 28px rgba(50, 255, 170, 0.35),
-        0 2px 0 rgba(0,0,0,0.5),
-        0 10px 22px rgba(0,0,0,0.4);
+        0 0 14px color-mix(in oklab, var(--neon-title) 55%, transparent),
+        0 0 28px color-mix(in oklab, var(--neon-title) 35%, transparent),
+        0 2px 0  color-mix(in oklab, var(--fg) 24%, transparent),
+        0 10px 22px color-mix(in oklab, var(--fg) 20%, transparent);
     }
   }
+
   .dark .section-title-animate { animation: neonTitlePulse 3.2s ease-in-out infinite; }
-
-  /* 3D icon shadow (light + dark) */
-  .icon-3d {
-    filter:
-      drop-shadow(0 1px 0 rgba(0,0,0,0.35))
-      drop-shadow(0 4px 10px rgba(0,0,0,0.25));
-    transition: transform .2s ease, filter .2s ease;
-  }
-  .icon-3d:hover { transform: translateY(-1px); }
-  .dark .icon-3d {
-    filter:
-      drop-shadow(0 1px 0 rgba(0,0,0,0.55))
-      drop-shadow(0 6px 14px rgba(0,0,0,0.45))
-      drop-shadow(0 0 8px rgba(50,255,170,0.18));
-  }
-
+  .page-title-animate { animation: neonTitlePulse 3.4s ease-in-out infinite; }
 }
