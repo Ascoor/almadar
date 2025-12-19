@@ -47,6 +47,15 @@ const COPY = {
     ar: 'مساحتك المركزية لاستعراض ملفات الأرشيف، البحث والتحرير بسرعة.',
     en: 'Your central place to browse, search, and edit archived files.',
   },
+  resultsTitle: { ar: 'عرض النتائج', en: 'Viewing results' },
+  resultsLead: {
+    ar: 'بحث بخطوات هادئة وهوية واضحة',
+    en: 'A calm, on-brand search journey',
+  },
+  resultsDescription: {
+    ar: 'تصميم أكثر احترافية مع نصوص بسيطة ودلائل سريعة على الحالة.',
+    en: 'A more polished layout with concise cues that reflect our identity.',
+  },
   refresh: { ar: 'تحديث', en: 'Refresh' },
   searchLabel: { ar: 'البحث في الأرشيف', en: 'Search archive' },
   searchPlaceholder: {
@@ -69,6 +78,11 @@ const COPY = {
     ar: 'عدّل البحث أو نوع الملف أو الترتيب للحصول على نتائج.',
     en: 'Tweak search, type, or sorting to see matching files.',
   },
+  activeFilters: { ar: 'التصفية المفعّلة', en: 'Active filters' },
+  searchQuery: { ar: 'نص البحث', en: 'Search text' },
+  typeFilter: { ar: 'تصنيف الملفات', en: 'File category' },
+  anyQuery: { ar: 'بدون تحديد', en: 'Unspecified' },
+  highlighted: { ar: 'الأبرز', en: 'Highlighted' },
   selectFileTitle: {
     ar: 'اختر ملفًا لعرضه هنا',
     en: 'Choose a file to view here',
@@ -244,6 +258,79 @@ function FileCard({ file, lang, active, onPreview }) {
         </span>
       </div>
     </article>
+  );
+}
+
+function ResultBadge({ icon: IconComp, label, value }) {
+  return (
+    <div className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--background)]/80 px-3 py-2 text-xs text-[var(--muted-foreground)] shadow-[var(--shadow-xs)]">
+      <span className="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-[var(--muted)]/40 text-[var(--foreground)]">
+        <IconComp className="h-4 w-4" aria-hidden="true" />
+      </span>
+      <div className="leading-tight">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+          {label}
+        </p>
+        <p className="text-sm font-bold text-[var(--foreground)]">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function ResultsSummary({ lang, query, filteredCount, totalCount, typeFilter }) {
+  const activeType =
+    typeFilter === 'ALL' ? COPY.all[lang] : getLabel(typeFilter, lang);
+
+  return (
+    <div className="flex flex-col gap-4 rounded-3xl border border-[var(--border)] bg-gradient-to-r from-[var(--muted)]/50 via-[var(--card)] to-[var(--background)] p-5 shadow-[var(--shadow-lg)]">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--background)] text-[var(--primary)] shadow-[var(--shadow-sm)]">
+            <Search className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+              {COPY.resultsLead[lang]}
+            </p>
+            <h2 className="text-xl font-black text-[var(--foreground)] sm:text-2xl">
+              {COPY.resultsTitle[lang]}
+            </h2>
+            <p className="max-w-2xl text-sm text-[var(--muted-foreground)]">
+              {COPY.resultsDescription[lang]}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <ResultBadge
+            icon={LayoutGrid}
+            label={COPY.highlighted[lang]}
+            value={`${filteredCount} / ${totalCount}`}
+          />
+          <ResultBadge
+            icon={SlidersHorizontal}
+            label={COPY.typeFilter[lang]}
+            value={activeType}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 text-xs">
+        <span className="rounded-full bg-[var(--muted)]/50 px-3 py-1 font-semibold text-[var(--foreground)]">
+          {COPY.activeFilters[lang]}
+        </span>
+        <span className="rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1 text-[var(--muted-foreground)]">
+          {COPY.searchQuery[lang]}:{' '}
+          <strong className="text-[var(--foreground)]">
+            {query?.trim() || COPY.anyQuery[lang]}
+          </strong>
+        </span>
+        <span className="rounded-full border border-[var(--border)] bg-[var(--card)] px-3 py-1 text-[var(--muted-foreground)]">
+          {COPY.typeFilter[lang]}:{' '}
+          <strong className="text-[var(--foreground)]">{activeType}</strong>
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -545,8 +632,16 @@ export default function ArchivePage() {
       <PageHeader lang={lang} onRefresh={fetchFiles} refreshing={refreshing} />
 
       <main className="container mx-auto max-w-7xl px-4 pb-10 pt-6 sm:px-6 lg:px-8">
+        <ResultsSummary
+          lang={lang}
+          query={query}
+          filteredCount={filteredCount}
+          totalCount={totalCount}
+          typeFilter={typeFilter}
+        />
+
         {/* Filters */}
-        <div className="flex flex-col gap-4 rounded-3xl border border-[var(--border)] bg-[var(--card)]/80 p-4 shadow-[var(--shadow-md)] sm:p-5">
+        <div className="mt-4 flex flex-col gap-4 rounded-3xl border border-[var(--border)] bg-[var(--card)]/80 p-4 shadow-[var(--shadow-md)] sm:p-5">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-1 items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-2 shadow-[var(--shadow-xs)] focus-within:ring-2 focus-within:ring-[var(--ring)]">
               <Search
