@@ -197,10 +197,7 @@ const HomePage = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-bg/90 via-bg/85 to-bg" aria-hidden />
           <div className="absolute inset-0 bg-gradient-subtle opacity-70 mix-blend-multiply" aria-hidden />
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -left-10 -top-10 h-72 w-72 rounded-full bg-primary/15 blur-3xl" aria-hidden />
-            <div className="absolute bottom-10 right-0 h-80 w-80 rounded-full bg-accent/20 blur-3xl" aria-hidden />
-          </div>
+          <AnimatedBackdrop />
         </div>
 
         <header className="sticky top-0 z-30 border-b border-border/80 bg-card/80 backdrop-blur-xl">
@@ -329,7 +326,7 @@ const HomePage = () => {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {stats.map((stat) => (
                     <div
                       key={stat.label}
@@ -350,48 +347,102 @@ const HomePage = () => {
                 {...heroAnimation}
                 transition={{ duration: 0.7, ease: 'easeOut', delay: shouldReduceMotion ? 0 : 0.08 }}
               >
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between gap-3">
+                <div className="absolute inset-0 opacity-60">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/15" aria-hidden />
+                  <motion.div
+                    className="absolute -left-10 top-6 h-32 w-32 rounded-full bg-primary/25 blur-3xl"
+                    animate={shouldReduceMotion ? undefined : { y: [0, -10, 0], opacity: [0.4, 0.8, 0.4] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  <motion.div
+                    className="absolute -bottom-12 right-4 h-40 w-40 rounded-full bg-accent/25 blur-3xl"
+                    animate={shouldReduceMotion ? undefined : { y: [0, 12, 0], opacity: [0.35, 0.75, 0.35] }}
+                    transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+                  />
+                </div>
+
+                <div className="relative space-y-5">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
                       <p className="text-sm font-semibold text-foreground">{t('landing.social.label')}</p>
                       <p className="text-xs text-muted-foreground">{t('landing.hero.supporting')}</p>
                     </div>
-                    <span className="rounded-full bg-muted/70 px-3 py-1 text-xs font-semibold text-muted-foreground border border-border">
-                      {t('landing.hero.eyebrow')}
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    {(t('landing.social.items') as string[]).map((item) => (
-                      <div
-                        key={item}
-                        className="flex items-center justify-between rounded-2xl border border-border bg-gradient-subtle px-4 py-3 shadow-sm"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="grid h-10 w-10 place-items-center rounded-xl bg-card text-primary shadow">
-                            <Sparkles className="h-5 w-5" aria-hidden />
-                          </span>
-                          <p className="text-sm font-semibold text-foreground">{item}</p>
-                        </div>
-                        <CheckCircle2 className="h-5 w-5 text-primary" aria-hidden />
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="rounded-2xl border border-border bg-card/90 p-4 shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{t('landing.hero.secondaryCta')}</p>
-                        <p className="text-xs text-muted-foreground">{t('landing.hero.eyebrow')}</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleOpenLogin}
-                        className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-                      >
-                        {t('landing.hero.primaryCta')}
-                      </button>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-muted/70 px-3 py-1 text-xs font-semibold text-muted-foreground border border-border">
+                        {t('landing.hero.eyebrow')}
+                      </span>
+                      <span className="rounded-full bg-gradient-primary/90 px-3 py-1 text-xs font-semibold text-primary-foreground shadow">
+                        {t('landing.nav.features')}
+                      </span>
                     </div>
+                  </div>
+
+                  <div className="space-y-3 rounded-2xl bg-card/90 p-4 shadow-inner">
+                    <div className="flex items-center justify-between gap-3 text-sm font-semibold text-foreground">
+                      <span className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-primary" aria-hidden />
+                        {t('landing.features.subtitle')}
+                      </span>
+                      <motion.span
+                        className="text-xs text-primary"
+                        animate={shouldReduceMotion ? undefined : { opacity: [0.5, 1, 0.5] }}
+                        transition={{ duration: 2.6, repeat: Infinity }}
+                      >
+                        {t('landing.nav.hero')}
+                      </motion.span>
+                    </div>
+                    <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-color:theme(colors.primary.DEFAULT)_transparent]">
+                      {(t('landing.social.items') as string[]).map((item) => (
+                        <div
+                          key={item}
+                          className="flex min-w-[230px] items-center justify-between gap-3 rounded-xl border border-border bg-gradient-subtle/80 px-4 py-3 shadow-sm"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="grid h-10 w-10 place-items-center rounded-xl bg-card text-primary shadow">
+                              <CheckCircle2 className="h-5 w-5" aria-hidden />
+                            </span>
+                            <p className="text-sm font-semibold text-foreground">{item}</p>
+                          </div>
+                          <span className="text-xs font-semibold text-muted-foreground">{t('landing.hero.supporting')}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="rounded-2xl border border-border bg-card/90 p-4 shadow-sm">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">{t('landing.hero.secondaryCta')}</p>
+                          <p className="text-xs text-muted-foreground">{t('landing.hero.eyebrow')}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleOpenLogin}
+                          className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                        >
+                          {t('landing.hero.primaryCta')}
+                        </button>
+                      </div>
+                    </div>
+
+                    <MotionDiv
+                      className="flex items-center justify-between rounded-2xl border border-border bg-card/90 p-4 shadow-sm"
+                      initial={{ opacity: 0, x: isRTL ? 10 : -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.12 }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary shadow-inner">
+                          <BarChart3 className="h-6 w-6" aria-hidden />
+                        </span>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">{t('landing.stats.title')}</p>
+                          <p className="text-xs text-muted-foreground">{t('landing.features.subtitle')}</p>
+                        </div>
+                      </div>
+                      <ArrowLeftRight className="h-5 w-5 text-muted-foreground" aria-hidden />
+                    </MotionDiv>
                   </div>
                 </div>
               </MotionDiv>
@@ -476,26 +527,92 @@ const HomePage = () => {
                 eyebrow={t('landing.nav.screens')}
                 align={isRTL ? 'end' : 'start'}
               />
-              <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
-                {(t('landing.screens.highlights') as string[]).map((highlight, index) => (
-                  <MotionDiv
-                    key={highlight}
-                    className="rounded-2xl border border-border bg-card/85 p-5 shadow-md"
-                    {...REVEAL_PROPS}
-                    transition={{ ...REVEAL_PROPS.transition, delay: shouldReduceMotion ? 0 : index * 0.05 }}
-                  >
-                    <div className="mb-3 flex items-center gap-3">
-                      <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-subtle text-primary shadow">
-                        <Layers className="h-5 w-5" aria-hidden />
+              <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.35fr_1fr]">
+                <MotionDiv
+                  className="relative overflow-hidden rounded-3xl border border-border bg-card/85 p-6 shadow-xl"
+                  {...REVEAL_PROPS}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/15" aria-hidden />
+                  <div className="relative space-y-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="rounded-full bg-muted/70 px-3 py-1 text-xs font-semibold text-muted-foreground border border-border">
+                        {t('landing.nav.screens')}
                       </span>
-                      <p className="text-sm font-semibold text-foreground">{t('landing.hero.eyebrow')}</p>
+                      <span className="rounded-full bg-gradient-primary/90 px-3 py-1 text-xs font-semibold text-primary-foreground shadow">
+                        {t('landing.nav.hero')}
+                      </span>
                     </div>
-                    <div className="space-y-3">
-                      <div className="h-32 rounded-xl bg-muted/70 shadow-inner" />
-                      <p className="text-sm text-muted-foreground">{highlight}</p>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      {(t('landing.screens.highlights') as string[]).map((highlight) => (
+                        <div
+                          key={highlight}
+                          className="flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card/90 p-4 shadow-md"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-subtle text-primary shadow">
+                              <Layers className="h-5 w-5" aria-hidden />
+                            </span>
+                            <p className="text-sm font-semibold text-foreground">{t('landing.hero.eyebrow')}</p>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{highlight}</p>
+                        </div>
+                      ))}
                     </div>
-                  </MotionDiv>
-                ))}
+                    <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      {stats.slice(0, 4).map((stat) => (
+                        <div key={stat.label} className="rounded-xl border border-border bg-card/90 p-3 text-center shadow-sm">
+                          <p className="text-xs text-muted-foreground">{stat.label}</p>
+                          <p className="text-lg font-bold text-foreground">{stat.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </MotionDiv>
+
+                <MotionDiv
+                  className="flex flex-col gap-4 overflow-hidden rounded-3xl border border-border bg-card/85 p-6 shadow-xl"
+                  {...REVEAL_PROPS}
+                  transition={{ ...REVEAL_PROPS.transition, delay: shouldReduceMotion ? 0 : 0.08 }}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-foreground">{t('landing.features.subtitle')}</p>
+                    <span className="rounded-full bg-muted/70 px-3 py-1 text-xs font-semibold text-muted-foreground border border-border">
+                      {t('landing.hero.supporting')}
+                    </span>
+                  </div>
+                  <div className="flex snap-x gap-3 overflow-x-auto pb-2 [scrollbar-color:theme(colors.primary.DEFAULT)_transparent]">
+                    {features.map((feature) => (
+                      <div
+                        key={feature.title}
+                        className="min-w-[220px] snap-start rounded-2xl border border-border bg-card/90 p-4 shadow-md"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="grid h-10 w-10 place-items-center rounded-xl bg-muted/70 text-primary shadow-sm">
+                            {(() => {
+                              const Icon = ICON_MAP[feature.icon] as ElementType;
+                              return <Icon className="h-5 w-5" aria-hidden />;
+                            })()}
+                          </span>
+                          <p className="text-sm font-semibold text-foreground">{feature.title}</p>
+                        </div>
+                        <p className="mt-2 text-xs text-muted-foreground">{feature.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card/90 p-4 shadow-sm">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{t('landing.contact.title')}</p>
+                      <p className="text-xs text-muted-foreground">{t('landing.contact.subtitle')}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleOpenLogin}
+                      className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                    >
+                      {t('landing.hero.primaryCta')}
+                    </button>
+                  </div>
+                </MotionDiv>
               </div>
             </div>
           </section>
@@ -651,6 +768,58 @@ const HomePage = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {!showLoginForm && (
+          <motion.div
+            className="fixed inset-x-4 bottom-4 z-30 md:hidden"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+          >
+            <div className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card/95 px-4 py-3 shadow-xl backdrop-blur">
+              <div>
+                <p className="text-sm font-semibold text-foreground">{t('landing.hero.title')}</p>
+                <p className="text-xs text-muted-foreground">{t('landing.hero.subtitle')}</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleOpenLogin}
+                className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md"
+              >
+                {t('landing.hero.primaryCta')}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const AnimatedBackdrop = () => {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <motion.div
+        className="absolute -left-24 top-10 h-80 w-80 rounded-full bg-primary/15 blur-3xl"
+        aria-hidden
+        animate={reduceMotion ? undefined : { y: [0, -20, 0], opacity: [0.5, 0.85, 0.5] }}
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-accent/20 blur-3xl"
+        aria-hidden
+        animate={reduceMotion ? undefined : { y: [0, 18, 0], opacity: [0.35, 0.7, 0.35] }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
+      />
+      <motion.div
+        className="absolute left-1/3 top-1/4 h-40 w-40 rounded-full bg-primary/10 blur-2xl"
+        aria-hidden
+        animate={reduceMotion ? undefined : { scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
+      />
     </div>
   );
 };
