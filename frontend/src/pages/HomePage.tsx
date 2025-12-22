@@ -7,8 +7,10 @@ import {
   Clock3,
   Layers,
   Menu,
+  Moon,
   ShieldCheck,
   Sparkles,
+  SunMedium,
   X,
 } from 'lucide-react';
 import Login from '@/components/organisms/Login';
@@ -48,6 +50,15 @@ interface PlanItem {
   description: string;
   features: string[];
   badge?: string;
+}
+
+interface LayoutPreviewItem {
+  id: string;
+  tone: 'day' | 'night';
+  title: string;
+  subtitle: string;
+  badge: string;
+  gradient: string;
 }
 
 const ICON_MAP = {
@@ -130,6 +141,39 @@ const HomePage = () => {
     [t],
   );
 
+  const sampleLayouts: LayoutPreviewItem[] = useMemo(
+    () => [
+      {
+        id: 'daybreak',
+        tone: 'day',
+        title: t('landing.hero.title'),
+        subtitle: t('landing.features.subtitle'),
+        badge: t('landing.nav.hero'),
+        gradient:
+          'linear-gradient(135deg, hsla(214, 70%, 82%, 0.55), hsla(214, 60%, 74%, 0.45), hsla(214, 45%, 68%, 0.55))',
+      },
+      {
+        id: 'dusk-shield',
+        tone: 'night',
+        title: t('landing.nav.features'),
+        subtitle: t('landing.hero.supporting'),
+        badge: t('landing.nav.features'),
+        gradient:
+          'linear-gradient(140deg, hsla(218, 35%, 18%, 0.85), hsla(218, 35%, 20%, 0.75), hsla(218, 35%, 24%, 0.7))',
+      },
+      {
+        id: 'oasis',
+        tone: 'day',
+        title: t('landing.pricing.title'),
+        subtitle: t('landing.pricing.subtitle'),
+        badge: t('landing.nav.pricing'),
+        gradient:
+          'linear-gradient(145deg, hsla(155, 60%, 78%, 0.45), hsla(214, 60%, 80%, 0.35), hsla(218, 40%, 78%, 0.45))',
+      },
+    ],
+    [t],
+  );
+
   const floatingKeywords = useMemo(
     () => (t('landing.hero.keywords') as unknown as string[]) || [],
     [t],
@@ -205,7 +249,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-fg" dir={dir}>
+    <div className="min-h-screen bg-gradient-to-b from-bg via-muted/30 to-bg text-fg" dir={dir}>
       <div className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -216,6 +260,10 @@ const HomePage = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-bg/90 via-bg/85 to-bg" aria-hidden />
           <div className="absolute inset-0 bg-gradient-subtle opacity-70 mix-blend-multiply" aria-hidden />
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute -left-12 top-20 h-80 w-80 rounded-full bg-primary/15 blur-3xl" aria-hidden />
+            <div className="absolute bottom-10 right-4 h-72 w-72 rounded-full bg-accent/20 blur-3xl" aria-hidden />
+          </div>
           <AnimatedBackdrop />
         </div>
 
@@ -667,6 +715,51 @@ const HomePage = () => {
                     </button>
                   </div>
                 </MotionDiv>
+              </div>
+
+              <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+                {sampleLayouts.map((layout, index) => (
+                  <MotionDiv
+                    key={layout.id}
+                    className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/90 p-4 shadow-lg"
+                    {...REVEAL_PROPS}
+                    transition={{ ...REVEAL_PROPS.transition, delay: shouldReduceMotion ? 0 : index * 0.05 }}
+                    style={{ backgroundImage: layout.gradient }}
+                  >
+                    <div
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-br from-card/70 via-transparent to-accent/10"
+                      aria-hidden
+                    />
+                    <div className="relative space-y-3">
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <span className="inline-flex items-center gap-2 rounded-full bg-card/80 px-3 py-1 text-xs font-semibold text-muted-foreground border border-border/60 backdrop-blur">
+                          {layout.badge}
+                        </span>
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-card/80 text-primary shadow-inner border border-border/70">
+                          {layout.tone === 'day' ? <SunMedium className="h-4 w-4" aria-hidden /> : <Moon className="h-4 w-4" aria-hidden />}
+                        </span>
+                      </div>
+                      <div className="relative rounded-xl border border-border/80 bg-card/60 p-3 shadow-sm backdrop-blur">
+                        <p className="text-base font-semibold text-foreground">{layout.title}</p>
+                        <p className="text-xs text-muted-foreground">{layout.subtitle}</p>
+                        <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
+                          <span className="rounded-lg border border-border/60 bg-muted/60 px-2 py-1 font-semibold text-foreground">
+                            {t('landing.nav.features')}
+                          </span>
+                          <span className="rounded-lg border border-border/60 bg-muted/60 px-2 py-1 font-semibold text-foreground">
+                            {t('landing.nav.pricing')}
+                          </span>
+                          <span className="rounded-lg border border-border/60 bg-muted/60 px-2 py-1 font-semibold text-foreground">
+                            {t('landing.nav.faq')}
+                          </span>
+                          <span className="rounded-lg border border-border/60 bg-muted/60 px-2 py-1 font-semibold text-foreground">
+                            {t('landing.nav.contact')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </MotionDiv>
+                ))}
               </div>
             </div>
           </section>
