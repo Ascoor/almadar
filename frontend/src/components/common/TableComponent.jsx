@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { Edit, Eye, Trash, ChevronUp, ChevronDown } from 'lucide-react';
-import * as XLSX from 'xlsx';
 import API_CONFIG from '../../config/config';
 import { AuthContext } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -144,6 +143,33 @@ export default function TableComponent({
     );
   };
 
+  const downloadFile = (content, mimeType, filename) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.rel = 'noopener';
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  const escapeCsvValue = (value) => {
+    const str = String(value ?? '');
+    const escaped = str.replace(/"/g, '""');
+    return `"${escaped}"`;
+  };
+
+  const escapeHtml = (value) =>
+    String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
   const exportTo = (type = 'xlsx') => {
     const selectedRows =
       selectedIds.length > 0
@@ -155,15 +181,25 @@ export default function TableComponent({
       headers.map((h) => row[h.key] ?? ''),
     );
 
-    const sheet = XLSX.utils.aoa_to_sheet([headerRow, ...rows]);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, sheet, 'Export');
-
     if (type === 'csv') {
-      XLSX.writeFile(wb, 'export.csv', { bookType: 'csv' });
-    } else {
-      XLSX.writeFile(wb, 'export.xlsx');
+      const csvContent = [headerRow, ...rows]
+        .map((row) => row.map(escapeCsvValue).join(','))
+        .join('\n');
+      downloadFile(csvContent, 'text/csv;charset=utf-8;', 'export.csv');
+      return;
     }
+
+    const headerHtml = headerRow.map((cell) => `<th>${escapeHtml(cell)}</th>`).join('');
+    const bodyHtml = rows
+      .map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`)
+      .join('');
+
+    const htmlTable =
+      '<!DOCTYPE html>' +
+      '<html><head><meta charset="utf-8" /></head><body>' +
+      `<table><thead><tr>${headerHtml}</tr></thead><tbody>${bodyHtml}</tbody></table>` +
+      '</body></html>';
+    downloadFile(htmlTable, 'application/vnd.ms-excel', 'export.xls');
   };
 
   return (
