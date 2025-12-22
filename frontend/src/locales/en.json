@@ -207,6 +207,7 @@
     "brand": "Almadar Legal OS",
     "nav": {
       "hero": "Overview",
+      "themes": "Themes",
       "features": "Features",
       "how": "How it works",
       "screens": "Screens",
@@ -216,25 +217,52 @@
       "contact": "Contact"
     },
     "hero": {
-      "eyebrow": "Libya legal intelligence",
-      "title": "Modernize contracts, litigations, and investigations",
-      "subtitle": "Unified control center for ministries and legal teams with bilingual workflows and verifiable trails.",
+      "eyebrow": "Premium Libyan legal studio",
+      "title": "A refined home for legal work by day and by night",
+      "subtitle": "Polished landing with a luminous daylight palette and a dimmed night mode accented by mint glows and calm typography.",
       "primaryCta": "Get started",
       "secondaryCta": "View platform",
-      "supporting": "Secure SSO access with auditable activity.",
+      "supporting": "Secure SSO access with auditable activity and curated onboarding.",
       "keywords": [
         "Arabic-first",
         "English-ready",
         "Responsive",
-        "Token colors",
-        "Calm layout",
+        "Daylight gradients",
+        "Night glow",
         "Adaptive motion"
       ],
       "highlights": [
         "Hero cover optimized for ministries",
         "Live bilingual preview without clutter",
-        "Soft gradients guided by design tokens",
-        "Motion that respects accessibility"
+        "Soft daylight gradients with mint finishes",
+        "Night cards with low-light teal glows"
+      ]
+    },
+    "themes": {
+      "title": "Day & night experience",
+      "subtitle": "Elevated palettes with airy daylight contrast and calm, low-light layers after dark.",
+      "description": "Bring the home page to life with refined typography, layered glass cards, and logo-led branding that remains legible in both sunlit and dim environments.",
+      "ribbon": "Polished landing",
+      "energy": {
+        "title": "Tone and lighting",
+        "badge": "Mint glow",
+        "copy": "Soft gradients, dotted glows, and balanced whitespace create a luxurious daytime feel while keeping the night view cinematic and readable."
+      },
+      "cards": [
+        {
+          "tone": "day",
+          "badge": "Daylight",
+          "title": "Signature daylight",
+          "description": "Light ivory panels with mint ribbons, subtle embossing for logo.png, and airy dividers that keep ministries comfortable during business hours.",
+          "note": "Uses the green wordmark with bright highlights and breathable spacing."
+        },
+        {
+          "tone": "night",
+          "badge": "Night watch",
+          "title": "Calm nightfall",
+          "description": "Deep navy canvas with teal halos, logo512 for crisp contrast, and discreet shadows that respect low-light reading.",
+          "note": "Low-light teal glows keep focus while preserving legibility for bilingual content."
+        }
       ]
     },
     "stats": {

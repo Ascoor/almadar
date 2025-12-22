@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import Login from '@/components/organisms/Login';
-import { WelcomeImage2 } from '@/assets/images';
+import { LogoTextArtGreen, LogoTextArtWhite, WelcomeImage2 } from '@/assets/images';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import { useLanguage } from '@/context/LanguageContext';
 import LanguageToggle from '@/components/common/LanguageToggle';
@@ -61,6 +61,14 @@ interface LayoutPreviewItem {
   gradient: string;
 }
 
+interface ThemeCardItem {
+  tone: 'day' | 'night';
+  title: string;
+  description: string;
+  badge: string;
+  note: string;
+}
+
 const ICON_MAP = {
   Layers,
   Clock3,
@@ -88,6 +96,11 @@ const FLOATING_KEYWORD_POSITIONS = [
   { x: '52%', y: '72%' },
 ];
 
+const THEME_GRADIENTS: Record<'day' | 'night', string> = {
+  day: 'linear-gradient(135deg, hsla(170, 65%, 92%, 0.95), hsla(214, 70%, 97%, 0.9), hsla(166, 55%, 88%, 0.92))',
+  night: 'linear-gradient(140deg, hsla(218, 32%, 14%, 0.95), hsla(214, 45%, 18%, 0.92), hsla(172, 38%, 20%, 0.88))',
+};
+
 const HomePage = () => {
   const { dir, t, lang, formatNumber } = useLanguage();
   const shouldReduceMotion = useReducedMotion();
@@ -102,6 +115,7 @@ const HomePage = () => {
   const navLinks = useMemo(
     () => [
       { id: 'hero', label: t('landing.nav.hero') },
+      { id: 'themes', label: t('landing.nav.themes') },
       { id: 'features', label: t('landing.nav.features') },
       { id: 'how', label: t('landing.nav.how') },
       { id: 'screens', label: t('landing.nav.screens') },
@@ -150,7 +164,7 @@ const HomePage = () => {
         subtitle: t('landing.features.subtitle'),
         badge: t('landing.nav.hero'),
         gradient:
-          'linear-gradient(135deg, hsla(214, 70%, 82%, 0.55), hsla(214, 60%, 74%, 0.45), hsla(214, 45%, 68%, 0.55))',
+          'linear-gradient(135deg, hsla(166, 60%, 86%, 0.65), hsla(214, 65%, 92%, 0.55), hsla(168, 50%, 84%, 0.65))',
       },
       {
         id: 'dusk-shield',
@@ -159,7 +173,7 @@ const HomePage = () => {
         subtitle: t('landing.hero.supporting'),
         badge: t('landing.nav.features'),
         gradient:
-          'linear-gradient(140deg, hsla(218, 35%, 18%, 0.85), hsla(218, 35%, 20%, 0.75), hsla(218, 35%, 24%, 0.7))',
+          'linear-gradient(140deg, hsla(218, 28%, 12%, 0.9), hsla(218, 32%, 16%, 0.85), hsla(172, 30%, 20%, 0.8))',
       },
       {
         id: 'oasis',
@@ -168,9 +182,14 @@ const HomePage = () => {
         subtitle: t('landing.pricing.subtitle'),
         badge: t('landing.nav.pricing'),
         gradient:
-          'linear-gradient(145deg, hsla(155, 60%, 78%, 0.45), hsla(214, 60%, 80%, 0.35), hsla(218, 40%, 78%, 0.45))',
+          'linear-gradient(145deg, hsla(155, 60%, 82%, 0.52), hsla(214, 58%, 86%, 0.42), hsla(218, 42%, 80%, 0.45))',
       },
     ],
+    [t],
+  );
+
+  const themeCards: ThemeCardItem[] = useMemo(
+    () => (t('landing.themes.cards') as unknown as ThemeCardItem[]) || [],
     [t],
   );
 
@@ -249,7 +268,14 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-bg via-muted/30 to-bg text-fg" dir={dir}>
+    <div
+      className="min-h-screen bg-gradient-to-b from-bg via-muted/30 to-bg text-fg"
+      style={{
+        backgroundImage:
+          'radial-gradient(circle at 20% 20%, rgba(82, 143, 255, 0.08), transparent 32%), radial-gradient(circle at 80% 12%, rgba(16, 185, 129, 0.08), transparent 30%), radial-gradient(circle at 10% 80%, rgba(94, 234, 212, 0.08), transparent 26%)',
+      }}
+      dir={dir}
+    >
       <div className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -270,9 +296,20 @@ const HomePage = () => {
         <header className="sticky top-0 z-30 border-b border-border/80 bg-card/80 backdrop-blur-xl">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-muted/70 text-primary shadow-sm border border-border">
-                <BarChart3 className="h-5 w-5" aria-hidden />
-              </span>
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 p-2 shadow-lg shadow-primary/10 ring-1 ring-primary/10 dark:bg-secondary/40 dark:shadow-primary/20 dark:ring-primary/30">
+                <img
+                  src={LogoTextArtGreen}
+                  alt={t('landing.brand')}
+                  className="h-full w-full object-contain dark:hidden"
+                  loading="lazy"
+                />
+                <img
+                  src={LogoTextArtWhite}
+                  alt={t('landing.brand')}
+                  className="hidden h-full w-full object-contain dark:block"
+                  loading="lazy"
+                />
+              </div>
               <div className={isRTL ? 'text-right' : 'text-left'}>
                 <p className="text-sm font-semibold text-foreground">{t('landing.brand')}</p>
                 <p className="text-xs text-muted-foreground">{t('landing.hero.eyebrow')}</p>
@@ -548,6 +585,142 @@ const HomePage = () => {
                   </div>
                 </div>
               </MotionDiv>
+            </div>
+          </section>
+
+          <section id="themes" className="scroll-mt-24 py-16">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+              <HeaderBlock
+                title={t('landing.themes.title')}
+                subtitle={t('landing.themes.subtitle')}
+                eyebrow={t('landing.nav.themes')}
+                align={isRTL ? 'end' : 'start'}
+              />
+              <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+                <MotionDiv
+                  className="relative overflow-hidden rounded-3xl border border-border/70 bg-card/80 p-6 shadow-xl"
+                  {...REVEAL_PROPS}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/10 to-primary/5" aria-hidden />
+                  <div className="relative space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <img
+                          src={LogoTextArtGreen}
+                          alt={t('landing.brand')}
+                          className="h-10 w-auto rounded-xl bg-white/70 p-2 shadow-lg shadow-primary/10 ring-1 ring-primary/10 dark:hidden"
+                          loading="lazy"
+                        />
+                        <img
+                          src={LogoTextArtWhite}
+                          alt={t('landing.brand')}
+                          className="hidden h-10 w-auto rounded-xl bg-secondary/40 p-2 shadow-lg shadow-primary/20 ring-1 ring-primary/30 dark:block"
+                          loading="lazy"
+                        />
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <p className="text-sm font-semibold text-foreground">{t('landing.brand')}</p>
+                          <p className="text-xs text-muted-foreground">{t('landing.hero.supporting')}</p>
+                        </div>
+                      </div>
+                      <span className="rounded-full bg-muted/70 px-3 py-1 text-xs font-semibold text-muted-foreground border border-border">
+                        {t('landing.themes.ribbon')}
+                      </span>
+                    </div>
+
+                    <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
+                      {t('landing.themes.description')}
+                    </p>
+
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {themeCards.map((card) => {
+                        const isNight = card.tone === 'night';
+                        return (
+                          <div
+                            key={card.title}
+                            className="group relative overflow-hidden rounded-2xl border border-border/70 p-4 shadow-lg shadow-primary/5"
+                            style={{ background: THEME_GRADIENTS[card.tone] }}
+                          >
+                            <div
+                              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-primary/5 dark:from-black/20 dark:via-black/10 dark:to-primary/20"
+                              aria-hidden
+                            />
+                            <div className="relative flex items-start justify-between gap-3">
+                              <div className="space-y-2">
+                                <span
+                                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
+                                    isNight
+                                      ? 'bg-white/10 text-white ring-1 ring-white/20'
+                                      : 'bg-white/70 text-primary ring-1 ring-primary/10'
+                                  }`}
+                                >
+                                  {card.badge}
+                                </span>
+                                <h3
+                                  className={`text-lg font-semibold leading-tight ${
+                                    isNight ? 'text-white drop-shadow' : 'text-foreground'
+                                  }`}
+                                >
+                                  {card.title}
+                                </h3>
+                                <p
+                                  className={`text-sm leading-relaxed ${
+                                    isNight ? 'text-slate-100/80' : 'text-muted-foreground'
+                                  }`}
+                                >
+                                  {card.description}
+                                </p>
+                              </div>
+                              <div className="relative h-12 w-12 shrink-0 rounded-2xl bg-white/70 p-2 shadow-lg shadow-primary/20 ring-1 ring-primary/10 dark:bg-secondary/50 dark:shadow-primary/30 dark:ring-primary/30">
+                                <img
+                                  src={card.tone === 'day' ? LogoTextArtGreen : LogoTextArtWhite}
+                                  alt={card.title}
+                                  className="h-full w-full object-contain"
+                                  loading="lazy"
+                                />
+                              </div>
+                            </div>
+                            <p
+                              className={`relative mt-3 text-xs font-semibold ${
+                                isNight ? 'text-slate-100/70' : 'text-primary'
+                              }`}
+                            >
+                              {card.note}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </MotionDiv>
+
+                <MotionDiv
+                  className="relative overflow-hidden rounded-3xl border border-border/70 bg-card/80 p-6 shadow-xl"
+                  {...REVEAL_PROPS}
+                  transition={{ ...REVEAL_PROPS.transition, delay: shouldReduceMotion ? 0 : 0.08 }}
+                >
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(82,143,255,0.08),transparent_32%),radial-gradient(circle_at_85%_12%,rgba(56,189,248,0.12),transparent_28%),radial-gradient(circle_at_30%_75%,rgba(16,185,129,0.1),transparent_30%)] dark:bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,0.1),transparent_32%),radial-gradient(circle_at_85%_12%,rgba(82,143,255,0.16),transparent_28%),radial-gradient(circle_at_30%_75%,rgba(16,185,129,0.14),transparent_30%)]" aria-hidden />
+                  <div className="relative space-y-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm font-semibold text-foreground">{t('landing.themes.energy.title')}</p>
+                      <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                        {t('landing.themes.energy.badge')}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground sm:text-base">{t('landing.themes.energy.copy')}</p>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {heroHighlights.map((highlight) => (
+                        <div
+                          key={highlight}
+                          className="flex items-center gap-3 rounded-2xl border border-border bg-gradient-subtle/80 p-4 shadow-sm"
+                        >
+                          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/15 via-accent/20 to-primary/10 shadow-inner" />
+                          <p className="text-sm font-semibold text-foreground">{highlight}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </MotionDiv>
+              </div>
             </div>
           </section>
 
