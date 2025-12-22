@@ -28,8 +28,7 @@ class ContractController extends Controller
                 'category',
                 'creator',
                 'updater',
-                'assignedTo',
-                'assignedBy',
+                'assignedTo', 
             ])
             ->latest()
             ->paginate(50);
@@ -44,8 +43,7 @@ class ContractController extends Controller
                 'category',
                 'creator',
                 'updater',
-                'assignedTo',
-                'assignedBy',
+                'assignedTo', 
             ])
             ->findOrFail($id);
 
