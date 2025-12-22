@@ -97,8 +97,8 @@ const FLOATING_KEYWORD_POSITIONS = [
 ];
 
 const THEME_GRADIENTS: Record<'day' | 'night', string> = {
-  day: 'linear-gradient(135deg, hsla(170, 65%, 92%, 0.95), hsla(214, 70%, 97%, 0.9), hsla(166, 55%, 88%, 0.92))',
-  night: 'linear-gradient(140deg, hsla(218, 32%, 14%, 0.95), hsla(214, 45%, 18%, 0.92), hsla(172, 38%, 20%, 0.88))',
+  day: 'linear-gradient(135deg, hsla(168, 60%, 88%, 0.9), hsla(210, 70%, 95%, 0.94), hsla(192, 50%, 90%, 0.92))',
+  night: 'linear-gradient(140deg, hsla(220, 36%, 12%, 0.95), hsla(214, 44%, 16%, 0.9), hsla(186, 34%, 18%, 0.9))',
 };
 
 const HomePage = () => {
@@ -637,11 +637,15 @@ const HomePage = () => {
                         return (
                           <div
                             key={card.title}
-                            className="group relative overflow-hidden rounded-2xl border border-border/70 p-4 shadow-lg shadow-primary/5"
+                            className="group relative overflow-hidden rounded-2xl border border-border/70 p-4 shadow-lg shadow-primary/5 backdrop-blur-sm"
                             style={{ background: THEME_GRADIENTS[card.tone] }}
                           >
                             <div
-                              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-primary/5 dark:from-black/20 dark:via-black/10 dark:to-primary/20"
+                              className={`pointer-events-none absolute inset-0 ${
+                                isNight
+                                  ? 'bg-gradient-to-br from-slate-950/70 via-slate-900/45 to-primary/30'
+                                  : 'bg-gradient-to-br from-white/50 via-primary/10 to-white/25'
+                              }`}
                               aria-hidden
                             />
                             <div className="relative flex items-start justify-between gap-3">
@@ -649,22 +653,22 @@ const HomePage = () => {
                                 <span
                                   className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
                                     isNight
-                                      ? 'bg-white/10 text-white ring-1 ring-white/20'
-                                      : 'bg-white/70 text-primary ring-1 ring-primary/10'
+                                      ? 'bg-primary/20 text-sky-50 ring-1 ring-primary/30 backdrop-blur'
+                                      : 'bg-white/75 text-primary-900 ring-1 ring-primary/10 shadow-sm'
                                   }`}
                                 >
                                   {card.badge}
                                 </span>
                                 <h3
                                   className={`text-lg font-semibold leading-tight ${
-                                    isNight ? 'text-white drop-shadow' : 'text-foreground'
+                                    isNight ? 'text-white drop-shadow' : 'text-slate-900'
                                   }`}
                                 >
                                   {card.title}
                                 </h3>
                                 <p
                                   className={`text-sm leading-relaxed ${
-                                    isNight ? 'text-slate-100/80' : 'text-muted-foreground'
+                                    isNight ? 'text-slate-100/85' : 'text-slate-800/80'
                                   }`}
                                 >
                                   {card.description}
@@ -681,7 +685,7 @@ const HomePage = () => {
                             </div>
                             <p
                               className={`relative mt-3 text-xs font-semibold ${
-                                isNight ? 'text-slate-100/70' : 'text-primary'
+                                isNight ? 'text-sky-100/75' : 'text-primary-800'
                               }`}
                             >
                               {card.note}
@@ -711,7 +715,7 @@ const HomePage = () => {
                       {heroHighlights.map((highlight) => (
                         <div
                           key={highlight}
-                          className="flex items-center gap-3 rounded-2xl border border-border bg-gradient-subtle/80 p-4 shadow-sm"
+                          className="flex items-center gap-3 rounded-2xl border border-border/70 bg-card/75 p-4 shadow-sm backdrop-blur dark:bg-secondary/50"
                         >
                           <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/15 via-accent/20 to-primary/10 shadow-inner" />
                           <p className="text-sm font-semibold text-foreground">{highlight}</p>
