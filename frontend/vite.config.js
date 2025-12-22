@@ -77,7 +77,6 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: {
             react: ['react', 'react-dom', 'lucide-react'],
-            pdf: ['@react-pdf-viewer/core', 'pdfjs-dist'],
             cesium: ['cesium', 'resium'],
             deckgl: ['@deck.gl/react', '@deck.gl/layers'],
             tiptap: [

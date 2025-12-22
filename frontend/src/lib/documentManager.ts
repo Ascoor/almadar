@@ -1,9 +1,8 @@
 import html2pdf from 'html2pdf.js';
 import mammoth from 'mammoth';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
-import { saveAs } from 'file-saver'; 
+import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
-import { DOMParser as XMLDOMParser } from 'xmldom';
  
 
 export interface DocumentMetadata {
@@ -164,7 +163,7 @@ export class DocumentManager {
     const xml = await zip.file('word/document.xml')?.async('string');
     if (!xml) return '';
 
-    const doc = new XMLDOMParser().parseFromString(xml, 'application/xml');
+    const doc = new DOMParser().parseFromString(xml, 'application/xml');
     const paragraphs = Array.from(doc.getElementsByTagName('w:p'));
 
     return paragraphs

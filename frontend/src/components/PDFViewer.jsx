@@ -1,87 +1,52 @@
-// src/components/PDFViewer.jsx
-
-import React, { useState } from 'react';
-import { Worker, Viewer } from '@react-pdf-viewer/core';
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import {
-  ChevronLeft,
-  ChevronRight,
-  ZoomIn,
-  ZoomOut,
-  RotateCw,
-  Download,
-} from 'lucide-react';
+import React from 'react';
+import { Download, ExternalLink } from 'lucide-react';
 
 export default function PDFViewer({ fileUrl, isRtl = true }) {
-  const [pageNumber, setPageNumber] = useState(1);
-  const [scale, setScale] = useState(1.0);
-  const [rotation, setRotation] = useState(0);
-
-  const downloadPdf = () => {
-    const link = document.createElement('a');
-    link.href = fileUrl;
-    link.download = 'document.pdf';
-    link.click();
+  const openInNewTab = () => {
+    window.open(fileUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
     <div dir={isRtl ? 'rtl' : 'ltr'} className="space-y-4">
-      {/* Controls */}
       <div className="flex flex-wrap gap-2 justify-between items-center bg-white p-2 rounded shadow">
-        <div className="flex gap-2">
-          <button
-            onClick={() => setPageNumber((p) => Math.max(p - 1, 1))}
-            disabled={pageNumber <= 1}
-            className="text-gray-700 hover:text-blue-600"
-          >
-            <ChevronRight />
-          </button>
-          <span className="text-sm px-2">
-            {isRtl ? `الصفحة ${pageNumber}` : `Page ${pageNumber}`}
-          </span>
-          <button
-            onClick={() => setPageNumber((p) => p + 1)}
-            className="text-gray-700 hover:text-blue-600"
-          >
-            <ChevronLeft />
-          </button>
-        </div>
+        <span className="text-sm text-gray-600">
+          {isRtl ? 'معاينة الملف في بيئة معزولة' : 'Isolated PDF preview'}
+        </span>
 
         <div className="flex gap-2">
-          <button
-            onClick={() => setScale((s) => Math.min(s + 0.25, 3))}
-            className="text-gray-700 hover:text-green-600"
+          <a
+            href={fileUrl}
+            download
+            className="text-gray-700 hover:text-blue-600 inline-flex items-center gap-1"
+            rel="noopener noreferrer"
           >
-            <ZoomIn />
-          </button>
+            <Download className="h-4 w-4" />
+            {isRtl ? 'تنزيل' : 'Download'}
+          </a>
           <button
-            onClick={() => setScale((s) => Math.max(s - 0.25, 0.5))}
-            className="text-gray-700 hover:text-red-600"
+            type="button"
+            onClick={openInNewTab}
+            className="text-gray-700 hover:text-blue-600 inline-flex items-center gap-1"
           >
-            <ZoomOut />
-          </button>
-          <button
-            onClick={() => setRotation((r) => (r + 90) % 360)}
-            className="text-gray-700 hover:text-purple-600"
-          >
-            <RotateCw />
-          </button>
-          <button
-            onClick={downloadPdf}
-            className="text-gray-700 hover:text-blue-600"
-          >
-            <Download />
+            <ExternalLink className="h-4 w-4" />
+            {isRtl ? 'فتح في تبويب جديد' : 'Open in new tab'}
           </button>
         </div>
       </div>
 
-      {/* PDF Document */}
-      <div className="bg-white p-4 border rounded shadow-md overflow-auto">
-        <Worker
-          workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}
+      <div className="bg-white p-4 border rounded shadow-md overflow-hidden">
+        <iframe
+          src={fileUrl}
+          title={isRtl ? 'معاينة PDF' : 'PDF preview'}
+          className="w-full h-[70vh]"
+          loading="lazy"
+          sandbox="allow-same-origin allow-downloads allow-forms allow-popups"
+          referrerPolicy="no-referrer"
         >
-          <Viewer fileUrl={fileUrl} defaultScale={scale} rotation={rotation} />
-        </Worker>
+          {isRtl
+            ? 'المستعرض لا يدعم معاينة ملفات PDF. يمكنك تنزيل الملف وفتحه محليًا.'
+            : 'Your browser does not support inline PDF previews. Please download the file instead.'}
+        </iframe>
       </div>
     </div>
   );
