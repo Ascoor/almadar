@@ -21,9 +21,20 @@ export default {
         popover: { DEFAULT: 'var(--popover)', foreground: 'var(--fg)' },
 
         // brand & actions
-        primary: { DEFAULT: 'var(--primary)', foreground: 'var(--primary-foreground)' },
-        secondary: 'var(--secondary)',
-        accent: 'var(--accent)',
+        primary: {
+          DEFAULT: 'var(--primary)',
+          foreground: 'var(--primary-foreground)',
+          hover: 'var(--primary-hover)',
+          light: 'var(--primary-light)',
+        },
+        secondary: {
+          DEFAULT: 'var(--secondary)',
+          hover: 'var(--secondary-hover)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          hover: 'var(--accent-hover)',
+        },
 
         // states
         success: 'var(--success)',
@@ -53,8 +64,8 @@ export default {
       },
       backgroundImage: {
         'map-gradient': 'linear-gradient(90deg, var(--map-start), var(--map-mid), var(--map-end))',
-        'gradient-primary': 'linear-gradient(135deg, var(--primary), var(--accent))',
-        'gradient-subtle': 'var(--gradient-subtle)',   // ⬅️ مضافة
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-subtle': 'var(--gradient-subtle)',
         'gradient-card': 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06))',
       },
       boxShadow: {
