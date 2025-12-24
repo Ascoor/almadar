@@ -206,36 +206,34 @@
   "landing": {
     "brand": "Almadar Legal OS",
     "nav": {
-      "hero": "Overview",
-      "themes": "Themes",
-      "features": "Features",
+      "hero": "Home",
+      "themes": "Vision",
+      "features": "Overview",
       "how": "How it works",
-      "screens": "Screens",
-      "testimonials": "Testimonials",
-      "pricing": "Pricing",
+      "screens": "Slides",
       "faq": "FAQ",
       "contact": "Contact"
     },
     "hero": {
-      "eyebrow": "Premium Libyan legal studio",
-      "title": "A refined home for legal work by day and by night",
-      "subtitle": "Polished landing with a luminous daylight palette and a dimmed night mode accented by mint glows and calm typography.",
-      "primaryCta": "Get started",
-      "secondaryCta": "View platform",
-      "supporting": "Secure SSO access with auditable activity and curated onboarding.",
+      "eyebrow": "Case and investigation platform",
+      "title": "Almadar streamlines your legal work from intake to closure",
+      "subtitle": "Arabic-first experience with quick language switching, unifying contracts, investigations, litigation, and notices.",
+      "primaryCta": "Start now",
+      "secondaryCta": "See how it works",
+      "supporting": "Secure access, precise permissions, and guided onboarding.",
       "keywords": [
-        "Arabic-first",
-        "English-ready",
-        "Responsive",
-        "Daylight gradients",
-        "Night glow",
-        "Adaptive motion"
+        "Bilingual ready",
+        "Session tracking",
+        "Instant alerts",
+        "Archive-ready",
+        "Responsive design",
+        "Reliable data"
       ],
       "highlights": [
-        "Hero cover optimized for ministries",
-        "Live bilingual preview without clutter",
-        "Soft daylight gradients with mint finishes",
-        "Night cards with low-light teal glows"
+        "Arabic is the default experience",
+        "Dashboards for contracts and cases",
+        "Clear workflows for every team",
+        "Deadline and outcome reminders"
       ]
     },
     "themes": {
@@ -297,66 +295,66 @@
       ]
     },
     "features": {
-      "title": "All your legal work in one workspace",
-      "subtitle": "Token-driven UI keeps contrast strong in Arabic and English alike.",
+      "title": "What Almadar delivers",
+      "subtitle": "An Arabic-first experience that keeps all legal work in one guided flow.",
       "items": [
         {
-          "title": "Unified matter hub",
-          "description": "Track contracts, investigations, and litigations in one coherent timeline.",
+          "title": "Immediate intake",
+          "description": "Register cases and investigations with automatic deadline reminders.",
           "icon": "Layers"
         },
         {
-          "title": "Automated follow-ups",
-          "description": "Smart reminders and due dates to prevent delays.",
+          "title": "Contract control",
+          "description": "Approval paths with instant alerts before expiry.",
           "icon": "Clock3"
         },
         {
-          "title": "Real-time intelligence",
-          "description": "Dashboards powered by token-driven theming for immediate clarity.",
+          "title": "Clear dashboards",
+          "description": "See critical matters and upcoming sessions with RTL/LTR-friendly layouts.",
           "icon": "Sparkles"
         },
         {
           "title": "Secure collaboration",
-          "description": "Share briefs, evidence, and notes with guided permissions.",
+          "description": "Share memos and evidence with fine-grained permissions.",
           "icon": "ShieldCheck"
         },
         {
           "title": "Bilingual by design",
-          "description": "RTL/LTR aware layouts, translation-aware formatting, and mirrored navigation.",
+          "description": "Arabic by default with instant English switching when needed.",
           "icon": "ArrowLeftRight"
         },
         {
-          "title": "Audit ready",
-          "description": "Traceable actions with exportable reports and printable summaries.",
+          "title": "Audit-ready",
+          "description": "Traceable actions, exportable reports, and alerts on completed steps.",
           "icon": "CheckCircle2"
         }
       ]
     },
     "how": {
-      "title": "How it works",
-      "subtitle": "Lean onboarding, structured capture, and guided follow-through.",
+      "title": "How Almadar works",
+      "subtitle": "Simple steps that keep teams aligned in Arabic by default.",
       "steps": [
         {
-          "title": "Connect",
-          "description": "Sign in securely and sync existing matters without friction."
+          "title": "Launch",
+          "description": "Secure sign-in readies your team instantly with Arabic as the default language."
         },
         {
           "title": "Organize",
-          "description": "Structure cases, contracts, and notifications with guided templates."
+          "description": "Guided templates for contracts and cases keep files and owners in one place."
         },
         {
-          "title": "Monitor",
-          "description": "Follow timelines, hearings, and KPIs with bilingual reports."
+          "title": "Track",
+          "description": "Timelines and instant alerts ensure no hearing or deadline is missed."
         }
       ]
     },
     "screens": {
-      "title": "A cockpit built for clarity",
-      "subtitle": "Token-first components keep contrast, spacing, and typography consistent in every mode.",
+      "title": "What you see",
+      "subtitle": "Quick notes on how the moving slides support your legal journey.",
       "highlights": [
-        "Role-based dashboards for cases, contracts, and investigations",
-        "Timeline view for hearings and submissions",
-        "Inline editing with autosave and audit history"
+        "High-end backgrounds to showcase services",
+        "Punchy opening copy ready for print",
+        "Instant switching between Arabic and English"
       ]
     },
     "testimonials": {
@@ -439,6 +437,31 @@
       "primary": "Book a demo",
       "secondary": "Talk to an expert"
     },
-    "loginCta": "Sign in"
+    "loginCta": "Sign in",
+    "slides": {
+      "title": "Live promotional slides",
+      "subtitle": "Professional backdrops with concise messages that introduce the platform.",
+      "badge": "Live tour",
+      "items": [
+        {
+          "imageKey": "welcome2",
+          "title": "Arabic-first welcome",
+          "description": "A visual welcome that keeps Arabic front and center with balanced gradients.",
+          "tagline": "Ideal for ministries and legal offices."
+        },
+        {
+          "imageKey": "welcome",
+          "title": "Unified workflow",
+          "description": "A single timeline connecting investigations, contracts, and hearings with automated nudges.",
+          "tagline": "From intake to closure on one screen."
+        },
+        {
+          "imageKey": "login",
+          "title": "Secure access",
+          "description": "Granular permissions, audit logs, and instant alerts for every action.",
+          "tagline": "Peace of mind with fast decisions."
+        }
+      ]
+    }
   }
 }
