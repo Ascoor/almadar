@@ -28,10 +28,11 @@ const interpolate = (str, params = {}) =>
 export const LanguageProvider = ({ children }) => {
   // Source of truth for language, dir, and <html> attributes
   const getInitialLanguage = () => {
-    if (typeof window === 'undefined') return 'en';
+    if (typeof window === 'undefined') return 'ar';
     const storedLang = localStorage.getItem('lang');
     if (storedLang === 'ar' || storedLang === 'en') return storedLang;
-    return navigator.language?.toLowerCase().startsWith('ar') ? 'ar' : 'en';
+    if (navigator.language?.toLowerCase().startsWith('ar')) return 'ar';
+    return 'ar';
   };
 
   const [lang, setLang] = useState(getInitialLanguage);

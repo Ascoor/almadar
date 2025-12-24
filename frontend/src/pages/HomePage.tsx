@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState, type ElementType } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowLeftRight,
-  BarChart3,
   CheckCircle2,
   Clock3,
   Layers,
@@ -14,7 +13,13 @@ import {
   X,
 } from 'lucide-react';
 import Login from '@/components/organisms/Login';
-import { LogoTextArtGreen, LogoTextArtWhite, WelcomeImage2 } from '@/assets/images';
+import {
+  LogoTextArtGreen,
+  LogoTextArtWhite,
+  LoginBg,
+  WelcomeImage,
+  WelcomeImage2,
+} from '@/assets/images';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import { useLanguage } from '@/context/LanguageContext';
 import LanguageToggle from '@/components/common/LanguageToggle';
@@ -37,21 +42,6 @@ interface StepItem {
   description: string;
 }
 
-interface TestimonialItem {
-  quote: string;
-  name: string;
-  role: string;
-}
-
-interface PlanItem {
-  name: string;
-  price: string;
-  period: string;
-  description: string;
-  features: string[];
-  badge?: string;
-}
-
 interface LayoutPreviewItem {
   id: string;
   tone: 'day' | 'night';
@@ -69,6 +59,13 @@ interface ThemeCardItem {
   note: string;
 }
 
+interface SlideItem {
+  imageKey: keyof typeof SLIDE_IMAGES;
+  title: string;
+  description: string;
+  tagline: string;
+}
+
 const ICON_MAP = {
   Layers,
   Clock3,
@@ -76,6 +73,12 @@ const ICON_MAP = {
   ShieldCheck,
   ArrowLeftRight,
   CheckCircle2,
+};
+
+const SLIDE_IMAGES = {
+  welcome: WelcomeImage,
+  welcome2: WelcomeImage2,
+  login: LoginBg,
 };
 
 const MotionDiv = motion.div;
@@ -108,6 +111,7 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const sectionsRef = useRef<Record<string, HTMLElement | null>>({});
   const isRTL = dir === 'rtl';
@@ -119,8 +123,6 @@ const HomePage = () => {
       { id: 'features', label: t('landing.nav.features') },
       { id: 'how', label: t('landing.nav.how') },
       { id: 'screens', label: t('landing.nav.screens') },
-      { id: 'testimonials', label: t('landing.nav.testimonials') },
-      { id: 'pricing', label: t('landing.nav.pricing') },
       { id: 'faq', label: t('landing.nav.faq') },
       { id: 'contact', label: t('landing.nav.contact') },
     ],
@@ -145,15 +147,19 @@ const HomePage = () => {
     [t],
   );
 
-  const testimonials: TestimonialItem[] = useMemo(
-    () => (t('landing.testimonials.items') as unknown as TestimonialItem[]) || [],
-    [t],
-  );
+  const slides: SlideItem[] = useMemo(() => {
+    const items = (t('landing.slides.items') as unknown as SlideItem[]) || [];
+    return items.map((item) => ({
+      ...item,
+      imageKey: item.imageKey in SLIDE_IMAGES ? item.imageKey : 'welcome',
+    }));
+  }, [t]);
 
-  const plans: PlanItem[] = useMemo(
-    () => (t('landing.pricing.plans') as unknown as PlanItem[]) || [],
-    [t],
-  );
+  useEffect(() => {
+    if (slides.length) {
+      setActiveSlide(0);
+    }
+  }, [slides.length]);
 
   const sampleLayouts: LayoutPreviewItem[] = useMemo(
     () => [
@@ -169,18 +175,18 @@ const HomePage = () => {
       {
         id: 'dusk-shield',
         tone: 'night',
-        title: t('landing.nav.features'),
-        subtitle: t('landing.hero.supporting'),
-        badge: t('landing.nav.features'),
+        title: t('landing.slides.title'),
+        subtitle: t('landing.slides.subtitle'),
+        badge: t('landing.nav.screens'),
         gradient:
           'linear-gradient(140deg, hsla(218, 28%, 12%, 0.9), hsla(218, 32%, 16%, 0.85), hsla(172, 30%, 20%, 0.8))',
       },
       {
         id: 'oasis',
         tone: 'day',
-        title: t('landing.pricing.title'),
-        subtitle: t('landing.pricing.subtitle'),
-        badge: t('landing.nav.pricing'),
+        title: t('landing.how.title'),
+        subtitle: t('landing.how.subtitle'),
+        badge: t('landing.nav.how'),
         gradient:
           'linear-gradient(145deg, hsla(155, 60%, 82%, 0.52), hsla(214, 58%, 86%, 0.42), hsla(218, 42%, 80%, 0.45))',
       },
@@ -231,6 +237,16 @@ const HomePage = () => {
 
     return () => observer.disconnect();
   }, [navLinks]);
+
+  useEffect(() => {
+    if (!slides.length || shouldReduceMotion) return undefined;
+    const intervalId = setInterval(
+      () => setActiveSlide((prev) => (prev + 1) % slides.length),
+      6000,
+    );
+
+    return () => clearInterval(intervalId);
+  }, [slides.length, shouldReduceMotion]);
 
   useEffect(() => {
     if (!showLoginForm) return;
@@ -801,51 +817,67 @@ const HomePage = () => {
           <section id="screens" className="scroll-mt-24 bg-card/40 py-16">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
               <HeaderBlock
-                title={t('landing.screens.title')}
-                subtitle={t('landing.screens.subtitle')}
+                title={t('landing.slides.title')}
+                subtitle={t('landing.slides.subtitle')}
                 eyebrow={t('landing.nav.screens')}
                 align={isRTL ? 'end' : 'start'}
               />
-              <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.35fr_1fr]">
+              <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
                 <MotionDiv
-                  className="relative overflow-hidden rounded-3xl border border-border bg-card/85 p-6 shadow-xl"
+                  className="relative overflow-hidden rounded-3xl border border-border bg-card/90 shadow-xl"
                   {...REVEAL_PROPS}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/15" aria-hidden />
-                  <div className="relative space-y-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-full bg-muted/70 px-3 py-1 text-xs font-semibold text-muted-foreground border border-border">
-                        {t('landing.nav.screens')}
-                      </span>
-                      <span className="rounded-full bg-gradient-primary/90 px-3 py-1 text-xs font-semibold text-primary-foreground shadow">
-                        {t('landing.nav.hero')}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      {(t('landing.screens.highlights') as string[]).map((highlight) => (
-                        <div
-                          key={highlight}
-                          className="flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card/90 p-4 shadow-md"
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-subtle text-primary shadow">
-                              <Layers className="h-5 w-5" aria-hidden />
-                            </span>
-                            <p className="text-sm font-semibold text-foreground">{t('landing.hero.eyebrow')}</p>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{highlight}</p>
+                  {slides.length > 0 && (
+                    <div className="relative h-[340px] w-full sm:h-[420px]">
+                      {slides.map((slide, index) => {
+                        const isActive = index === activeSlide;
+                        return (
+                          <motion.div
+                            key={slide.title}
+                            className="absolute inset-0"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: isActive ? 1 : 0 }}
+                            transition={{ duration: 0.6 }}
+                          >
+                            <div
+                              className="h-full w-full bg-cover bg-center"
+                              style={{
+                                backgroundImage: `linear-gradient(135deg, rgba(4, 9, 20, 0.55), rgba(4, 9, 20, 0.2)), url(${SLIDE_IMAGES[slide.imageKey]})`,
+                              }}
+                            />
+                          </motion.div>
+                        );
+                      })}
+                      <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-bg/80 via-bg/50 to-transparent p-6">
+                        <p className="inline-flex w-fit items-center gap-2 rounded-full bg-muted/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground border border-border">
+                          {t('landing.slides.badge')}
+                        </p>
+                        <h3 className="mt-3 text-2xl font-heading leading-tight text-foreground sm:text-3xl">
+                          {slides[activeSlide]?.title}
+                        </h3>
+                        <p className="mt-2 max-w-3xl text-sm text-muted-foreground sm:text-base">
+                          {slides[activeSlide]?.description}
+                        </p>
+                        <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-primary">
+                          <Sparkles className="h-4 w-4" aria-hidden />
+                          {slides[activeSlide]?.tagline}
                         </div>
-                      ))}
-                    </div>
-                    <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                      {stats.slice(0, 4).map((stat) => (
-                        <div key={stat.label} className="rounded-xl border border-border bg-card/90 p-3 text-center shadow-sm">
-                          <p className="text-xs text-muted-foreground">{stat.label}</p>
-                          <p className="text-lg font-bold text-foreground">{stat.value}</p>
+                        <div className="mt-5 flex items-center gap-3">
+                          {slides.map((slide, index) => (
+                            <button
+                              key={slide.title}
+                              type="button"
+                              className={`h-2.5 w-2.5 rounded-full transition ${
+                                index === activeSlide ? 'bg-primary shadow-glow' : 'bg-muted hover:bg-primary/60'
+                              }`}
+                              onClick={() => setActiveSlide(index)}
+                              aria-label={slide.title}
+                            />
+                          ))}
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </MotionDiv>
 
                 <MotionDiv
@@ -854,42 +886,23 @@ const HomePage = () => {
                   transition={{ ...REVEAL_PROPS.transition, delay: shouldReduceMotion ? 0 : 0.08 }}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-foreground">{t('landing.features.subtitle')}</p>
+                    <p className="text-sm font-semibold text-foreground">{t('landing.screens.subtitle')}</p>
                     <span className="rounded-full bg-muted/70 px-3 py-1 text-xs font-semibold text-muted-foreground border border-border">
                       {t('landing.hero.supporting')}
                     </span>
                   </div>
-                  <div className="flex snap-x gap-3 overflow-x-auto pb-2 [scrollbar-color:theme(colors.primary.DEFAULT)_transparent]">
-                    {features.map((feature) => (
+                  <div className="flex flex-col gap-3">
+                    {(t('landing.screens.highlights') as string[]).map((highlight) => (
                       <div
-                        key={feature.title}
-                        className="min-w-[220px] snap-start rounded-2xl border border-border bg-card/90 p-4 shadow-md"
+                        key={highlight}
+                        className="flex items-center gap-3 rounded-2xl border border-border bg-card/90 p-4 shadow-sm"
                       >
-                        <div className="flex items-center gap-3">
-                          <span className="grid h-10 w-10 place-items-center rounded-xl bg-muted/70 text-primary shadow-sm">
-                            {(() => {
-                              const Icon = ICON_MAP[feature.icon] as ElementType;
-                              return <Icon className="h-5 w-5" aria-hidden />;
-                            })()}
-                          </span>
-                          <p className="text-sm font-semibold text-foreground">{feature.title}</p>
-                        </div>
-                        <p className="mt-2 text-xs text-muted-foreground">{feature.description}</p>
+                        <span className="grid h-10 w-10 place-items-center rounded-xl bg-muted/70 text-primary shadow-sm">
+                          <Layers className="h-5 w-5" aria-hidden />
+                        </span>
+                        <p className="text-sm text-foreground">{highlight}</p>
                       </div>
                     ))}
-                  </div>
-                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card/90 p-4 shadow-sm">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{t('landing.contact.title')}</p>
-                      <p className="text-xs text-muted-foreground">{t('landing.contact.subtitle')}</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleOpenLogin}
-                      className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-                    >
-                      {t('landing.hero.primaryCta')}
-                    </button>
                   </div>
                 </MotionDiv>
               </div>
@@ -924,7 +937,7 @@ const HomePage = () => {
                             {t('landing.nav.features')}
                           </span>
                           <span className="rounded-lg border border-border/60 bg-muted/60 px-2 py-1 font-semibold text-foreground">
-                            {t('landing.nav.pricing')}
+                            {t('landing.nav.screens')}
                           </span>
                           <span className="rounded-lg border border-border/60 bg-muted/60 px-2 py-1 font-semibold text-foreground">
                             {t('landing.nav.faq')}
@@ -938,88 +951,6 @@ const HomePage = () => {
                   </MotionDiv>
                 ))}
               </div>
-            </div>
-          </section>
-
-          <section id="testimonials" className="scroll-mt-24 py-16">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <HeaderBlock
-                title={t('landing.testimonials.title')}
-                subtitle={t('landing.testimonials.subtitle')}
-                eyebrow={t('landing.nav.testimonials')}
-                align="center"
-              />
-              <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-                {testimonials.map((item, index) => (
-                  <MotionDiv
-                    key={item.name}
-                    className="relative flex h-full flex-col gap-3 overflow-hidden rounded-2xl border border-border bg-card/80 p-5 shadow-md"
-                    {...REVEAL_PROPS}
-                    transition={{ ...REVEAL_PROPS.transition, delay: shouldReduceMotion ? 0 : index * 0.05 }}
-                  >
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/10" aria-hidden />
-                    <Sparkles className="h-5 w-5 text-primary" aria-hidden />
-                    <p className="flex-1 text-sm leading-relaxed text-foreground">{item.quote}</p>
-                    <div className="space-y-1">
-                      <p className="text-sm font-semibold text-foreground">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.role}</p>
-                    </div>
-                  </MotionDiv>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section id="pricing" className="scroll-mt-24 bg-card/40 py-16">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-              <HeaderBlock
-                title={t('landing.pricing.title')}
-                subtitle={t('landing.pricing.subtitle')}
-                eyebrow={t('landing.nav.pricing')}
-                align="center"
-              />
-              <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-                {plans.map((plan) => (
-                  <MotionDiv
-                    key={plan.name}
-                    className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-border bg-card/85 p-6 shadow-md"
-                    {...REVEAL_PROPS}
-                  >
-                    <div className="pointer-events-none absolute inset-x-6 top-0 h-24 rounded-b-full bg-gradient-to-b from-primary/20 via-primary/5 to-transparent opacity-70 transition duration-500 group-hover:opacity-100" aria-hidden />
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-lg font-semibold text-foreground">{plan.name}</p>
-                        <p className="text-sm text-muted-foreground">{plan.description}</p>
-                      </div>
-                      {plan.badge && (
-                        <span className="rounded-full bg-muted/80 px-3 py-1 text-xs font-semibold text-muted-foreground border border-border">
-                          {plan.badge}
-                        </span>
-                      )}
-                    </div>
-                    <div>
-                      <p className="text-3xl font-bold text-foreground">{plan.price}</p>
-                      <p className="text-sm text-muted-foreground">{plan.period}</p>
-                    </div>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      {plan.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2 text-foreground">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" aria-hidden />
-                          <span className="text-sm text-muted-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      type="button"
-                      onClick={handleOpenLogin}
-                      className="mt-auto rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-                    >
-                      {t('landing.loginCta')}
-                    </button>
-                  </MotionDiv>
-                ))}
-              </div>
-              <p className="mt-4 text-center text-sm text-muted-foreground">{t('landing.pricing.note')}</p>
             </div>
           </section>
 
