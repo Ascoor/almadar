@@ -4,14 +4,14 @@
   --font-heading: 'Lora', 'Cairo', Georgia, 'Times New Roman', serif;
   --font-map: 'Roboto', 'Cairo', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 
-  /* Base */
+  /* Base (clean daylight) */
   --bg: hsl(210 25% 97%);
   --fg: hsl(222 22% 12%);
 
   --card: hsl(0 0% 100%);
   --popover: hsl(0 0% 100%);
 
-  /* Brand (more premium teal) */
+  /* Brand (premium teal) */
   --primary: hsl(176 88% 28%);
   --primary-foreground: hsl(0 0% 100%);
   --secondary: hsl(152 70% 40%);
@@ -38,57 +38,48 @@
   --sidebar-muted: hsl(210 18% 92%);
   --sidebar-active: var(--primary);
 
-  /* Glass */
-  --glass-bg: 255 255 255 / 0.82;
-  --glass-border: 0 0 0 / 0.08;
-  --glass-shadow: 0 10px 30px rgba(2, 6, 23, 0.10);
+  /* Glass (day) */
+  --glass-bg: 255 255 255 / 0.78;
+  --glass-border: 0 0 0 / 0.07;
+  --glass-shadow: 0 12px 32px rgba(2, 6, 23, 0.10);
 
-  /* Gradients (use brand variables to stay consistent) */
+  /* Gradients (consistent with tokens) */
   --gradient-primary: linear-gradient(
     135deg,
-    color-mix(in oklab, var(--primary) 85%, white),
-    color-mix(in oklab, var(--accent) 85%, white)
+    color-mix(in oklab, var(--primary) 84%, white),
+    color-mix(in oklab, var(--accent) 82%, white)
   );
   --gradient-subtle: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--bg) 92%, white),
+    color-mix(in oklab, var(--bg) 94%, white),
     color-mix(in oklab, var(--muted) 92%, white)
   );
 
-  /* Charts (keep vivid but slightly softer) */
-  --chart-1: hsl(190 70% 45%);
-  --chart-2: hsl(200 75% 52%);
-  --chart-3: hsl(30 92% 56%);
-  --chart-4: hsl(340 72% 62%);
-  --chart-5: hsl(50 92% 58%);
-  --chart-6: hsl(170 62% 44%);
-  --chart-7: hsl(210 66% 55%);
-  --chart-8: hsl(15 86% 58%);
-  --chart-grid: hsl(210 16% 86%);
-
-  /* KPI */
-  --kpi-title: hsl(220 14% 36%);
-  --kpi-value: var(--primary);
-  --kpi-positive: var(--success);
-  --kpi-positive-bg: color-mix(in oklab, var(--success) 14%, transparent);
-  --kpi-negative: hsl(0 72% 46%);
-  --kpi-negative-bg: color-mix(in oklab, var(--kpi-negative) 14%, transparent);
-
-  /* Map gradient */
-  --map-start: color-mix(in oklab, var(--primary) 85%, white);
-  --map-mid: color-mix(in oklab, var(--secondary) 85%, white);
-  --map-end: color-mix(in oklab, var(--accent) 85%, white);
-
-  /* Neon */
-  --neon-title: rgba(20, 255, 98, 0.81);
-
-  /* Shadows */
+  /* Shadows (day) */
   --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.05);
-  --shadow-md: 0 10px 26px rgba(2, 6, 23, 0.10);
-  --shadow-lg: 0 18px 56px rgba(2, 6, 23, 0.14);
+  --shadow-md: 0 12px 28px rgba(2, 6, 23, 0.10);
+  --shadow-lg: 0 20px 60px rgba(2, 6, 23, 0.14);
   --shadow-glow:
-    0 0 0 2px color-mix(in oklab, var(--primary) 28%, transparent),
-    0 18px 60px color-mix(in oklab, var(--primary) 26%, transparent);
+    0 0 0 2px color-mix(in oklab, var(--primary) 20%, transparent),
+    0 18px 60px color-mix(in oklab, var(--primary) 18%, transparent);
+
+  /* Neon (kept, but day is subtle) */
+  --neon-title: rgba(20, 255, 98, 0.55);
+
+  /* Panel behind list to separate from details panel */
+  --comments-panel: color-mix(in oklab, var(--card) 78%, var(--muted));
+  /* each comment card surface (more contrast vs panel) */
+  --comments-item: color-mix(in oklab, var(--card) 92%, var(--bg));
+  /* input / soft surfaces */
+  --comments-soft: color-mix(in oklab, var(--muted) 62%, white);
+
+  /* neon halo (day: super subtle) */
+  --comments-halo: color-mix(in oklab, var(--primary) 14%, transparent);
+  /* inner outline for glass */
+  --comments-outline: color-mix(in oklab, var(--primary) 14%, transparent);
+
+  /* tiny separators inside comment card */
+  --comments-divider: color-mix(in oklab, var(--border) 65%, transparent);
 }
 
 /* --------------------- DARK THEME ---------------------- */
@@ -97,13 +88,13 @@
   --fg: hsl(210 30% 96%);
 
   /* cards slightly lighter than bg for depth */
-  --card: hsl(225 30% 11%);
+  --card: hsl(182, 77%, 9%);
   --popover: hsl(225 30% 11%);
 
   /* brand shifts brighter in dark */
-  --primary: hsl(168 70% 48%);
+  --primary: hsl(168 70% 50%);
   --primary-foreground: hsl(225 40% 7%);
-  --secondary: hsl(190 70% 42%);
+  --secondary: hsl(190 70% 44%);
   --accent: hsl(38 90% 60%);
 
   --muted: hsl(225 22% 16%);
@@ -123,14 +114,16 @@
   --sidebar-muted: hsl(225 22% 15%);
   --sidebar-active: var(--primary);
 
-  --glass-bg: 0 0 0 / 0.45;
+  /* Glass (dark) */
+  --glass-bg: 0 0 0 / 0.38;
   --glass-border: 255 255 255 / 0.12;
-  --glass-shadow: 0 12px 42px rgba(0, 0, 0, 0.55);
+  --glass-shadow: 0 16px 48px rgba(0, 0, 0, 0.58);
 
+  /* Gradient (dark) */
   --gradient-primary: linear-gradient(
     135deg,
-    color-mix(in oklab, var(--primary) 82%, black),
-    color-mix(in oklab, var(--secondary) 78%, black)
+    color-mix(in oklab, var(--primary) 78%, black),
+    color-mix(in oklab, var(--secondary) 74%, black)
   );
   --gradient-subtle: linear-gradient(
     180deg,
@@ -138,49 +131,43 @@
     color-mix(in oklab, var(--card) 88%, black)
   );
 
-  /* charts: still visible but not neon */
-  --chart-1: hsl(168 60% 44%);
-  --chart-2: hsl(200 70% 62%);
-  --chart-3: hsl(46 80% 58%);
-  --chart-4: hsl(330 60% 64%);
-  --chart-5: hsl(88 45% 44%);
-  --chart-6: hsl(155 55% 44%);
-  --chart-7: hsl(210 55% 58%);
-  --chart-8: hsl(25 35% 70%);
-  --chart-grid: hsl(225 14% 26%);
-
-  --map-start: color-mix(in oklab, var(--primary) 78%, black);
-  --map-mid: color-mix(in oklab, var(--secondary) 72%, black);
-  --map-end: color-mix(in oklab, var(--ring) 60%, black);
-
+  /* Shadows (dark) */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 12px 34px rgba(0, 0, 0, 0.55);
-  --shadow-lg: 0 26px 68px rgba(0, 0, 0, 0.65);
+  --shadow-md: 0 14px 38px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 28px 78px rgba(0, 0, 0, 0.68);
   --shadow-glow:
-    0 0 0 2px color-mix(in oklab, var(--ring) 28%, transparent),
-    0 22px 70px color-mix(in oklab, var(--primary) 22%, transparent);
+    0 0 0 2px color-mix(in oklab, var(--ring) 26%, transparent),
+    0 24px 78px color-mix(in oklab, var(--primary) 22%, transparent);
 
-  --kpi-title: hsl(220 14% 74%);
-  --kpi-value: var(--primary);
-  --kpi-positive: hsl(145 75% 52%);
-  --kpi-positive-bg: color-mix(in oklab, var(--kpi-positive) 16%, transparent);
-  --kpi-negative: hsl(0 70% 58%);
-  --kpi-negative-bg: color-mix(in oklab, var(--kpi-negative) 16%, transparent);
+  /* Neon: night stronger but still soft */
+  --neon-title: rgba(0, 255, 210, 0.65);
+
+  /* ---------- COMMENT THEME TOKENS (dark) ---------- */
+  
+  --comments-panel: color-mix(in oklab, var(--card) 70%, var(--bg));
+  --comments-item: color-mix(in oklab, var(--card) 84%, var(--bg));
+  --comments-soft: color-mix(in oklab, var(--muted) 62%, var(--card));
+
+  --comments-halo: color-mix(in oklab, var(--ring) 18%, transparent);
+  --comments-outline: color-mix(in oklab, var(--ring) 16%, transparent);
+
+  --comments-divider: color-mix(in oklab, var(--border) 70%, transparent);
 }
 
 /* Radius */
 :root, .dark { --radius: 1rem; }
 
+/* Neon title helper (optional) */
 .neon-title {
   color: var(--primary);
   text-shadow:
     0 1px 0 rgba(0,0,0,0.18),
-    0 2px 12px color-mix(in oklab, var(--primary) 35%, transparent);
+    0 2px 14px color-mix(in oklab, var(--primary) 32%, transparent);
 }
 
 .dark .neon-title {
   color: var(--neon-title);
   text-shadow:
-    0 0 10px rgba(0, 223, 255, 0.55),
-    0 0 18px rgba(0, 223, 255, 0.35);
+    0 0 10px rgba(0, 255, 210, 0.30),
+    0 0 22px rgba(0, 255, 210, 0.18);
 }

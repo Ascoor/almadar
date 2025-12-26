@@ -12,190 +12,306 @@ import {
   UserCheck,
   Users,
   XCircle,
+  ExternalLink,
 } from 'lucide-react';
+
+/**
+ * ✅ Neon Glass / Token-based (day + dark)
+ * - Uses your CSS tokens: --bg, --fg, --card, --muted, --border, --ring, --gradient-primary, --shadow-*
+ * - No hardcoded "blue/gray" colors → all driven by tokens for perfect dark/day
+ */
 
 export default function ContractDetails({ selected, onClose, onEdit }) {
   if (!selected) return null;
 
-  const hasDuration = !!selected.end_date;
+  const hasDuration = Boolean(selected.end_date);
   const formattedValue = selected.value
-    ? `${selected.value.toLocaleString()} ريال`
+    ? `${Number(selected.value).toLocaleString()} ريال`
     : '—';
 
+  const attachmentUrl = selected.attachment
+    ? `${API_CONFIG.baseURL}/storage/${selected.attachment}`
+    : null;
+
   return (
-    <div className="relative bg-gradient-to-br from-white to-gray-50 dark:from-zinc-950 dark:to-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl p-6 md:p-10 mt-4 transition-all duration-300 hover:shadow-2xl">
-      {/* إجراءات */}
-      <div className="absolute top-3 left-3 flex items-center gap-2">
+    <div
+      className="
+        relative mt-4
+        rounded-[1.75rem]
+        border border-border
+        bg-card/70 backdrop-blur
+        shadow-[var(--shadow-lg)]
+        overflow-hidden
+      "
+    >
+      {/* top neon bar */}
+      <div className="h-1 w-full bg-[var(--gradient-primary)] opacity-70" />
+
+      {/* dark-only soft halo */}
+      <div
+        className="
+          pointer-events-none absolute -top-28 -right-28 h-[28rem] w-[28rem] rounded-full
+          opacity-0 dark:opacity-100
+          bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--ring)_18%,transparent),transparent_72%)]
+          blur-3xl
+        "
+      />
+
+      {/* header actions */}
+      <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
         {onEdit && (
           <button
+            type="button"
             onClick={onEdit}
-            className="flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700 shadow-sm ring-1 ring-blue-100 transition hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-200 dark:ring-blue-800"
+            className="
+              inline-flex items-center gap-2
+              rounded-full px-3 py-1.5
+              border border-border
+              bg-muted/40 hover:bg-muted/60
+              text-fg text-sm font-semibold
+              shadow-[var(--shadow-sm)]
+              transition
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
+            "
           >
-            <Pencil size={16} />
+            <Pencil size={16} className="text-primary" />
             تعديل
           </button>
         )}
+
         <button
+          type="button"
           onClick={onClose}
-          className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition"
+          className="
+            grid place-items-center
+            w-9 h-9 rounded-full
+            border border-border
+            bg-muted/30 hover:bg-muted/55
+            transition
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
+          "
+          aria-label="إغلاق"
+          title="إغلاق"
         >
-          <XCircle size={22} />
+          <XCircle size={20} className="text-destructive" />
         </button>
       </div>
 
-      {/* عنوان الصفحة */}
-      <div className="mb-6 flex items-center gap-3">
-        <FileText size={28} className="text-blue-600 dark:text-blue-400" />
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          تفاصيل العقد
-        </h2>
-      </div>
+      <div className="p-6 md:p-10">
+        {/* title */}
+        <div className="mb-7 flex items-center gap-3">
+          <div
+            className="
+              grid place-items-center w-11 h-11 rounded-2xl
+              border border-border
+              bg-muted/30
+              shadow-[var(--shadow-sm)]
+            "
+            aria-hidden="true"
+          >
+            <FileText size={22} className="text-primary" />
+          </div>
 
-      {/* معلومات العقد */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
-        <InfoItem icon={<File />} label="رقم العقد" value={selected.number} />
-        <InfoItem
-          icon={<Globe />}
-          label="نوع العقد"
-          value={selected.scope === 'local' ? 'محلي' : 'دولي'}
-        />
-        <InfoItem
-          icon={<Layers />}
-          label="تصنيف العقد"
-          value={selected.category?.name}
-        />
-        <InfoItem
-          icon={<ShieldCheck />}
-          label="الحالة"
-          value={selected.status}
-        />
-        <InfoItem
-          icon={<BadgeDollarSign />}
-          label="قيمة العقد"
-          value={formattedValue}
-        />
+          <div className="leading-tight">
+            <h2 className="text-2xl font-extrabold text-fg">تفاصيل العقد</h2>
+            <p className="text-xs text-muted-foreground">
+              بيانات العقد وتفاصيله حسب النظام
+            </p>
+          </div>
+        </div>
 
-        <InfoItem
-          icon={<Calendar />}
-          label="تاريخ الإنشاء"
-          value={selected.created_at}
-        />
-        <InfoItem
-          icon={<Users />}
-          label="الأطراف المتعاقدة"
-          value={selected.contract_parties}
-        />
-        <InfoItem
-          icon={<Calendar />}
-          label="آخر تحديث"
-          value={selected.updated_at}
-        />
-        <InfoItem
-          icon={<UserCheck />}
-          label="محرر البيان"
-          value={selected.creator?.name}
-        />
-        <InfoItem
-          icon={<UserCheck />}
-          label=" مسئول التعاقد "
-          value={selected.assigned_to?.name}
-        />
-        <InfoItem
-          icon={<UserCheck />}
-          label="آخر من عدّل العقد"
-          value={selected.updater?.name}
-        />
-        <InfoItem
-          icon={<Calendar />}
-          label={hasDuration ? 'تاريخ بداية العقد' : 'تاريخ العقد'}
-          value={selected.start_date}
-        />
-        {hasDuration && (
+        {/* info grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
+          <InfoItem icon={File} label="رقم العقد" value={selected.number} />
           <InfoItem
-            icon={<Calendar />}
-            label="تاريخ نهاية العقد"
-            value={selected.end_date}
+            icon={Globe}
+            label="نوع العقد"
+            value={selected.scope === 'local' ? 'محلي' : 'دولي'}
           />
-        )}
+          <InfoItem
+            icon={Layers}
+            label="تصنيف العقد"
+            value={selected.category?.name}
+          />
+          <InfoItem icon={ShieldCheck} label="الحالة" value={selected.status} />
+          <InfoItem
+            icon={BadgeDollarSign}
+            label="قيمة العقد"
+            value={formattedValue}
+          />
+          <InfoItem
+            icon={Calendar}
+            label="تاريخ الإنشاء"
+            value={selected.created_at}
+          />
+          <InfoItem
+            icon={Users}
+            label="الأطراف المتعاقدة"
+            value={selected.contract_parties}
+          />
+          <InfoItem
+            icon={Calendar}
+            label="آخر تحديث"
+            value={selected.updated_at}
+          />
+          <InfoItem
+            icon={UserCheck}
+            label="محرر البيان"
+            value={selected.creator?.name}
+          />
+          <InfoItem
+            icon={UserCheck}
+            label="مسؤول التعاقد"
+            value={selected.assigned_to?.name}
+          />
+          <InfoItem
+            icon={UserCheck}
+            label="آخر من عدّل العقد"
+            value={selected.updater?.name}
+          />
 
-        {/* المرفق */}
-        <div className="col-span-full sm:col-span-2 lg:col-span-1">
-          <span className="flex items-center gap-2 text-gray-600 dark:text-gray-300 font-semibold">
-            <File size={16} />
-            المرفق:
-          </span>
-          {selected.attachment ? (
-            <a
-              href={`${API_CONFIG.baseURL}/storage/${selected.attachment}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 dark:text-blue-400 hover:underline ml-1 block mt-1 transition"
-            >
-              عرض الملف
-            </a>
-          ) : (
-            <span className="text-gray-400 dark:text-gray-500 ml-1 mt-1 block">
-              لا يوجد
-            </span>
+          <InfoItem
+            icon={Calendar}
+            label={hasDuration ? 'تاريخ بداية العقد' : 'تاريخ العقد'}
+            value={selected.start_date}
+          />
+          {hasDuration && (
+            <InfoItem
+              icon={Calendar}
+              label="تاريخ نهاية العقد"
+              value={selected.end_date}
+            />
           )}
+
+          {/* attachment */}
+          <div className="col-span-full sm:col-span-2 lg:col-span-1">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+              <File size={16} className="text-primary" />
+              <span className="font-semibold">المرفق</span>
+            </div>
+
+            {attachmentUrl ? (
+              <a
+                href={attachmentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  inline-flex items-center gap-2
+                  rounded-2xl px-3 py-2
+                  border border-border
+                  bg-muted/35 hover:bg-muted/60
+                  text-sm font-semibold text-fg
+                  shadow-[var(--shadow-sm)]
+                  transition
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                "
+              >
+                <ExternalLink size={16} className="text-primary" />
+                عرض الملف
+              </a>
+            ) : (
+              <div className="rounded-2xl border border-border bg-muted/25 px-3 py-2 text-sm text-muted-foreground">
+                لا يوجد
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* big sections */}
+        <SectionCard icon={UserCheck} title="ملخص العقد">
+          {selected.summary || 'لا يوجد ملخص متاح.'}
+        </SectionCard>
+
+        <SectionCard icon={FileText} title="وصف العقد">
+          {selected.description || 'لا يوجد وصف متاح.'}
+        </SectionCard>
+
+        <SectionCard icon={Users} title="الأطراف المتعاقدة">
+          {selected.contract_parties || 'لا توجد بيانات حول الأطراف المتعاقدة.'}
+        </SectionCard>
+
+        <SectionCard icon={Notebook} title="ملاحظات">
+          {selected.notes || 'لا توجد ملاحظات.'}
+        </SectionCard>
       </div>
-
-      {/* ملخص العقد */}
-      <SectionCard icon={<UserCheck size={18} />} title="ملخص العقد">
-        {selected.summary || 'لا يوجد ملخص متاح.'}
-      </SectionCard>
-
-      {/* وصف العقد */}
-      <SectionCard icon={<FileText size={18} />} title="وصف العقد">
-        {selected.description || 'لا يوجد وصف متاح.'}
-      </SectionCard>
-
-      {/* الأطراف */}
-      <SectionCard icon={<Users size={18} />} title="الأطراف المتعاقدة">
-        {selected.contract_parties || 'لا توجد بيانات حول الأطراف المتعاقدة.'}
-      </SectionCard>
-
-      {/* ملاحظات */}
-      <SectionCard icon={<Notebook size={18} />} title="ملاحظات">
-        {selected.notes || 'لا توجد ملاحظات.'}
-      </SectionCard>
     </div>
   );
 }
 
-// ✅ عرض معلومات مفصلة بشكل منسق
-function InfoItem({ icon, label, value }) {
+/* ---------- Small Info Tile ---------- */
+function InfoItem({ icon: Icon, label, value }) {
+  const empty = !value;
+
   return (
-    <div className="flex items-start gap-3 text-gray-800 dark:text-gray-100">
-      <div className="pt-1 text-blue-500 dark:text-blue-300 shrink-0">
-        {icon}
-      </div>
-      <div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-          {label}
-        </div>
+    <div
+      className="
+        rounded-2xl border border-border
+        bg-muted/25
+        p-4
+        shadow-[var(--shadow-sm)]
+      "
+    >
+      <div className="flex items-start gap-3">
         <div
-          className={`font-semibold ${!value ? 'text-gray-400 dark:text-zinc-500' : ''}`}
+          className="
+            mt-0.5 grid place-items-center
+            w-9 h-9 rounded-xl
+            border border-border
+            bg-card/60
+          "
+          aria-hidden="true"
         >
-          {value || '—'}
+          <Icon size={18} className="text-primary" />
+        </div>
+
+        <div className="min-w-0">
+          <div className="text-[11px] text-muted-foreground mb-1">{label}</div>
+          <div className={`text-sm font-extrabold ${empty ? 'text-muted-foreground' : 'text-fg'}`}>
+            {value || '—'}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-// ✅ مكون موحد لعرض أقسام كبيرة
-function SectionCard({ icon, title, children }) {
+/* ---------- Big Section Card ---------- */
+function SectionCard({ icon: Icon, title, children }) {
   return (
-    <div className="mt-8 p-6 rounded-2xl bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 shadow-inner">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
-        <span className="text-blue-500 dark:text-blue-300">{icon}</span>
-        {title}
-      </h3>
-      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-        {children}
-      </p>
+    <div
+      className="
+        mt-7
+        rounded-3xl border border-border
+        bg-card/55 backdrop-blur
+        shadow-[var(--shadow-md)]
+        overflow-hidden
+      "
+    >
+      {/* section bar */}
+      <div className="h-1 w-full bg-[var(--gradient-primary)] opacity-60" />
+
+      <div className="p-5 md:p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div
+            className="
+              grid place-items-center w-10 h-10 rounded-2xl
+              border border-border
+              bg-muted/30
+            "
+            aria-hidden="true"
+          >
+            <Icon size={18} className="text-primary" />
+          </div>
+
+          <h3 className="text-base md:text-lg font-extrabold text-fg">
+            {title}
+          </h3>
+        </div>
+
+        <p className="text-sm text-fg/90 leading-relaxed whitespace-pre-line">
+          {children}
+        </p>
+      </div>
     </div>
   );
 }
