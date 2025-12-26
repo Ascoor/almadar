@@ -12,7 +12,7 @@ import {
   updateLegalAdvice,
 } from '@/services/api/legalAdvices';
 import API_CONFIG from '@/config/config';
-import { getRoleLawyer } from '@/services/api/users';
+import { getRoleLawyers } from '@/services/api/users';
 
 const EMPTY_FORM = {
   id: null,
@@ -82,7 +82,7 @@ export default function LegalAdviceModal({
     const fetchLawyers = async () => {
       setLawyersLoading(true);
       try {
-        const list = await getRoleLawyer(); // role=lawyer
+        const list = await getRoleLawyers(); // role=lawyer
         if (mounted) setLawyers(Array.isArray(list) ? list : []);
       } catch (err) {
         console.error(err);
