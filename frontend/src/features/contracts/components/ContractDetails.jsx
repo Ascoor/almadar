@@ -1,18 +1,20 @@
 import API_CONFIG from '@/config/config';
 import {
-  FileText,
-  File,
-  UserCheck,
-  ShieldCheck,
-  Calendar,
   BadgeDollarSign,
-  Layers,
+  Calendar,
+  File,
+  FileText,
   Globe,
-  XCircle,
+  Layers,
   Notebook,
+  Pencil,
+  ShieldCheck,
+  UserCheck,
+  Users,
+  XCircle,
 } from 'lucide-react';
 
-export default function ContractDetails({ selected, onClose }) {
+export default function ContractDetails({ selected, onClose, onEdit }) {
   if (!selected) return null;
 
   const hasDuration = !!selected.end_date;
@@ -22,16 +24,27 @@ export default function ContractDetails({ selected, onClose }) {
 
   return (
     <div className="relative bg-gradient-to-br from-white to-gray-50 dark:from-zinc-950 dark:to-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl p-6 md:p-10 mt-4 transition-all duration-300 hover:shadow-2xl">
-      {/* زر الإغلاق */}
-      <button
-        onClick={onClose}
-        className="absolute top-3 left-3 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition"
-      >
-        <XCircle size={22} />
-      </button>
+      {/* إجراءات */}
+      <div className="absolute top-3 left-3 flex items-center gap-2">
+        {onEdit && (
+          <button
+            onClick={onEdit}
+            className="flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700 shadow-sm ring-1 ring-blue-100 transition hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-200 dark:ring-blue-800"
+          >
+            <Pencil size={16} />
+            تعديل
+          </button>
+        )}
+        <button
+          onClick={onClose}
+          className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition"
+        >
+          <XCircle size={22} />
+        </button>
+      </div>
 
       {/* عنوان الصفحة */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="mb-6 flex items-center gap-3">
         <FileText size={28} className="text-blue-600 dark:text-blue-400" />
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
           تفاصيل العقد
@@ -66,6 +79,11 @@ export default function ContractDetails({ selected, onClose }) {
           icon={<Calendar />}
           label="تاريخ الإنشاء"
           value={selected.created_at}
+        />
+        <InfoItem
+          icon={<Users />}
+          label="الأطراف المتعاقدة"
+          value={selected.contract_parties}
         />
         <InfoItem
           icon={<Calendar />}
@@ -126,6 +144,16 @@ export default function ContractDetails({ selected, onClose }) {
       {/* ملخص العقد */}
       <SectionCard icon={<UserCheck size={18} />} title="ملخص العقد">
         {selected.summary || 'لا يوجد ملخص متاح.'}
+      </SectionCard>
+
+      {/* وصف العقد */}
+      <SectionCard icon={<FileText size={18} />} title="وصف العقد">
+        {selected.description || 'لا يوجد وصف متاح.'}
+      </SectionCard>
+
+      {/* الأطراف */}
+      <SectionCard icon={<Users size={18} />} title="الأطراف المتعاقدة">
+        {selected.contract_parties || 'لا توجد بيانات حول الأطراف المتعاقدة.'}
       </SectionCard>
 
       {/* ملاحظات */}

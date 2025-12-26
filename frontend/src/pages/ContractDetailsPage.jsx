@@ -1,7 +1,12 @@
-import { lazy, Suspense, useMemo } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useContract, useContracts } from '@/hooks/dataHooks';
+import {
+  useContract,
+  useContractCategories,
+  useContracts,
+} from '@/hooks/dataHooks';
+import ContractModal from '@/features/contracts/components/ContractModal';
 
 const ContractDetails = lazy(
   () => import('@/features/contracts/components/ContractDetails'),
@@ -11,9 +16,10 @@ export default function ContractDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data } = useContracts();
-
+  const { data, refetch: refetchContracts } = useContracts();
+  
   const contracts = data?.data?.data || [];
   const initialContract = useMemo(
     () => location.state || contracts.find((c) => c.id === Number(id)),
@@ -25,9 +31,12 @@ export default function ContractDetailsPage() {
     data: contractData,
     isLoading: isContractLoading,
     isFetching: isContractFetching,
+    refetch: refetchContract,
   } = useContract(id, {
     enabled: shouldFetchSingle,
   });
+
+  const { data: contractCategories = [] } = useContractCategories();
 
   const resolvedContract = initialContract || contractData;
 
@@ -43,14 +52,31 @@ export default function ContractDetailsPage() {
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
       <div className="mb-4 flex gap-2">
         <Button onClick={() => navigate(-1)}>رجوع</Button>
+        <Button variant="outline" onClick={() => setIsModalOpen(true)}>
+          تعديل العقد
+        </Button>
       </div>
 
       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
         <ContractDetails
           selected={resolvedContract}
           onClose={() => navigate(-1)}
+          onEdit={() => setIsModalOpen(true)}
         />
       </Suspense>
+
+      {isModalOpen && (
+        <ContractModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          initialData={resolvedContract}
+          categories={contractCategories}
+          reloadContracts={() => {
+            refetchContracts();
+            refetchContract();
+          }}
+        />
+      )}
     </div>
   );
 }
