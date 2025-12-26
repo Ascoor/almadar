@@ -13,10 +13,12 @@ import { useLanguage } from '@/context/LanguageContext';
 const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
   const { login } = useContext(AuthContext);
   const { lang, t } = useLanguage();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
   const [errors, setErrors] = useState({ email: '', password: '' });
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,6 +48,14 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
       submitting: t('login.submitting'),
       cancel: t('login.cancel'),
       terms: t('login.terms'),
+
+      successTitle: t('login.successTitle'),
+      successDescription: t('login.successDescription'),
+      errorTitle: t('login.errorTitle'),
+      errorDescription: t('login.errorDescription'),
+      errorFallback: t('login.errorFallback'),
+      unexpected: t('login.unexpected'),
+      unexpectedDescription: t('login.unexpectedDescription'),
     }),
     [isArabic, t]
   );
@@ -70,7 +80,6 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (isSubmitting) return;
 
     setFormError('');
@@ -87,33 +96,21 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
       const { success, message } = await login(email.trim(), password);
 
       if (success) {
-        if (rememberMe) {
-          localStorage.setItem('rememberedEmail', email.trim());
-        } else {
-          localStorage.removeItem('rememberedEmail');
-        }
+        if (rememberMe) localStorage.setItem('rememberedEmail', email.trim());
+        else localStorage.removeItem('rememberedEmail');
 
-        toast.success(t('login.successTitle'), {
-          description: t('login.successDescription'),
-        });
+        toast.success(labels.successTitle, { description: labels.successDescription });
         onAuthComplete?.(true);
       } else {
-        const errorMsg =
-          message === 'Bad credentials'
-            ? t('login.errorDescription')
-            : message;
+        const errorMsg = message === 'Bad credentials' ? labels.errorDescription : message;
 
-        setFormError(errorMsg || t('login.errorFallback'));
-        toast.error(t('login.errorTitle'), {
-          description: errorMsg || t('login.errorFallback'),
-        });
+        setFormError(errorMsg || labels.errorFallback);
+        toast.error(labels.errorTitle, { description: errorMsg || labels.errorFallback });
         onAuthComplete?.(false);
       }
     } catch (error) {
-      setFormError(error?.message || t('login.unexpectedDescription'));
-      toast.error(t('login.unexpected'), {
-        description: error?.message || t('login.unexpectedDescription'),
-      });
+      setFormError(error?.message || labels.unexpectedDescription);
+      toast.error(labels.unexpected, { description: error?.message || labels.unexpectedDescription });
       onAuthComplete?.(false);
     } finally {
       setIsSubmitting(false);
@@ -124,6 +121,9 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
     handleFormClose?.();
     setEmail('');
     setPassword('');
+    setErrors({ email: '', password: '' });
+    setFormError('');
+    setShowPassword(false);
   };
 
   return (
@@ -136,19 +136,22 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
       exit={{ y: 40, opacity: 0 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
     >
-      <div
-        className="
-          rounded-2xl md:rounded-3xl
-          shadow-lg border border-border/70
-          p-6 md:p-8 space-y-6
-          bg-green-400/40 dark:bg-green-900/40
-        "
+      {/* Special Edition Card */}
+      <motion.div
+        className="login-card-special p-6 md:p-8 space-y-6"
+        whileHover={{ scale: 1.01 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
       >
-        {/* Top bar: language + theme */}
-        <div
-          className={`flex items-center justify-between gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}
-        >
-          <div className="text-xs text-muted-foreground truncate">
+        {/* Top bar */}
+        <div className={`flex items-center justify-between gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+          <div
+            className="
+              text-[11px] md:text-xs truncate
+              px-2 py-1 rounded-full
+              bg-muted border border-border
+              shadow-sm
+            "
+          >
             {labels.brand}
           </div>
           <div className="flex items-center gap-2">
@@ -161,19 +164,32 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
         <div className="text-center space-y-2 mt-2">
           <h2
             id="login-title"
-            className="text-2xl md:text-3xl font-extrabold"
+            className="neon-title text-2xl md:text-3xl font-extrabold tracking-tight"
           >
             {labels.title}
           </h2>
-          <p className="text-xs md:text-sm max-w-xs mx-auto leading-relaxed">
+          <p className="text-xs md:text-sm max-w-xs mx-auto leading-relaxed text-muted-foreground">
             {labels.subtitle}
           </p>
         </div>
 
+        {/* Error box */}
         {formError && (
-          <div className="rounded-lg border border-red-500 bg-red-100 p-3 text-sm text-red-800">
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="
+              rounded-lg p-3 text-sm
+              border
+              bg-[color-mix(in_oklab,var(--destructive)_12%,transparent)]
+              border-[color-mix(in_oklab,var(--destructive)_45%,transparent)]
+              text-destructive
+            "
+            role="alert"
+            aria-live="polite"
+          >
             {formError}
-          </div>
+          </motion.div>
         )}
 
         {/* Form */}
@@ -205,8 +221,9 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
               required
               error={errors.password}
             />
+
             <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-              <label className="flex items-center gap-2 text-xs text-muted-foreground">
+              <label className="flex items-center gap-2 text-xs text-muted-foreground select-none">
                 <input
                   type="checkbox"
                   className="rounded border-border bg-card text-primary focus:ring-ring"
@@ -215,6 +232,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
                 />
                 {labels.remember}
               </label>
+
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
@@ -233,12 +251,16 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
               className="
                 w-full justify-center font-semibold
                 rounded-lg py-2.5 md:py-3
-                bg-gradient-to-r from-primary to-secondary text-primary-foreground
-                shadow-md
+                text-primary-foreground
+                shadow-glow
                 transition-all
-                hover:scale-[1.02] focus:outline-none
+                hover:scale-[1.02]
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
                 disabled:opacity-80 disabled:cursor-not-allowed
               "
+              style={{
+                backgroundImage: 'var(--gradient-primary)',
+              }}
             >
               {isSubmitting ? labels.submitting : labels.submit}
             </Button>
@@ -246,18 +268,23 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
             <button
               type="button"
               onClick={handleCancel}
-              className="w-full py-2.5 md:py-3 font-medium rounded-lg bg-muted text-fg border border-border transition-all hover:bg-muted/80 hover:scale-[1.01]"
+              className="
+                w-full py-2.5 md:py-3 font-medium rounded-lg
+                bg-muted text-fg border border-border
+                transition-all
+                hover:opacity-90 hover:scale-[1.01]
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+              "
             >
               {labels.cancel}
             </button>
 
-            {/* Optional subtle hint under buttons */}
             <p className="text-[11px] md:text-xs text-muted-foreground text-center leading-snug mt-1">
               {labels.terms}
             </p>
           </div>
         </form>
-      </div>
+      </motion.div>
     </motion.div>
   );
 };

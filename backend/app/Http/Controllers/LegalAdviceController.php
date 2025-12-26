@@ -8,8 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Services\AssignmentService;
-use App\Events\EntityActivityRecorded;
-use App\Events\EntityActivityRecorded;
+use App\Events\EntityActivityRecorded; 
 
 class LegalAdviceController extends Controller
 {

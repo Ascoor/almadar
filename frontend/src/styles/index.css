@@ -401,3 +401,63 @@
   .dark .section-title-animate { animation: neonTitlePulse 3.2s ease-in-out infinite; }
   .page-title-animate { animation: neonTitlePulse 3.4s ease-in-out infinite; }
 }
+/* =========================================
+   Special Edition Login Card (Glass + Glow)
+   Uses your existing CSS variables
+========================================= */
+
+.login-card-special {
+  position: relative;
+  overflow: hidden;
+
+  /* bigger + softer radius than your base */
+  border-radius: calc(var(--radius) + 14px);
+
+  /* glass surface from your theme */
+  background: color-mix(in oklab, var(--card) 82%, transparent);
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+
+  /* your glow shadow */
+  box-shadow: var(--shadow-glow);
+
+  /* glass blur */
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.login-card-special::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  /* subtle vertical gradient from your theme */
+  background: var(--gradient-subtle);
+  opacity: 0.85;
+
+  pointer-events: none;
+}
+
+.login-card-special::after {
+  content: "";
+  position: absolute;
+  inset: -42px;
+
+  /* ambient “special edition” light using your theme gradient */
+  background: var(--gradient-primary);
+  opacity: 0.18;
+  filter: blur(48px);
+
+  animation: loginAmbientDrift 10s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes loginAmbientDrift {
+  0%, 100% { transform: translate(-6%, -4%) scale(1.00); }
+  50%      { transform: translate( 6%,  4%) scale(1.08); }
+}
+
+/* Keep content above the effects */
+.login-card-special > * {
+  position: relative;
+  z-index: 1;
+}
