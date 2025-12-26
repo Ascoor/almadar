@@ -22,8 +22,7 @@ class LitigationAction extends Model
 
         'created_by',
         'updated_by',
-        'assigned_to_user_id',
-        'updated_by_user_id',
+        'assigned_to_user_id', 
     ];
     public function creator()
 {
@@ -40,10 +39,7 @@ public function updater()
         return $this->belongsTo(User::class, 'assigned_to_user_id');
     }
 
-    public function lastUpdatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_by_user_id');
-    }
+ 
 
     public function litigation()
     {

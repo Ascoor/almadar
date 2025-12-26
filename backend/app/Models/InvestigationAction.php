@@ -36,13 +36,7 @@ public function updater()
     {
         return $this->belongsTo(User::class, 'assigned_to_user_id');
     }
-
-    public function assignedBy()
-    {
-        return $this->belongsTo(User::class, 'assigned_by_user_id');
-    }
  
-
     // ✅ علاقة: كل إجراء يتبع تحقيق واحد
     public function investigation()
     {

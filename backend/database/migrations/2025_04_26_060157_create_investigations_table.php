@@ -24,7 +24,11 @@ return new class extends Migration
                   ->nullable()
                   ->constrained('users')
                   ->nullOnDelete();
-
+      
+                  $table->foreignId('assigned_to_user_id')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
       
             $table->foreignId('updated_by')
                   ->nullable()

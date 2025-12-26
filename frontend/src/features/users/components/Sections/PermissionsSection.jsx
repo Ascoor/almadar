@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ToggleLeft, ToggleRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
@@ -6,26 +6,40 @@ import { useLanguage } from '@/context/LanguageContext';
 
 const normalizeAction = (action) => (action === 'update' ? 'edit' : action);
 
+// خلي الترتيب اللي تحبه
+const ACTIONS = ['view', 'create', 'edit', 'delete', 'listen'];
+
 /**
- * شكل local:
+ * local:
  * {
  *   [sectionKey]: {
- *     view: { id, name, enabled },
+ *     view: { id, name, enabled, action },
  *     create: {...},
  *     edit: {...},
- *     delete: {...}
+ *     delete: {...},
+ *     listen: {...}
  *   }
  * }
  */
 const groupPermissionsBySection = (all = [], user = []) => {
-  const have = new Set(user.map((p) => p.name.toLowerCase()));
-  return all.reduce((acc, perm) => {
-    let [action, ...parts] = perm.name.toLowerCase().split(' ');
+  const have = new Set((user || []).map((p) => String(p?.name || '').toLowerCase()));
+  const out = {};
+
+  for (const perm of all || []) {
+    const lower = String(perm?.name || '').toLowerCase().trim();
+    if (!lower) continue;
+
+    let [action, ...parts] = lower.split(' ');
     action = normalizeAction(action);
-    const section = parts.join(' ');
-    if (!section) return acc;
-    acc[section] = acc[section] || [];
-    acc[section].push({
+
+    // لو عندك أفعال أخرى غير اللي فوق سيبها تتعدى أو ضيفها
+    if (!ACTIONS.includes(action)) continue;
+
+    const section = parts.join(' ').trim();
+    if (!section) continue;
+
+    out[section] ??= {};
+    out[section][action] = {
       id: perm.id,
       name: lower,
       action,
@@ -47,7 +61,6 @@ function PermissionRow({ label, enabled, reason, onToggle }) {
       aria-disabled={isDisabled}
       onClick={() => {
         if (isDisabled) {
-          // نخليها clickable عشان نقدر نظهر سبب المنع
           toast(reason);
           return;
         }
@@ -76,22 +89,35 @@ function PermissionRow({ label, enabled, reason, onToggle }) {
 }
 
 export default function PermissionsSection({
-  allPermissions,
-  userPermissions,
+  allPermissions = [],
+  userPermissions = [],
   handlePermissionChange,
   loading,
 }) {
   const { hasPermission } = useAuth();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+
+  const canEdit = hasPermission('edit permissions');
+
   const [local, setLocal] = useState({});
-  const isInitialized = useRef(false);
-  const [suppressToast, setSuppressToast] = useState(false);
+  const [pending, setPending] = useState({}); // { [permName]: true }
+
+  const dir = lang === 'ar' ? 'rtl' : 'ltr';
+  const localRef = useRef(local);
+  useEffect(() => {
+    localRef.current = local;
+  }, [local]);
+
+  // ✅ Sync always مع props
+  useEffect(() => {
+    setLocal(groupPermissionsBySection(allPermissions, userPermissions));
+  }, [allPermissions, userPermissions]);
 
   const translatePermission = useMemo(
-    () => (name) => {
-      const key = `permissions.actions.${name}`;
+    () => (action) => {
+      const key = `permissions.actions.${action}`;
       const label = t(key);
-      return label === key ? name : label;
+      return label === key ? action : label;
     },
     [t],
   );
@@ -105,16 +131,11 @@ export default function PermissionsSection({
     [t],
   );
 
-  const actionOrder = ['view', 'create', 'edit', 'delete', 'listen'];
-
-  useEffect(() => {
-    localRef.current = local;
-  }, [local]);
-
-  // ✅ Sync always (بدون isInitialized)
-  useEffect(() => {
-    setLocal(groupPermissionsBySection(allPermissions, userPermissions));
-  }, [allPermissions, userPermissions]);
+  const disabledReasonGlobal = useMemo(() => {
+    if (loading) return t('common.loading') === 'common.loading' ? 'جاري التحميل...' : t('common.loading');
+    if (!canEdit) return t('permissions.noEdit') === 'permissions.noEdit' ? 'ليست لديك صلاحية تعديل الصلاحيات' : t('permissions.noEdit');
+    return null;
+  }, [loading, canEdit, t]);
 
   const markPending = (names, isOn) => {
     setPending((prev) => {
@@ -131,26 +152,15 @@ export default function PermissionsSection({
     setLocal((prev) => {
       const next = { ...prev };
       const sec = { ...(next[sectionKey] || {}) };
-
-      // clone items to avoid mutation bugs
-      for (const k of Object.keys(sec)) {
-        sec[k] = { ...sec[k] };
-      }
-
+      for (const k of Object.keys(sec)) sec[k] = { ...sec[k] };
       patchFn(sec);
       next[sectionKey] = sec;
       return next;
     });
   };
 
-  /**
-   * changes: [{ name, enabled }]
-   * options: passed to handlePermissionChange
-   */
   const applyChanges = async (changes, options = {}) => {
     const names = changes.map((c) => c.name);
-
-    // optimistic update should be done by caller via applySectionPatch
     markPending(names, true);
 
     try {
@@ -160,10 +170,12 @@ export default function PermissionsSection({
         ),
       );
     } catch (err) {
-      // fallback: رجّع من props (source of truth)
+      // رجوع لآخر source of truth
       setLocal(groupPermissionsBySection(allPermissions, userPermissions));
-      toast.error('فشل تحديث الصلاحيات', {
-        description: err?.message || 'حاول مرة أخرى',
+      toast.error(t('permissions.updateFailedTitle') === 'permissions.updateFailedTitle' ? 'فشل تحديث الصلاحيات' : t('permissions.updateFailedTitle'), {
+        description:
+          err?.message ||
+          (t('permissions.tryAgain') === 'permissions.tryAgain' ? 'حاول مرة أخرى' : t('permissions.tryAgain')),
       });
     } finally {
       markPending(names, false);
@@ -171,14 +183,127 @@ export default function PermissionsSection({
   };
 
   const sections = useMemo(() => {
-    // ترتيب لطيف (اختياري)
     return Object.entries(local).sort(([a], [b]) =>
-      translateSection(a).localeCompare(translateSection(b), 'ar'),
+      translateSection(a).localeCompare(translateSection(b), lang === 'ar' ? 'ar' : 'en'),
     );
-  }, [local]);
+  }, [local, translateSection, lang]);
+
+  const enableAll = async (sectionKey, secPerms) => {
+    if (disabledReasonGlobal) return toast.error(disabledReasonGlobal);
+
+    const changes = [];
+    applySectionPatch(sectionKey, (sec) => {
+      for (const a of ACTIONS) {
+        if (sec[a]) {
+          sec[a].enabled = true;
+          changes.push({ name: sec[a].name, enabled: true });
+        }
+      }
+    });
+
+    await applyChanges(changes, { silent: true, batch: true });
+    toast(t('permissions.enabledAll') === 'permissions.enabledAll' ? 'تم تفعيل جميع صلاحيات القسم.' : t('permissions.enabledAll'));
+  };
+
+  const disableAll = async (sectionKey, secPerms) => {
+    if (disabledReasonGlobal) return toast.error(disabledReasonGlobal);
+
+    const changes = [];
+    applySectionPatch(sectionKey, (sec) => {
+      for (const a of ACTIONS) {
+        if (sec[a]) {
+          if (sec[a].enabled) changes.push({ name: sec[a].name, enabled: false });
+          sec[a].enabled = false;
+        }
+      }
+    });
+
+    await applyChanges(changes, { silent: true, batch: true });
+    toast(t('permissions.disabledAll') === 'permissions.disabledAll' ? 'تم إلغاء جميع صلاحيات القسم.' : t('permissions.disabledAll'));
+  };
+
+  const onToggleView = async (sectionKey, secPerms, val) => {
+    const viewPerm = secPerms?.view;
+    if (!viewPerm) return;
+
+    if (disabledReasonGlobal) return toast.error(disabledReasonGlobal);
+    if (pending[viewPerm.name]) return;
+
+    if (val === false) {
+      // إطفاء view => إطفاء الباقي دفعة واحدة
+      const changes = [{ name: viewPerm.name, enabled: false }];
+
+      applySectionPatch(sectionKey, (sec) => {
+        if (sec.view) sec.view.enabled = false;
+        for (const a of ['create', 'edit', 'delete', 'listen']) {
+          if (sec[a]?.enabled) changes.push({ name: sec[a].name, enabled: false });
+          if (sec[a]) sec[a].enabled = false;
+        }
+      });
+
+      await applyChanges(changes, { silent: true, batch: true });
+
+      toast(
+        t('permissions.viewOffCascade') === 'permissions.viewOffCascade'
+          ? 'تم إلغاء عرض القسم وتعطيل جميع صلاحياته.'
+          : t('permissions.viewOffCascade'),
+      );
+      return;
+    }
+
+    // تشغيل view فقط
+    applySectionPatch(sectionKey, (sec) => {
+      if (sec.view) sec.view.enabled = true;
+    });
+
+    await applyChanges([{ name: viewPerm.name, enabled: true }]);
+  };
+
+  const onToggleAction = async (sectionKey, secPerms, actionKey, val) => {
+    const perm = secPerms?.[actionKey];
+    if (!perm) return;
+
+    if (disabledReasonGlobal) return toast.error(disabledReasonGlobal);
+    if (pending[perm.name]) return;
+
+    const viewPerm = secPerms?.view;
+    const isViewOn = viewPerm?.enabled ?? false;
+
+    // لو المستخدم يفعّل create/edit/delete/listen والـ view مطفي => فعّل view تلقائياً
+    const needView = actionKey !== 'view';
+
+    if (needView && val === true && !isViewOn && viewPerm) {
+      applySectionPatch(sectionKey, (sec) => {
+        sec.view.enabled = true;
+        sec[actionKey].enabled = true;
+      });
+
+      await applyChanges(
+        [
+          { name: viewPerm.name, enabled: true },
+          { name: perm.name, enabled: true },
+        ],
+        { silent: true, batch: true },
+      );
+
+      toast(
+        t('permissions.autoEnabledView') === 'permissions.autoEnabledView'
+          ? 'تم تفعيل "عرض" تلقائياً ثم تفعيل الصلاحية.'
+          : t('permissions.autoEnabledView'),
+      );
+      return;
+    }
+
+    // Toggle طبيعي
+    applySectionPatch(sectionKey, (sec) => {
+      sec[actionKey].enabled = val;
+    });
+
+    await applyChanges([{ name: perm.name, enabled: val }]);
+  };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div dir={dir} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {sections.map(([sectionKey, secPerms]) => {
         const viewPerm = secPerms?.view;
         const isViewOn = viewPerm?.enabled ?? false;
@@ -186,162 +311,80 @@ export default function PermissionsSection({
         const total = ACTIONS.filter((a) => secPerms?.[a]).length;
         const enabledCount = ACTIONS.filter((a) => secPerms?.[a]?.enabled).length;
 
-        const disabledReasonGlobal = loading
-          ? 'جاري التحميل...'
-          : !canEdit
-            ? 'ليست لديك صلاحية تعديل الصلاحيات'
-            : null;
-
-        // ✅ Turn OFF view => disable all others in ONE shot + one toast
-        const onToggleView = async (val) => {
-          if (!viewPerm) return;
-
-          if (disabledReasonGlobal) {
-            toast.error(disabledReasonGlobal);
-            return;
-          }
-          toggleLocal(viewPerm.name, val);
-          if (!val) {
-            setSuppressToast(true);
-            let anyDisabled = false;
-            perms
-              .filter((p) => p.action !== 'view' && p.enabled)
-              .forEach((p) => {
-                anyDisabled = true;
-                toggleLocal(p.name, false, { silent: true, batch: true });
-              });
-            if (anyDisabled) {
-              toast('تم تعطيل جميع الصلاحيات بسبب إلغاء عرض القسم.');
-            }
-            setTimeout(() => {
-              setSuppressToast(false);
-            }, 0);
-          }
-
-          // val === true
-          applySectionPatch(sectionKey, (sec) => {
-            if (sec.view) sec.view.enabled = true;
-          });
-
-          await applyChanges([{ name: viewPerm.name, enabled: true }]);
-        };
-
-        // ✅ Toggle create/edit/delete:
-        // if turning ON while view is OFF => auto-enable view then enable action
-        const onToggleAction = async (actionKey, val) => {
-          const perm = secPerms?.[actionKey];
-          if (!perm) return;
-
-          if (disabledReasonGlobal) {
-            toast.error(disabledReasonGlobal);
-            return;
-          }
-
-          if (pending[perm.name]) return;
-
-          // require view
-          const needView = actionKey !== 'view';
-
-          if (needView && val === true && !isViewOn && viewPerm) {
-            // patch local once
-            applySectionPatch(sectionKey, (sec) => {
-              sec.view.enabled = true;
-              sec[actionKey].enabled = true;
-            });
-
-            // update server: view then action (or parallel)
-            await applyChanges(
-              [
-                { name: viewPerm.name, enabled: true },
-                { name: perm.name, enabled: true },
-              ],
-              { silent: true, batch: true },
-            );
-
-            toast('تم تفعيل "عرض" تلقائياً ثم تفعيل الصلاحية.');
-            return;
-          }
-
-          // normal toggle
-          applySectionPatch(sectionKey, (sec) => {
-            sec[actionKey].enabled = val;
-          });
-
-          await applyChanges([{ name: perm.name, enabled: val }]);
-        };
-
-        // ✅ Enable all / disable all per section (اختياري لكنه ممتاز)
-        const enableAll = async () => {
-          if (disabledReasonGlobal) return toast.error(disabledReasonGlobal);
-
-          const changes = [];
-          applySectionPatch(sectionKey, (sec) => {
-            for (const a of ACTIONS) {
-              if (sec[a]) {
-                sec[a].enabled = true;
-                changes.push({ name: sec[a].name, enabled: true });
-              }
-            }
-          });
-
-          await applyChanges(changes, { silent: true, batch: true });
-          toast('تم تفعيل جميع صلاحيات القسم.');
-        };
-
-        const disableAll = async () => {
-          if (disabledReasonGlobal) return toast.error(disabledReasonGlobal);
-
-          const changes = [];
-          applySectionPatch(sectionKey, (sec) => {
-            for (const a of ACTIONS) {
-              if (sec[a]) {
-                if (sec[a].enabled) changes.push({ name: sec[a].name, enabled: false });
-                sec[a].enabled = false;
-              }
-            }
-          });
-
-          await applyChanges(changes, { silent: true, batch: true });
-          toast('تم إلغاء جميع صلاحيات القسم.');
-        };
-
         return (
           <div
             key={sectionKey}
-            className="
-              rounded-2xl border border-border
-              bg-card/75 backdrop-blur
-              shadow-md p-4 space-y-3
-            "
+            className="rounded-2xl border border-border bg-card/75 backdrop-blur shadow-md p-4 space-y-3"
           >
-            <h3 className="text-center font-bold mb-4">
-              {translateSection(section)}
-            </h3>
-            {actionOrder.map((actionType) => {
-              const perm = perms.find((p) => p.action === actionType);
-              if (!perm) return null;
-              const disabled = loading || (actionType !== 'view' && !isViewOn);
-              const onToggle =
-                actionType === 'view'
-                  ? onViewToggle
-                  : (val) => {
-                      if (!hasPermission('edit permissions')) {
-                        toast.error('ليست لديك صلاحية تعديل الصلاحيات');
-                        return;
-                      }
-                      toggleLocal(perm.name, val);
-                    };
-              return (
-                <PermissionRow
-                  key={perm.id}
-                  label={translatePermission(actionType)}
-                  enabled={perm.enabled}
-                  disabled={disabled}
-                  onToggle={onToggle}
-                  suppressToast={suppressToast}
-                />
-              );
-            })}
+            <div className="space-y-1">
+              <h3 className="text-center font-extrabold text-fg">
+                {translateSection(sectionKey)}
+              </h3>
+
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>
+                  {t('permissions.enabledCount') === 'permissions.enabledCount'
+                    ? 'مفعّل'
+                    : t('permissions.enabledCount')}
+                  : <b className="text-fg">{enabledCount}</b> / {total}
+                </span>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => enableAll(sectionKey, secPerms)}
+                    className="px-2 py-1 rounded-lg border border-border bg-muted/40 hover:bg-muted/60 transition"
+                  >
+                    {t('permissions.enableAll') === 'permissions.enableAll' ? 'تفعيل الكل' : t('permissions.enableAll')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => disableAll(sectionKey, secPerms)}
+                    className="px-2 py-1 rounded-lg border border-border bg-muted/40 hover:bg-muted/60 transition"
+                  >
+                    {t('permissions.disableAll') === 'permissions.disableAll' ? 'إلغاء الكل' : t('permissions.disableAll')}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {ACTIONS.map((actionKey) => {
+                const perm = secPerms?.[actionKey];
+                if (!perm) return null;
+
+                const isPending = !!pending[perm.name];
+
+                // سبب التعطيل:
+                // - لو مش مسموح تعديل
+                // - لو action مش view والـ view مطفي
+                // - لو request شغال
+                const reason =
+                  disabledReasonGlobal ||
+                  (actionKey !== 'view' && !isViewOn
+                    ? (t('permissions.needView') === 'permissions.needView'
+                        ? 'يجب تفعيل "عرض" أولاً.'
+                        : t('permissions.needView'))
+                    : isPending
+                      ? (t('common.updating') === 'common.updating' ? 'جاري التحديث...' : t('common.updating'))
+                      : null);
+
+                const onToggle =
+                  actionKey === 'view'
+                    ? (val) => onToggleView(sectionKey, secPerms, val)
+                    : (val) => onToggleAction(sectionKey, secPerms, actionKey, val);
+
+                return (
+                  <PermissionRow
+                    key={perm.id}
+                    label={translatePermission(actionKey)}
+                    enabled={perm.enabled}
+                    reason={reason}
+                    onToggle={onToggle}
+                  />
+                );
+              })}
+            </div>
           </div>
         );
       })}

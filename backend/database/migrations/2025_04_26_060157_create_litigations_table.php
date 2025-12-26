@@ -53,6 +53,11 @@ $table->unsignedSmallInteger('case_year');
                   ->nullable()
                   ->constrained('users')
                   ->nullOnDelete();
+                        
+            $table->foreignId('assigned_to_user_id')
+            ->nullable()
+            ->constrained('users')
+            ->nullOnDelete();
             // الربط مع جدول "litigations"
             $table->foreignId('litigation_id')->constrained()->onDelete('cascade');
 
