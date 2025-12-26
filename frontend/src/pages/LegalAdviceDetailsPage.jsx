@@ -1,7 +1,7 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useLegalAdvices } from '@/hooks/dataHooks';
+import { useLegalAdvice, useLegalAdvices } from '@/hooks/dataHooks';
 
 const LegalAdviceDetails = lazy(
   () => import('@/features/legal-advices/components/LegalAdviceDetails'),
@@ -16,11 +16,20 @@ export default function LegalAdviceDetailsPage() {
   const advices = data?.data || [];
 
   // تحديد المشورة الحالية
-  const initialAdvice =
-    location.state || advices.find((a) => a.id === Number(id));
-  const [current] = useState(initialAdvice);
+  const fallbackAdvice = useMemo(
+    () => location.state || advices.find((a) => a.id === Number(id)),
+    [advices, id, location.state],
+  );
 
-  if (!current) {
+  const { data: advice, isLoading } = useLegalAdvice(id, {
+    initialData: fallbackAdvice,
+  });
+
+  if (isLoading && !advice) {
+    return <div className="p-4">جاري تحميل بيانات المشورة...</div>;
+  }
+
+  if (!advice) {
     return <div className="p-4">لا توجد بيانات</div>;
   }
 
@@ -33,7 +42,7 @@ export default function LegalAdviceDetailsPage() {
 
       {/* تفاصيل المشورة */}
       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
-        <LegalAdviceDetails selected={current} onClose={() => navigate(-1)} />
+        <LegalAdviceDetails selected={advice} onClose={() => navigate(-1)} />
       </Suspense>
     </div>
   );

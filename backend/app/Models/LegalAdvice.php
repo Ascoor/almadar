@@ -44,7 +44,7 @@ class LegalAdvice extends Model
 
     public function comments()
     {
-        return $this->hasMany(LegalAdviceComment::class);
+        return $this->hasMany(LegalAdviceComment::class)->latest();
     }
 
     // العلاقة مع AdviceType (Many-to-One)
