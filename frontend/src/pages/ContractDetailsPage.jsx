@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useContracts } from '@/hooks/dataHooks';
+import { useContract, useContracts } from '@/hooks/dataHooks';
 
 const ContractDetails = lazy(
   () => import('@/features/contracts/components/ContractDetails'),
@@ -18,9 +18,22 @@ export default function ContractDetailsPage() {
   const initialContract =
     location.state || contracts.find((c) => c.id === Number(id));
 
-  const [current] = useState(initialContract || null);
+  const shouldFetchSingle = !initialContract && Boolean(id);
+  const { data: contractData, isLoading: isContractLoading } = useContract(
+    id,
+    {
+      enabled: shouldFetchSingle,
+    },
+  );
 
-  if (!current) {
+  const [current] = useState(initialContract || null);
+  const resolvedContract = current || contractData;
+
+  if (isContractLoading) {
+    return <div className="p-4">جارٍ تحميل بيانات العقد...</div>;
+  }
+
+  if (!resolvedContract) {
     return <div className="p-4">لا توجد بيانات</div>;
   }
 
@@ -31,7 +44,10 @@ export default function ContractDetailsPage() {
       </div>
 
       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
-        <ContractDetails selected={current} onClose={() => navigate(-1)} />
+        <ContractDetails
+          selected={resolvedContract}
+          onClose={() => navigate(-1)}
+        />
       </Suspense>
     </div>
   );

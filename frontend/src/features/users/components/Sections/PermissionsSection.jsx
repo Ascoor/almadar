@@ -1,50 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ToggleLeft, ToggleRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 
-const translatePermission = (name) => {
-  switch (name) {
-    case 'view':
-      return 'عرض';
-    case 'create':
-      return 'إضافة';
-    case 'update':
-    case 'edit':
-      return 'تعديل';
-    case 'delete':
-      return 'حذف';
-    default:
-      return name;
-  }
-};
-
-const translateSection = (section) => {
-  const map = {
-    'litigation-from': 'دعاوى من الشركة',
-    'litigation-against-actions': 'إجراءات دعاوى ضد الشركة',
-    'litigation-against': 'دعاوى ضد الشركة',
-    'litigation-from-actions': 'إجراءات دعاوى من الشركة',
-    legaladvices: 'الرأي والمشورة',
-    'managment-lists': 'قوائم البيانات',
-    litigations: 'القضايا',
-    contracts: 'العقود',
-    investigations: 'التحقيقات',
-    'investigation-actions': 'إجراءات التحقيق',
-    users: 'المستخدمين',
-    roles: 'الأدوار',
-    profile: 'الملف الشخصي',
-    permissions: 'الصلاحيات',
-    archive: 'الأرشيف',
-  };
-  return map[section] || section;
-};
+const normalizeAction = (action) => (action === 'update' ? 'edit' : action);
 
 const groupPermissionsBySection = (all = [], user = []) => {
   const have = new Set(user.map((p) => p.name.toLowerCase()));
   return all.reduce((acc, perm) => {
     let [action, ...parts] = perm.name.toLowerCase().split(' ');
-    if (action === 'update') action = 'edit';
+    action = normalizeAction(action);
     const section = parts.join(' ');
     if (!section) return acc;
     acc[section] = acc[section] || [];
@@ -96,10 +62,30 @@ export default function PermissionsSection({
   loading,
 }) {
   const { hasPermission } = useAuth();
+  const { t } = useLanguage();
   const [local, setLocal] = useState({});
   const isInitialized = useRef(false);
   const [suppressToast, setSuppressToast] = useState(false);
-  const [batchUpdate, setBatchUpdate] = useState(false);
+
+  const translatePermission = useMemo(
+    () => (name) => {
+      const key = `permissions.actions.${name}`;
+      const label = t(key);
+      return label === key ? name : label;
+    },
+    [t],
+  );
+
+  const translateSection = useMemo(
+    () => (section) => {
+      const key = `permissions.sections.${section}`;
+      const label = t(key);
+      return label === key ? section : label;
+    },
+    [t],
+  );
+
+  const actionOrder = ['view', 'create', 'edit', 'delete', 'listen'];
 
   useEffect(() => {
     if (!isInitialized.current) {
@@ -135,7 +121,6 @@ export default function PermissionsSection({
           toggleLocal(viewPerm.name, val);
           if (!val) {
             setSuppressToast(true);
-            setBatchUpdate(true);
             let anyDisabled = false;
             perms
               .filter((p) => p.action !== 'view' && p.enabled)
@@ -148,7 +133,6 @@ export default function PermissionsSection({
             }
             setTimeout(() => {
               setSuppressToast(false);
-              setBatchUpdate(false);
             }, 0);
           }
         };
@@ -161,7 +145,7 @@ export default function PermissionsSection({
             <h3 className="text-center font-bold mb-4">
               {translateSection(section)}
             </h3>
-            {['view', 'create', 'edit', 'delete'].map((actionType) => {
+            {actionOrder.map((actionType) => {
               const perm = perms.find((p) => p.action === actionType);
               if (!perm) return null;
               const disabled = loading || (actionType !== 'view' && !isViewOn);

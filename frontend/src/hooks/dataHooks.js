@@ -125,6 +125,18 @@ export const useContracts = () => {
   return { data, isLoading, refetch };
 };
 
+export const useContract = (id, options = {}) => {
+  const { enabled = true, ...rest } = options;
+
+  return useQuery({
+    queryKey: ['contract', id],
+    queryFn: () => contractsApi.getContractById(id),
+    enabled: Boolean(id) && enabled,
+    select: (res) => res?.data ?? res,
+    ...rest,
+  });
+};
+
 export const useInvestigations = () => {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['investigations'],
