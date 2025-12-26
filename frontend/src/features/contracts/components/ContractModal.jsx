@@ -15,6 +15,7 @@ const buildEmptyForm = (user) => ({
   number: '',
   value: '',
   contract_parties: '',
+  description: '',
   start_date: '',
   end_date: '',
   notes: '',
@@ -59,6 +60,7 @@ export default function ContractModal({
         number: initialData.number ?? '',
         value: initialData.value != null ? initialData.value : '',
         contract_parties: initialData.contract_parties ?? '',
+        description: initialData.description ?? '',
         start_date: initialData.start_date
           ? initialData.start_date.slice(0, 10)
           : '',
@@ -324,6 +326,19 @@ export default function ContractModal({
             className={inputClass('contract_parties')}
           />
           {errorText('contract_parties')}
+        </div>
+
+        {/* الوصف */}
+        <div className="md:col-span-2">
+          <label className="mb-1 block text-sm font-medium">وصف العقد</label>
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            rows={3}
+            className={inputClass('description')}
+            placeholder="اكتب وصفًا موجزًا لبنود العقد"
+          />
         </div>
 
         {/* البداية – النهاية */}
