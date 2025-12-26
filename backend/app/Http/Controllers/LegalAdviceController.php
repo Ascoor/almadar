@@ -163,7 +163,15 @@ class LegalAdviceController extends Controller
      */
     public function show(LegalAdvice $legalAdvice)
     {
-        return response()->json($legalAdvice);
+        return response()->json(
+            $legalAdvice->load([
+                'comments.user',
+                'adviceType',
+                'assignedTo',
+                'creator',
+                'updater',
+            ])
+        );
     }
 
     // ------------------------------------------------------------------------
