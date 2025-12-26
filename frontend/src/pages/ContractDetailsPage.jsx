@@ -1,7 +1,7 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useContracts } from '@/hooks/dataHooks';
+import { useContract, useContracts } from '@/hooks/dataHooks';
 
 const ContractDetails = lazy(
   () => import('@/features/contracts/components/ContractDetails'),
@@ -15,12 +15,27 @@ export default function ContractDetailsPage() {
   const { data } = useContracts();
 
   const contracts = data?.data?.data || [];
-  const initialContract =
-    location.state || contracts.find((c) => c.id === Number(id));
+  const initialContract = useMemo(
+    () => location.state || contracts.find((c) => c.id === Number(id)),
+    [contracts, id, location.state],
+  );
 
-  const [current] = useState(initialContract || null);
+  const shouldFetchSingle = Boolean(id);
+  const {
+    data: contractData,
+    isLoading: isContractLoading,
+    isFetching: isContractFetching,
+  } = useContract(id, {
+    enabled: shouldFetchSingle,
+  });
 
-  if (!current) {
+  const resolvedContract = initialContract || contractData;
+
+  if (isContractLoading || (isContractFetching && !resolvedContract)) {
+    return <div className="p-4">جارٍ تحميل بيانات العقد...</div>;
+  }
+
+  if (!resolvedContract) {
     return <div className="p-4">لا توجد بيانات</div>;
   }
 
@@ -31,7 +46,10 @@ export default function ContractDetailsPage() {
       </div>
 
       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
-        <ContractDetails selected={current} onClose={() => navigate(-1)} />
+        <ContractDetails
+          selected={resolvedContract}
+          onClose={() => navigate(-1)}
+        />
       </Suspense>
     </div>
   );

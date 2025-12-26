@@ -9,6 +9,33 @@
   "users": "المستخدمين",
   "usersManagement": "إدارة المستخدمين",
   "usersList": "المستخدمين",
+  "permissions": {
+    "actions": {
+      "view": "عرض",
+      "create": "إضافة",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "listen": "متابعة"
+    },
+    "sections": {
+      "archive": "الأرشيف",
+      "legaladvices": "الرأي والمشورة",
+      "litigations": "القضايا",
+      "litigation-from": "دعاوى من الشركة",
+      "litigation-from-actions": "إجراءات دعاوى من الشركة",
+      "litigation-against": "دعاوى ضد الشركة",
+      "litigation-against-actions": "إجراءات دعاوى ضد الشركة",
+      "contracts": "العقود",
+      "investigations": "التحقيقات",
+      "investigation-actions": "إجراءات التحقيق",
+      "users": "المستخدمين",
+      "roles": "الأدوار",
+      "permissions": "الصلاحيات",
+      "managment-lists": "قوائم البيانات",
+      "reports": "التقارير",
+      "profile": "الملف الشخصي"
+    }
+  },
   "archive": "الأرشيف",
   "fatwa": "الرأي والفتوى",
   "title": "لوحة التحكم الرئيسية",
