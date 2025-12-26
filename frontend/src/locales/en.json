@@ -11,6 +11,33 @@
   "users": "Users",
   "usersManagement": "Users Management",
   "usersList": "Users",
+  "permissions": {
+    "actions": {
+      "view": "View",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "listen": "Follow"
+    },
+    "sections": {
+      "archive": "Archive",
+      "legaladvices": "Legal advices",
+      "litigations": "Litigations",
+      "litigation-from": "Company claims",
+      "litigation-from-actions": "Company claim actions",
+      "litigation-against": "Claims against company",
+      "litigation-against-actions": "Actions for claims against company",
+      "contracts": "Contracts",
+      "investigations": "Investigations",
+      "investigation-actions": "Investigation actions",
+      "users": "Users",
+      "roles": "Roles",
+      "permissions": "Permissions",
+      "managment-lists": "Management lists",
+      "reports": "Reports",
+      "profile": "Profile"
+    }
+  },
   "archive": "Archive",
   "fatwa": "Fatwa",
   "title": "Main Dashboard",

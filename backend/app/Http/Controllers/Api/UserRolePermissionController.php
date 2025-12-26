@@ -100,7 +100,7 @@ public function changeUserPermission(Request $request, $userId)
         // إن كانت الصلاحية View، أزل باقي الصلاحيات المرتبطة بالقسم أيضًا
         if (str_starts_with($permission->name, 'view ')) {
             $section = explode(' ', $permission->name)[1];
-            foreach (['create', 'edit', 'delete'] as $action) {
+            foreach (['create', 'edit', 'delete', 'listen'] as $action) {
                 $related = "$action $section";
 
                 // من المستخدم
