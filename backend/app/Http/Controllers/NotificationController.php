@@ -11,7 +11,27 @@ class NotificationController extends Controller
         $notifications = auth()->user()
             ->notifications()
             ->latest()
-            ->get();
+            ->get()
+            ->map(function (DatabaseNotification $notification) {
+                $data = $notification->data ?? [];
+                $meta = $data['meta'] ?? [];
+
+                $mergedData = array_merge($data, $meta, [
+                    'meta' => $meta,
+                    'id' => $notification->id,
+                    'read_at' => $notification->read_at,
+                    'created_at' => $notification->created_at,
+                ]);
+
+                return [
+                    'id' => $notification->id,
+                    'type' => $notification->type,
+                    'read_at' => $notification->read_at,
+                    'read' => (bool) $notification->read_at,
+                    'created_at' => $notification->created_at,
+                    'data' => $mergedData,
+                ];
+            });
 
         return response()->json(['data' => $notifications]);
     }
