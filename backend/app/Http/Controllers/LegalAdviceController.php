@@ -12,8 +12,8 @@ use App\Events\EntityActivityRecorded;
 
 class LegalAdviceController extends Controller
 {
-                 public function __construct()
-        {
+    public function __construct()
+    {
         $this->middleware('permission:view legaladvices')->only(['index','show']);
         $this->middleware('permission:create legaladvices')->only('store');
         $this->middleware('permission:edit legaladvices')->only('update');
@@ -163,15 +163,19 @@ class LegalAdviceController extends Controller
      */
     public function show(LegalAdvice $legalAdvice)
     {
-        return response()->json(
-            $legalAdvice->load([
-                'comments.user',
-                'adviceType',
-                'assignedTo',
-                'creator',
-                'updater',
-            ])
-        );
+        $legalAdvice->load([
+            'adviceType',
+            'assignedTo',
+            'creator',
+            'updater',
+            'comments' => function ($query) {
+                $query
+                    ->with('user:id,name')
+                    ->latest();
+            },
+        ]);
+
+        return response()->json($legalAdvice);
     }
 
     // ------------------------------------------------------------------------
