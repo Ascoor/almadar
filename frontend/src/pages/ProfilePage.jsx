@@ -22,8 +22,10 @@ export default function ProfilePage() {
         const res = await getProfile(user.id); // استخدم user.id
         setProfileData(res.user);
         setForm({ name: res.user.name, email: res.user.email, image: null });
-        if (res.user.image) {
-          setPreview(`${API_CONFIG.baseURL}/${res.user.image}`);
+        if (res.user.image_url || res.user.image) {
+          setPreview(
+            res.user.image_url || `${API_CONFIG.baseURL}/${res.user.image}`,
+          );
         }
       } catch {
         toast.error('فشل تحميل الملف الشخصي');

@@ -169,9 +169,12 @@ export default function UsersManagementPage() {
     ),
     image: (user) => (
       <div className="flex justify-center">
-        {user.image ? (
+        {user.image_url || user.image ? (
           <img
-            src={`${API_CONFIG.baseURL}/${user.image}`}
+            src={
+              user.image_url ||
+              (user.image ? `${API_CONFIG.baseURL}/${user.image}` : undefined)
+            }
             alt={user.name}
             className="w-10 h-10 rounded-full object-cover border"
           />
