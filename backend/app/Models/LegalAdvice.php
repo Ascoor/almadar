@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\LegalAdviceComment;
 
 class LegalAdvice extends Model
 {
@@ -23,21 +24,27 @@ class LegalAdvice extends Model
 
         'created_by',
         'updated_by',
-        'assigned_to_user_id', 
+        'assigned_to_user_id',
     ];
-    public function creator()
-{
-    return $this->belongsTo(User::class, 'created_by');
-}
 
-public function updater()
-{
-    return $this->belongsTo(User::class, 'updated_by');
-}
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 
     public function assignedTo()
     {
         return $this->belongsTo(User::class, 'assigned_to_user_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(LegalAdviceComment::class);
     }
 
     // العلاقة مع AdviceType (Many-to-One)
