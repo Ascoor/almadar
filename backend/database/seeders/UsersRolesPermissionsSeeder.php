@@ -44,6 +44,7 @@ class UsersRolesPermissionsSeeder extends Seeder
             'investigations'            => ['view', 'create', 'edit', 'delete', 'listen'],
             'investigation-actions'     => ['view', 'create', 'edit', 'delete', 'listen'],
             'users'                     => ['view', 'create', 'edit', 'delete'],
+            'editor'                     => ['view', 'create', 'edit', 'delete'],
             'roles'                     => ['view', 'create', 'edit', 'delete'],
             'permissions'               => ['view', 'create', 'edit', 'delete'],
             'managment-lists'           => ['view', 'create', 'edit', 'delete'],
