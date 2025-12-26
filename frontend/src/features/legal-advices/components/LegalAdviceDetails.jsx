@@ -10,6 +10,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import API_CONFIG from '@/config/config';
+import LegalAdviceComments from './LegalAdviceComments';
 
 export default function LegalAdviceDetails({ selected, onClose }) {
   if (!selected) return null;
@@ -118,6 +119,10 @@ export default function LegalAdviceDetails({ selected, onClose }) {
         <p className="whitespace-pre-wrap leading-relaxed text-fg">
           {selected.text || 'لا يوجد نص للمشورة.'}
         </p>
+      </div>
+
+      <div className="rounded-xl border border-border bg-card/50 dark:bg-muted p-4 shadow-inner">
+        <LegalAdviceComments legalAdviceId={selected.id} />
       </div>
     </div>
   );

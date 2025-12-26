@@ -3,6 +3,8 @@ import api from './axiosConfig'; // تأكد أن ملف axiosConfig صحيح
 // ✅ legal-advices  Endpoints
 export const getLegalAdvices = () => api.get('/api/legal-advices');
 
+export const getLegalAdviceById = (id) => api.get(`/api/legal-advices/${id}`);
+
 export const createLegalAdvice = (formData) => {
   return api.post('/api/legal-advices', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
@@ -17,6 +19,12 @@ export const updateLegalAdvice = (id, formData) => {
 };
 
 export const deleteLegalAdvice = (id) => api.delete(`/api/legal-advices/${id}`);
+
+export const getLegalAdviceComments = (id) =>
+  api.get(`/api/legal-advices/${id}/comments`);
+
+export const createLegalAdviceComment = (id, data) =>
+  api.post(`/api/legal-advices/${id}/comments`, data);
 
 // ✅ Get all advice types
 export const getAdviceTypes = () => {

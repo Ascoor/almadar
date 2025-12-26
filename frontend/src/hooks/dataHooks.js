@@ -45,6 +45,18 @@ export const useLegalAdvices = () => {
     queryFn: legalAdvicesApi.getLegalAdvices, // ✅ الحرف A كبير هنا
   });
 };
+
+export const useLegalAdvice = (id, options = {}) => {
+  const { enabled = true, ...rest } = options;
+
+  return useQuery({
+    queryKey: ['legalAdvice', id],
+    queryFn: () => legalAdvicesApi.getLegalAdviceById(id),
+    select: (res) => res?.data ?? res,
+    enabled: Boolean(id) && enabled,
+    ...rest,
+  });
+};
 export const useDashboardStats = () => {
   return useQuery({
     queryKey: ['dashboardStatus'],
