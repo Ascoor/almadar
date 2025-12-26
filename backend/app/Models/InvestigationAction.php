@@ -13,7 +13,7 @@ class InvestigationAction extends Model
     protected $fillable = [
         'investigation_id',
         'action_date',
-       'action_type_id', 
+        'action_type_id',
         'requirements',
         'results',
         'status', // pending | in_review | done
@@ -22,26 +22,21 @@ class InvestigationAction extends Model
         'updated_by',
         'assigned_to_user_id',
     ];
-    public function creator()
-{
-    return $this->belongsTo(User::class, 'created_by');
-}
 
-public function updater()
-{
-    return $this->belongsTo(User::class, 'updated_by');
-}
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
 
     public function assignedTo()
     {
         return $this->belongsTo(User::class, 'assigned_to_user_id');
     }
-
-    public function assignedBy()
-    {
-        return $this->belongsTo(User::class, 'assigned_by_user_id');
-    }
- 
 
     // ✅ علاقة: كل إجراء يتبع تحقيق واحد
     public function investigation()
