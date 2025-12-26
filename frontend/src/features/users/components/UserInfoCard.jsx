@@ -29,6 +29,8 @@ const getInitials = (name = '') => {
 const UserInfoCard = ({ user }) => {
   if (!user) return null;
 
+  const imageSrc =
+    user.image_url || (user.image ? `${API_CONFIG.baseURL}/${user.image}` : null);
   const roles = getDisplayRoles(user);
 
   return (
@@ -66,9 +68,9 @@ const UserInfoCard = ({ user }) => {
               "
             />
             <div className="relative h-full w-full overflow-hidden rounded-full border border-background/80">
-              {user.image ? (
+              {imageSrc ? (
                 <img
-                  src={`${API_CONFIG.baseURL}/${user.image}`}
+                  src={imageSrc}
                   className="h-full w-full object-cover"
                   alt={`صورة ${user.name || 'المستخدم'}`}
                 />
