@@ -6,6 +6,7 @@ export { default as LogoNewArt } from './logo-art-n.png';
 export { default as Logo1 } from './logo-1.png';
 export { default as LogoGreen } from './logo-green.png';
 export { default as WelcomeLogo } from './welcome-logo.png';
+export { default as LandingPage } from './LandingPage.webp';
 export { default as LogoPatren } from './logo-art-text.png';
 export { default as LogoText } from './logo-text.png';
 export { default as LogoArtGreen } from './logo-green.png';

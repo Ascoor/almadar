@@ -47,7 +47,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
       cancel: t('login.cancel'),
       terms: t('login.terms'),
     }),
-    [isArabic, t],
+    [isArabic, t]
   );
 
   const validate = () => {
@@ -138,11 +138,10 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
     >
       <div
         className="
-           rounded-2xl md:rounded-3xl
-          shadow-glow border border-border/70
- 
+          rounded-2xl md:rounded-3xl
+          shadow-lg border border-border/70
           p-6 md:p-8 space-y-6
-          hover-scale
+          bg-green-400/40 dark:bg-green-900/40
         "
       >
         {/* Top bar: language + theme */}
@@ -162,20 +161,17 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
         <div className="text-center space-y-2 mt-2">
           <h2
             id="login-title"
-            className="
-              page-title page-title-animate
-              text-2xl md:text-3xl font-extrabold
-            "
+            className="text-2xl md:text-3xl font-extrabold"
           >
             {labels.title}
           </h2>
-          <p className="page-subtitle text-xs md:text-sm max-w-xs mx-auto leading-relaxed">
+          <p className="text-xs md:text-sm max-w-xs mx-auto leading-relaxed">
             {labels.subtitle}
           </p>
         </div>
 
         {formError && (
-          <div className="rounded-lg border border-border bg-destructive/10 p-3 text-sm text-foreground">
+          <div className="rounded-lg border border-red-500 bg-red-100 p-3 text-sm text-red-800">
             {formError}
           </div>
         )}
@@ -234,32 +230,23 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
             <Button
               type="submit"
               disabled={isSubmitting || !email || !password}
-              className={`
+              className="
                 w-full justify-center font-semibold
                 rounded-lg py-2.5 md:py-3
-                bg-gradient-primary text-primary-foreground
+                bg-gradient-to-r from-primary to-secondary text-primary-foreground
                 shadow-md
                 transition-all
-                ${isSubmitting ? 'opacity-80 cursor-wait' : 'hover:scale-[1.02]'}
-              `}
+                hover:scale-[1.02] focus:outline-none
+                disabled:opacity-80 disabled:cursor-not-allowed
+              "
             >
-              {isSubmitting
-                ? labels.submitting
-                : labels.submit}
+              {isSubmitting ? labels.submitting : labels.submit}
             </Button>
 
             <button
               type="button"
               onClick={handleCancel}
-              className="
-                w-full py-2.5 md:py-3
-                font-medium
-                rounded-lg
-                bg-muted text-fg
-                border border-border
-                transition-all
-                hover:bg-muted/80 hover:scale-[1.01]
-              "
+              className="w-full py-2.5 md:py-3 font-medium rounded-lg bg-muted text-fg border border-border transition-all hover:bg-muted/80 hover:scale-[1.01]"
             >
               {labels.cancel}
             </button>
