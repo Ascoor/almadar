@@ -115,7 +115,9 @@ class ContractController extends Controller
         $assigneeId = $validated['assigned_to_user_id'] ?? null;
         unset($validated['assigned_to_user_id']);
 
-        $validated['value'] = $this->normalizeValue($validated['value'] ?? null);
+        if (array_key_exists('value', $validated)) {
+            $validated['value'] = $this->normalizeValue($validated['value']);
+        }
 
         // ✅ updater
         $userId = auth()->id();
@@ -199,21 +201,24 @@ class ContractController extends Controller
 
     private function validateContract(Request $request, $contractId = null): array
     {
+        $isUpdate = (bool) $contractId;
+        $required = $isUpdate ? 'sometimes|required' : 'required';
+
         $uniqueRule = 'unique:contracts,number';
         if ($contractId) {
             $uniqueRule .= ',' . $contractId;
         }
 
         return $request->validate([
-            'contract_category_id' => 'required|exists:contract_categories,id',
-            'scope'                => 'required|in:local,international',
-            'number'               => ['required', 'string', $uniqueRule],
-            'contract_parties'     => 'required|string',
+            'contract_category_id' => [$required, 'exists:contract_categories,id'],
+            'scope'                => [$required, 'in:local,international'],
+            'number'               => [$required, 'string', $uniqueRule],
+            'contract_parties'     => [$required, 'string'],
             'value'                => 'nullable|numeric',
             'start_date'           => 'nullable|date',
             'end_date'             => 'nullable|date|after_or_equal:start_date',
             'notes'                => 'nullable|string',
-            'status'               => 'required|in:active,expired,terminated,pending,cancelled',
+            'status'               => [$required, 'in:active,expired,terminated,pending,cancelled'],
             'summary'              => 'nullable|string',
             'assigned_to_user_id'  => 'nullable|exists:users,id',
             'attachment'           => 'nullable|file|mimes:pdf|max:5120',

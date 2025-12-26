@@ -1,4 +1,9 @@
+import { useEffect, useState } from 'react';
+
+import { toast } from 'sonner';
+
 import API_CONFIG from '@/config/config';
+import { updateContract } from '@/services/api/contracts';
 import {
   FileText,
   File,
@@ -10,15 +15,68 @@ import {
   Globe,
   XCircle,
   Notebook,
+  Pencil,
+  Save,
+  X,
 } from 'lucide-react';
 
 export default function ContractDetails({ selected, onClose }) {
-  if (!selected) return null;
+  const [current, setCurrent] = useState(selected ?? null);
+  const [editingField, setEditingField] = useState(null);
+  const [fieldValue, setFieldValue] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const hasDuration = !!selected.end_date;
-  const formattedValue = selected.value
-    ? `${selected.value.toLocaleString()} ريال`
+  useEffect(() => {
+    setCurrent(selected ?? null);
+    setEditingField(null);
+    setFieldValue('');
+  }, [selected]);
+
+  const hasDuration = !!current?.end_date;
+  const formattedValue = current?.value
+    ? `${current.value.toLocaleString()} ريال`
     : '—';
+
+  const startEditing = (field) => {
+    if (!current) return;
+    setEditingField(field);
+    setFieldValue(current?.[field] ?? '');
+  };
+
+  const cancelEditing = () => {
+    setEditingField(null);
+    setFieldValue('');
+  };
+
+  const handleQuickSave = async () => {
+    if (!current?.id || !editingField) return;
+
+    const payload = new FormData();
+    payload.append('_method', 'PUT');
+    payload.append(editingField, fieldValue);
+
+    setSaving(true);
+    try {
+      const res = await updateContract(current.id, payload);
+      const updated = res?.data?.contract ?? res?.data ?? null;
+
+      if (updated) {
+        setCurrent(updated);
+      } else {
+        setCurrent((prev) => ({ ...prev, [editingField]: fieldValue }));
+      }
+
+      toast.success('✅ تم حفظ التعديل بنجاح.');
+      cancelEditing();
+    } catch (err) {
+      console.error(err);
+      toast.error('❌ فشل حفظ التعديل، يرجى المحاولة لاحقًا.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (!current) return null;
 
   return (
     <div className="relative bg-gradient-to-br from-white to-gray-50 dark:from-zinc-950 dark:to-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl p-6 md:p-10 mt-4 transition-all duration-300 hover:shadow-2xl">
@@ -40,21 +98,21 @@ export default function ContractDetails({ selected, onClose }) {
 
       {/* معلومات العقد */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
-        <InfoItem icon={<File />} label="رقم العقد" value={selected.number} />
+        <InfoItem icon={<File />} label="رقم العقد" value={current.number} />
         <InfoItem
           icon={<Globe />}
           label="نوع العقد"
-          value={selected.scope === 'local' ? 'محلي' : 'دولي'}
+          value={current.scope === 'local' ? 'محلي' : 'دولي'}
         />
         <InfoItem
           icon={<Layers />}
           label="تصنيف العقد"
-          value={selected.category?.name}
+          value={current.category?.name}
         />
         <InfoItem
           icon={<ShieldCheck />}
           label="الحالة"
-          value={selected.status}
+          value={current.status}
         />
         <InfoItem
           icon={<BadgeDollarSign />}
@@ -65,38 +123,38 @@ export default function ContractDetails({ selected, onClose }) {
         <InfoItem
           icon={<Calendar />}
           label="تاريخ الإنشاء"
-          value={selected.created_at}
+          value={current.created_at}
         />
         <InfoItem
           icon={<Calendar />}
           label="آخر تحديث"
-          value={selected.updated_at}
+          value={current.updated_at}
         />
         <InfoItem
           icon={<UserCheck />}
           label="محرر البيان"
-          value={selected.creator?.name}
+          value={current.creator?.name}
         />
         <InfoItem
           icon={<UserCheck />}
           label=" مسئول التعاقد "
-          value={selected.assigned_to?.name}
+          value={current.assigned_to?.name}
         />
         <InfoItem
           icon={<UserCheck />}
           label="آخر من عدّل العقد"
-          value={selected.updater?.name}
+          value={current.updater?.name}
         />
         <InfoItem
           icon={<Calendar />}
           label={hasDuration ? 'تاريخ بداية العقد' : 'تاريخ العقد'}
-          value={selected.start_date}
+          value={current.start_date}
         />
         {hasDuration && (
           <InfoItem
             icon={<Calendar />}
             label="تاريخ نهاية العقد"
-            value={selected.end_date}
+            value={current.end_date}
           />
         )}
 
@@ -106,9 +164,9 @@ export default function ContractDetails({ selected, onClose }) {
             <File size={16} />
             المرفق:
           </span>
-          {selected.attachment ? (
+          {current.attachment ? (
             <a
-              href={`${API_CONFIG.baseURL}/storage/${selected.attachment}`}
+              href={`${API_CONFIG.baseURL}/storage/${current.attachment}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 dark:text-blue-400 hover:underline ml-1 block mt-1 transition"
@@ -124,13 +182,61 @@ export default function ContractDetails({ selected, onClose }) {
       </div>
 
       {/* ملخص العقد */}
-      <SectionCard icon={<UserCheck size={18} />} title="ملخص العقد">
-        {selected.summary || 'لا يوجد ملخص متاح.'}
+      <SectionCard
+        icon={<UserCheck size={18} />}
+        title="ملخص العقد"
+        actions={
+          editingField === 'summary' ? (
+            <EditActions
+              saving={saving}
+              onSave={handleQuickSave}
+              onCancel={cancelEditing}
+            />
+          ) : (
+            <EditButton onClick={() => startEditing('summary')} />
+          )
+        }
+      >
+        {editingField === 'summary' ? (
+          <textarea
+            className="w-full rounded-xl border border-gray-200 bg-white/70 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-blue-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-gray-100"
+            rows={3}
+            value={fieldValue}
+            onChange={(e) => setFieldValue(e.target.value)}
+            disabled={saving}
+          />
+        ) : (
+          current.summary || 'لا يوجد ملخص متاح.'
+        )}
       </SectionCard>
 
       {/* ملاحظات */}
-      <SectionCard icon={<Notebook size={18} />} title="ملاحظات">
-        {selected.notes || 'لا توجد ملاحظات.'}
+      <SectionCard
+        icon={<Notebook size={18} />}
+        title="ملاحظات"
+        actions={
+          editingField === 'notes' ? (
+            <EditActions
+              saving={saving}
+              onSave={handleQuickSave}
+              onCancel={cancelEditing}
+            />
+          ) : (
+            <EditButton onClick={() => startEditing('notes')} />
+          )
+        }
+      >
+        {editingField === 'notes' ? (
+          <textarea
+            className="w-full rounded-xl border border-gray-200 bg-white/70 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-blue-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-gray-100"
+            rows={3}
+            value={fieldValue}
+            onChange={(e) => setFieldValue(e.target.value)}
+            disabled={saving}
+          />
+        ) : (
+          current.notes || 'لا توجد ملاحظات.'
+        )}
       </SectionCard>
     </div>
   );
@@ -158,16 +264,54 @@ function InfoItem({ icon, label, value }) {
 }
 
 // ✅ مكون موحد لعرض أقسام كبيرة
-function SectionCard({ icon, title, children }) {
+function SectionCard({ icon, title, children, actions }) {
   return (
     <div className="mt-8 p-6 rounded-2xl bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 shadow-inner">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
-        <span className="text-blue-500 dark:text-blue-300">{icon}</span>
-        {title}
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center justify-between gap-2">
+        <span className="flex items-center gap-2">
+          <span className="text-blue-500 dark:text-blue-300">{icon}</span>
+          {title}
+        </span>
+        {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
       </h3>
-      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+      <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
         {children}
-      </p>
+      </div>
+    </div>
+  );
+}
+
+function EditButton({ onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-white px-3 py-1 text-xs font-medium text-blue-600 shadow-sm transition hover:bg-blue-50 dark:border-blue-900/60 dark:bg-zinc-900 dark:text-blue-300"
+    >
+      <Pencil size={14} />
+      تعديل
+    </button>
+  );
+}
+
+function EditActions({ onSave, onCancel, saving }) {
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={onCancel}
+        className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 shadow-sm transition hover:bg-gray-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-200"
+        disabled={saving}
+      >
+        <X size={14} />
+        إلغاء
+      </button>
+      <button
+        onClick={onSave}
+        disabled={saving}
+        className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-500 px-3 py-1 text-xs font-medium text-white shadow-sm transition hover:bg-emerald-600 disabled:opacity-50 dark:border-emerald-900"
+      >
+        <Save size={14} />
+        {saving ? 'جارٍ الحفظ...' : 'حفظ'}
+      </button>
     </div>
   );
 }
