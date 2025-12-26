@@ -130,33 +130,41 @@
       "message": "New permissions received.",
       "toast": "Your permissions were updated"
     },
-    "events": {
-      "created": {
-        "title": "New {section} created",
-        "message": "{actor_name} created a new {entity_type} (#{entity_id})."
+      "events": {
+        "created": {
+          "label": "Created",
+          "title": "New {section} created",
+          "message": "{actor_name} created a new {entity_type} (#{entity_id})."
+        },
+        "updated": {
+          "label": "Updated",
+          "title": "{section} updated",
+          "message": "{actor_name} updated {entity_type} (#{entity_id})."
+        },
+        "assigned": {
+          "label": "Assigned",
+          "title": "You have been assigned",
+          "message": "You were assigned to {entity_type} (#{entity_id}) by {actor_name}."
+        },
+        "generic": {
+          "label": "Update",
+          "title": "Notification",
+          "message": "{message}"
+        }
       },
-      "updated": {
-        "title": "{section} updated",
-        "message": "{actor_name} updated {entity_type} (#{entity_id})."
+      "entities": {
+        "item": "item",
+        "contract": "contract",
+        "session": "session",
+        "case": "case",
+        "consultation": "consultation",
+        "investigation": "investigation",
+        "procedure": "investigation action",
+        "legalAdvice": "legal advice",
+        "litigation": "litigation",
+        "archive": "archive",
+        "user": "user"
       },
-      "assigned": {
-        "title": "You have been assigned",
-        "message": "You were assigned to {entity_type} (#{entity_id}) by {actor_name}."
-      },
-      "generic": {
-        "title": "Notification",
-        "message": "{message}"
-      }
-    },
-    "entities": {
-      "item": "item",
-      "contract": "contract",
-      "session": "session",
-      "case": "case",
-      "consultation": "consultation",
-      "investigation": "investigation",
-      "procedure": "investigation action"
-    },
     "details": {
       "entity": "Entity",
       "id": "Record ID"

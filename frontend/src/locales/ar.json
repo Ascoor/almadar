@@ -135,18 +135,22 @@
     },
     "events": {
       "created": {
+        "label": "إنشاء",
         "title": "تم إنشاء {section} جديد",
         "message": "{actor_name} قام بإنشاء {entity_type} جديد (#{entity_id})."
       },
       "updated": {
+        "label": "تحديث",
         "title": "تم تحديث {section}",
         "message": "{actor_name} حدّث {entity_type} (#{entity_id})."
       },
       "assigned": {
+        "label": "إسناد",
         "title": "تم إسنادك",
         "message": "تم إسناد {entity_type} (#{entity_id}) إليك بواسطة {actor_name}."
       },
       "generic": {
+        "label": "تنبيه",
         "title": "إشعار",
         "message": "{message}"
       }
@@ -158,7 +162,11 @@
       "case": "قضية",
       "consultation": "مشورة",
       "investigation": "تحقيق",
-      "procedure": "إجراء تحقيق"
+      "procedure": "إجراء تحقيق",
+      "legalAdvice": "استشارة قانونية",
+      "litigation": "دعوى",
+      "archive": "أرشيف",
+      "user": "مستخدم"
     },
     "details": {
       "entity": "الكيان",

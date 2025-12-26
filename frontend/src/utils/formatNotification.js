@@ -10,6 +10,7 @@ const defaultPayload = {
   event: null,
   actor_name: null,
   params: {},
+  meta: {},
 };
 
 const entityDictionary = {
@@ -23,7 +24,15 @@ const entityDictionary = {
     labelKey: 'notifications.entities.consultation',
     path: 'consultations',
   },
+  consultations: {
+    labelKey: 'notifications.entities.consultation',
+    path: 'consultations',
+  },
   investigation: {
+    labelKey: 'notifications.entities.investigation',
+    path: 'investigations',
+  },
+  investigations: {
     labelKey: 'notifications.entities.investigation',
     path: 'investigations',
   },
@@ -35,6 +44,28 @@ const entityDictionary = {
     labelKey: 'notifications.entities.procedure',
     path: 'legal/investigation-action',
   },
+  'legal-advice': {
+    labelKey: 'notifications.entities.legalAdvice',
+    path: 'legal-advices',
+  },
+  'legal-advices': {
+    labelKey: 'notifications.entities.legalAdvice',
+    path: 'legal-advices',
+  },
+  legaladvices: {
+    labelKey: 'notifications.entities.legalAdvice',
+    path: 'legal-advices',
+  },
+  legaladvice: {
+    labelKey: 'notifications.entities.legalAdvice',
+    path: 'legal-advices',
+  },
+  litigation: { labelKey: 'notifications.entities.litigation', path: 'litigations' },
+  litigations: { labelKey: 'notifications.entities.litigation', path: 'litigations' },
+  archive: { labelKey: 'notifications.entities.archive', path: 'archives' },
+  archives: { labelKey: 'notifications.entities.archive', path: 'archives' },
+  user: { labelKey: 'notifications.entities.user', path: 'users' },
+  users: { labelKey: 'notifications.entities.user', path: 'users' },
 };
 
 const cleanPath = (path) => {
@@ -49,19 +80,27 @@ export const buildNotificationLink = (payload = {}) => {
     payload.link ||
     payload?.params?.link ||
     payload?.data?.link ||
-    payload?.data?.action_url;
+    payload?.data?.action_url ||
+    payload?.meta?.link ||
+    payload?.meta?.action_url;
 
   if (directLink) return cleanPath(directLink);
 
   const sectionKey =
-    payload.section || payload.entity_type || payload?.data?.entity_type;
+    payload.section ||
+    payload.entity_type ||
+    payload?.data?.entity_type ||
+    payload?.meta?.section ||
+    payload?.meta?.entity_type;
   const entityId =
     payload.entity_id ||
     payload.entityId ||
     payload?.data?.entity_id ||
     payload?.data?.entityId ||
     payload?.params?.entity_id ||
-    payload?.params?.entityId;
+    payload?.params?.entityId ||
+    payload?.meta?.entity_id ||
+    payload?.meta?.entityId;
 
   if (!sectionKey || !entityId) return null;
 
@@ -74,8 +113,17 @@ export const buildNotificationLink = (payload = {}) => {
 export function formatNotification(notification, t, lang = 'en') {
   if (!notification) return null;
 
-  const payload = { ...defaultPayload, ...(notification.data || notification) };
-  const sectionKey = String(payload.section || payload.entity_type || 'item');
+  const metaPayload = notification?.data?.meta || notification?.meta || {};
+  const payload = {
+    ...defaultPayload,
+    ...(notification.data || notification),
+    ...metaPayload,
+    meta: metaPayload,
+  };
+
+  const sectionKey = String(
+    payload.section || payload.entity_type || payload.entityType || 'item',
+  );
   const meta = entityDictionary[sectionKey.toLowerCase()];
   const sectionLabelKey = meta?.labelKey || 'notifications.entities.item';
   const sectionLabelRaw = t(sectionLabelKey);
@@ -84,24 +132,26 @@ export function formatNotification(notification, t, lang = 'en') {
       ? sectionLabelRaw
       : sectionKey;
 
-  const eventKey = payload.event || payload.key || 'generic';
+  const eventKey = payload.event || payload.key || payload?.meta?.event || 'generic';
+  const eventLabelKey = `notifications.events.${eventKey}.label`;
+  const eventLabel = t(eventLabelKey);
 
-  const baseTitleKey = `notifications.events.${eventKey}.title`;
-  const baseMessageKey = `notifications.events.${eventKey}.message`;
+  const baseTitleKey = payload.title_key || `notifications.events.${eventKey}.title`;
+  const baseMessageKey =
+    payload.message_key || `notifications.events.${eventKey}.message`;
 
-  const title = t(baseTitleKey, {
+  const interpolation = {
     section: sectionLabel,
-    entity_type: payload.entity_type,
+    entity_type: payload.entity_type || payload.entityType,
     entity_id: payload.entity_id,
-  });
-
-  const message = t(baseMessageKey, {
     actor_name: payload.actor_name,
-    section: sectionLabel,
-    entity_type: payload.entity_type,
-    entity_id: payload.entity_id,
     message: payload.message,
-  });
+    ...payload.params,
+  };
+
+  const title = t(baseTitleKey, interpolation);
+
+  const message = t(baseMessageKey, interpolation);
 
   const fallbackTitle =
     title && title !== baseTitleKey
@@ -130,7 +180,7 @@ export function formatNotification(notification, t, lang = 'en') {
     title: fallbackTitle,
     message: fallbackMessage,
     section: sectionLabel,
-    event: eventKey,
+    event: eventLabel && eventLabel !== eventLabelKey ? eventLabel : eventKey,
     link: href,
     entityId,
     entityLabel: sectionLabel,
