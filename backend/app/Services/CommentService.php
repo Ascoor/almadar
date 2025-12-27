@@ -85,8 +85,7 @@ class CommentService
     private function authorize(array $permissions, string $action): void
     {
         $user = auth()->user();
-        $allowed = collect($permissions)
-            ->contains(fn ($perm) => $user?->can("{$action} {$perm}"));
+        $allowed = $this->canAccess($user, $permissions, $action);
 
         abort_if(!$allowed, 403, self::FORBIDDEN_MESSAGE);
     }
@@ -100,8 +99,12 @@ class CommentService
         }
 
         $meta = $this->getModuleMeta($module);
+        if (!$this->canAccess($assignee, $meta['permissions'], 'view')) {
+            return;
+        }
+
         $title = (string) ($entity->{Arr::get($meta, 'title_field')} ?? class_basename($entity));
-        $actionUrl = rtrim($meta['route'], '/') . '/' . $entity->getKey();
+        $actionUrl = rtrim($meta['route'], '/') . '/' . $entity->getKey() . '?comment=' . $comment->getKey();
 
         event(new CommentCreated(
             entity: $entity,
@@ -120,5 +123,11 @@ class CommentService
         abort_if(!$meta, 404, 'Unknown module');
 
         return $meta;
+    }
+
+    private function canAccess(?User $user, array $permissions, string $action): bool
+    {
+        return collect($permissions)
+            ->contains(fn ($perm) => $user?->can("{$action} {$perm}"));
     }
 }
