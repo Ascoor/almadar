@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
   modalOverlay,
   modalContainer,
@@ -19,16 +20,45 @@ export default function ModalCard({
   className = '',
 }) {
   const { t } = useLanguage();
+  const overlayRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose?.();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
-  return (
-    <div className={modalOverlay}>
+  const handleOverlayClick = (event) => {
+    if (event.target === overlayRef.current) {
+      onClose?.();
+    }
+  };
+
+  return createPortal(
+    <div
+      ref={overlayRef}
+      className={modalOverlay}
+      onMouseDown={handleOverlayClick}
+    >
       <div
         className={`${modalContainer} max-w-3xl sm:p-8 flex flex-col
           transition-all duration-300 ease-in-out
           hover:shadow-3xl hover:scale-[1.01]
           ${className}
         `}
+        onMouseDown={(event) => event.stopPropagation()}
       >
         {/* Loading Overlay */}
         {loading && (
@@ -66,6 +96,7 @@ export default function ModalCard({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

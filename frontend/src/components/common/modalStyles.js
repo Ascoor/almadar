@@ -1,5 +1,5 @@
 export const modalOverlay =
-  'fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6 py-8 ' +
+  'fixed inset-0 z-[9999] flex items-center justify-center px-4 sm:px-6 py-8 ' +
   'bg-gradient-to-br from-[color:var(--bg)]/92 via-[color:var(--bg)]/88 to-[color:var(--bg)]/92 ' +
   'dark:from-slate-950/88 dark:via-slate-900/85 dark:to-black/90 backdrop-blur-2xl';
 
