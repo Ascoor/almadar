@@ -9,7 +9,7 @@ const AppSidebar = lazy(() => import('./AppSidebar'));
 
 export default function AppLayout({ children, user }) {
   const { isMobile, isStandalone, safeAreaInsets } = useMobileTheme();
-  const { dir } = useLanguage();
+  useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isTablet, setIsTablet] = useState(
     typeof window !== 'undefined' &&
@@ -32,7 +32,15 @@ export default function AppLayout({ children, user }) {
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  const marginProp = dir === 'rtl' ? 'marginRight' : 'marginLeft';
+  const sidebarOffset = !isMobile
+    ? isTablet
+      ? sidebarOpen
+        ? '0'
+        : '64px'
+      : sidebarOpen
+        ? '260px'
+        : '64px'
+    : '0';
   const mainStyles = {
     paddingTop: isMobile
       ? isStandalone
@@ -41,20 +49,12 @@ export default function AppLayout({ children, user }) {
       : '112px',
     paddingBottom:
       isStandalone && isMobile ? `${safeAreaInsets.bottom + 32}px` : '32px',
-    [marginProp]: !isMobile
-      ? isTablet
-        ? sidebarOpen
-          ? '0'
-          : '64px'
-        : sidebarOpen
-          ? '260px'
-          : '64px'
-      : '0',
+    marginInlineStart: sidebarOffset,
     minHeight: isMobile ? 'calc(var(--vh, 1vh) * 100)' : '100vh',
   };
 
   return (
-    <ResponsiveLayout className="min-h-screen flex flex-col sm:flex-row relative">
+    <ResponsiveLayout className="min-h-screen w-full min-w-0 flex flex-col sm:flex-row relative overflow-x-hidden">
       <Suspense fallback={null}>
         <AppSidebar
           isOpen={sidebarOpen}
@@ -68,7 +68,7 @@ export default function AppLayout({ children, user }) {
           />
         )}
       </Suspense>
-      <div className="flex-1 flex flex-col transition-all duration-300">
+      <div className="flex-1 flex flex-col transition-[width,transform] duration-300 min-w-0 w-full">
         <Suspense fallback={null}>
           <Header
             user={user}
@@ -80,9 +80,10 @@ export default function AppLayout({ children, user }) {
           className={`
             flex-1 px-4 sm:px-6 lg:px-8
             bg-bg
-            transition-all duration-500
+            transition-[width,transform] duration-500
             ${isMobile ? 'mobile-main' : 'desktop-main'}
             ${isStandalone ? 'standalone-main' : ''}
+            min-w-0 w-full
           `}
           style={mainStyles}
         >

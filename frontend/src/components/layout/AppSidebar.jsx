@@ -191,7 +191,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
       style={
         isDark ? { boxShadow: '0 0 15px rgba(34,211,238,0.35)' } : undefined
       }
-      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0  border-r '} top-0 z-20 h-full bg-sidebar text-sidebar-fg border-l  border-border transition-all duration-300 ${
+      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0'} top-0 z-20 h-full bg-sidebar text-sidebar-fg border-s border-border transition-[width,transform] duration-300 shrink-0 ${
         isLargeScreen
           ? isOpen
             ? 'w-64'
@@ -219,7 +219,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
       </div>
 
       <nav
-        className={`${isOpen ? 'px-4 space-y-4 mt-6' : 'px-2 space-y-2 mt-8'} overflow-y-auto h-full`}
+        className={`${isOpen ? 'px-4 space-y-4 mt-6' : 'px-2 space-y-2 mt-8'} overflow-y-auto h-full min-w-0`}
       >
         {showFullNav ? (
           navConfig.map((item) => (
@@ -245,7 +245,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                             : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
                         }`,
                       })}
-                      <span className="flex-1 text-right">{item.label}</span>
+                      <span className="flex-1 text-right min-w-0 truncate">{item.label}</span>
                     </>
                   )}
                 </NavLink>
@@ -265,7 +265,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
                         : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
                     }`,
                   })}
-                  <span className="flex-1 text-right">{item.label}</span>
+                  <span className="flex-1 text-right min-w-0 truncate">{item.label}</span>
                   {item.children && (
                     <ChevronRight
                       className={`w-4 h-4 transform transition-transform duration-200 ${

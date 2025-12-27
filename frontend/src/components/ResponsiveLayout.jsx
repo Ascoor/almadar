@@ -10,7 +10,8 @@ const ResponsiveLayout = ({ children, className = '' }) => {
     ${isMobile ? 'mobile-layout' : 'desktop-layout'}
     ${isStandalone ? 'standalone-mode' : 'browser-mode'}
     ${orientation === 'landscape' ? 'landscape-mode' : 'portrait-mode'}
-    transition-all duration-300 ease-in-out
+    transition-[width,transform] duration-300 ease-in-out
+    w-full min-w-0 overflow-x-hidden
   `;
 
   const layoutStyles = {

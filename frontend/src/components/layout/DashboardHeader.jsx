@@ -17,14 +17,6 @@ export default function Header({ isOpen, user, onToggleSidebar }) {
     );
   });
 
-  const marginClass = isOpen
-    ? dir === 'rtl'
-      ? 'lg:mr-64'
-      : 'lg:ml-64'
-    : dir === 'rtl'
-      ? 'lg:mr-16'
-      : 'lg:ml-16';
-
   return (
     <nav
       dir={dir}
@@ -35,8 +27,8 @@ export default function Header({ isOpen, user, onToggleSidebar }) {
       }}
       className={`
         fixed top-0 left-0 right-0
-        transition-all duration-300
-        ${marginClass}
+        transition-[margin,padding] duration-300
+        ${isOpen ? 'lg:ms-64' : 'lg:ms-16'}
         py-3 px-6 flex justify-between items-center
         bg-sidebar
         text-gray-900 dark:text-white
