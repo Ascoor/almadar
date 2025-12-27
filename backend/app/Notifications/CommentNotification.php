@@ -18,6 +18,7 @@ class CommentNotification extends Notification
         public string $title,
         public ?string $actionUrl = null,
         public ?string $commentBody = null,
+        public ?int $commentId = null,
     ) {
     }
 
@@ -37,6 +38,7 @@ class CommentNotification extends Notification
             'section' => $this->section,
             'event' => 'commented',
             'comment' => $this->commentBody,
+            'comment_id' => $this->commentId,
             'actor' => $this->actorName,
             'label' => $this->title,
         ];
