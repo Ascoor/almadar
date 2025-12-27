@@ -1,5 +1,10 @@
 <?php
 
+use App\Models\Contract;
+use App\Models\Investigation;
+use App\Models\LegalAdvice;
+use App\Models\Litigation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -13,12 +18,53 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-
-// routes/channels.php
 Broadcast::channel('user.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
 Broadcast::channel('admins.{id}', function ($user, $id) {
     return $user->hasRole('Admin') && (int) $user->id === (int) $id;
+});
+
+$modules = [
+    'legal-advices' => [
+        'model' => LegalAdvice::class,
+        'permissions' => ['legaladvices'],
+    ],
+    'contracts' => [
+        'model' => Contract::class,
+        'permissions' => ['contracts'],
+    ],
+    'investigations' => [
+        'model' => Investigation::class,
+        'permissions' => ['investigations'],
+    ],
+    'litigations' => [
+        'model' => Litigation::class,
+        'permissions' => ['litigations', 'litigation-from', 'litigation-against'],
+    ],
+];
+
+Broadcast::channel('entity.{module}.{id}', function ($user, string $module, int $id) use ($modules) {
+    $meta = Arr::get($modules, $module);
+
+    if (!$meta) {
+        return false;
+    }
+
+    $permissions = Arr::get($meta, 'permissions', []);
+    $canView = collect($permissions)->contains(
+        fn (string $permission) => $user?->can("view {$permission}") === true
+    );
+
+    if (!$canView) {
+        return false;
+    }
+
+    $model = Arr::get($meta, 'model');
+    if (!$model) {
+        return false;
+    }
+
+    return $model::query()->whereKey($id)->exists();
 });
