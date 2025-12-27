@@ -1,122 +1,3 @@
-<?php
-
-namespace App\Services;
-
-use App\Events\CommentCreated;
-use App\Models\Comment;
-use App\Models\Contract;
-use App\Models\Investigation;
-use App\Models\LegalAdvice;
-use App\Models\Litigation;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-
-class CommentService
-{
-    public const FORBIDDEN_MESSAGE = 'لا تملك الصلاحية لإضافة تعليق.';
-
-    private const MODULES = [
-        'legal-advices' => [
-            'model' => LegalAdvice::class,
-            'permissions' => ['legaladvices'],
-            'title_field' => 'topic',
-            'route' => '/legal/legal-advices',
-        ],
-        'contracts' => [
-            'model' => Contract::class,
-            'permissions' => ['contracts'],
-            'title_field' => 'number',
-            'route' => '/contracts',
-        ],
-        'investigations' => [
-            'model' => Investigation::class,
-            'permissions' => ['investigations'],
-            'title_field' => 'subject',
-            'route' => '/legal/investigations',
-        ],
-        'litigations' => [
-            'model' => Litigation::class,
-            'permissions' => ['litigations', 'litigation-from', 'litigation-against'],
-            'title_field' => 'case_number',
-            'route' => '/litigations',
-        ],
-    ];
-
-    public function getComments(string $module, int $id)
-    {
-        $entity = $this->resolveCommentable($module, $id, 'view');
-
-        return $entity->comments()
-            ->with('user:id,name')
-            ->latest()
-            ->get();
-    }
-
-    public function addComment(string $module, int $id, string $body, User $user): Comment
-    {
-        $entity = $this->resolveCommentable($module, $id, 'create');
-
-        $comment = new Comment(['body' => $body]);
-        $comment->user()->associate($user);
-
-        $entity->comments()->save($comment);
-        $comment->load('user:id,name');
-
-        $this->notifyAssignee($module, $entity, $comment, $user);
-
-        return $comment;
-    }
-
-    private function resolveCommentable(string $module, int $id, string $action): Model
-    {
-        $meta = $this->getModuleMeta($module);
-
-        $this->authorize($meta['permissions'], $action);
-
-        /** @var Model $model */
-        $model = $meta['model'];
-
-        return $model::query()
-            ->with(['assignedTo:id,name'])
-            ->findOrFail($id);
-    }
-
-    private function authorize(array $permissions, string $action): void
-    {
-        $user = auth()->user();
-        $allowed = $this->canAccess($user, $permissions, $action);
-
-        abort_if(!$allowed, 403, self::FORBIDDEN_MESSAGE);
-    }
-
-    private function notifyAssignee(string $module, Model $entity, Comment $comment, User $actor): void
-    {
-        $assignee = $entity->assignedTo ?? null;
-
-        if (!$assignee || $assignee->is($actor)) {
-            return;
-        }
-
-        $meta = $this->getModuleMeta($module);
-        if (!$this->canAccess($assignee, $meta['permissions'], 'view')) {
-            return;
-        }
-
-        $title = (string) ($entity->{Arr::get($meta, 'title_field')} ?? class_basename($entity));
-        $actionUrl = rtrim($meta['route'], '/') . '/' . $entity->getKey() . '?comment=' . $comment->getKey();
-
-        event(new CommentCreated(
-            entity: $entity,
-            section: $module,
-            assignee: $assignee,
-            actor: $actor,
-            title: $title,
-            actionUrl: $actionUrl,
-            comment: $comment,
-        ));
-    }
-
     private function getModuleMeta(string $module): array
     {
         $meta = Arr::get(self::MODULES, $module);
@@ -127,7 +8,438 @@ class CommentService
 
     private function canAccess(?User $user, array $permissions, string $action): bool
     {
-        return collect($permissions)
-            ->contains(fn ($perm) => $user?->can("{$action} {$perm}"));
+        return collect($permissions)->contains(
+            fn ($perm) => $user?->can("{$action} {$perm}")
+        );
     }
-}
+
+    private function determineRecipients(Model $entity, User $actor): Collection
+    {
+        // القاعدة: إذا المعلّق Admin → الإشعار يذهب للمسند إليه
+        if ($this->isAdmin($actor)) {
+            return collect($entity->assignedTo ? [$entity->assignedTo] : [])->filter();
+        }
+
+        // إذا المعلّق مستخدم عادي → الإشعار يذهب للأدمن
+        return User::role('admin')->get();
+    }
+
+    private function formatCommentForViewer(Comment $comment, ?User $viewer): array
+    {
+        $receipt = $viewer ? $this->resolveVisibleReceipt($comment, $viewer) : null;
+
+        $base = Arr::except($comment->toArray(), ['receipts']);
+
+        return array_merge($base, [
+            'receipt' => $receipt ? [
+                'recipient_id' => $receipt->recipient_id,
+                'delivered_at' => optional($receipt->delivered_at)->toISOString(),
+                'read_at' => optional($receipt->read_at)->toISOString(),
+            ] : null,
+        ]);
+    }
+
+    private function resolveVisibleReceipt(Comment $comment, User $viewer): ?CommentReceipt
+    {
+        // 1) لو المشاهد هو المستلم: يرجع receipt الخاص به
+        $receiptForViewer = $comment->receipts->first(
+            fn (CommentReceipt $receipt) => $receipt->recipient_id === $viewer->id
+        );
+
+        if ($receiptForViewer) {
+            return $receiptForViewer;
+        }
+
+        // 2) لو المشاهد هو كاتب التعليق: يعرض أول receipt (حالة المستلم المقابل)
+        if ($comment->user_id === $viewer->id) {
+            return $comment->receipts->first();
+        }
+
+        // 3) لو Admin: يعرض أول receipt (للمراقبة/المتابعة)
+        if ($this->isAdmin($viewer)) {
+            return $comment->receipts->first();
+        }
+
+        // غير ذلك لا نعرض receipts (خصوصية)
+        return null;
+    }
+
+    private function isAdmin(User $user): bool
+    {
+        return $user->hasRole('admin') || $user->hasRole('Admin');
+    }
+
+    public function markAsRead(?string $module, ?int $id, array $commentIds, User $user): void
+    {
+        $receiptQuery = CommentReceipt::query()
+            ->where('recipient_id', $user->id)
+            ->whereNull('read_at');
+
+        if ($module && $id) {
+            $entity = $this->resolveCommentable($module, $id, 'view');
+            $ids = $entity->comments()->pluck('id');
+            $receiptQuery->whereIn('comment_id', $ids);
+        }
+
+        if (!empty($commentIds)) {
+            $receiptQuery->whereIn('comment_id', $commentIds);
+        }
+
+        $receiptQuery->update(['read_at' => now()]);
+    }
+    private function getModuleMeta(string $module): array
+    {
+        $meta = Arr::get(self::MODULES, $module);
+        abort_if(!$meta, 404, 'Unknown module');
+
+        return $meta;
+    }
+
+    private function canAccess(?User $user, array $permissions, string $action): bool
+    {
+        return collect($permissions)->contains(
+            fn ($perm) => $user?->can("{$action} {$perm}")
+        );
+    }
+
+    private function determineRecipients(Model $entity, User $actor): Collection
+    {
+        // القاعدة: إذا المعلّق Admin → الإشعار يذهب للمسند إليه
+        if ($this->isAdmin($actor)) {
+            return collect($entity->assignedTo ? [$entity->assignedTo] : [])->filter();
+        }
+
+        // إذا المعلّق مستخدم عادي → الإشعار يذهب للأدمن
+        return User::role('admin')->get();
+    }
+
+    private function formatCommentForViewer(Comment $comment, ?User $viewer): array
+    {
+        $receipt = $viewer ? $this->resolveVisibleReceipt($comment, $viewer) : null;
+
+        $base = Arr::except($comment->toArray(), ['receipts']);
+
+        return array_merge($base, [
+            'receipt' => $receipt ? [
+                'recipient_id' => $receipt->recipient_id,
+                'delivered_at' => optional($receipt->delivered_at)->toISOString(),
+                'read_at' => optional($receipt->read_at)->toISOString(),
+            ] : null,
+        ]);
+    }
+
+    private function resolveVisibleReceipt(Comment $comment, User $viewer): ?CommentReceipt
+    {
+        // 1) لو المشاهد هو المستلم: يرجع receipt الخاص به
+        $receiptForViewer = $comment->receipts->first(
+            fn (CommentReceipt $receipt) => $receipt->recipient_id === $viewer->id
+        );
+
+        if ($receiptForViewer) {
+            return $receiptForViewer;
+        }
+
+        // 2) لو المشاهد هو كاتب التعليق: يعرض أول receipt (حالة المستلم المقابل)
+        if ($comment->user_id === $viewer->id) {
+            return $comment->receipts->first();
+        }
+
+        // 3) لو Admin: يعرض أول receipt (للمراقبة/المتابعة)
+        if ($this->isAdmin($viewer)) {
+            return $comment->receipts->first();
+        }
+
+        // غير ذلك لا نعرض receipts (خصوصية)
+        return null;
+    }
+
+    private function isAdmin(User $user): bool
+    {
+        return $user->hasRole('admin') || $user->hasRole('Admin');
+    }
+
+    public function markAsRead(?string $module, ?int $id, array $commentIds, User $user): void
+    {
+        $receiptQuery = CommentReceipt::query()
+            ->where('recipient_id', $user->id)
+            ->whereNull('read_at');
+
+        if ($module && $id) {
+            $entity = $this->resolveCommentable($module, $id, 'view');
+            $ids = $entity->comments()->pluck('id');
+            $receiptQuery->whereIn('comment_id', $ids);
+        }
+
+        if (!empty($commentIds)) {
+            $receiptQuery->whereIn('comment_id', $commentIds);
+        }
+
+        $receiptQuery->update(['read_at' => now()]);
+    }
+    private function getModuleMeta(string $module): array
+    {
+        $meta = Arr::get(self::MODULES, $module);
+        abort_if(!$meta, 404, 'Unknown module');
+
+        return $meta;
+    }
+
+    private function canAccess(?User $user, array $permissions, string $action): bool
+    {
+        return collect($permissions)->contains(
+            fn ($perm) => $user?->can("{$action} {$perm}")
+        );
+    }
+
+    private function determineRecipients(Model $entity, User $actor): Collection
+    {
+        // القاعدة: إذا المعلّق Admin → الإشعار يذهب للمسند إليه
+        if ($this->isAdmin($actor)) {
+            return collect($entity->assignedTo ? [$entity->assignedTo] : [])->filter();
+        }
+
+        // إذا المعلّق مستخدم عادي → الإشعار يذهب للأدمن
+        return User::role('admin')->get();
+    }
+
+    private function formatCommentForViewer(Comment $comment, ?User $viewer): array
+    {
+        $receipt = $viewer ? $this->resolveVisibleReceipt($comment, $viewer) : null;
+
+        $base = Arr::except($comment->toArray(), ['receipts']);
+
+        return array_merge($base, [
+            'receipt' => $receipt ? [
+                'recipient_id' => $receipt->recipient_id,
+                'delivered_at' => optional($receipt->delivered_at)->toISOString(),
+                'read_at' => optional($receipt->read_at)->toISOString(),
+            ] : null,
+        ]);
+    }
+
+    private function resolveVisibleReceipt(Comment $comment, User $viewer): ?CommentReceipt
+    {
+        // 1) لو المشاهد هو المستلم: يرجع receipt الخاص به
+        $receiptForViewer = $comment->receipts->first(
+            fn (CommentReceipt $receipt) => $receipt->recipient_id === $viewer->id
+        );
+
+        if ($receiptForViewer) {
+            return $receiptForViewer;
+        }
+
+        // 2) لو المشاهد هو كاتب التعليق: يعرض أول receipt (حالة المستلم المقابل)
+        if ($comment->user_id === $viewer->id) {
+            return $comment->receipts->first();
+        }
+
+        // 3) لو Admin: يعرض أول receipt (للمراقبة/المتابعة)
+        if ($this->isAdmin($viewer)) {
+            return $comment->receipts->first();
+        }
+
+        // غير ذلك لا نعرض receipts (خصوصية)
+        return null;
+    }
+
+    private function isAdmin(User $user): bool
+    {
+        return $user->hasRole('admin') || $user->hasRole('Admin');
+    }
+
+    public function markAsRead(?string $module, ?int $id, array $commentIds, User $user): void
+    {
+        $receiptQuery = CommentReceipt::query()
+            ->where('recipient_id', $user->id)
+            ->whereNull('read_at');
+
+        if ($module && $id) {
+            $entity = $this->resolveCommentable($module, $id, 'view');
+            $ids = $entity->comments()->pluck('id');
+            $receiptQuery->whereIn('comment_id', $ids);
+        }
+
+        if (!empty($commentIds)) {
+            $receiptQuery->whereIn('comment_id', $commentIds);
+        }
+
+        $receiptQuery->update(['read_at' => now()]);
+    }
+    private function getModuleMeta(string $module): array
+    {
+        $meta = Arr::get(self::MODULES, $module);
+        abort_if(!$meta, 404, 'Unknown module');
+
+        return $meta;
+    }
+
+    private function canAccess(?User $user, array $permissions, string $action): bool
+    {
+        return collect($permissions)->contains(
+            fn ($perm) => $user?->can("{$action} {$perm}")
+        );
+    }
+
+    private function determineRecipients(Model $entity, User $actor): Collection
+    {
+        // القاعدة: إذا المعلّق Admin → الإشعار يذهب للمسند إليه
+        if ($this->isAdmin($actor)) {
+            return collect($entity->assignedTo ? [$entity->assignedTo] : [])->filter();
+        }
+
+        // إذا المعلّق مستخدم عادي → الإشعار يذهب للأدمن
+        return User::role('admin')->get();
+    }
+
+    private function formatCommentForViewer(Comment $comment, ?User $viewer): array
+    {
+        $receipt = $viewer ? $this->resolveVisibleReceipt($comment, $viewer) : null;
+
+        $base = Arr::except($comment->toArray(), ['receipts']);
+
+        return array_merge($base, [
+            'receipt' => $receipt ? [
+                'recipient_id' => $receipt->recipient_id,
+                'delivered_at' => optional($receipt->delivered_at)->toISOString(),
+                'read_at' => optional($receipt->read_at)->toISOString(),
+            ] : null,
+        ]);
+    }
+
+    private function resolveVisibleReceipt(Comment $comment, User $viewer): ?CommentReceipt
+    {
+        // 1) لو المشاهد هو المستلم: يرجع receipt الخاص به
+        $receiptForViewer = $comment->receipts->first(
+            fn (CommentReceipt $receipt) => $receipt->recipient_id === $viewer->id
+        );
+
+        if ($receiptForViewer) {
+            return $receiptForViewer;
+        }
+
+        // 2) لو المشاهد هو كاتب التعليق: يعرض أول receipt (حالة المستلم المقابل)
+        if ($comment->user_id === $viewer->id) {
+            return $comment->receipts->first();
+        }
+
+        // 3) لو Admin: يعرض أول receipt (للمراقبة/المتابعة)
+        if ($this->isAdmin($viewer)) {
+            return $comment->receipts->first();
+        }
+
+        // غير ذلك لا نعرض receipts (خصوصية)
+        return null;
+    }
+
+    private function isAdmin(User $user): bool
+    {
+        return $user->hasRole('admin') || $user->hasRole('Admin');
+    }
+
+    public function markAsRead(?string $module, ?int $id, array $commentIds, User $user): void
+    {
+        $receiptQuery = CommentReceipt::query()
+            ->where('recipient_id', $user->id)
+            ->whereNull('read_at');
+
+        if ($module && $id) {
+            $entity = $this->resolveCommentable($module, $id, 'view');
+            $ids = $entity->comments()->pluck('id');
+            $receiptQuery->whereIn('comment_id', $ids);
+        }
+
+        if (!empty($commentIds)) {
+            $receiptQuery->whereIn('comment_id', $commentIds);
+        }
+
+        $receiptQuery->update(['read_at' => now()]);
+    }
+    private function getModuleMeta(string $module): array
+    {
+        $meta = Arr::get(self::MODULES, $module);
+        abort_if(!$meta, 404, 'Unknown module');
+
+        return $meta;
+    }
+
+    private function canAccess(?User $user, array $permissions, string $action): bool
+    {
+        return collect($permissions)->contains(
+            fn ($perm) => $user?->can("{$action} {$perm}")
+        );
+    }
+
+    private function determineRecipients(Model $entity, User $actor): Collection
+    {
+        // القاعدة: إذا المعلّق Admin → الإشعار يذهب للمسند إليه
+        if ($this->isAdmin($actor)) {
+            return collect($entity->assignedTo ? [$entity->assignedTo] : [])->filter();
+        }
+
+        // إذا المعلّق مستخدم عادي → الإشعار يذهب للأدمن
+        return User::role('admin')->get();
+    }
+
+    private function formatCommentForViewer(Comment $comment, ?User $viewer): array
+    {
+        $receipt = $viewer ? $this->resolveVisibleReceipt($comment, $viewer) : null;
+
+        $base = Arr::except($comment->toArray(), ['receipts']);
+
+        return array_merge($base, [
+            'receipt' => $receipt ? [
+                'recipient_id' => $receipt->recipient_id,
+                'delivered_at' => optional($receipt->delivered_at)->toISOString(),
+                'read_at' => optional($receipt->read_at)->toISOString(),
+            ] : null,
+        ]);
+    }
+
+    private function resolveVisibleReceipt(Comment $comment, User $viewer): ?CommentReceipt
+    {
+        // 1) لو المشاهد هو المستلم: يرجع receipt الخاص به
+        $receiptForViewer = $comment->receipts->first(
+            fn (CommentReceipt $receipt) => $receipt->recipient_id === $viewer->id
+        );
+
+        if ($receiptForViewer) {
+            return $receiptForViewer;
+        }
+
+        // 2) لو المشاهد هو كاتب التعليق: يعرض أول receipt (حالة المستلم المقابل)
+        if ($comment->user_id === $viewer->id) {
+            return $comment->receipts->first();
+        }
+
+        // 3) لو Admin: يعرض أول receipt (للمراقبة/المتابعة)
+        if ($this->isAdmin($viewer)) {
+            return $comment->receipts->first();
+        }
+
+        // غير ذلك لا نعرض receipts (خصوصية)
+        return null;
+    }
+
+    private function isAdmin(User $user): bool
+    {
+        return $user->hasRole('admin') || $user->hasRole('Admin');
+    }
+
+    public function markAsRead(?string $module, ?int $id, array $commentIds, User $user): void
+    {
+        $receiptQuery = CommentReceipt::query()
+            ->where('recipient_id', $user->id)
+            ->whereNull('read_at');
+
+        if ($module && $id) {
+            $entity = $this->resolveCommentable($module, $id, 'view');
+            $ids = $entity->comments()->pluck('id');
+            $receiptQuery->whereIn('comment_id', $ids);
+        }
+
+        if (!empty($commentIds)) {
+            $receiptQuery->whereIn('comment_id', $commentIds);
+        }
+
+        $receiptQuery->update(['read_at' => now()]);
+    }

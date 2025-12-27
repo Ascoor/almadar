@@ -84,6 +84,7 @@ Route::post('/users/{id}/first-login-password', [UserController::class, 'firstLo
         Route::get('/', [CommentController::class, 'index']);
         Route::post('/', [CommentController::class, 'store']);
     });
+    Route::post('/comments/mark-read', [CommentController::class, 'markAsRead']);
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);

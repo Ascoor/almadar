@@ -14,58 +14,116 @@ const defaultPayload = {
 };
 
 const entityDictionary = {
-  contract: { labelKey: 'notifications.entities.contract', path: 'contracts' },
-  contracts: { labelKey: 'notifications.entities.contract', path: 'contracts' },
-  session: { labelKey: 'notifications.entities.session', path: 'sessions' },
-  hearing: { labelKey: 'notifications.entities.session', path: 'sessions' },
-  case: { labelKey: 'notifications.entities.case', path: 'cases' },
-  lawsuit: { labelKey: 'notifications.entities.case', path: 'cases' },
+  contract: {
+    labelKey: 'notifications.entities.contract',
+    path: 'contracts',
+    fallbackLabel: 'العقد',
+  },
+  contracts: {
+    labelKey: 'notifications.entities.contract',
+    path: 'contracts',
+    fallbackLabel: 'العقد',
+  },
+  session: {
+    labelKey: 'notifications.entities.session',
+    path: 'sessions',
+    fallbackLabel: 'الجلسة',
+  },
+  hearing: {
+    labelKey: 'notifications.entities.session',
+    path: 'sessions',
+    fallbackLabel: 'الجلسة',
+  },
+  case: {
+    labelKey: 'notifications.entities.case',
+    path: 'cases',
+    fallbackLabel: 'القضية',
+  },
+  lawsuit: {
+    labelKey: 'notifications.entities.case',
+    path: 'cases',
+    fallbackLabel: 'القضية',
+  },
   consultation: {
     labelKey: 'notifications.entities.consultation',
     path: 'consultations',
+    fallbackLabel: 'المشورة',
   },
   consultations: {
     labelKey: 'notifications.entities.consultation',
     path: 'consultations',
+    fallbackLabel: 'المشورة',
   },
   investigation: {
     labelKey: 'notifications.entities.investigation',
     path: 'investigations',
+    fallbackLabel: 'التحقيق',
   },
   investigations: {
     labelKey: 'notifications.entities.investigation',
     path: 'investigations',
+    fallbackLabel: 'التحقيق',
   },
   procedures: {
     labelKey: 'notifications.entities.procedure',
     path: 'legal/investigation-action',
+    fallbackLabel: 'الإجراء',
   },
   'investigation-action': {
     labelKey: 'notifications.entities.procedure',
     path: 'legal/investigation-action',
+    fallbackLabel: 'الإجراء',
   },
   'legal-advice': {
     labelKey: 'notifications.entities.legalAdvice',
     path: 'legal-advices',
+    fallbackLabel: 'الاستشارة القانونية',
   },
   'legal-advices': {
     labelKey: 'notifications.entities.legalAdvice',
     path: 'legal-advices',
+    fallbackLabel: 'الاستشارة القانونية',
   },
   legaladvices: {
     labelKey: 'notifications.entities.legalAdvice',
     path: 'legal-advices',
+    fallbackLabel: 'الاستشارة القانونية',
   },
   legaladvice: {
     labelKey: 'notifications.entities.legalAdvice',
     path: 'legal-advices',
+    fallbackLabel: 'الاستشارة القانونية',
   },
-  litigation: { labelKey: 'notifications.entities.litigation', path: 'litigations' },
-  litigations: { labelKey: 'notifications.entities.litigation', path: 'litigations' },
-  archive: { labelKey: 'notifications.entities.archive', path: 'archives' },
-  archives: { labelKey: 'notifications.entities.archive', path: 'archives' },
-  user: { labelKey: 'notifications.entities.user', path: 'users' },
-  users: { labelKey: 'notifications.entities.user', path: 'users' },
+  litigation: {
+    labelKey: 'notifications.entities.litigation',
+    path: 'litigations',
+    fallbackLabel: 'الدعوى',
+  },
+  litigations: {
+    labelKey: 'notifications.entities.litigation',
+    path: 'litigations',
+    fallbackLabel: 'الدعوى',
+  },
+  archive: {
+    labelKey: 'notifications.entities.archive',
+    path: 'archives',
+    fallbackLabel: 'الأرشيف',
+  },
+  archives: {
+    labelKey: 'notifications.entities.archive',
+    path: 'archives',
+    fallbackLabel: 'الأرشيف',
+  },
+  user: {
+    labelKey: 'notifications.entities.user',
+    path: 'users',
+    fallbackLabel: 'المستخدم',
+  },
+  users: {
+    labelKey: 'notifications.entities.user',
+    path: 'users',
+    fallbackLabel: 'المستخدم',
+  },
 };
 
 const cleanPath = (path) => {
@@ -130,7 +188,7 @@ export function formatNotification(notification, t, lang = 'en') {
   const sectionLabel =
     sectionLabelRaw && sectionLabelRaw !== sectionLabelKey
       ? sectionLabelRaw
-      : sectionKey;
+      : meta?.fallbackLabel || sectionKey;
 
   const eventKey = payload.event || payload.key || payload?.meta?.event || 'generic';
   const eventLabelKey = `notifications.events.${eventKey}.label`;

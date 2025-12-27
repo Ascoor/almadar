@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import {
-  LogoArt,
+  LogoNewArt,
   LogoTextArtGreen,
   LogoTextArtWhite,
 } from '../../assets/images';
@@ -86,7 +86,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
     ? isDark
       ? LogoTextArtWhite
       : LogoTextArtGreen // open → text logo (white in dark, green in light)
-    : LogoArt; // closed → compact mark
+    : LogoNewArt; // closed → compact mark
 
   const navConfig = useMemo(
     () =>

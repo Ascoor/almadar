@@ -1,6 +1,7 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 import {
   useContract,
   useContractCategories,
@@ -17,6 +18,8 @@ export default function ContractDetailsPage() {
   const { id } = useParams();
   const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { hasPermission } = useAuth();
+  const canEdit = hasPermission('edit contracts');
 
   const { data, refetch: refetchContracts } = useContracts();
   
@@ -52,20 +55,23 @@ export default function ContractDetailsPage() {
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
       <div className="mb-4 flex gap-2">
         <Button onClick={() => navigate(-1)}>رجوع</Button>
-        <Button variant="outline" onClick={() => setIsModalOpen(true)}>
-          تعديل العقد
-        </Button>
       </div>
 
       <Suspense fallback={<div>تحميل التفاصيل...</div>}>
         <ContractDetails
           selected={resolvedContract}
           onClose={() => navigate(-1)}
-          onEdit={() => setIsModalOpen(true)}
+          onEdit={
+            canEdit
+              ? () => {
+                  setIsModalOpen(true);
+                }
+              : undefined
+          }
         />
       </Suspense>
 
-      {isModalOpen && (
+      {isModalOpen && canEdit && (
         <ContractModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
