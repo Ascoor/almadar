@@ -7,15 +7,7 @@ import {
   Tooltip,
 } from 'recharts';
 import { useLanguage } from '@/context/LanguageContext';
-import {
-  getPalette,
-  tooltipStyle,
-  legendStyle,
-  chartMargin,
-} from './chartTheme';
-
-// Radial bars alternative to the pie — same data idea, unique look
-// Tokenized colors, RTL-safe rendering, and AR/EN demo labels
+import { getPalette, tooltipStyle, legendStyle, chartMargin } from './chartTheme';
 
 const demoData = {
   ar: [
@@ -36,11 +28,11 @@ const demoData = {
 
 export default function LegalCaseCategorysChart({ height = '100%' }) {
   const { lang, formatNumber } = useLanguage();
-  const palette = getPalette(8);
+
+  const palette = useMemo(() => getPalette(8), []);
 
   const data = useMemo(() => {
     const src = lang === 'ar' ? demoData.ar : demoData.en;
-    // RadialBarChart expects an angle mapping; keep original values
     return src.map((d, i) => ({ ...d, fill: palette[i % palette.length] }));
   }, [lang, palette]);
 
@@ -61,25 +53,28 @@ export default function LegalCaseCategorysChart({ height = '100%' }) {
             cornerRadius={6}
             minAngle={4}
             clockWise
+            isAnimationActive={false}
             label={{
               position: 'insideStart',
               fill: 'var(--fg)',
               fontSize: 11,
-              formatter: (v) =>
-                typeof v === 'number' ? formatNumber(v, lang) : v,
+              formatter: (v) => (typeof v === 'number' ? formatNumber(v, lang) : v),
             }}
           />
+
           <Tooltip
             contentStyle={tooltipStyle}
-            formatter={(v) =>
-              typeof v === 'number' ? formatNumber(v, lang) : v
-            }
+            formatter={(v) => (typeof v === 'number' ? formatNumber(v, lang) : v)}
           />
+
           <Legend
             verticalAlign="bottom"
             height={36}
             iconType="circle"
             wrapperStyle={legendStyle}
+            formatter={(value) => (
+              <span style={{ color: 'var(--muted-foreground)' }}>{value}</span>
+            )}
           />
         </RadialBarChart>
       </ResponsiveContainer>

@@ -7,6 +7,7 @@
 ========================= */
 @layer base {
   :root { color-scheme: light dark; }
+
   html {
     -webkit-font-smoothing: antialiased;
     scrollbar-gutter: stable;
@@ -93,12 +94,14 @@
 
   select { background-color: var(--card); color: var(--fg); }
   option { background-color: var(--card); color: var(--fg); }
+
   option:checked,
   option:focus,
   option:active {
     background-color: var(--primary);
     color: var(--primary-foreground);
   }
+
   select[multiple] option:checked {
     background-color: var(--primary);
     color: var(--primary-foreground);
@@ -110,11 +113,17 @@
     border: 1px solid var(--border);
     border-radius: .75rem;
   }
-  [role="listbox"] [role="option"] { padding: .5rem .75rem; cursor: pointer; }
+
+  [role="listbox"] [role="option"] {
+    padding: .5rem .75rem;
+    cursor: pointer;
+  }
+
   [role="listbox"] [role="option"][aria-selected="true"] {
     background: color-mix(in oklab, var(--primary) 24%, transparent);
     color: var(--primary-foreground);
   }
+
   [role="listbox"] [role="option"]:hover {
     background: color-mix(in oklab, var(--primary) 15%, transparent);
     color: var(--primary-foreground);
@@ -125,6 +134,45 @@
    Components
 ========================= */
 @layer components {
+  /* Chart Card (Premium surface) */
+  .chart-card {
+    @apply rounded-2xl border border-border bg-card shadow-md;
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    contain: layout paint style;
+    transform: translateZ(0);
+  }
+
+  .chart-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-subtle);
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  .dark .chart-card::before { opacity: 0.45; }
+
+  .chart-card::after {
+    content: "";
+    position: absolute;
+    inset: -24px;
+    background: var(--gradient-primary);
+    opacity: 0.12;
+    filter: blur(46px);
+    pointer-events: none;
+    transform: translate3d(0,0,0);
+  }
+
+  .dark .chart-card::after { opacity: 0.16; }
+
+  .chart-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
   /* Reusable container styles */
   .card {
     @apply bg-card text-fg border border-border rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out;
@@ -154,7 +202,7 @@
     color: transparent;
   }
 
-  /* Status pills (TOKEN-DRIVEN ONLY) */
+  /* Status pills */
   .status-pill {
     display: inline-flex;
     align-items: center;
@@ -165,31 +213,38 @@
     font-weight: 600;
     border: 1px solid transparent;
   }
-  /* requires tokens: --warning, --secondary, --kpi-positive, --kpi-positive-bg */
+
   .status-pill--pending {
     background: color-mix(in oklab, var(--warning) 14%, transparent);
     color: var(--warning);
     border-color: color-mix(in oklab, var(--warning) 42%, transparent);
   }
+
   .status-pill--review {
     background: color-mix(in oklab, var(--secondary) 14%, transparent);
     color: var(--secondary);
     border-color: color-mix(in oklab, var(--secondary) 42%, transparent);
   }
+
   .status-pill--done {
     background-color: var(--kpi-positive-bg);
     color: var(--kpi-positive);
     border-color: color-mix(in oklab, var(--kpi-positive) 42%, transparent);
   }
 
-  /* Optional explicit helpers for consistency */
+  /* Optional explicit helpers */
   .form-control {
     @apply w-full rounded-lg border;
     background-color: var(--card);
     color: var(--fg);
     border-color: var(--border);
   }
-  .form-control:focus { outline: none; box-shadow: 0 0 0 2px var(--ring); border-color: var(--ring); }
+  .form-control:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ring);
+    border-color: var(--ring);
+  }
+
   .form-hint { @apply text-xs; color: var(--muted-foreground); }
 
   .btn-primary {
@@ -249,12 +304,16 @@
     }
   }
 
-  /* Mini-sidebar item helpers (light + dark) */
+  /* Mini-sidebar item helpers */
   .mini-sidebar-item {
     @apply flex items-center gap-2 px-3 py-2 rounded-lg transition-colors;
     color: var(--fg);
     position: relative;
-    transition: background-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+    transition:
+      background-color .2s ease,
+      color .2s ease,
+      transform .2s ease,
+      box-shadow .2s ease;
   }
 
   .mini-sidebar-item:hover {
@@ -291,6 +350,7 @@
     background: color-mix(in oklab, var(--neon-title) 10%, transparent);
     box-shadow: 0 0 14px color-mix(in oklab, var(--neon-title) 18%, transparent);
   }
+
   .dark .mini-sidebar-item.active {
     background: color-mix(in oklab, var(--neon-title) 16%, transparent);
     outline: 2px solid color-mix(in oklab, var(--neon-title) 28%, transparent);
@@ -299,11 +359,12 @@
       0 8px 22px color-mix(in oklab, var(--fg) 18%, transparent);
     transform: translateX(3px);
   }
+
   .dark .mini-sidebar-item::before {
     background: color-mix(in oklab, var(--neon-title) 55%, transparent);
   }
 
-  /* Section/page titles (token-driven) */
+  /* Section/page titles */
   .section-title {
     color: var(--primary);
     text-shadow: 0 1px 0 color-mix(in oklab, var(--fg) 12%, transparent);
@@ -417,26 +478,21 @@
   .dark .section-title-animate { animation: neonTitlePulse 3.2s ease-in-out infinite; }
   .page-title-animate { animation: neonTitlePulse 3.4s ease-in-out infinite; }
 }
+
 /* =========================================
    Special Edition Login Card (Glass + Glow)
-   Uses your existing CSS variables
 ========================================= */
-
 .login-card-special {
   position: relative;
   overflow: hidden;
 
-  /* bigger + softer radius than your base */
   border-radius: calc(var(--radius) + 14px);
 
-  /* glass surface from your theme */
   background: color-mix(in oklab, var(--card) 82%, transparent);
   border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
 
-  /* your glow shadow */
   box-shadow: var(--shadow-glow);
 
-  /* glass blur */
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
@@ -445,11 +501,8 @@
   content: "";
   position: absolute;
   inset: 0;
-
-  /* subtle vertical gradient from your theme */
   background: var(--gradient-subtle);
   opacity: 0.85;
-
   pointer-events: none;
 }
 
@@ -457,12 +510,9 @@
   content: "";
   position: absolute;
   inset: -42px;
-
-  /* ambient “special edition” light using your theme gradient */
   background: var(--gradient-primary);
   opacity: 0.18;
   filter: blur(48px);
-
   animation: loginAmbientDrift 10s ease-in-out infinite;
   pointer-events: none;
 }
@@ -472,8 +522,50 @@
   50%      { transform: translate( 6%,  4%) scale(1.08); }
 }
 
-/* Keep content above the effects */
 .login-card-special > * {
   position: relative;
   z-index: 1;
+}
+
+/* =========================
+   Reduce Motion (Accessibility)
+========================= */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+
+  .chart-card,
+  .card,
+  .mini-sidebar-item,
+  .neon-pulse-dark,
+  .section-title-animate,
+  .page-title-animate {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+/* ===== Recharts Typography / Clarity ===== */
+.recharts-wrapper text,
+.recharts-wrapper tspan {
+  font-family: var(--font-map) !important; /* Cairo/Roboto حسب lang */
+  font-weight: 600;
+  letter-spacing: 0.1px;
+}
+
+/* Axis ticks stronger */
+.recharts-cartesian-axis-tick text {
+  fill: var(--chart-axis) !important;
+  opacity: 1 !important;
+}
+
+/* Tooltip label/value */
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+/* Grid lines more stable */
+.recharts-cartesian-grid line {
+  stroke: var(--chart-grid) !important;
+  shape-rendering: crispEdges;
 }

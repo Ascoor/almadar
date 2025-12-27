@@ -257,10 +257,7 @@ export default function EntityComments({ entityType, entityId, title = 'التع
   return (
     <div className="space-y-4 rounded-2xl border border-border bg-[var(--comments-panel)] p-4 shadow-[var(--shadow-sm)]">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <MessageCircle className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold text-fg">{title}</h3>
-        </div>
+
 
         {!canComment && (
           <div className="flex items-center gap-2 text-xs px-2 py-1 rounded-full border border-border bg-muted/40 text-muted-foreground">

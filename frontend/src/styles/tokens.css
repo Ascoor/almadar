@@ -1,8 +1,16 @@
+/* =========================
+   Theme Tokens
+   - Light: :root
+   - Dark : .dark
+========================= */
 :root {
   /* Fonts */
   --font-body: 'Roboto', 'Cairo', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   --font-heading: 'Lora', 'Cairo', Georgia, 'Times New Roman', serif;
   --font-map: 'Roboto', 'Cairo', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+
+  /* Radius */
+  --radius: 1rem;
 
   /* Base (clean daylight) */
   --bg: hsl(210 25% 97%);
@@ -49,6 +57,7 @@
     color-mix(in oklab, var(--primary) 84%, white),
     color-mix(in oklab, var(--accent) 82%, white)
   );
+
   --gradient-subtle: linear-gradient(
     180deg,
     color-mix(in oklab, var(--bg) 94%, white),
@@ -63,35 +72,44 @@
     0 0 0 2px color-mix(in oklab, var(--primary) 20%, transparent),
     0 18px 60px color-mix(in oklab, var(--primary) 18%, transparent);
 
-  /* Neon (kept, but day is subtle) */
+  /* Neon (day: subtle) */
   --neon-title: rgba(20, 255, 98, 0.55);
 
-  /* Panel behind list to separate from details panel */
+  /* Comments Theme Tokens */
   --comments-panel: color-mix(in oklab, var(--card) 78%, var(--muted));
-  /* each comment card surface (more contrast vs panel) */
   --comments-item: color-mix(in oklab, var(--card) 92%, var(--bg));
-  /* input / soft surfaces */
   --comments-soft: color-mix(in oklab, var(--muted) 62%, white);
-
-  /* neon halo (day: super subtle) */
   --comments-halo: color-mix(in oklab, var(--primary) 14%, transparent);
-  /* inner outline for glass */
   --comments-outline: color-mix(in oklab, var(--primary) 14%, transparent);
-
-  /* tiny separators inside comment card */
   --comments-divider: color-mix(in oklab, var(--border) 65%, transparent);
+
+  /* Chart palette */
+  --chart-1: hsl(176 88% 28%);
+  --chart-2: hsl(152 70% 40%);
+  --chart-3: hsl(190 70% 44%);
+  --chart-4: hsl(22 92% 56%);
+  --chart-5: hsl(200 80% 46%);
+  --chart-6: hsl(260 70% 60%);
+  --chart-7: hsl(330 75% 52%);
+  --chart-8: hsl(42 96% 54%);
+  
+  /* ... */
+  --chart-axis: color-mix(in oklab, var(--muted-foreground) 92%, transparent);
+  --chart-grid: color-mix(in oklab, var(--border) 86%, transparent);
+  --chart-tooltip-bg: color-mix(in oklab, var(--card) 96%, var(--bg));
+  --chart-tooltip-border: color-mix(in oklab, var(--border) 82%, transparent);
 }
 
-/* --------------------- DARK THEME ---------------------- */
+/* ---------------------
+   Dark Theme Tokens
+---------------------- */
 .dark {
   --bg: hsl(225 40% 7%);
   --fg: hsl(210 30% 96%);
 
-  /* cards slightly lighter than bg for depth */
-  --card: hsl(182, 77%, 9%);
+  --card: hsl(182 77% 9%);
   --popover: hsl(225 30% 11%);
 
-  /* brand shifts brighter in dark */
   --primary: hsl(168 70% 50%);
   --primary-foreground: hsl(225 40% 7%);
   --secondary: hsl(190 70% 44%);
@@ -105,8 +123,6 @@
 
   --border: hsl(225 18% 22%);
   --input: hsl(225 18% 22%);
-
-  /* bright ring for focus */
   --ring: hsl(168 90% 60%);
 
   --sidebar-bg: hsl(225 35% 9%);
@@ -114,24 +130,22 @@
   --sidebar-muted: hsl(225 22% 15%);
   --sidebar-active: var(--primary);
 
-  /* Glass (dark) */
   --glass-bg: 0 0 0 / 0.38;
   --glass-border: 255 255 255 / 0.12;
   --glass-shadow: 0 16px 48px rgba(0, 0, 0, 0.58);
 
-  /* Gradient (dark) */
   --gradient-primary: linear-gradient(
     135deg,
     color-mix(in oklab, var(--primary) 78%, black),
     color-mix(in oklab, var(--secondary) 74%, black)
   );
+
   --gradient-subtle: linear-gradient(
     180deg,
     color-mix(in oklab, var(--bg) 88%, black),
     color-mix(in oklab, var(--card) 88%, black)
   );
 
-  /* Shadows (dark) */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
   --shadow-md: 0 14px 38px rgba(0, 0, 0, 0.55);
   --shadow-lg: 0 28px 78px rgba(0, 0, 0, 0.68);
@@ -139,25 +153,33 @@
     0 0 0 2px color-mix(in oklab, var(--ring) 26%, transparent),
     0 24px 78px color-mix(in oklab, var(--primary) 22%, transparent);
 
-  /* Neon: night stronger but still soft */
   --neon-title: rgba(0, 255, 210, 0.65);
 
-  /* ---------- COMMENT THEME TOKENS (dark) ---------- */
-  
+  /* Comments (dark) */
   --comments-panel: color-mix(in oklab, var(--card) 70%, var(--bg));
   --comments-item: color-mix(in oklab, var(--card) 84%, var(--bg));
   --comments-soft: color-mix(in oklab, var(--muted) 62%, var(--card));
-
   --comments-halo: color-mix(in oklab, var(--ring) 18%, transparent);
   --comments-outline: color-mix(in oklab, var(--ring) 16%, transparent);
-
   --comments-divider: color-mix(in oklab, var(--border) 70%, transparent);
+
+  /* Charts (dark) */
+  
+  --chart-1: hsl(168 70% 50%);
+  --chart-2: hsl(190 70% 44%);
+  --chart-3: hsl(176 88% 52%);
+  --chart-4: hsl(38 90% 60%);
+  --chart-5: hsl(200 90% 58%);
+  --chart-6: hsl(260 80% 70%);
+  --chart-7: hsl(330 80% 62%);
+  --chart-8: hsl(42 96% 60%);
+  --chart-axis: color-mix(in oklab, var(--fg) 76%, transparent);
+  --chart-grid: color-mix(in oklab, var(--border) 88%, transparent);
+  --chart-tooltip-bg: color-mix(in oklab, var(--card) 86%, var(--bg));
+  --chart-tooltip-border: color-mix(in oklab, var(--border) 88%, transparent);
 }
 
-/* Radius */
-:root, .dark { --radius: 1rem; }
-
-/* Neon title helper (optional) */
+/* Optional neon title helper */
 .neon-title {
   color: var(--primary);
   text-shadow:

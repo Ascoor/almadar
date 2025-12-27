@@ -75,22 +75,7 @@ export default function LegalAdviceDetailsPage() {
           <InfoItem icon={Calendar} label="آخر تحديث" value={formatDate(advice.updated_at)} />
         </div>
 
-        {/* ✅ سطر مستقل: الإجراءات/الجدول */}
-        <SectionCard title="الإجراءات" icon={ShieldCheck} hint="متجاوب على الموبايل">
-          <div className="w-full overflow-x-auto">
-            <div className="min-w-[720px]">
-              <Suspense fallback={<div>تحميل البيانات...</div>}>
-                {/* ضع جدول الإجراءات الخاص بالمشورة هنا إن كان موجودًا */}
-                {/* <LegalAdviceActionsTable adviceId={advice.id} /> */}
-
-                {/* Placeholder نظيف بدل الجدول إذا لم يوجد */}
-                <div className="rounded-lg border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
-                  لا يوجد جدول إجراءات مرتبط بهذه المشورة (أو لم يتم ربطه بعد).
-                </div>
-              </Suspense>
-            </div>
-          </div>
-        </SectionCard>
+      
 
         {/* ✅ سطر مستقل: التعليقات */}
         <SectionCard title="التعليقات" icon={MessageCircle}>
