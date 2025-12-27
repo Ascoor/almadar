@@ -228,8 +228,16 @@ export default function EntityComments({ entityType, entityId, title = 'التع
     return 'تعذر تحميل التعليقات، يرجى المحاولة لاحقًا.';
   }, [error, isError]);
 
-  const renderReceipt = (receipt) => {
+  const viewerId = user?.id ? String(user.id) : null;
+
+  const renderReceipt = (receipt, authorId) => {
     if (!receipt) return null;
+
+    // احترام الصلاحيات: لا نعرض حالة التسليم/المشاهدة إلا للطرف المعني
+    const recipientId = receipt.recipient_id != null ? String(receipt.recipient_id) : null;
+    const canSeeReceipt = viewerId && (viewerId === authorId || viewerId === recipientId);
+
+    if (!canSeeReceipt) return null;
 
     const isRead = Boolean(receipt.read_at);
     const isDelivered = Boolean(receipt.delivered_at);
@@ -282,6 +290,7 @@ export default function EntityComments({ entityType, entityId, title = 'التع
 
         {comments.map((entry) => {
           const text = entry.body ?? entry.comment ?? '';
+          const authorId = entry.user?.id != null ? String(entry.user.id) : null;
           return (
             <div
               key={entry.id}
@@ -292,7 +301,7 @@ export default function EntityComments({ entityType, entityId, title = 'التع
                   <span className="font-semibold text-fg">
                     {entry.user?.name || 'مستخدم غير معروف'}
                   </span>
-                  {renderReceipt(entry.receipt)}
+                  {renderReceipt(entry.receipt, authorId)}
                 </div>
                 <span>{formatDateTime(entry.created_at)}</span>
               </div>
