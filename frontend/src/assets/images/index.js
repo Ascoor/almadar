@@ -6,6 +6,7 @@ export { default as WelcomeLogoWhite } from './logo-art-t.png';
 export { default as LogoNewArt } from './logo-art-n.png';
 export { default as Logo1 } from './logo-1.png';
 export { default as LogoGreen } from './logo-green.png';
+export { default as SpinnerLogo } from './spinner-logo.png';
 export { default as WelcomeLogo } from './welcome-logo.png';
 export { default as LandingPage } from './LandingPage.webp';
 export { default as LogoPatren } from './logo-art-text.png';
