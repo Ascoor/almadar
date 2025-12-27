@@ -5,3 +5,5 @@ export const getEntityComments = (entityType, id, config = {}) =>
 
 export const createEntityComment = (entityType, id, payload) =>
   api.post(`/api/${entityType}/${id}/comments`, payload);
+
+export const markCommentsAsRead = (payload) => api.post('/api/comments/mark-read', payload);

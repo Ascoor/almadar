@@ -1,10 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Lock, MessageCircle, Send } from 'lucide-react';
+import { Check, CheckCheck, Loader2, Lock, MessageCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { createEntityComment, getEntityComments } from '@/services/api/comments';
+import {
+  createEntityComment,
+  getEntityComments,
+  markCommentsAsRead,
+} from '@/services/api/comments';
 import { useAuth } from '@/context/AuthContext';
 
 const formatDateTime = (value) => {
@@ -32,7 +36,7 @@ const PERMISSION_MAP = {
 export default function EntityComments({ entityType, entityId, title = 'التعليقات' }) {
   const queryClient = useQueryClient();
   const [body, setBody] = useState('');
-  const { hasPermission } = useAuth();
+  const { hasPermission, user } = useAuth();
 
   const permissionKey = useMemo(() => {
     if (!entityType) return null;
@@ -55,6 +59,15 @@ export default function EntityComments({ entityType, entityId, title = 'التع
     queryFn: () => getEntityComments(entityType, entityId),
     select: (res) => (Array.isArray(res?.data?.data) ? res.data.data : []),
     enabled: Boolean(entityType && entityId),
+  });
+
+  const { mutate: markAsRead } = useMutation({
+    mutationFn: markCommentsAsRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['entityComments', entityType, entityId],
+      });
+    },
   });
 
   const { mutate: submitComment, isPending } = useMutation({
@@ -95,6 +108,38 @@ export default function EntityComments({ entityType, entityId, title = 'التع
     submitComment({ body: trimmed });
   };
 
+  useEffect(() => {
+    if (!user?.id || !Array.isArray(comments) || comments.length === 0) return;
+
+    const unreadIds = comments
+      .filter(
+        (comment) =>
+          comment?.receipt?.recipient_id === user.id &&
+          comment?.receipt?.delivered_at &&
+          !comment?.receipt?.read_at,
+      )
+      .map((comment) => comment.id);
+
+    if (unreadIds.length > 0) {
+      markAsRead({ comment_ids: unreadIds });
+    }
+  }, [comments, markAsRead, user]);
+
+  const renderReceipt = (receipt) => {
+    if (!receipt) return null;
+
+    const isRead = Boolean(receipt.read_at);
+    const isDelivered = Boolean(receipt.delivered_at);
+
+    if (!isDelivered) return null;
+
+    return (
+      <span className="flex items-center gap-1 text-primary text-xs" title={isRead ? 'تمت المشاهدة' : 'تم التسليم'}>
+        {isRead ? <CheckCheck className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+      </span>
+    );
+  };
+
   return (
     <div className="space-y-4 rounded-2xl border border-border bg-[var(--comments-panel)] p-4 shadow-[var(--shadow-sm)]">
       <div className="flex items-center justify-between gap-2">
@@ -131,9 +176,12 @@ export default function EntityComments({ entityType, entityId, title = 'التع
               className="rounded-xl border border-border bg-[var(--comments-item)] p-3 shadow-sm"
             >
               <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                <span className="font-semibold text-fg">
-                  {entry.user?.name || 'مستخدم غير معروف'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-fg">
+                    {entry.user?.name || 'مستخدم غير معروف'}
+                  </span>
+                  {renderReceipt(entry.receipt)}
+                </div>
                 <span>{formatDateTime(entry.created_at)}</span>
               </div>
 
