@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
-export default function Header({ isOpen, user, onToggleSidebar }) {
+export default function Header({ isOpen, user, sidebarOffset = '0px', onToggleSidebar }) {
   const { dir } = useLanguage();
   const [isDark] = useState(() => {
     const root = document.documentElement;
@@ -24,11 +24,11 @@ export default function Header({ isOpen, user, onToggleSidebar }) {
         boxShadow: isDark
           ? '0 10px 30px -10px rgba(34,211,238,0.35)' // إضاءة للأسفل فقط
           : '0 6px 12px -4px rgba(0,0,0,0.1)', // ظل خفيف للأسفل فقط
+        marginInlineStart: sidebarOffset,
       }}
       className={`
         fixed top-0 left-0 right-0
-        transition-[margin,padding] duration-300
-        ${isOpen ? 'lg:ms-64' : 'lg:ms-16'}
+        transition-[margin,padding] duration-250 ${isOpen ? 'ease-out' : 'ease-in'}
         py-3 px-6 flex justify-between items-center
         bg-sidebar
         text-gray-900 dark:text-white

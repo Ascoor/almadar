@@ -32,14 +32,17 @@ export default function AppLayout({ children, user }) {
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  const sidebarOffset = !isMobile
-    ? isTablet
-      ? sidebarOpen
-        ? '0'
-        : '64px'
-      : sidebarOpen
-        ? '260px'
-        : '64px'
+  const isDashboardRoute =
+    location.pathname === '/' || location.pathname.startsWith('/dashboard');
+  const desktopSidebarWidth = 256;
+  const collapsedPeekWidth = 64;
+
+  const isOverlayMode = isMobile || isTablet;
+  const headerOffset = !isOverlayMode
+    ? `${sidebarOpen ? desktopSidebarWidth : collapsedPeekWidth}px`
+    : '0px';
+  const sidebarOffset = !isOverlayMode
+    ? `${sidebarOpen ? desktopSidebarWidth : collapsedPeekWidth}px`
     : '0';
   const mainStyles = {
     paddingTop: isMobile
@@ -61,33 +64,43 @@ export default function AppLayout({ children, user }) {
           onToggle={toggleSidebar}
           onLinkClick={() => (isMobile || isTablet) && setSidebarOpen(false)}
         />
-        {(isMobile || isTablet) && sidebarOpen && (
-          <div
-            className="fixed inset-0 bg-foreground/50 z-10"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+        <div
+          className={`fixed inset-0 bg-foreground/50 z-10 transition-opacity duration-250 ${
+            sidebarOpen && (isMobile || isTablet)
+              ? 'opacity-100'
+              : 'opacity-0 pointer-events-none'
+          }`}
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden={!sidebarOpen}
+        />
       </Suspense>
-      <div className="flex-1 flex flex-col transition-[width,transform] duration-300 min-w-0 w-full">
+      <div className="flex-1 flex flex-col min-w-0 w-full">
         <Suspense fallback={null}>
           <Header
             user={user}
             isOpen={sidebarOpen}
+            sidebarOffset={headerOffset}
             onToggleSidebar={toggleSidebar}
           />
         </Suspense>
         <main
           className={`
-            flex-1 px-4 sm:px-6 lg:px-8
-            bg-bg
-            transition-[width,transform] duration-500
+            flex-1 bg-bg
+            transition-[margin] duration-250 ${sidebarOpen ? 'ease-out' : 'ease-in'}
             ${isMobile ? 'mobile-main' : 'desktop-main'}
             ${isStandalone ? 'standalone-main' : ''}
             min-w-0 w-full
+            pb-8
           `}
           style={mainStyles}
         >
-          {children}
+          <div
+            className={`w-full ${
+              isDashboardRoute ? 'max-w-[1400px]' : 'max-w-6xl'
+            } mx-auto px-4 sm:px-6 lg:px-8 space-y-6 lg:space-y-8`}
+          >
+            {children}
+          </div>
         </main>
       </div>
     </ResponsiveLayout>
