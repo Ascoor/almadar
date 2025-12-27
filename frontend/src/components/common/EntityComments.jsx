@@ -10,10 +10,7 @@ import {
   markCommentsAsRead,
 } from '@/services/api/comments';
 import { useAuth } from '@/context/AuthContext';
-import {
-  mergeComments,
-  useRealtimeComments,
-} from '@/hooks/useRealtimeComments';
+import { mergeComments, useRealtimeComments } from '@/hooks/useRealtimeComments';
 
 const formatDateTime = (value) => {
   if (!value) return '—';
@@ -42,6 +39,7 @@ export default function EntityComments({ entityType, entityId, title = 'التع
   const [body, setBody] = useState('');
   const { hasPermission, user } = useAuth();
 
+  // IMPORTANT: this hook should also wire realtime events and update cache via mergeComments
   const { commentsKey, detailKey } = useRealtimeComments({ entityType, entityId });
 
   const permissionKey = useMemo(() => {
@@ -72,29 +70,32 @@ export default function EntityComments({ entityType, entityId, title = 'التع
     select: (res) => (Array.isArray(res?.data?.data) ? res.data.data : []),
     enabled: Boolean(commentsKey),
     retry: false,
+    // Prevent UI wipe / empty flicker during refetch & invalidations
     placeholderData: (previousData) => previousData ?? [],
   });
 
   const { mutate: markAsRead } = useMutation({
     mutationFn: markCommentsAsRead,
+    // keep it simple: invalidate will refetch, but placeholderData prevents wiping
     onSuccess: () => {
       if (commentsKey) {
-        queryClient.invalidateQueries({
-          queryKey: commentsKey,
-        });
+        queryClient.invalidateQueries({ queryKey: commentsKey });
       }
     },
   });
 
   const { mutate: submitComment, isPending } = useMutation({
     mutationFn: (payload) => createEntityComment(entityType, entityId, payload),
+
+    // Optimistic add without wiping, and keep a snapshot for rollback
     onMutate: async (variables) => {
       if (!commentsKey) return {};
 
       await queryClient.cancelQueries({ queryKey: commentsKey });
 
       const previous = queryClient.getQueryData(commentsKey);
-      const optimisticId = `optimistic-${Date.now()}`;
+
+      const optimisticId = `optimistic-${Date.now()}-${Math.random().toString(16).slice(2)}`;
       const optimisticComment = {
         id: optimisticId,
         body: variables?.body,
@@ -115,19 +116,20 @@ export default function EntityComments({ entityType, entityId, title = 'التع
 
       return { previous, optimisticId };
     },
+
     onSuccess: (response, _variables, context) => {
       setBody('');
       setCanComment(true);
 
       const createdComment = response?.data?.comment ?? response?.comment;
 
-      if (commentsKey) {
+      if (commentsKey && createdComment) {
         queryClient.setQueryData(commentsKey, (previous) =>
-          mergeComments(previous, createdComment, { replaceId: context?.optimisticId }),
+          mergeComments(previous ?? [], createdComment, { replaceId: context?.optimisticId }),
         );
       }
 
-      if (detailKey) {
+      if (detailKey && createdComment) {
         queryClient.setQueryData(detailKey, (previous) => {
           if (!previous) return previous;
           const next = { ...previous };
@@ -141,7 +143,9 @@ export default function EntityComments({ entityType, entityId, title = 'التع
 
       toast.success('تم إضافة التعليق بنجاح.');
     },
+
     onError: (err, _vars, context) => {
+      // rollback comments snapshot only (no wipe)
       if (commentsKey && context?.previous !== undefined) {
         queryClient.setQueryData(commentsKey, context.previous);
       }
@@ -149,18 +153,18 @@ export default function EntityComments({ entityType, entityId, title = 'التع
       const status = err?.response?.status;
       if (status === 403) {
         setCanComment(false);
-        toast.error('لا تملك الصلاحية', {
-          description: COMMENT_FORBIDDEN,
-        });
+        toast.error('لا تملك الصلاحية', { description: COMMENT_FORBIDDEN });
         return;
       }
 
-      const message =
-        err?.response?.data?.message || err?.message || 'حدث خطأ غير متوقع.';
+      const message = err?.response?.data?.message || err?.message || 'حدث خطأ غير متوقع.';
+      toast.error('تعذر إضافة التعليق', { description: message });
+    },
 
-      toast.error('تعذر إضافة التعليق', {
-        description: message,
-      });
+    // Optional: ensure full consistency after success/error without wiping UI
+    onSettled: () => {
+      if (commentsKey) queryClient.invalidateQueries({ queryKey: commentsKey });
+      if (detailKey) queryClient.invalidateQueries({ queryKey: detailKey });
     },
   });
 
@@ -173,6 +177,7 @@ export default function EntityComments({ entityType, entityId, title = 'التع
     submitComment({ body: trimmed });
   };
 
+  // Mark as read for current viewer (batch)
   useEffect(() => {
     if (!user?.id || !Array.isArray(comments) || comments.length === 0) return;
 
@@ -198,11 +203,7 @@ export default function EntityComments({ entityType, entityId, title = 'التع
 
   const errorMessage = useMemo(() => {
     if (!isError) return '';
-
-    if (error?.response?.status === 403) {
-      return 'لا تملك الصلاحية لعرض التعليقات.';
-    }
-
+    if (error?.response?.status === 403) return 'لا تملك الصلاحية لعرض التعليقات.';
     return 'تعذر تحميل التعليقات، يرجى المحاولة لاحقًا.';
   }, [error, isError]);
 
@@ -215,7 +216,10 @@ export default function EntityComments({ entityType, entityId, title = 'التع
     if (!isDelivered) return null;
 
     return (
-      <span className="flex items-center gap-1 text-primary text-xs" title={isRead ? 'تمت المشاهدة' : 'تم التسليم'}>
+      <span
+        className="flex items-center gap-1 text-primary text-xs"
+        title={isRead ? 'تمت المشاهدة' : 'تم التسليم'}
+      >
         {isRead ? <CheckCheck className="w-4 h-4" /> : <Check className="w-4 h-4" />}
       </span>
     );
@@ -238,7 +242,7 @@ export default function EntityComments({ entityType, entityId, title = 'التع
       </div>
 
       <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-        {isFetching && (
+        {(isLoading || isFetching) && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" />
             جاري تحميل التعليقات...
