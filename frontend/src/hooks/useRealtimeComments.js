@@ -9,9 +9,21 @@ const DETAIL_KEY_ROOTS = {
   litigations: 'litigation',
 };
 
-const normalizeList = (data) => {
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.data?.data)) return data.data.data;
+export const normalizeCommentsList = (source) => {
+  const candidates = [
+    source?.data?.data?.data,
+    source?.data?.data,
+    source?.data?.comments,
+    source?.data,
+    source?.comments,
+    source,
+  ];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) return candidate;
+    if (Array.isArray(candidate?.data)) return candidate.data;
+  }
+
   // react-query placeholderData sometimes passes undefined/null
   return [];
 };
@@ -23,7 +35,7 @@ const normalizeList = (data) => {
  * - optionally replaces an optimistic placeholder id (replaceId)
  */
 export const mergeComments = (current, incoming, { replaceId } = {}) => {
-  const list = normalizeList(current);
+  const list = normalizeCommentsList(current);
 
   if (!incoming) return list;
 
@@ -45,15 +57,15 @@ export const mergeComments = (current, incoming, { replaceId } = {}) => {
 };
 
 export const buildDetailQueryKey = (entityType, entityId) => {
-  if (!entityType || !entityId) return null;
+  if (!entityType || entityId === undefined || entityId === null) return null;
   const root = DETAIL_KEY_ROOTS[entityType] || entityType;
-  return [root, entityId];
+  return [root, String(entityId)];
 };
 
 // ✅ ثابت ومباشر — يمنع mismatch بين fetch/mutation/realtime
 export const buildCommentsQueryKey = (entityType, entityId) => {
-  if (!entityType || !entityId) return null;
-  return [entityType, entityId, 'comments'];
+  if (!entityType || entityId === undefined || entityId === null) return null;
+  return [entityType, String(entityId), 'comments'];
 };
 
 const incrementCommentCounters = (entity, delta = 1, timestamp = null) => {
@@ -93,7 +105,7 @@ export function useRealtimeComments({ entityType, entityId }) {
   );
 
   useEffect(() => {
-    if (!entityType || !entityId) return undefined;
+    if (!entityType || entityId === undefined || entityId === null) return undefined;
 
     const echo = initEcho();
     const channelName = `entity.${entityType}.${entityId}`;
