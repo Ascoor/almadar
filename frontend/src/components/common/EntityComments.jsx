@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Lock, MessageCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { createEntityComment, getEntityComments } from '@/services/api/comments';
+import { useAuth } from '@/context/AuthContext';
 
 const formatDateTime = (value) => {
   if (!value) return '—';
@@ -21,10 +22,33 @@ const formatDateTime = (value) => {
 
 const COMMENT_FORBIDDEN = 'لا تملك الصلاحية لإضافة تعليق.';
 
+const PERMISSION_MAP = {
+  contracts: 'contracts',
+  'legal-advices': 'legaladvices',
+  investigations: 'investigations',
+  litigations: 'litigations',
+};
+
 export default function EntityComments({ entityType, entityId, title = 'التعليقات' }) {
   const queryClient = useQueryClient();
   const [body, setBody] = useState('');
-  const [canComment, setCanComment] = useState(true);
+  const { hasPermission } = useAuth();
+
+  const permissionKey = useMemo(() => {
+    if (!entityType) return null;
+    const normalized = PERMISSION_MAP[entityType] || entityType;
+    return `edit ${normalized}`;
+  }, [entityType]);
+
+  const hasCommentPermission = permissionKey
+    ? hasPermission(permissionKey) || hasPermission(permissionKey.replace('edit', 'create'))
+    : true;
+
+  const [canComment, setCanComment] = useState(hasCommentPermission);
+
+  useEffect(() => {
+    setCanComment(hasCommentPermission);
+  }, [hasCommentPermission]);
 
   const { data: comments = [], isFetching } = useQuery({
     queryKey: ['entityComments', entityType, entityId],

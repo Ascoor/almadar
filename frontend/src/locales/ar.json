@@ -183,17 +183,17 @@
       }
     },
     "entities": {
-      "item": "عنصر",
-      "contract": "عقد",
-      "session": "جلسة",
-      "case": "قضية",
-      "consultation": "مشورة",
-      "investigation": "تحقيق",
-      "procedure": "إجراء تحقيق",
-      "legalAdvice": "استشارة قانونية",
-      "litigation": "دعوى",
-      "archive": "أرشيف",
-      "user": "مستخدم"
+      "item": "العنصر",
+      "contract": "العقد",
+      "session": "الجلسة",
+      "case": "القضية",
+      "consultation": "المشورة",
+      "investigation": "التحقيق",
+      "procedure": "الإجراء",
+      "legalAdvice": "الاستشارة القانونية",
+      "litigation": "الدعوى",
+      "archive": "الأرشيف",
+      "user": "المستخدم"
     },
     "details": {
       "entity": "الكيان",
