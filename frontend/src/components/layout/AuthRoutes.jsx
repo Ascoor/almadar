@@ -19,6 +19,7 @@ const InvestigationDetailsPage = lazy(
 const InvestigationActionDetailsPage = lazy(
   () => import('@/features/investigations/InvestigationActionDetailsPage'),
 );
+const DataFetchingSpike = lazy(() => import('@/pages/DataFetchingSpike.jsx'));
 const LegalAdvices = lazy(() => import('../../pages/LegalAdvicePage.jsx'));
 const LegalAdviceDetailsPage = lazy(
   () => import('../../pages/LegalAdviceDetailsPage.jsx'),
@@ -61,6 +62,14 @@ const AuthRoutes = () => {
       <Suspense fallback={<GlobalSpinner />}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route
+            path="/spike/data-fetching"
+            element={
+              <ProtectedRoute permission={[]}>
+                <DataFetchingSpike />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/archive" element={<ArchivePage />} />
           <Route path="/editor" element={<DocumentEditor />} />
