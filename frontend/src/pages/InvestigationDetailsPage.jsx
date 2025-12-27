@@ -31,36 +31,29 @@ export default function InvestigationDetailsPage() {
 
           <DetailsShell
             title="تفاصيل التحقيق"
-            subtitle="واجهة موحدة للمعلومات والتعليقات"
+            subtitle="واجهة موحدة للمعلومات + الإجراءات + التعليقات"
             icon={ShieldCheck}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
-                <SectionCard
-                  title="ملخص التحقيق"
-                  icon={ShieldCheck}
-                  className="h-full"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                    <InfoItem icon={User} label="الموظف" value={current.employee_name} />
-                    <InfoItem icon={Building2} label="الجهة المحيلة" value={current.source} />
-                    <InfoItem icon={Hash} label="رقم القضية" value={current.case_number} />
-                    <InfoItem icon={ShieldCheck} label="الحالة" value={current.status} />
-                    <InfoItem icon={MessageCircle} label="الموضوع" value={current.subject} />
-                    <InfoItem
-                      icon={User}
-                      label="المحقق"
-                      value={current.assigned_to?.name || '—'}
-                    />
-                  </div>
-                </SectionCard>
+            {/* ✅ سطر مستقل: ملخص التحقيق */}
+            <SectionCard title="ملخص التحقيق" icon={ShieldCheck}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                <InfoItem icon={User} label="الموظف" value={current.employee_name} />
+                <InfoItem icon={Building2} label="الجهة المحيلة" value={current.source} />
+                <InfoItem icon={Hash} label="رقم القضية" value={current.case_number} />
+                <InfoItem icon={ShieldCheck} label="الحالة" value={current.status} />
+                <InfoItem icon={MessageCircle} label="الموضوع" value={current.subject} />
+                <InfoItem
+                  icon={User}
+                  label="المحقق"
+                  value={current.assigned_to?.name || '—'}
+                />
+              </div>
+            </SectionCard>
 
-                <SectionCard
-                  title="الإجراءات"
-                  icon={ShieldCheck}
-                  hint="محدثة تلقائيًا"
-                  className="h-full"
-                >
+            {/* ✅ سطر مستقل: الإجراءات (جدول متجاوب) */}
+            <SectionCard title="الإجراءات" icon={ShieldCheck} hint="محدثة تلقائيًا">
+              <div className="w-full overflow-x-auto">
+                <div className="min-w-[720px]">
                   <div className="overflow-hidden rounded-xl border border-border/70 bg-card/70">
                     <Suspense fallback={<div className="p-4">تحميل البيانات...</div>}>
                       <InvestigationActionsTable
@@ -69,15 +62,14 @@ export default function InvestigationDetailsPage() {
                       />
                     </Suspense>
                   </div>
-                </SectionCard>
+                </div>
               </div>
+            </SectionCard>
 
-              <div className="lg:col-span-1 space-y-6">
-                <SectionCard title="التعليقات" icon={MessageCircle} className="h-full">
-                  <EntityComments entityType="investigations" entityId={current.id} />
-                </SectionCard>
-              </div>
-            </div>
+            {/* ✅ سطر مستقل: التعليقات */}
+            <SectionCard title="التعليقات" icon={MessageCircle}>
+              <EntityComments entityType="investigations" entityId={current.id} />
+            </SectionCard>
           </DetailsShell>
         </div>
       )}

@@ -54,21 +54,26 @@ export default function LitigationDetailsPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <SectionCard title="التعليقات" icon={MessageCircle}>
-            <EntityComments entityType="litigations" entityId={current.id} />
-          </SectionCard>
+        {/* ✅ سطر مستقل للـ الإجراءات */}
+        <SectionCard title="الإجراءات" icon={ShieldCheck} hint="تحديث مباشر">
+          {/* يجعل الجدول متجاوب على الموبايل */}
+          <div className="w-full overflow-x-auto">
+            <div className="min-w-[720px]">
+              <Suspense fallback={<div>تحميل البيانات...</div>}>
+                <LitigationActionsTable
+                  litigationId={current.id}
+                  scope={current.scope}
+                  reloadLitigations={refetch}
+                />
+              </Suspense>
+            </div>
+          </div>
+        </SectionCard>
 
-          <SectionCard title="الإجراءات" icon={ShieldCheck} hint="تحديث مباشر">
-            <Suspense fallback={<div>تحميل البيانات...</div>}>
-              <LitigationActionsTable
-                litigationId={current.id}
-                scope={current.scope}
-                reloadLitigations={refetch}
-              />
-            </Suspense>
-          </SectionCard>
-        </div>
+        {/* ✅ سطر مستقل للتعليقات */}
+        <SectionCard title="التعليقات" icon={MessageCircle}>
+          <EntityComments entityType="litigations" entityId={current.id} />
+        </SectionCard>
       </DetailsShell>
     </div>
   );

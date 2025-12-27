@@ -11,7 +11,7 @@ class LitigationActionController extends Controller
 {
     public function index(Litigation $litigation)
     {
-        $actions = $litigation->actions()->with(['assigned_to','actionType'])->latest()->paginate(10);
+        $actions = $litigation->actions()->with(['assignedTo','actionType'])->latest()->paginate(10);
         return response()->json($actions);
     }
 
