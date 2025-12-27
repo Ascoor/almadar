@@ -7,8 +7,24 @@
 ========================= */
 @layer base {
   :root { color-scheme: light dark; }
-  html { -webkit-font-smoothing: antialiased; }
-  html, body { transition: background-color .2s ease, color .2s ease; }
+  html {
+    -webkit-font-smoothing: antialiased;
+    scrollbar-gutter: stable;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  html,
+  body {
+    transition: background-color .2s ease, color .2s ease;
+  }
+
+  body,
+  #root {
+    min-height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+  }
 
   body { @apply bg-bg text-fg font-body antialiased; }
   h1,h2,h3,h4,h5,h6 { @apply font-heading; }
