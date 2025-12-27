@@ -32,4 +32,29 @@ class CommentController extends Controller
             'comment' => $comment,
         ], 201);
     }
+
+    public function markAsRead(Request $request)
+    {
+        $data = $request->validate([
+            'comment_ids' => 'array',
+            'comment_ids.*' => 'integer',
+            'entity_type' => 'nullable|string',
+            'entity_id' => 'nullable|integer',
+        ]);
+
+        abort_if(
+            empty($data['comment_ids']) && (empty($data['entity_type']) || empty($data['entity_id'])),
+            422,
+            'يجب تحديد التعليقات أو الكيان المستهدف.',
+        );
+
+        $this->service->markAsRead(
+            $data['entity_type'] ?? null,
+            $data['entity_id'] ?? null,
+            $data['comment_ids'] ?? [],
+            $request->user(),
+        );
+
+        return response()->json(['message' => 'تم تحديث حالة التعليقات.']);
+    }
 }
