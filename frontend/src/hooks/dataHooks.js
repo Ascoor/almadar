@@ -1,7 +1,10 @@
 // ✅ react-query implementation to replace DataContext
 import React from 'react';
-import { QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { queryClient } from '@/lib/queryClient';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query';
 
 import * as adviceTypesApi from '@/services/api/adviceTypes';
 import * as legalAdvicesApi from '@/services/api/legalAdvices';
@@ -12,6 +15,8 @@ import * as usersApi from '@/services/api/users';
 import * as contractsApi from '@/services/api/contracts';
 import * as investigationsApi from '@/services/api/investigations';
 import * as litigationsApi from '@/services/api/litigations';
+
+const queryClient = new QueryClient();
 
 export const AppWithQuery = ({ children }) =>
   React.createElement(QueryClientProvider, { client: queryClient }, children);

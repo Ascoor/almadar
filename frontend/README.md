@@ -16,14 +16,6 @@ npm run dev
 ```
 
 Visit `/editor` after logging in to access the document editor.
-
-## Data fetching & caching (React Query)
-
-- الوثيقة الكاملة للمعمارية، السياسات، وأنماط الصفحات موجودة في
-  [`docs/frontend-data-fetching-architecture.md`](../docs/frontend-data-fetching-architecture.md).
-- يوجد مسار تجريبي في الواجهة لتجربة النهج الجديد:
-  - قم بتسجيل الدخول ثم افتح `/spike/data-fetching` لرؤية POC (تفاصيل + تعليقات مع تحديث متفائل وcache policy واضحة).
-  - يعتمد على `QueryClient` موحّد في `src/lib/queryClient.ts` وhooks مخصصة في `src/features/data-spike/hooks`.
  
 
 ## Build
