@@ -56,6 +56,31 @@ export const mergeComments = (current, incoming, { replaceId } = {}) => {
   return [incoming, ...filtered];
 };
 
+export const updateReceipt = (current, payload) => {
+  const list = normalizeCommentsList(current);
+
+  if (!payload?.comment_id) return list;
+
+  const targetId = String(payload.comment_id);
+  const deliveredAt = payload.delivered_at;
+  const readAt = payload.read_at;
+  const recipientId = payload.recipient_id;
+
+  return list.map((comment) => {
+    if (String(comment?.id ?? '') !== targetId) return comment;
+    if (!comment?.receipt) return comment;
+
+    const nextReceipt = {
+      ...comment.receipt,
+      recipient_id: comment.receipt.recipient_id ?? recipientId,
+      delivered_at: comment.receipt.delivered_at || deliveredAt,
+      read_at: comment.receipt.read_at || readAt,
+    };
+
+    return { ...comment, receipt: nextReceipt };
+  });
+};
+
 export const buildDetailQueryKey = (entityType, entityId) => {
   if (!entityType || entityId === undefined || entityId === null) return null;
   const root = DETAIL_KEY_ROOTS[entityType] || entityType;
@@ -111,7 +136,7 @@ export function useRealtimeComments({ entityType, entityId }) {
     const channelName = `entity.${entityType}.${entityId}`;
     const channel = echo.private(channelName);
 
-    const handler = (event) => {
+    const handleCommentCreated = (event) => {
       const incomingComment = event?.comment;
       const delta = event?.commentCountDelta ?? 1;
 
@@ -128,10 +153,22 @@ export function useRealtimeComments({ entityType, entityId }) {
       }
     };
 
-    channel.listen('.CommentCreated', handler);
+    const handleReceipt = (payload) => {
+      if (!commentsKey) return;
+
+      queryClient.setQueryData(commentsKey, (previous) =>
+        updateReceipt(previous ?? [], payload),
+      );
+    };
+
+    channel.listen('.CommentCreated', handleCommentCreated);
+    channel.listen('.CommentReceiptDelivered', handleReceipt);
+    channel.listen('.CommentReceiptRead', handleReceipt);
 
     return () => {
-      channel.stopListening('.CommentCreated', handler);
+      channel.stopListening('.CommentCreated', handleCommentCreated);
+      channel.stopListening('.CommentReceiptDelivered', handleReceipt);
+      channel.stopListening('.CommentReceiptRead', handleReceipt);
       echo.leave(channelName);
     };
   }, [commentsKey, detailKey, entityId, entityType, queryClient]);

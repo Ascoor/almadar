@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Events\CommentCreated;
+use App\Events\CommentReceiptDelivered;
+use App\Events\CommentReceiptRead;
 use App\Models\Comment;
 use App\Models\CommentReceipt;
 use App\Models\Contract;
@@ -79,15 +81,24 @@ class CommentService
 
         // Create/update receipts (delivered)
         foreach ($recipients as $recipient) {
-            CommentReceipt::updateOrCreate(
-                [
-                    'comment_id' => $comment->id,
-                    'recipient_id' => $recipient->id,
-                ],
-                [
-                    'delivered_at' => now(),
-                ]
-            );
+            $receipt = CommentReceipt::firstOrNew([
+                'comment_id' => $comment->id,
+                'recipient_id' => $recipient->id,
+            ]);
+
+            $wasDelivered = (bool) $receipt->delivered_at;
+
+            if (!$wasDelivered) {
+                $receipt->delivered_at = now();
+            }
+
+            if ($receipt->isDirty()) {
+                $receipt->save();
+            }
+
+            if (!$wasDelivered && $receipt->delivered_at) {
+                $this->broadcastReceiptDelivered($module, $entity->getKey(), $receipt);
+            }
         }
 
         // Fire event to send notifications (listener can dedup)
@@ -128,7 +139,33 @@ class CommentService
             return;
         }
 
-        $receiptQuery->update(['read_at' => now()]);
+        $timestamp = now();
+
+        $targetReceipts = (clone $receiptQuery)
+            ->with(['comment.commentable'])
+            ->get();
+
+        if ($targetReceipts->isEmpty()) {
+            return;
+        }
+
+        $receiptQuery->update(['read_at' => $timestamp]);
+
+        $broadcastContext = $module && isset($entity)
+            ? ['module' => $module, 'entityId' => $entity->getKey()]
+            : null;
+
+        foreach ($targetReceipts as $receipt) {
+            $receipt->read_at = $timestamp;
+
+            $context = $broadcastContext ?? $this->resolveModuleFromComment($receipt->comment);
+
+            if (!$context) {
+                continue;
+            }
+
+            $this->broadcastReceiptRead($context['module'], $context['entityId'], $receipt);
+        }
     }
 
     private function resolveCommentable(string $module, int $id, string $action): Model
@@ -231,6 +268,16 @@ class CommentService
         )->values();
     }
 
+    private function broadcastReceiptDelivered(string $module, int $entityId, CommentReceipt $receipt): void
+    {
+        event(new CommentReceiptDelivered($module, $entityId, $receipt));
+    }
+
+    private function broadcastReceiptRead(string $module, int $entityId, CommentReceipt $receipt): void
+    {
+        event(new CommentReceiptRead($module, $entityId, $receipt));
+    }
+
     /**
      * Adds a `receipt` field to the comment payload based on the viewer.
      * Viewer can see:
@@ -270,6 +317,35 @@ class CommentService
         // 3) Admin sees a primary receipt (first)
         if ($this->isAdmin($viewer)) {
             return $comment->receipts->first();
+        }
+
+        return null;
+    }
+
+    private function resolveModuleFromComment(?Comment $comment): ?array
+    {
+        if (!$comment || !$comment->commentable) {
+            return null;
+        }
+
+        $module = $this->findModuleByModelClass($comment->commentable::class);
+
+        if (!$module) {
+            return null;
+        }
+
+        return [
+            'module' => $module,
+            'entityId' => $comment->commentable->getKey(),
+        ];
+    }
+
+    private function findModuleByModelClass(string $class): ?string
+    {
+        foreach (self::MODULES as $module => $meta) {
+            if (($meta['model'] ?? null) === $class) {
+                return $module;
+            }
         }
 
         return null;

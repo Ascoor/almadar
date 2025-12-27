@@ -82,11 +82,26 @@ export default function EntityComments({ entityType, entityId, title = 'التع
 
   const { mutate: markAsRead } = useMutation({
     mutationFn: markCommentsAsRead,
-    // keep it simple: invalidate will refetch, but placeholderData prevents wiping
-    onSuccess: () => {
-      if (commentsKey) {
-        queryClient.invalidateQueries({ queryKey: commentsKey });
-      }
+    onSuccess: (_data, variables) => {
+      if (!commentsKey) return;
+
+      const ids = (variables?.comment_ids ?? []).map((id) => String(id));
+      const stamp = new Date().toISOString();
+
+      queryClient.setQueryData(commentsKey, (current) => {
+        const list = normalizeCommentsList(current);
+
+        return list.map((comment) => {
+          const commentId = String(comment?.id ?? '');
+          if (!ids.includes(commentId)) return comment;
+          if (!comment?.receipt) return comment;
+
+          if (comment.receipt.read_at) return comment;
+
+          const nextReceipt = { ...comment.receipt, read_at: stamp };
+          return { ...comment, receipt: nextReceipt };
+        });
+      });
     },
   });
 
