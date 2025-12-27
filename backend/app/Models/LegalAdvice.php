@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\LegalAdviceComment;
+use App\Models\Comment;
 
 class LegalAdvice extends Model
 {
@@ -44,7 +44,7 @@ class LegalAdvice extends Model
 
     public function comments()
     {
-        return $this->hasMany(LegalAdviceComment::class)->latest();
+        return $this->morphMany(Comment::class, 'commentable')->latest();
     }
 
     // العلاقة مع AdviceType (Many-to-One)

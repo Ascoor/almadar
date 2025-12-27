@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('legal_advice_comments', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('legal_advice_id')->constrained('legal_advices')->cascadeOnDelete();
+            $table->morphs('commentable');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->text('comment');
+            $table->text('body');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('legal_advice_comments');
+        Schema::dropIfExists('comments');
     }
 };
