@@ -10,6 +10,10 @@ import {
   markCommentsAsRead,
 } from '@/services/api/comments';
 import { useAuth } from '@/context/AuthContext';
+import {
+  prependCommentIfMissing,
+  useRealtimeComments,
+} from '@/hooks/useRealtimeComments';
 
 const formatDateTime = (value) => {
   if (!value) return '—';
@@ -38,6 +42,8 @@ export default function EntityComments({ entityType, entityId, title = 'التع
   const [body, setBody] = useState('');
   const { hasPermission, user } = useAuth();
 
+  const { commentsKey, detailKey } = useRealtimeComments({ entityType, entityId });
+
   const permissionKey = useMemo(() => {
     if (!entityType) return null;
     const normalized = PERMISSION_MAP[entityType] || entityType;
@@ -54,30 +60,56 @@ export default function EntityComments({ entityType, entityId, title = 'التع
     setCanComment(hasCommentPermission);
   }, [hasCommentPermission]);
 
-  const { data: comments = [], isFetching } = useQuery({
-    queryKey: ['entityComments', entityType, entityId],
+  const {
+    data: comments = [],
+    isFetching,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: commentsKey ?? ['comments', 'disabled'],
     queryFn: () => getEntityComments(entityType, entityId),
     select: (res) => (Array.isArray(res?.data?.data) ? res.data.data : []),
-    enabled: Boolean(entityType && entityId),
+    enabled: Boolean(commentsKey),
+    retry: false,
   });
 
   const { mutate: markAsRead } = useMutation({
     mutationFn: markCommentsAsRead,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['entityComments', entityType, entityId],
-      });
+      if (commentsKey) {
+        queryClient.invalidateQueries({
+          queryKey: commentsKey,
+        });
+      }
     },
   });
 
   const { mutate: submitComment, isPending } = useMutation({
     mutationFn: (payload) => createEntityComment(entityType, entityId, payload),
-    onSuccess: () => {
+    onSuccess: (response) => {
       setBody('');
       setCanComment(true);
-      queryClient.invalidateQueries({
-        queryKey: ['entityComments', entityType, entityId],
-      });
+
+      const createdComment = response?.data?.comment ?? response?.comment;
+
+      if (commentsKey) {
+        queryClient.setQueryData(commentsKey, (previous) =>
+          prependCommentIfMissing(previous, createdComment),
+        );
+      }
+
+      if (detailKey) {
+        queryClient.setQueryData(detailKey, (previous) => {
+          if (!previous) return previous;
+          const next = { ...previous };
+          if ('commentCount' in next) next.commentCount = (next.commentCount ?? 0) + 1;
+          if ('comment_count' in next) next.comment_count = (next.comment_count ?? 0) + 1;
+          if ('comments_count' in next) next.comments_count = (next.comments_count ?? 0) + 1;
+          next.lastUpdated = createdComment?.created_at || new Date().toISOString();
+          return next;
+        });
+      }
+
       toast.success('تم إضافة التعليق بنجاح.');
     },
     onError: (err) => {
@@ -125,6 +157,22 @@ export default function EntityComments({ entityType, entityId, title = 'التع
     }
   }, [comments, markAsRead, user]);
 
+  useEffect(() => {
+    if (isError && error?.response?.status === 403) {
+      setCanComment(false);
+    }
+  }, [error, isError]);
+
+  const errorMessage = useMemo(() => {
+    if (!isError) return '';
+
+    if (error?.response?.status === 403) {
+      return 'لا تملك الصلاحية لعرض التعليقات.';
+    }
+
+    return 'تعذر تحميل التعليقات، يرجى المحاولة لاحقًا.';
+  }, [error, isError]);
+
   const renderReceipt = (receipt) => {
     if (!receipt) return null;
 
@@ -164,7 +212,13 @@ export default function EntityComments({ entityType, entityId, title = 'التع
           </div>
         )}
 
-        {!isFetching && comments.length === 0 && (
+        {isError && (
+          <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            {errorMessage}
+          </div>
+        )}
+
+        {!isFetching && !isError && comments.length === 0 && (
           <p className="text-sm text-muted-foreground">لا توجد تعليقات حتى الآن.</p>
         )}
 
