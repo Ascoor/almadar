@@ -98,7 +98,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
-      <header className="container mx-auto px-6 pt-6 pb-2">
+      <header className="container mx-auto px-6 pt-6 pb-4 min-w-0">
         <motion.div {...fadeIn(0.05)} className="text-center">
           <h1 className="page-title page-title-animate text-3xl md:text-4xl font-extrabold tracking-tight mb-1">
             {t('title', lang)}
@@ -109,13 +109,13 @@ export default function Dashboard() {
         </motion.div>
       </header>
 
-      <main className="container mx-auto px-6 py-6 space-y-6">
+      <main className="container mx-auto px-6 py-6 space-y-8 lg:space-y-10 min-w-0">
         <motion.div {...fadeIn(0.08)}>
           <Toolbar value={filters} onChange={setFilters} />
         </motion.div>
         <motion.div
           {...fadeIn(0.1)}
-          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6"
         >
           <KpiCard
             title={t('totalCases', lang)}
@@ -147,10 +147,10 @@ export default function Dashboard() {
           />
         </motion.div>
 
-        <section className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        <section className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 min-w-0">
           <motion.div
             {...fadeIn(0.12)}
-            className="xl:col-span-3 space-y-6 order-2 xl:order-1"
+            className="xl:col-span-3 space-y-6 lg:space-y-8 order-2 xl:order-1 min-w-0"
           >
             <ChartCard
               title={t('monthlyCases', lang)}
@@ -186,7 +186,7 @@ export default function Dashboard() {
 
           <motion.div
             {...fadeIn(0.18)}
-            className="xl:col-span-6 order-1 xl:order-2 space-y-6"
+            className="xl:col-span-6 order-1 xl:order-2 space-y-6 lg:space-y-8 min-w-0"
           >
             <div className="relative">
               <ChartCard
@@ -218,7 +218,7 @@ export default function Dashboard() {
 
           <motion.div
             {...fadeIn(0.22)}
-            className="xl:col-span-3 space-y-6 order-3"
+            className="xl:col-span-3 space-y-6 lg:space-y-8 order-3 min-w-0"
           >
             <ChartCard
               title={t('caseOutcomes', lang)}

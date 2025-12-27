@@ -185,31 +185,40 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
   };
   const showFullNav = isOpen || (!isLargeScreen && !isTablet);
 
+  const isOverlayMode = !isLargeScreen || isTablet;
+  const desktopPeekTranslate = dir === 'rtl' ? 'translate-x-[12rem]' : '-translate-x-[12rem]';
+  const overlayTranslateHidden = dir === 'rtl' ? 'translate-x-full' : '-translate-x-full';
+  const sidebarTransformClass = isOverlayMode
+    ? isOpen
+      ? 'translate-x-0'
+      : overlayTranslateHidden
+    : isOpen
+      ? 'translate-x-0'
+      : desktopPeekTranslate;
+  const sidebarEasing = isOpen ? 'ease-out' : 'ease-in';
+
   return (
     <aside
       dir={dir}
-      style={
-        isDark ? { boxShadow: '0 0 15px rgba(34,211,238,0.35)' } : undefined
-      }
-      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0'} top-0 z-20 h-full bg-sidebar text-sidebar-fg border-s border-border transition-[width,transform] duration-300 shrink-0 ${
-        isLargeScreen
-          ? isOpen
-            ? 'w-64'
-            : 'w-16'
+      className={`fixed ${dir === 'rtl' ? 'right-0' : 'left-0'} top-0 z-20 h-full bg-sidebar text-sidebar-fg border-s border-border shrink-0 transform ${sidebarTransformClass} transition-transform duration-250 ${sidebarEasing}`}
+      style={{
+        boxShadow: isDark
+          ? '0 0 15px rgba(34,211,238,0.35)'
+          : undefined,
+        width: isLargeScreen
+          ? '16rem'
           : isTablet
-            ? isOpen
-              ? 'w-full'
-              : 'w-16'
-            : isOpen
-              ? 'w-full mt-12'
-              : `${dir === 'rtl' ? 'translate-x-full' : '-translate-x-full'}`
-      }`}
+            ? '18rem'
+            : 'min(20rem, 90vw)',
+      }}
     >
-      <div className="flex items-center justify-center p-0 mt-6">
+      <div className="flex items-center justify-center p-0 mt-6 min-w-0">
         <img
           src={logoSrc}
           alt="Almadar Logo"
-          className={`transition-all duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
+          className={`transition-[width] duration-250 ${
+            isOpen ? 'w-36 ease-out' : 'w-10 ease-in'
+          }`}
         />
         {isOpen && (
           <button onClick={onToggle} className="absolute top-4 left-4">
