@@ -12,17 +12,36 @@ const DETAIL_KEY_ROOTS = {
 const normalizeList = (data) => {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.data?.data)) return data.data.data;
+  // react-query placeholderData sometimes passes undefined/null
   return [];
 };
 
-export const prependCommentIfMissing = (current, incoming) => {
+/**
+ * Merge incoming comment into current list:
+ * - prepends incoming
+ * - removes duplicates by id
+ * - optionally replaces an optimistic placeholder id (replaceId)
+ */
+export const mergeComments = (current, incoming, { replaceId } = {}) => {
   const list = normalizeList(current);
-  if (!incoming?.id) return list;
 
-  const exists = list.some((entry) => String(entry.id) === String(incoming.id));
-  if (exists) return list;
+  if (!incoming) return list;
 
-  return [incoming, ...list];
+  const incomingId = incoming?.id != null ? String(incoming.id) : null;
+  const replaceStr = replaceId != null ? String(replaceId) : null;
+
+  // If we don't have any usable ids, just prepend safely
+  if (!incomingId && !replaceStr) {
+    return [incoming, ...list];
+  }
+
+  const removalIds = [incomingId, replaceStr].filter(Boolean);
+  const filtered = list.filter((entry) => {
+    const id = entry?.id != null ? String(entry.id) : '';
+    return !removalIds.includes(id);
+  });
+
+  return [incoming, ...filtered];
 };
 
 export const buildDetailQueryKey = (entityType, entityId) => {
@@ -31,9 +50,10 @@ export const buildDetailQueryKey = (entityType, entityId) => {
   return [root, entityId];
 };
 
+// ✅ ثابت ومباشر — يمنع mismatch بين fetch/mutation/realtime
 export const buildCommentsQueryKey = (entityType, entityId) => {
-  const detailKey = buildDetailQueryKey(entityType, entityId);
-  return detailKey ? [...detailKey, 'comments'] : null;
+  if (!entityType || !entityId) return null;
+  return [entityType, entityId, 'comments'];
 };
 
 const incrementCommentCounters = (entity, delta = 1, timestamp = null) => {
@@ -61,10 +81,12 @@ const incrementCommentCounters = (entity, delta = 1, timestamp = null) => {
 
 export function useRealtimeComments({ entityType, entityId }) {
   const queryClient = useQueryClient();
+
   const detailKey = useMemo(
     () => buildDetailQueryKey(entityType, entityId),
     [entityType, entityId],
   );
+
   const commentsKey = useMemo(
     () => buildCommentsQueryKey(entityType, entityId),
     [entityType, entityId],
@@ -81,13 +103,13 @@ export function useRealtimeComments({ entityType, entityId }) {
       const incomingComment = event?.comment;
       const delta = event?.commentCountDelta ?? 1;
 
-      if (commentsKey) {
+      if (commentsKey && incomingComment) {
         queryClient.setQueryData(commentsKey, (previous) =>
-          prependCommentIfMissing(previous, incomingComment),
+          mergeComments(previous ?? [], incomingComment),
         );
       }
 
-      if (detailKey) {
+      if (detailKey && incomingComment) {
         queryClient.setQueryData(detailKey, (previous) =>
           incrementCommentCounters(previous, delta, incomingComment?.created_at),
         );
