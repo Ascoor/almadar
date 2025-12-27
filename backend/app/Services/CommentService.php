@@ -63,7 +63,7 @@ class CommentService
         $entity->comments()->save($comment);
         $comment->load('user:id,name');
 
-        $this->notifyAssignee($module, $entity, $comment, $user);
+        $this->notifyStakeholders($module, $entity, $comment, $user);
 
         return $comment;
     }
@@ -78,7 +78,7 @@ class CommentService
         $model = $meta['model'];
 
         return $model::query()
-            ->with(['assignedTo:id,name'])
+            ->with(['assignedTo:id,name', 'creator:id,name', 'updater:id,name'])
             ->findOrFail($id);
     }
 
@@ -91,22 +91,43 @@ class CommentService
         abort_if(!$allowed, 403, self::FORBIDDEN_MESSAGE);
     }
 
-    private function notifyAssignee(string $module, Model $entity, Comment $comment, User $actor): void
+    private function notifyStakeholders(string $module, Model $entity, Comment $comment, User $actor): void
     {
-        $assignee = $entity->assignedTo ?? null;
-
-        if (!$assignee || $assignee->is($actor)) {
-            return;
-        }
-
         $meta = $this->getModuleMeta($module);
         $title = (string) ($entity->{Arr::get($meta, 'title_field')} ?? class_basename($entity));
         $actionUrl = rtrim($meta['route'], '/') . '/' . $entity->getKey();
 
+        $recipientIds = collect([
+            $entity->creator?->id,
+            $entity->updater?->id,
+            $entity->assignedTo?->id,
+        ])
+            ->merge(
+                $entity->comments()
+                    ->whereNotNull('user_id')
+                    ->pluck('user_id')
+            )
+            ->filter()
+            ->reject(fn (int $id) => $id === $actor->id)
+            ->unique()
+            ->values();
+
+        if ($recipientIds->isEmpty()) {
+            return;
+        }
+
+        $recipients = User::query()
+            ->whereIn('id', $recipientIds)
+            ->get();
+
+        if ($recipients->isEmpty()) {
+            return;
+        }
+
         event(new CommentCreated(
             entity: $entity,
             section: $module,
-            assignee: $assignee,
+            recipients: $recipients,
             actor: $actor,
             title: $title,
             actionUrl: $actionUrl,

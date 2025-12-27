@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class CommentCreated
 {
@@ -16,7 +17,8 @@ class CommentCreated
     public function __construct(
         public Model $entity,
         public string $section,
-        public User $assignee,
+        /** @var Collection<int, User> */
+        public Collection $recipients,
         public User $actor,
         public string $title,
         public ?string $actionUrl,
