@@ -5,19 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LegalAdviceComment extends Model
+class Comment extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'legal_advice_id',
+        'body',
         'user_id',
-        'comment',
     ];
 
-    public function legalAdvice()
+    public function commentable()
     {
-        return $this->belongsTo(LegalAdvice::class);
+        return $this->morphTo();
     }
 
     public function user()

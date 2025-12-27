@@ -20,15 +20,9 @@ export const updateLegalAdvice = (id, formData) => {
 
 export const deleteLegalAdvice = (id) => api.delete(`/api/legal-advices/${id}`);
 
-export const getLegalAdviceComments = (id) =>
-  api.get(`/api/legal-advices/${id}/comments`);
-
-export const createLegalAdviceComment = (id, data) =>
-  api.post(`/api/legal-advices/${id}/comments`, data);
-
 // ✅ Get all advice types
 export const getAdviceTypes = () => {
-  return api.get('/api/advice-types');
+    return api.get('/api/advice-types');
 };
 
 // ✅ Create a new advice type

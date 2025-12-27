@@ -14,7 +14,6 @@ use App\Http\Controllers\ContractCategoryController;
 use App\Http\Controllers\InvestigationController;
 use App\Http\Controllers\InvestigationActionController;
 use App\Http\Controllers\LegalAdviceController;
-use App\Http\Controllers\LegalAdviceCommentController;
 use App\Http\Controllers\AdviceTypeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\LitigationController;
@@ -23,6 +22,7 @@ use App\Http\Controllers\InvestigationActionTypeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LitigationActionTypeController;
 use App\Http\Controllers\AssignableUserController;
+use App\Http\Controllers\CommentController;
  
 
 
@@ -74,14 +74,16 @@ Route::middleware('auth:sanctum')->group(function () {
     // Legal Advices
     Route::apiResource('legal-advices', LegalAdviceController::class);
     Route::patch('legal-advices/{legal_advice}/assign', [LegalAdviceController::class, 'assign']);
-    Route::prefix('legal-advices/{legal_advice}')->group(function () {
-        Route::get('comments', [LegalAdviceCommentController::class, 'index']);
-        Route::post('comments', [LegalAdviceCommentController::class, 'store']);
-    });
     Route::apiResource('advice-types', AdviceTypeController::class);
     Route::apiResource('litigations', LitigationController::class);
 Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
 Route::post('/users/{id}/first-login-password', [UserController::class, 'firstLoginPassword']);
+
+    // Unified comments
+    Route::prefix('{module}/{id}/comments')->where(['module' => 'contracts|legal-advices|investigations|litigations'])->group(function () {
+        Route::get('/', [CommentController::class, 'index']);
+        Route::post('/', [CommentController::class, 'store']);
+    });
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);

@@ -2,6 +2,13 @@ import { lazy, Suspense, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLitigations } from '@/hooks/dataHooks';
+import {
+  DetailsShell,
+  InfoItem,
+  SectionCard,
+} from '@/components/common/details/DetailsPrimitives';
+import EntityComments from '@/components/common/EntityComments';
+import { Building2, Gavel, Hash, ShieldCheck, User, MessageCircle } from 'lucide-react';
 
 const LitigationActionsTable = lazy(
   () => import('@/features/litigations/components/LitigationActionsTable'),
@@ -24,43 +31,45 @@ export default function LitigationDetailsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
-      <div className="mb-4 flex gap-2">
+    <div className="p-4 sm:p-6 lg:p-8 min-h-screen space-y-4">
+      <div className="mb-2 flex gap-2">
         <Button onClick={() => navigate(-1)}>رجوع</Button>
       </div>
 
-      <div className="mb-6 p-4 bg-card text-fg rounded-xl shadow">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <span className="font-semibold">رقم الدعوى: </span>
-            {current.case_number}
-          </div>
-          <div>
-            <span className="font-semibold">المحكمة: </span>
-            {current.court}
-          </div>
-          <div>
-            <span className="font-semibold">الخصم: </span>
-            {current.opponent}
-          </div>
-          <div>
-            <span className="font-semibold">الموضوع: </span>
-            {current.subject}
-          </div>
-          <div>
-            <span className="font-semibold">الحالة: </span>
-            {current.status}
-          </div>
+      <DetailsShell
+        title="تفاصيل القضية"
+        subtitle="بطاقات موحدة مع التعليقات"
+        icon={Gavel}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
+          <InfoItem icon={Hash} label="رقم الدعوى" value={current.case_number} />
+          <InfoItem icon={Building2} label="المحكمة" value={current.court} />
+          <InfoItem icon={User} label="الخصم" value={current.opponent} />
+          <InfoItem icon={MessageCircle} label="الموضوع" value={current.subject} />
+          <InfoItem icon={ShieldCheck} label="الحالة" value={current.status} />
+          <InfoItem
+            icon={User}
+            label="المسؤول"
+            value={current.assigned_to?.name || '—'}
+          />
         </div>
-      </div>
 
-      <Suspense fallback={<div>تحميل البيانات...</div>}>
-        <LitigationActionsTable
-          litigationId={current.id}
-          scope={current.scope}
-          reloadLitigations={refetch}
-        />
-      </Suspense>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <SectionCard title="التعليقات" icon={MessageCircle}>
+            <EntityComments entityType="litigations" entityId={current.id} />
+          </SectionCard>
+
+          <SectionCard title="الإجراءات" icon={ShieldCheck} hint="تحديث مباشر">
+            <Suspense fallback={<div>تحميل البيانات...</div>}>
+              <LitigationActionsTable
+                litigationId={current.id}
+                scope={current.scope}
+                reloadLitigations={refetch}
+              />
+            </Suspense>
+          </SectionCard>
+        </div>
+      </DetailsShell>
     </div>
   );
 }
