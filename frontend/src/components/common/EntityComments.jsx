@@ -10,7 +10,11 @@ import {
   markCommentsAsRead,
 } from '@/services/api/comments';
 import { useAuth } from '@/context/AuthContext';
-import { mergeComments, useRealtimeComments } from '@/hooks/useRealtimeComments';
+import {
+  mergeComments,
+  normalizeCommentsList,
+  useRealtimeComments,
+} from '@/hooks/useRealtimeComments';
 
 const formatDateTime = (value) => {
   if (!value) return '—';
@@ -58,6 +62,8 @@ export default function EntityComments({ entityType, entityId, title = 'التع
     setCanComment(hasCommentPermission);
   }, [hasCommentPermission]);
 
+  const canFetch = Boolean(entityType) && entityId !== undefined && entityId !== null;
+
   const {
     data: comments = [],
     isLoading,
@@ -67,11 +73,11 @@ export default function EntityComments({ entityType, entityId, title = 'التع
   } = useQuery({
     queryKey: commentsKey ?? ['comments', 'disabled'],
     queryFn: () => getEntityComments(entityType, entityId),
-    select: (res) => (Array.isArray(res?.data?.data) ? res.data.data : []),
-    enabled: Boolean(commentsKey),
+    select: normalizeCommentsList,
+    enabled: Boolean(commentsKey) && canFetch,
     retry: false,
     // Prevent UI wipe / empty flicker during refetch & invalidations
-    placeholderData: (previousData) => previousData ?? [],
+    placeholderData: (previousData) => normalizeCommentsList(previousData) ?? [],
   });
 
   const { mutate: markAsRead } = useMutation({
