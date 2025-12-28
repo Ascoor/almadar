@@ -1,5 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import InvestigationDetailsSmart from '@/features/investigations/components/InvestigationDetailsSmart';
 import {
@@ -9,9 +10,13 @@ import {
 } from '@/components/common/details/DetailsPrimitives';
 import EntityComments from '@/components/common/EntityComments';
 import { Building2, Hash, ShieldCheck, User, MessageCircle } from 'lucide-react';
+import { updateInvestigation } from '@/services/api/investigations';
 
 const InvestigationActionsTable = lazy(
   () => import('@/features/investigations/components/InvestigationActionsTable'),
+);
+const InvestigationModal = lazy(
+  () => import('@/features/investigations/components/InvestigationModal'),
 );
 
 export default function InvestigationDetailsPage() {
@@ -19,10 +24,19 @@ export default function InvestigationDetailsPage() {
   const { id } = useParams();
   const location = useLocation();
 
+  const [currentInvestigation, setCurrentInvestigation] = useState(
+    location.state || null,
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const initial = location.state || null; // from table click
 
   return (
-    <InvestigationDetailsSmart id={id} selected={initial}>
+    <InvestigationDetailsSmart
+      id={id}
+      selected={currentInvestigation || initial}
+      onResolved={setCurrentInvestigation}
+    >
       {(current) => (
         <div className="p-4 sm:p-6 lg:p-8 min-h-screen space-y-4">
           <div className="flex gap-2">
@@ -33,6 +47,15 @@ export default function InvestigationDetailsPage() {
             title="تفاصيل التحقيق"
             subtitle="واجهة موحدة للمعلومات + الإجراءات + التعليقات"
             icon={ShieldCheck}
+            actions={
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setIsModalOpen(true)}
+              >
+                تعديل
+              </Button>
+            }
           >
             {/* ✅ سطر مستقل: ملخص التحقيق */}
             <SectionCard title="ملخص التحقيق" icon={ShieldCheck}>
@@ -71,6 +94,30 @@ export default function InvestigationDetailsPage() {
               <EntityComments entityType="investigations" entityId={current.id} />
             </SectionCard>
           </DetailsShell>
+
+          <Suspense fallback={null}>
+            {isModalOpen && (
+              <InvestigationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                initialData={currentInvestigation || current}
+                onSubmit={async (formData) => {
+                  if (!current?.id) return;
+                  try {
+                    await updateInvestigation(current.id, formData);
+                    toast.success('تم تحديث التحقيق بنجاح');
+                    setCurrentInvestigation((prev) => ({
+                      ...(prev || current),
+                      ...formData,
+                    }));
+                  } catch (error) {
+                    toast.error('فشل تحديث التحقيق');
+                    throw error;
+                  }
+                }}
+              />
+            )}
+          </Suspense>
         </div>
       )}
     </InvestigationDetailsSmart>
