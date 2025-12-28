@@ -52,5 +52,5 @@ export default function InvestigationDetailsSmart({ id, selected, children }) {
   }
 
   // ✅ render-prop
-  return typeof children === 'function' ? children(current) : null;
+  return typeof children === 'function' ? children(current, setCurrent) : null;
 }
