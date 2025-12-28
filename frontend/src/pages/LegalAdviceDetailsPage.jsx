@@ -1,7 +1,11 @@
-import { Suspense, useMemo } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useLegalAdvice, useLegalAdvices } from '@/hooks/dataHooks';
+import {
+  useAdviceTypes,
+  useLegalAdvice,
+  useLegalAdvices,
+} from '@/hooks/dataHooks';
 import {
   DetailsShell,
   InfoItem,
@@ -9,6 +13,7 @@ import {
 } from '@/components/common/details/DetailsPrimitives';
 import EntityComments from '@/components/common/EntityComments';
 import { FileText, User, ShieldCheck, Calendar, MessageCircle, Hash } from 'lucide-react';
+import LegalAdviceModal from '@/features/legal-advices/components/LegalAdviceModal';
 
 // ✅ (اختياري) لو عندكم جدول إجراءات للمشورة، فعّله
 // const LegalAdviceActionsTable = lazy(() => import('@/features/legal-advices/components/LegalAdviceActionsTable'));
@@ -32,17 +37,19 @@ export default function LegalAdviceDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // قائمة المشورات (للـ fallback)
-  const { data } = useLegalAdvices();
+  const { data, refetch: refetchAdvices } = useLegalAdvices();
   const advices = data?.data || data?.data?.data || [];
+  const { data: adviceTypes = [] } = useAdviceTypes();
 
   const fallbackAdvice = useMemo(
     () => location.state || advices.find((a) => a.id === Number(id)),
     [advices, id, location.state],
   );
 
-  const { data: advice, isLoading } = useLegalAdvice(id, {
+  const { data: advice, isLoading, refetch } = useLegalAdvice(id, {
     initialData: fallbackAdvice,
   });
 
@@ -64,6 +71,15 @@ export default function LegalAdviceDetailsPage() {
         title="تفاصيل المشورة القانونية"
         subtitle="عرض متجاوب + الإجراءات والتعليقات في أسطر مستقلة"
         icon={FileText}
+        actions={
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsModalOpen(true)}
+          >
+            تعديل
+          </Button>
+        }
       >
         {/* ✅ كروت البيانات الأساسية (Responsive) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
@@ -82,6 +98,21 @@ export default function LegalAdviceDetailsPage() {
           <EntityComments entityType="legal-advices" entityId={advice.id} />
         </SectionCard>
       </DetailsShell>
+
+      <Suspense fallback={null}>
+        {isModalOpen && (
+          <LegalAdviceModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            adviceTypes={adviceTypes}
+            initialData={advice}
+            reload={() => {
+              refetch();
+              refetchAdvices();
+            }}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

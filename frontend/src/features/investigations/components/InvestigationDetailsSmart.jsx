@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import GlobalSpinner from '@/components/common/Spinners/GlobalSpinner';
 import { getInvestigationById } from '@/services/api/investigations';
 
-export default function InvestigationDetailsSmart({ id, selected, children }) {
+export default function InvestigationDetailsSmart({
+  id,
+  selected,
+  children,
+  onResolved,
+}) {
   const [current, setCurrent] = useState(selected ?? null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -12,6 +17,12 @@ export default function InvestigationDetailsSmart({ id, selected, children }) {
   useEffect(() => {
     if (selected) setCurrent(selected);
   }, [selected]);
+
+  useEffect(() => {
+    if (current && typeof onResolved === 'function') {
+      onResolved(current);
+    }
+  }, [current, onResolved]);
 
   // ✅ fetch by id (Notifications/URL)
   useEffect(() => {

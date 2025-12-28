@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLitigations } from '@/hooks/dataHooks';
@@ -9,6 +9,7 @@ import {
 } from '@/components/common/details/DetailsPrimitives';
 import EntityComments from '@/components/common/EntityComments';
 import { Building2, Gavel, Hash, ShieldCheck, User, MessageCircle } from 'lucide-react';
+import LitigationModal from '@/features/litigations/components/LitigationModal';
 
 const LitigationActionsTable = lazy(
   () => import('@/features/litigations/components/LitigationActionsTable'),
@@ -24,7 +25,24 @@ export default function LitigationDetailsPage() {
   const initialLitigation =
     location.state || litigations.find((l) => l.id === Number(id));
 
-  const [current] = useState(initialLitigation);
+  const [current, setCurrent] = useState(initialLitigation);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (initialLitigation) setCurrent(initialLitigation);
+  }, [initialLitigation]);
+
+  const reloadLitigationDetails = async () => {
+    try {
+      const refreshed = await refetch();
+      const latest =
+        refreshed?.data?.data?.data?.find((item) => item.id === Number(id)) ||
+        null;
+      if (latest) setCurrent(latest);
+    } catch (error) {
+      console.error('Failed to reload litigation details', error);
+    }
+  };
 
   if (!current) {
     return <div className="p-4">لا توجد بيانات</div>;
@@ -40,6 +58,15 @@ export default function LitigationDetailsPage() {
         title="تفاصيل القضية"
         subtitle="بطاقات موحدة مع التعليقات"
         icon={Gavel}
+        actions={
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsModalOpen(true)}
+          >
+            تعديل
+          </Button>
+        }
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
           <InfoItem icon={Hash} label="رقم الدعوى" value={current.case_number} />
@@ -75,6 +102,17 @@ export default function LitigationDetailsPage() {
           <EntityComments entityType="litigations" entityId={current.id} />
         </SectionCard>
       </DetailsShell>
+
+      <Suspense fallback={null}>
+        {isModalOpen && (
+          <LitigationModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            initialData={current}
+            reloadLitigations={reloadLitigationDetails}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }
