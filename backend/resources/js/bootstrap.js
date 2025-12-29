@@ -19,7 +19,11 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 // import Pusher from 'pusher-js';
 // window.Pusher = Pusher;
-
+window.Echo = new Echo({
+    // ...
+    authEndpoint: '/broadcasting/auth',
+  });
+  
 // window.Echo = new Echo({
 //     broadcaster: 'pusher',
 //     key: import.meta.env.VITE_PUSHER_APP_KEY,

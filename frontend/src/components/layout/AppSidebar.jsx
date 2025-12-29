@@ -168,7 +168,15 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick }) {
       seen.add(x.id);
       return true;
     });
-  }, [navConfig]);
+  }, [navConfig]); 
+  const showMiniNav = !isOverlayMode && !isOpen; // desktop collapsed فقط 
+  const handleNavLinkClick = () => {
+    onLinkClick?.();      // لو عندك callback
+    setActiveSection(null);
+
+    // ✅ في الموبايل/تابلت: اقفل السايدبار بعد اختيار صفحة
+    if (isOverlayMode && isOpen) onToggle();
+  };
 
   return (
     <aside
