@@ -7,7 +7,12 @@ import {
   Tooltip,
 } from 'recharts';
 import { useLanguage } from '@/context/LanguageContext';
-import { getPalette, tooltipStyle, legendStyle, chartMargin } from './chartTheme';
+import {
+  getPalette,
+  tooltipStyle,
+  legendStyle,
+  chartMargin,
+} from './chartTheme';
 
 const demoData = {
   ar: [
@@ -58,13 +63,16 @@ export default function LegalCaseCategorysChart({ height = '100%' }) {
               position: 'insideStart',
               fill: 'var(--fg)',
               fontSize: 11,
-              formatter: (v) => (typeof v === 'number' ? formatNumber(v, lang) : v),
+              formatter: (v) =>
+                typeof v === 'number' ? formatNumber(v, lang) : v,
             }}
           />
 
           <Tooltip
             contentStyle={tooltipStyle}
-            formatter={(v) => (typeof v === 'number' ? formatNumber(v, lang) : v)}
+            formatter={(v) =>
+              typeof v === 'number' ? formatNumber(v, lang) : v
+            }
           />
 
           <Legend

@@ -8,13 +8,24 @@ import {
   SectionCard,
 } from '@/components/common/details/DetailsPrimitives';
 import EntityComments from '@/components/common/EntityComments';
-import { Building2, Hash, ShieldCheck, User, MessageCircle, Pencil } from 'lucide-react';
+import {
+  Building2,
+  Hash,
+  ShieldCheck,
+  User,
+  MessageCircle,
+  Pencil,
+} from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { updateInvestigation, getInvestigationById } from '@/services/api/investigations';
+import {
+  updateInvestigation,
+  getInvestigationById,
+} from '@/services/api/investigations';
 import { toast } from 'sonner';
 
 const InvestigationActionsTable = lazy(
-  () => import('@/features/investigations/components/InvestigationActionsTable'),
+  () =>
+    import('@/features/investigations/components/InvestigationActionsTable'),
 );
 const InvestigationModal = lazy(
   () => import('@/features/investigations/components/InvestigationModal'),
@@ -37,10 +48,13 @@ export default function InvestigationDetailsPage() {
           try {
             await updateInvestigation(current.id, formData);
             const refreshed = await getInvestigationById(current.id);
-            setCurrent(refreshed.data?.data ?? refreshed.data ?? {
-              ...current,
-              ...formData,
-            });
+            setCurrent(
+              refreshed.data?.data ??
+                refreshed.data ?? {
+                  ...current,
+                  ...formData,
+                },
+            );
             toast.success('تم تحديث بيانات التحقيق بنجاح');
             setIsModalOpen(false);
           } catch (error) {
@@ -75,11 +89,31 @@ export default function InvestigationDetailsPage() {
               {/* ✅ سطر مستقل: ملخص التحقيق */}
               <SectionCard title="ملخص التحقيق" icon={ShieldCheck}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                  <InfoItem icon={User} label="الموظف" value={current.employee_name} />
-                  <InfoItem icon={Building2} label="الجهة المحيلة" value={current.source} />
-                  <InfoItem icon={Hash} label="رقم القضية" value={current.case_number} />
-                  <InfoItem icon={ShieldCheck} label="الحالة" value={current.status} />
-                  <InfoItem icon={MessageCircle} label="الموضوع" value={current.subject} />
+                  <InfoItem
+                    icon={User}
+                    label="الموظف"
+                    value={current.employee_name}
+                  />
+                  <InfoItem
+                    icon={Building2}
+                    label="الجهة المحيلة"
+                    value={current.source}
+                  />
+                  <InfoItem
+                    icon={Hash}
+                    label="رقم القضية"
+                    value={current.case_number}
+                  />
+                  <InfoItem
+                    icon={ShieldCheck}
+                    label="الحالة"
+                    value={current.status}
+                  />
+                  <InfoItem
+                    icon={MessageCircle}
+                    label="الموضوع"
+                    value={current.subject}
+                  />
                   <InfoItem
                     icon={User}
                     label="المحقق"
@@ -89,11 +123,17 @@ export default function InvestigationDetailsPage() {
               </SectionCard>
 
               {/* ✅ سطر مستقل: الإجراءات (جدول متجاوب) */}
-              <SectionCard title="الإجراءات" icon={ShieldCheck} hint="محدثة تلقائيًا">
+              <SectionCard
+                title="الإجراءات"
+                icon={ShieldCheck}
+                hint="محدثة تلقائيًا"
+              >
                 <div className="w-full overflow-x-auto">
                   <div className="min-w-[720px]">
                     <div className="overflow-hidden rounded-xl border border-border/70 bg-card/70">
-                      <Suspense fallback={<div className="p-4">تحميل البيانات...</div>}>
+                      <Suspense
+                        fallback={<div className="p-4">تحميل البيانات...</div>}
+                      >
                         <InvestigationActionsTable
                           investigationId={current.id}
                           reloadInvestigations={() => {}}
@@ -106,7 +146,10 @@ export default function InvestigationDetailsPage() {
 
               {/* ✅ سطر مستقل: التعليقات */}
               <SectionCard title="التعليقات" icon={MessageCircle}>
-                <EntityComments entityType="investigations" entityId={current.id} />
+                <EntityComments
+                  entityType="investigations"
+                  entityId={current.id}
+                />
               </SectionCard>
             </DetailsShell>
 

@@ -26,8 +26,10 @@ const HomePage = () => {
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/70 via-black/45 to-black/70" />
 
       {/* subtle noise / glow layer */}
-      <div className="absolute inset-0 z-10 opacity-40 pointer-events-none
-        [background:radial-gradient(80%_60%_at_50%_35%,rgba(59,130,246,0.25),transparent_60%),radial-gradient(60%_50%_at_70%_60%,rgba(34,197,94,0.18),transparent_60%)]" />
+      <div
+        className="absolute inset-0 z-10 opacity-40 pointer-events-none
+        [background:radial-gradient(80%_60%_at_50%_35%,rgba(59,130,246,0.25),transparent_60%),radial-gradient(60%_50%_at_70%_60%,rgba(34,197,94,0.18),transparent_60%)]"
+      />
 
       {/* Main Content */}
       <div className="relative z-20 flex items-center justify-center min-h-screen px-4 sm:px-6">
@@ -50,19 +52,23 @@ const HomePage = () => {
               "
             >
               {/* Circular soft shadow / halo behind card */}
-              <div className="pointer-events-none absolute -inset-32 opacity-70
-                [background:radial-gradient(circle,rgba(59,130,246,0.18),transparent_55%)]" />
-              <div className="pointer-events-none absolute -inset-32 opacity-60
-                [background:radial-gradient(circle,rgba(34,197,94,0.14),transparent_55%)]" />
+              <div
+                className="pointer-events-none absolute -inset-32 opacity-70
+                [background:radial-gradient(circle,rgba(59,130,246,0.18),transparent_55%)]"
+              />
+              <div
+                className="pointer-events-none absolute -inset-32 opacity-60
+                [background:radial-gradient(circle,rgba(34,197,94,0.14),transparent_55%)]"
+              />
 
               {/* glossy highlight */}
-              <div className="pointer-events-none absolute -top-24 left-1/2 h-66 w-[32rem] -translate-x-1/2 rotate-12 rounded-full bg-white/10 blur-2xl" />
+              <div className="pointer-events-none absolute -top-24 left-1/2 h-56 w-[32rem] -translate-x-1/2 rotate-12 rounded-full bg-white/10 blur-2xl" />
 
               {/* Logo */}
               <motion.img
                 src={WelcomeLogoWhite}
                 alt="Logo"
-                className="mx-auto  w-66 h-66 drop-shadow-[0_25px_45px_rgba(0,0,0,0.55)]"
+                className="mx-auto h-28 sm:h-32 w-36 drop-shadow-[0_25px_45px_rgba(0,0,0,0.55)]"
                 initial={{ opacity: 0, y: -14 }}
                 animate={
                   reduce
@@ -166,7 +172,6 @@ const HomePage = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
       </div>
 
       {/* keyframes for sheen */}

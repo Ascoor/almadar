@@ -8,7 +8,15 @@ import {
   SectionCard,
 } from '@/components/common/details/DetailsPrimitives';
 import EntityComments from '@/components/common/EntityComments';
-import { Building2, Gavel, Hash, ShieldCheck, User, MessageCircle, Pencil } from 'lucide-react';
+import {
+  Building2,
+  Gavel,
+  Hash,
+  ShieldCheck,
+  User,
+  MessageCircle,
+  Pencil,
+} from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getLitigationById } from '@/services/api/litigations';
 import { toast } from 'sonner';
@@ -63,10 +71,18 @@ export default function LitigationDetailsPage() {
         }
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
-          <InfoItem icon={Hash} label="رقم الدعوى" value={current.case_number} />
+          <InfoItem
+            icon={Hash}
+            label="رقم الدعوى"
+            value={current.case_number}
+          />
           <InfoItem icon={Building2} label="المحكمة" value={current.court} />
           <InfoItem icon={User} label="الخصم" value={current.opponent} />
-          <InfoItem icon={MessageCircle} label="الموضوع" value={current.subject} />
+          <InfoItem
+            icon={MessageCircle}
+            label="الموضوع"
+            value={current.subject}
+          />
           <InfoItem icon={ShieldCheck} label="الحالة" value={current.status} />
           <InfoItem
             icon={User}

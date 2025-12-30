@@ -24,7 +24,9 @@ export default function NotificationDetailsCard({ notification, onClose }) {
           </p>
         </div>
         <Badge variant={formatted.read ? 'outline' : 'destructive'}>
-          {formatted.read ? t('notifications.ui.read') : t('notifications.ui.unread')}
+          {formatted.read
+            ? t('notifications.ui.read')
+            : t('notifications.ui.unread')}
         </Badge>
       </div>
 

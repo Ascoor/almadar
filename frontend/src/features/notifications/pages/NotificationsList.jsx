@@ -53,7 +53,9 @@ export default function NotificationsList() {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="all">{t('notifications.ui.all')}</TabsTrigger>
-          <TabsTrigger value="unread">{t('notifications.ui.unread')}</TabsTrigger>
+          <TabsTrigger value="unread">
+            {t('notifications.ui.unread')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="mt-4 space-y-3">

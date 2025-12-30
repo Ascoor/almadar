@@ -10,8 +10,11 @@ export default function ThemeProvider({ children }) {
   const getInitialTheme = () => {
     if (typeof window === 'undefined') return 'light';
     const persistedTheme = localStorage.getItem('theme');
-    if (persistedTheme === 'light' || persistedTheme === 'dark') return persistedTheme;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (persistedTheme === 'light' || persistedTheme === 'dark')
+      return persistedTheme;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
   };
 
   const [theme, setTheme] = useState(getInitialTheme);

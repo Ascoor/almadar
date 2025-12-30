@@ -190,11 +190,13 @@ export function formatNotification(notification, t, lang = 'en') {
       ? sectionLabelRaw
       : meta?.fallbackLabel || sectionKey;
 
-  const eventKey = payload.event || payload.key || payload?.meta?.event || 'generic';
+  const eventKey =
+    payload.event || payload.key || payload?.meta?.event || 'generic';
   const eventLabelKey = `notifications.events.${eventKey}.label`;
   const eventLabel = t(eventLabelKey);
 
-  const baseTitleKey = payload.title_key || `notifications.events.${eventKey}.title`;
+  const baseTitleKey =
+    payload.title_key || `notifications.events.${eventKey}.title`;
   const baseMessageKey =
     payload.message_key || `notifications.events.${eventKey}.message`;
 

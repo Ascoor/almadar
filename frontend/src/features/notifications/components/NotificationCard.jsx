@@ -40,7 +40,11 @@ export default function NotificationCard({ notification, onOpen, onMarkRead }) {
 
       <div className="flex gap-2 justify-end pt-2">
         {!formatted.read && (
-          <Button variant="outline" size="sm" onClick={() => onMarkRead?.(notification)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onMarkRead?.(notification)}
+          >
             {t('notifications.ui.markRead')}
           </Button>
         )}

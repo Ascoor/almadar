@@ -57,7 +57,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
       unexpected: t('login.unexpected'),
       unexpectedDescription: t('login.unexpectedDescription'),
     }),
-    [isArabic, t]
+    [isArabic, t],
   );
 
   const validate = () => {
@@ -65,13 +65,19 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email.trim()) {
-      nextErrors.email = isArabic ? 'البريد الإلكتروني مطلوب' : 'Email is required';
+      nextErrors.email = isArabic
+        ? 'البريد الإلكتروني مطلوب'
+        : 'Email is required';
     } else if (!emailPattern.test(email.trim())) {
-      nextErrors.email = isArabic ? 'صيغة البريد غير صحيحة' : 'Invalid email format';
+      nextErrors.email = isArabic
+        ? 'صيغة البريد غير صحيحة'
+        : 'Invalid email format';
     }
 
     if (!password) {
-      nextErrors.password = isArabic ? 'كلمة المرور مطلوبة' : 'Password is required';
+      nextErrors.password = isArabic
+        ? 'كلمة المرور مطلوبة'
+        : 'Password is required';
     }
 
     setErrors(nextErrors);
@@ -99,18 +105,25 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
         if (rememberMe) localStorage.setItem('rememberedEmail', email.trim());
         else localStorage.removeItem('rememberedEmail');
 
-        toast.success(labels.successTitle, { description: labels.successDescription });
+        toast.success(labels.successTitle, {
+          description: labels.successDescription,
+        });
         onAuthComplete?.(true);
       } else {
-        const errorMsg = message === 'Bad credentials' ? labels.errorDescription : message;
+        const errorMsg =
+          message === 'Bad credentials' ? labels.errorDescription : message;
 
         setFormError(errorMsg || labels.errorFallback);
-        toast.error(labels.errorTitle, { description: errorMsg || labels.errorFallback });
+        toast.error(labels.errorTitle, {
+          description: errorMsg || labels.errorFallback,
+        });
         onAuthComplete?.(false);
       }
     } catch (error) {
       setFormError(error?.message || labels.unexpectedDescription);
-      toast.error(labels.unexpected, { description: error?.message || labels.unexpectedDescription });
+      toast.error(labels.unexpected, {
+        description: error?.message || labels.unexpectedDescription,
+      });
       onAuthComplete?.(false);
     } finally {
       setIsSubmitting(false);
@@ -143,7 +156,9 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
         transition={{ duration: 0.25, ease: 'easeOut' }}
       >
         {/* Top bar */}
-        <div className={`flex items-center justify-between gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+        <div
+          className={`flex items-center justify-between gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}
+        >
           <div
             className="
               text-[11px] md:text-xs truncate
@@ -222,7 +237,9 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
               error={errors.password}
             />
 
-            <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <div
+              className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}
+            >
               <label className="flex items-center gap-2 text-xs text-muted-foreground select-none">
                 <input
                   type="checkbox"

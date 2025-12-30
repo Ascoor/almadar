@@ -48,7 +48,11 @@ export default function LegalAdviceDetails({ selected, onClose }) {
           label="تاريخ المشورة"
           value={formatDateTime(selected.advice_date)}
         />
-        <InfoItem icon={Hash} label="رقم المشورة" value={selected.advice_number} />
+        <InfoItem
+          icon={Hash}
+          label="رقم المشورة"
+          value={selected.advice_number}
+        />
         {selected.created_at && (
           <InfoItem
             icon={CalendarDays}
@@ -64,10 +68,18 @@ export default function LegalAdviceDetails({ selected, onClose }) {
           />
         )}
         {selected.creator?.name && (
-          <InfoItem icon={User} label="منشئ السجل" value={selected.creator?.name} />
+          <InfoItem
+            icon={User}
+            label="منشئ السجل"
+            value={selected.creator?.name}
+          />
         )}
         {selected.updater?.name && (
-          <InfoItem icon={User} label="آخر من عدّل" value={selected.updater?.name} />
+          <InfoItem
+            icon={User}
+            label="آخر من عدّل"
+            value={selected.updater?.name}
+          />
         )}
       </div>
 
@@ -92,7 +104,11 @@ export default function LegalAdviceDetails({ selected, onClose }) {
         </SectionCard>
       </div>
 
-      <SectionCard title="نص المشورة" hint="عرض/قراءة" className="bg-[var(--comments-item)]">
+      <SectionCard
+        title="نص المشورة"
+        hint="عرض/قراءة"
+        className="bg-[var(--comments-item)]"
+      >
         <p className="whitespace-pre-wrap leading-relaxed text-fg text-sm">
           {selected.text || 'لا يوجد نص للمشورة.'}
         </p>

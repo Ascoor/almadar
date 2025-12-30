@@ -9,7 +9,12 @@ import {
   Tooltip,
 } from 'recharts';
 import { useLanguage } from '@/context/LanguageContext';
-import { axisTick, chartMargin, tooltipStyle, makeTickFormatter } from './chartTheme';
+import {
+  axisTick,
+  chartMargin,
+  tooltipStyle,
+  makeTickFormatter,
+} from './chartTheme';
 
 function SmartTooltip({ active, payload, label, dir, formatNumber, lang }) {
   if (!active || !payload?.length) return null;
@@ -25,7 +30,9 @@ function SmartTooltip({ active, payload, label, dir, formatNumber, lang }) {
     >
       <div className="font-semibold text-fg mb-1">{label}</div>
       <div className="text-muted-foreground">
-        {typeof value === 'number' ? formatNumber(value, lang) : String(value ?? '—')}
+        {typeof value === 'number'
+          ? formatNumber(value, lang)
+          : String(value ?? '—')}
       </div>
     </div>
   );
@@ -40,16 +47,15 @@ export default function BarChartBasic({
   const { lang, dir, formatNumber } = useLanguage();
 
   const safeData = Array.isArray(data) ? data : [];
-  const yTick = useMemo(() => makeTickFormatter(formatNumber, lang), [formatNumber, lang]);
+  const yTick = useMemo(
+    () => makeTickFormatter(formatNumber, lang),
+    [formatNumber, lang],
+  );
 
   return (
     <div style={{ height }} className="w-full min-w-0" dir="ltr">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={safeData}
-          barCategoryGap="22%"
-          margin={chartMargin}
-        >
+        <BarChart data={safeData} barCategoryGap="22%" margin={chartMargin}>
           <CartesianGrid stroke="var(--chart-grid)" strokeOpacity={1} />
 
           <XAxis
@@ -70,7 +76,9 @@ export default function BarChartBasic({
           />
 
           <Tooltip
-            cursor={{ fill: 'color-mix(in oklab, var(--primary) 10%, transparent)' }}
+            cursor={{
+              fill: 'color-mix(in oklab, var(--primary) 10%, transparent)',
+            }}
             content={(props) => (
               <SmartTooltip
                 {...props}
@@ -85,8 +93,8 @@ export default function BarChartBasic({
             dataKey={yKey}
             fill="url(#primaryGradient)"
             radius={[10, 10, 0, 0]}
-            isAnimationActive={false}   // يقلل flicker
-            maxBarSize={44}             // يحمي الموبايل
+            isAnimationActive={false} // يقلل flicker
+            maxBarSize={44} // يحمي الموبايل
           />
         </BarChart>
       </ResponsiveContainer>

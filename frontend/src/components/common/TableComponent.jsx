@@ -189,9 +189,14 @@ export default function TableComponent({
       return;
     }
 
-    const headerHtml = headerRow.map((cell) => `<th>${escapeHtml(cell)}</th>`).join('');
+    const headerHtml = headerRow
+      .map((cell) => `<th>${escapeHtml(cell)}</th>`)
+      .join('');
     const bodyHtml = rows
-      .map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`)
+      .map(
+        (row) =>
+          `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`,
+      )
       .join('');
 
     const htmlTable =

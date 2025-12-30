@@ -1,6 +1,18 @@
 import React, { useMemo } from 'react';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import { getPalette, tooltipStyle, legendStyle, chartMargin } from './chartTheme';
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+} from 'recharts';
+import {
+  getPalette,
+  tooltipStyle,
+  legendStyle,
+  chartMargin,
+} from './chartTheme';
 
 export default function PieChartBasic({
   data,
@@ -28,12 +40,19 @@ export default function PieChartBasic({
             isAnimationActive={false} // optional: يقلل flicker
           >
             {safeData.map((_, index) => (
-              <Cell key={`cell-${index}`} fill={palette[index % palette.length]} />
+              <Cell
+                key={`cell-${index}`}
+                fill={palette[index % palette.length]}
+              />
             ))}
           </Pie>
 
           <Tooltip contentStyle={tooltipStyle} />
-          <Legend verticalAlign="bottom" height={36} wrapperStyle={legendStyle} />
+          <Legend
+            verticalAlign="bottom"
+            height={36}
+            wrapperStyle={legendStyle}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>

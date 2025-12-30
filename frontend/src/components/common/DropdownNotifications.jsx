@@ -28,7 +28,8 @@ export default function DropdownNotifications() {
 
   // ✅ لازم تكون موجودة لأنك تستخدمها في map + navigation
   const getNotifLink = (n) => {
-    const directLink = buildNotificationLink(n) || buildNotificationLink(n?.data);
+    const directLink =
+      buildNotificationLink(n) || buildNotificationLink(n?.data);
     if (!directLink) return null;
 
     if (/^https?:\/\//i.test(directLink)) return directLink;

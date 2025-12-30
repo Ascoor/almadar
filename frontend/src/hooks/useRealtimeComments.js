@@ -130,7 +130,8 @@ export function useRealtimeComments({ entityType, entityId }) {
   );
 
   useEffect(() => {
-    if (!entityType || entityId === undefined || entityId === null) return undefined;
+    if (!entityType || entityId === undefined || entityId === null)
+      return undefined;
 
     const echo = initEcho();
     const channelName = `entity.${entityType}.${entityId}`;
@@ -148,7 +149,11 @@ export function useRealtimeComments({ entityType, entityId }) {
 
       if (detailKey && incomingComment) {
         queryClient.setQueryData(detailKey, (previous) =>
-          incrementCommentCounters(previous, delta, incomingComment?.created_at),
+          incrementCommentCounters(
+            previous,
+            delta,
+            incomingComment?.created_at,
+          ),
         );
       }
     };

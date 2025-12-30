@@ -30,7 +30,8 @@ const UserInfoCard = ({ user }) => {
   if (!user) return null;
 
   const imageSrc =
-    user.image_url || (user.image ? `${API_CONFIG.baseURL}/${user.image}` : null);
+    user.image_url ||
+    (user.image ? `${API_CONFIG.baseURL}/${user.image}` : null);
   const roles = getDisplayRoles(user);
 
   return (

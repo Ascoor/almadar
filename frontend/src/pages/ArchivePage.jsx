@@ -277,7 +277,13 @@ function ResultBadge({ icon: IconComp, label, value }) {
   );
 }
 
-function ResultsSummary({ lang, query, filteredCount, totalCount, typeFilter }) {
+function ResultsSummary({
+  lang,
+  query,
+  filteredCount,
+  totalCount,
+  typeFilter,
+}) {
   const activeType =
     typeFilter === 'ALL' ? COPY.all[lang] : getLabel(typeFilter, lang);
 

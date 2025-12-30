@@ -170,10 +170,7 @@ const AuthRoutes = () => {
             }
           />
           <Route path="/reports-page" element={<ReportsPage />} />
-          <Route
-            path="/notifications"
-            element={<NotificationsPage />}
-          />
+          <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/forbidden" element={<Forbidden />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

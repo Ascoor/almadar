@@ -71,7 +71,11 @@ export default function FormField({
           value={value}
           onChange={onChange}
           placeholder={translate(placeholder)}
-          className={error ? 'border-destructive focus-visible:ring-destructive' : undefined}
+          className={
+            error
+              ? 'border-destructive focus-visible:ring-destructive'
+              : undefined
+          }
         />
       )}
       {error && <p className="text-xs text-destructive">{error}</p>}

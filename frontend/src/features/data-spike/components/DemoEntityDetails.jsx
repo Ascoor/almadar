@@ -84,8 +84,11 @@ const DemoEntityDetails = ({ entityId }) => {
     isFetching,
     error: entityError,
   } = useDemoEntityQuery(entityId);
-  const { data: comments, isLoading: commentsLoading, error: commentsError } =
-    useDemoCommentsQuery(entityId);
+  const {
+    data: comments,
+    isLoading: commentsLoading,
+    error: commentsError,
+  } = useDemoCommentsQuery(entityId);
   const addComment = useAddDemoComment(entityId);
 
   const statusTone = useMemo(() => {
@@ -101,7 +104,12 @@ const DemoEntityDetails = ({ entityId }) => {
   }, [entity]);
 
   if (isDemoApiError(entityError) && entityError.status === 404) {
-    return <ErrorAlert title="العنصر غير موجود" message="لا توجد بيانات متاحة حالياً." />;
+    return (
+      <ErrorAlert
+        title="العنصر غير موجود"
+        message="لا توجد بيانات متاحة حالياً."
+      />
+    );
   }
 
   return (
@@ -120,18 +128,30 @@ const DemoEntityDetails = ({ entityId }) => {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="text-xs text-gray-500">المسؤول</p>
-                  <p className="text-sm font-semibold text-gray-900">{entity.owner}</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {entity.owner}
+                  </p>
                 </div>
-                <div className={`rounded-full px-3 py-1 text-xs font-semibold ${statusTone}`}>
+                <div
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${statusTone}`}
+                >
                   {entity.translatedStatus}
                 </div>
               </div>
-              <h2 className="text-lg font-bold text-gray-900">{entity.title}</h2>
-              <p className="text-sm leading-relaxed text-gray-700">{entity.summary}</p>
+              <h2 className="text-lg font-bold text-gray-900">
+                {entity.title}
+              </h2>
+              <p className="text-sm leading-relaxed text-gray-700">
+                {entity.summary}
+              </p>
               <div className="flex flex-wrap gap-4 text-xs text-gray-500">
                 <span>آخر تحديث: {formatDate(entity.lastUpdated)}</span>
                 <span>عدد التعليقات: {entity.commentCount}</span>
-                {isFetching ? <span className="text-indigo-600">جارٍ تحديث البيانات...</span> : null}
+                {isFetching ? (
+                  <span className="text-indigo-600">
+                    جارٍ تحديث البيانات...
+                  </span>
+                ) : null}
               </div>
             </div>
           ) : null}
@@ -140,14 +160,20 @@ const DemoEntityDetails = ({ entityId }) => {
         {commentsError ? (
           <ErrorAlert
             title="تعذر تحميل التعليقات"
-            message={isDemoApiError(commentsError) ? commentsError.message : 'حدث خطأ غير متوقع.'}
+            message={
+              isDemoApiError(commentsError)
+                ? commentsError.message
+                : 'حدث خطأ غير متوقع.'
+            }
           />
         ) : null}
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-900">التعليقات</h3>
-            {commentsLoading ? <span className="text-xs text-gray-500">تحميل...</span> : null}
+            {commentsLoading ? (
+              <span className="text-xs text-gray-500">تحميل...</span>
+            ) : null}
           </div>
           {commentsLoading ? (
             <div className="space-y-2">
@@ -161,7 +187,9 @@ const DemoEntityDetails = ({ entityId }) => {
           ) : (
             <div className="space-y-2">
               {comments?.length ? (
-                comments.map((comment) => <CommentCard key={comment.id} comment={comment} />)
+                comments.map((comment) => (
+                  <CommentCard key={comment.id} comment={comment} />
+                ))
               ) : (
                 <p className="rounded-md bg-gray-50 p-3 text-sm text-gray-600">
                   لا توجد تعليقات بعد.
@@ -187,7 +215,10 @@ const DemoEntityDetails = ({ entityId }) => {
           <p className="font-semibold">سياسة الكاش</p>
           <ul className="list-disc space-y-1 pr-4">
             <li>staleTime عام للكيان: 5 دقائق (من QueryClient الافتراضي).</li>
-            <li>staleTime للتعليقات: دقيقة واحدة مع إعادة الجلب بالخلفية عند عودة التركيز.</li>
+            <li>
+              staleTime للتعليقات: دقيقة واحدة مع إعادة الجلب بالخلفية عند عودة
+              التركيز.
+            </li>
             <li>تمكين تحديث متفائل مع rollback عند الفشل.</li>
           </ul>
         </div>

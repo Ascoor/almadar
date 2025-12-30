@@ -25,10 +25,17 @@ export default function AreaChartBasic({
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={Array.isArray(data) ? data : []} margin={chartMargin}>
           <CartesianGrid stroke="var(--chart-grid)" strokeOpacity={1} />
-          <XAxis dataKey={xKey} tick={axisTick} axisLine={false} tickLine={false} />
+          <XAxis
+            dataKey={xKey}
+            tick={axisTick}
+            axisLine={false}
+            tickLine={false}
+          />
           <YAxis
             tick={axisTick}
-            tickFormatter={(v) => (typeof v === 'number' ? formatNumber(v, lang) : v)}
+            tickFormatter={(v) =>
+              typeof v === 'number' ? formatNumber(v, lang) : v
+            }
             axisLine={false}
             tickLine={false}
           />

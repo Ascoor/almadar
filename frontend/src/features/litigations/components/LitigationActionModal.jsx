@@ -112,8 +112,14 @@ export default function LitigationActionModal({
   };
 
   const handleSave = async () => {
-    if (!form.action_date || !form.action_type_id || !form.assigned_to_user_id) {
-      toast.error('فضلاً أكمل الحقول الأساسية (التاريخ، نوع الإجراء، المحامي المسؤول).');
+    if (
+      !form.action_date ||
+      !form.action_type_id ||
+      !form.assigned_to_user_id
+    ) {
+      toast.error(
+        'فضلاً أكمل الحقول الأساسية (التاريخ، نوع الإجراء، المحامي المسؤول).',
+      );
       return;
     }
 
@@ -214,7 +220,9 @@ export default function LitigationActionModal({
         />
 
         <div className="md:col-span-2 space-y-1">
-          <label className="block text-sm font-medium text-foreground">ملاحظات</label>
+          <label className="block text-sm font-medium text-foreground">
+            ملاحظات
+          </label>
           <textarea
             name="notes"
             value={form.notes ?? ''}
@@ -260,7 +268,9 @@ function Field({
 
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-foreground">{label}</label>
+      <label className="block text-sm font-medium text-foreground">
+        {label}
+      </label>
 
       {type === 'select' ? (
         <select

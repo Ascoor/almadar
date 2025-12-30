@@ -58,17 +58,37 @@ export default function ContractDetails({ selected, onClose, onEdit }) {
           label="نوع العقد"
           value={selected.scope === 'local' ? 'محلي' : 'دولي'}
         />
-        <InfoItem icon={Layers} label="تصنيف العقد" value={selected.category?.name} />
+        <InfoItem
+          icon={Layers}
+          label="تصنيف العقد"
+          value={selected.category?.name}
+        />
         <InfoItem icon={ShieldCheck} label="الحالة" value={selected.status} />
-        <InfoItem icon={BadgeDollarSign} label="قيمة العقد" value={formattedValue} />
-        <InfoItem icon={Calendar} label="تاريخ الإنشاء" value={selected.created_at} />
+        <InfoItem
+          icon={BadgeDollarSign}
+          label="قيمة العقد"
+          value={formattedValue}
+        />
+        <InfoItem
+          icon={Calendar}
+          label="تاريخ الإنشاء"
+          value={selected.created_at}
+        />
         <InfoItem
           icon={Users}
           label="الأطراف المتعاقدة"
           value={selected.contract_parties}
         />
-        <InfoItem icon={Calendar} label="آخر تحديث" value={selected.updated_at} />
-        <InfoItem icon={UserCheck} label="محرر البيان" value={selected.creator?.name} />
+        <InfoItem
+          icon={Calendar}
+          label="آخر تحديث"
+          value={selected.updated_at}
+        />
+        <InfoItem
+          icon={UserCheck}
+          label="محرر البيان"
+          value={selected.creator?.name}
+        />
         <InfoItem
           icon={UserCheck}
           label="مسؤول التعاقد"
@@ -85,7 +105,11 @@ export default function ContractDetails({ selected, onClose, onEdit }) {
           value={selected.start_date}
         />
         {hasDuration && (
-          <InfoItem icon={Calendar} label="تاريخ نهاية العقد" value={selected.end_date} />
+          <InfoItem
+            icon={Calendar}
+            label="تاريخ نهاية العقد"
+            value={selected.end_date}
+          />
         )}
       </div>
 

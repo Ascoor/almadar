@@ -22,7 +22,7 @@ export default function ContractDetailsPage() {
   const canEdit = hasPermission('edit contracts');
 
   const { data, refetch: refetchContracts } = useContracts();
-  
+
   const contracts = data?.data?.data || [];
   const initialContract = useMemo(
     () => location.state || contracts.find((c) => c.id === Number(id)),

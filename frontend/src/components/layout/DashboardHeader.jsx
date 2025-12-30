@@ -7,7 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
-export default function Header({ isOpen, user, sidebarOffset = '0px', onToggleSidebar }) {
+export default function Header({
+  isOpen,
+  user,
+  sidebarOffset = '0px',
+  onToggleSidebar,
+}) {
   const { dir } = useLanguage();
   const [isDark] = useState(() => {
     const root = document.documentElement;
@@ -19,6 +24,7 @@ export default function Header({ isOpen, user, sidebarOffset = '0px', onToggleSi
 
   return (
     <nav
+      id="app-header"
       dir={dir}
       style={{
         boxShadow: isDark

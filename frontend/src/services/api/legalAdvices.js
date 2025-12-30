@@ -22,7 +22,7 @@ export const deleteLegalAdvice = (id) => api.delete(`/api/legal-advices/${id}`);
 
 // ✅ Get all advice types
 export const getAdviceTypes = () => {
-    return api.get('/api/advice-types');
+  return api.get('/api/advice-types');
 };
 
 // ✅ Create a new advice type

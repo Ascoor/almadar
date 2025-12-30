@@ -97,9 +97,7 @@ export function NotificationProvider({ children }) {
         const res = await getNotifications();
         const list = Array.isArray(res?.data) ? res.data : res;
         if (!mounted || !Array.isArray(list)) return;
-        const normalized = list
-          .map((item) => normalize(item))
-          .filter(Boolean);
+        const normalized = list.map((item) => normalize(item)).filter(Boolean);
 
         setNotifications(normalized);
         normalized.forEach((n) => seenIds.current.add(n.id));
