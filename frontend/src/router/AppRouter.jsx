@@ -1,11 +1,6 @@
 // src/router/AppRouter.jsx
 import React, { lazy, Suspense } from 'react';
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-  Outlet,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 
@@ -15,57 +10,59 @@ const DocumentEditor = lazy(() => import('@/components/editor/DocumentEditor'));
 
 function Protected({ children }) {
   const { user, isLoading } = useAuth();
+
   if (isLoading) return <AuthSpinner />;
-  return user ? children : <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+
+  return children || <Outlet />;
 }
 
-function ProvidersRoot() {
-  return (
-    // <ThemeProvider>
-    <AuthProvider>
-      <Outlet />
-    </AuthProvider>
-    // </ThemeProvider>
-  );
+function PublicRoute({ children }) {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) return <AuthSpinner />;
+  return user ? <Navigate to="/dashboard" replace /> : children;
 }
 
-const router = createBrowserRouter([
+function AuthRedirect() {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) return <AuthSpinner />;
+  return <Navigate to={user ? '/dashboard' : '/login'} replace />;
+}
+
+export const routes = [
   {
-    element: <ProvidersRoot />,
+    element: (
+      <AuthProvider>
+        <Suspense fallback={<AuthSpinner />}>
+          <Outlet />
+        </Suspense>
+      </AuthProvider>
+    ),
     children: [
-      { path: '/', element: <Navigate to="/dashboard" replace /> },
+      { index: true, element: <AuthRedirect /> },
       {
-        path: '/login',
+        path: 'login',
         element: (
-          <Suspense fallback={<AuthSpinner />}>
+          <PublicRoute>
             <Login />
-          </Suspense>
+          </PublicRoute>
         ),
       },
       {
-        path: '/dashboard',
-        element: (
-          <Protected>
-            <Suspense fallback={<AuthSpinner />}>
-              <Dashboard />
-            </Suspense>
-          </Protected>
-        ),
+        element: <Protected />,
+        children: [
+          { path: 'dashboard', element: <Dashboard /> },
+          { path: 'editor', element: <DocumentEditor /> },
+        ],
       },
-      {
-        path: '/editor',
-        element: (
-          <Protected>
-            <Suspense fallback={<AuthSpinner />}>
-              <DocumentEditor />
-            </Suspense>
-          </Protected>
-        ),
-      },
-      { path: '*', element: <Navigate to="/dashboard" replace /> },
+      { path: '*', element: <AuthRedirect /> },
     ],
   },
-]);
+];
+
+const router = createBrowserRouter(routes);
 
 export default function AppRouter() {
   return <RouterProvider router={router} />;

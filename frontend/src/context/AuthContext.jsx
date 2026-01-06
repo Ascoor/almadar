@@ -27,6 +27,7 @@ export const AuthContext = createContext({
 
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState(() =>
     sessionStorage.getItem('token')
       ? JSON.parse(sessionStorage.getItem('token'))
@@ -62,6 +63,7 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password) => {
+    setIsLoading(true);
     try {
       await axios.get(`${API_CONFIG.baseURL}/sanctum/csrf-cookie`, {
         withCredentials: true,
@@ -84,6 +86,8 @@ export function AuthProvider({ children }) {
         success: false,
         message: err.response?.data?.message || 'Connection error',
       };
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -128,6 +132,10 @@ export function AuthProvider({ children }) {
     };
   }, [user]);
 
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -135,6 +143,7 @@ export function AuthProvider({ children }) {
         token,
         roles,
         permissions,
+        isLoading,
         login,
         logout,
         hasRole,
