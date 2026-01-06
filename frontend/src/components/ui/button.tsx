@@ -120,10 +120,7 @@ const buttonVariants = cva(
           "hover:bg-muted/35 hover:shadow-sm",
         ].join(" "),
 
-        ghost: [
-          "bg-transparent text-foreground",
-          "hover:bg-muted/35",
-        ].join(" "),
+        ghost: ["bg-transparent text-foreground", "hover:bg-muted/35"].join(" "),
 
         link: [
           "bg-transparent text-primary underline-offset-4 underline",
@@ -151,12 +148,10 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-<<<<<<< HEAD
+  /** if true, disables button when offline (defaults to submit buttons) */
   requiresNetwork?: boolean;
-=======
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
->>>>>>> f5ae528 (Update gitignore)
 }
 
 /**
@@ -164,27 +159,34 @@ export interface ButtonProps
  * <Button leftIcon={<Icon/>} rightIcon={<Icon/>}>Text</Button>
  */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-<<<<<<< HEAD
   (
-    { className, variant, size, asChild = false, requiresNetwork, ...props },
-    ref,
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      requiresNetwork,
+      leftIcon,
+      rightIcon,
+      children,
+      ...props
+    },
+    ref
   ) => {
     const { isOffline, offlineMessage } = useNetworkStatus();
-=======
-  ({ className, variant, size, asChild = false, leftIcon, rightIcon, children, ...props }, ref) => {
->>>>>>> f5ae528 (Update gitignore)
+
     const Comp = asChild ? Slot : "button";
+
     const shouldGuardNetwork =
       typeof requiresNetwork === "boolean"
         ? requiresNetwork
         : props.type === "submit";
 
     const isNetworkDisabled = Boolean(shouldGuardNetwork && isOffline);
-    const mergedDisabled = props.disabled || isNetworkDisabled;
+    const mergedDisabled = Boolean(props.disabled || isNetworkDisabled);
+
     const title =
-      isNetworkDisabled && !props.title
-        ? offlineMessage
-        : props.title;
+      isNetworkDisabled && !props.title ? offlineMessage : props.title;
 
     return (
       <Comp
@@ -197,13 +199,24 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         title={title}
         {...props}
       >
-        {leftIcon ? <span className="inline-flex items-center">{leftIcon}</span> : null}
+        {leftIcon ? (
+          <span className="relative z-10 inline-flex items-center">
+            {leftIcon}
+          </span>
+        ) : null}
+
         <span className="relative z-10">{children}</span>
-        {rightIcon ? <span className="inline-flex items-center">{rightIcon}</span> : null}
+
+        {rightIcon ? (
+          <span className="relative z-10 inline-flex items-center">
+            {rightIcon}
+          </span>
+        ) : null}
       </Comp>
     );
   }
 );
+
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
