@@ -7,6 +7,7 @@ import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 const Login = lazy(() => import('@/components/organisms/Login'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const DocumentEditor = lazy(() => import('@/components/editor/DocumentEditor'));
+const HomePage = lazy(() => import('@/pages/HomePage'));
 
 function Protected({ children }) {
   const { user, isLoading } = useAuth();
@@ -31,6 +32,15 @@ function AuthRedirect() {
   return <Navigate to={user ? '/dashboard' : '/login'} replace />;
 }
 
+function HomeEntry() {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) return <AuthSpinner />;
+  if (user) return <Navigate to="/dashboard" replace />;
+
+  return <HomePage />;
+}
+
 export const routes = [
   {
     element: (
@@ -41,7 +51,7 @@ export const routes = [
       </AuthProvider>
     ),
     children: [
-      { index: true, element: <AuthRedirect /> },
+      { index: true, element: <HomeEntry /> },
       {
         path: 'login',
         element: (
@@ -57,7 +67,7 @@ export const routes = [
           { path: 'editor', element: <DocumentEditor /> },
         ],
       },
-      { path: '*', element: <AuthRedirect /> },
+      { path: '*', element: <Navigate to="/" replace /> },
     ],
   },
 ];
