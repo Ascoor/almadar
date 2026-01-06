@@ -5,7 +5,6 @@ import { AuthContext } from '@/context/AuthContext';
 import { AnimatePresence } from 'framer-motion';
 import { MobileThemeProvider } from '@/components/MobileThemeProvider';
 import { NotificationProvider } from '@/context/NotificationContext';
-import { AppWithQuery } from '@/hooks/dataHooks';
 
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'));
 const AuthRoutes = lazy(() => import('@/components/layout/AuthRoutes'));
@@ -48,11 +47,9 @@ const DashboardContent = () => {
 
 const AuthWrapper = () => (
   <MobileThemeProvider>
-    <AppWithQuery>
-      <NotificationProvider>
-        <DashboardContent />
-      </NotificationProvider>
-    </AppWithQuery>
+    <NotificationProvider>
+      <DashboardContent />
+    </NotificationProvider>
   </MobileThemeProvider>
 );
 
