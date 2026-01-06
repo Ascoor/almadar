@@ -7,22 +7,31 @@ import { Suspense } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ThemeProvider from './context/ThemeContext';
-import { Toaster as SonnerToaster } from 'sonner';
+import { AuthProvider } from '@/context/AuthContext';
+import { Toaster as SonnerToaster, toast } from 'sonner';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { SpinnerProvider } from './context/SpinnerContext';
 import { queryClient } from './lib/queryClient';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-// Register service worker for PWA functionality
-registerSW({
+const updateSW = registerSW({
   onNeedRefresh() {
-    if (confirm('New content available, reload?')) {
-      window.location.reload();
-    }
+    toast('✨ تحديث متاح', {
+      description:
+        'يوجد إصدار جديد من التطبيق، اضغط إعادة التحميل لتطبيق التحديثات.',
+      duration: 10000,
+      action: {
+        label: 'إعادة التحميل',
+        onClick: () => updateSW(true),
+      },
+    });
   },
   onOfflineReady() {
-    console.log('App ready to work offline');
+    toast.success('🚀 جاهز للعمل دون اتصال', {
+      description: 'تم تجهيز الملفات الأساسية للعمل في وضع عدم الاتصال.',
+      duration: 5000,
+    });
   },
 });
 

@@ -120,24 +120,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
     }
   }, [editor]);
 
-  // Register service worker for PWA
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          console.log('SW registered: ', registration);
-          toast({
-            title: "🚀 تطبيق جاهز للعمل بدون إنترنت - App Ready for Offline",
-            description: "يمكنك الآن استخدام المحرر بدون اتصال بالإنترنت - You can now use the editor offline",
-            duration: 3000,
-          });
-        })
-        .catch(registrationError => {
-          console.log('SW registration failed: ', registrationError);
-        });
-    }
-  }, [toast]);
-
   const handleNewDocument = useCallback(() => {
     if (editor) {
       editor.commands.clearContent();

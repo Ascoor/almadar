@@ -6,10 +6,12 @@ import NotificationDetailsCard from '../components/NotificationDetailsCard';
 import { useNotifications } from '@/context/NotificationContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { markAllNotificationsRead } from '../api';
+import { useNetworkStatus } from '@/context/NetworkStatusContext';
 
 export default function NotificationsList() {
   const { notifications, markRead, markAllAsRead } = useNotifications();
   const { t } = useLanguage();
+  const { guardOnline, isOffline } = useNetworkStatus();
   const [selectedId, setSelectedId] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
 
@@ -30,6 +32,8 @@ export default function NotificationsList() {
   }, [notifications, selectedId]);
 
   const handleMarkAll = async () => {
+    if (!guardOnline()) return;
+
     markAllAsRead();
     try {
       await markAllNotificationsRead();
@@ -45,7 +49,12 @@ export default function NotificationsList() {
             {t('notifications.ui.description')}
           </p>
         </div>
-        <Button variant="outline" onClick={handleMarkAll}>
+        <Button
+          variant="outline"
+          onClick={handleMarkAll}
+          requiresNetwork
+          disabled={isOffline}
+        >
           {t('notifications.ui.markAll')}
         </Button>
       </div>
