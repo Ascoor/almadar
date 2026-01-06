@@ -115,7 +115,7 @@ export default function HomePage() {
                   </p>
                   <div className="mt-10">
                     <Button variant="hero" size="xl" onClick={open} className="px-12 py-6 text-xl shadow-2xl">
-                      ابدأ الآن ✨
+                      دخول ✨
                     </Button>
                   </div>
                 </motion.div>
