@@ -5,8 +5,7 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 
 const Login = lazy(() => import('@/components/organisms/Login'));
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
-const DocumentEditor = lazy(() => import('@/components/editor/DocumentEditor'));
+const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const HomePage = lazy(() => import('@/pages/HomePage'));
 
 function Protected({ children }) {
@@ -63,8 +62,9 @@ export const routes = [
       {
         element: <Protected />,
         children: [
-          { path: 'dashboard', element: <Dashboard /> },
-          { path: 'editor', element: <DocumentEditor /> },
+          // All authenticated routes render through DashboardPage so the app
+          // layout (header + sidebar) is always visible.
+          { path: '*', element: <DashboardPage /> },
         ],
       },
       { path: '*', element: <Navigate to="/" replace /> },
