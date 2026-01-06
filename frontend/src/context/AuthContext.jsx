@@ -49,6 +49,7 @@ export function AuthProvider({ children }) {
       ? JSON.parse(sessionStorage.getItem('permissions'))
       : [],
   );
+  const [isLoading, setIsLoading] = useState(true);
 
   const saveAuth = ({ user, token, roles, permissions }) => {
     sessionStorage.setItem('token', JSON.stringify(token));
