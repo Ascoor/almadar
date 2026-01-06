@@ -93,6 +93,8 @@ export function AuthProvider({ children }) {
         success: false,
         message: err.response?.data?.message || 'Connection error',
       };
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -137,6 +139,10 @@ export function AuthProvider({ children }) {
     };
   }, [user]);
 
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -144,6 +150,7 @@ export function AuthProvider({ children }) {
         token,
         roles,
         permissions,
+        isLoading,
         login,
         logout,
         hasRole,
