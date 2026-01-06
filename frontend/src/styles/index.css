@@ -569,3 +569,31 @@
   stroke: var(--chart-grid) !important;
   shape-rendering: crispEdges;
 }
+.hero-gradient {
+  background: radial-gradient(80% 60% at 50% 35%, rgba(212,169,23,0.20), transparent 60%),
+              radial-gradient(60% 50% at 70% 60%, rgba(34,197,94,0.16), transparent 60%);
+}
+
+.grid-pattern {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.gold-text {
+  color: rgb(212 169 23);
+}
+
+.gold-glow {
+  text-shadow: 0 0 18px rgba(212,169,23,.35);
+}
+
+
+@keyframes pulseSlow { 0%,100%{opacity:.85} 50%{opacity:1} }
+@keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+@keyframes slideUp { from{opacity:0; transform:translateY(22px)} to{opacity:1; transform:translateY(0)} }
+
+.animate-pulse-slow { animation: pulseSlow 3.5s ease-in-out infinite; }
+.animate-float { animation: floatY 4s ease-in-out infinite; }
+.animate-slide-up { animation: slideUp .7s ease-out; }
