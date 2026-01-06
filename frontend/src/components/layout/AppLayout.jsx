@@ -36,8 +36,9 @@ export default function AppLayout({ children, user }) {
   const toggleSidebar = () => setSidebarOpen((p) => !p);
 
   // offsets فقط للتابلتUp لأن الموبايل مفيهوش sidebar جانبي
+  // محاذاة العرض مع قيم AppSidebar (16rem open / 72px collapsed)
   const desktopSidebarWidth = 256;
-  const collapsedWidth = 64;
+  const collapsedWidth = 72;
   const sidebarOffset = isTabletUp
     ? `${sidebarOpen ? desktopSidebarWidth : collapsedWidth}px`
     : '0px';
