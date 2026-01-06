@@ -6,7 +6,9 @@
    Base
 ========================= */
 @layer base {
-  :root { color-scheme: light dark; }
+  :root {
+    color-scheme: light dark;
+  }
 
   html {
     -webkit-font-smoothing: antialiased;
@@ -17,7 +19,7 @@
 
   html,
   body {
-    transition: background-color .2s ease, color .2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   body,
@@ -27,18 +29,40 @@
     overflow-x: hidden;
   }
 
-  body { @apply bg-bg text-fg font-body antialiased; }
-  h1,h2,h3,h4,h5,h6 { @apply font-heading; }
+  body {
+    @apply bg-bg text-fg font-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+  }
 
   /* Switch map font by document language for best legibility */
-  html[lang="ar"] { --font-map: 'Cairo', var(--font-body); }
-  html[lang="en"] { --font-map: 'Roboto', var(--font-body); }
+  html[lang="ar"] {
+    --font-map: "Cairo", var(--font-body);
+  }
+  html[lang="en"] {
+    --font-map: "Roboto", var(--font-body);
+  }
 
   /* Selection (token-driven) */
-  ::selection { background: var(--primary); color: var(--primary-foreground); }
-  ::-moz-selection { background: var(--primary); color: var(--primary-foreground); }
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  ::-moz-selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
 
-  /* Token-driven form styles (unified across app) */
+  /* =========================
+     Forms (token-driven)
+  ========================= */
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -58,7 +82,7 @@
   input::placeholder,
   textarea::placeholder {
     color: var(--muted-foreground);
-    opacity: .8;
+    opacity: 0.8;
   }
 
   input:focus,
@@ -92,8 +116,15 @@
     color: var(--fg);
   }
 
-  select { background-color: var(--card); color: var(--fg); }
-  option { background-color: var(--card); color: var(--fg); }
+  select {
+    background-color: var(--card);
+    color: var(--fg);
+  }
+
+  option {
+    background-color: var(--card);
+    color: var(--fg);
+  }
 
   option:checked,
   option:focus,
@@ -111,11 +142,11 @@
     background: var(--card);
     color: var(--fg);
     border: 1px solid var(--border);
-    border-radius: .75rem;
+    border-radius: 0.75rem;
   }
 
   [role="listbox"] [role="option"] {
-    padding: .5rem .75rem;
+    padding: 0.5rem 0.75rem;
     cursor: pointer;
   }
 
@@ -134,7 +165,24 @@
    Components
 ========================= */
 @layer components {
-  /* Chart Card (Premium surface) */
+  /* -------------------------
+     Standard Cards / Layout
+  -------------------------- */
+  .card {
+    @apply bg-card text-fg border border-border rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out;
+  }
+
+  .card-p {
+    @apply p-4 md:p-6;
+  }
+
+  .chart-container {
+    @apply bg-card p-6 md:p-8 rounded-2xl shadow-md border border-border overflow-hidden min-w-0;
+  }
+
+  /* -------------------------
+     Chart Card (Premium surface)
+  -------------------------- */
   .chart-card {
     @apply rounded-2xl border border-border bg-card shadow-md;
     position: relative;
@@ -153,7 +201,9 @@
     pointer-events: none;
   }
 
-  .dark .chart-card::before { opacity: 0.45; }
+  .dark .chart-card::before {
+    opacity: 0.45;
+  }
 
   .chart-card::after {
     content: "";
@@ -163,38 +213,90 @@
     opacity: 0.12;
     filter: blur(46px);
     pointer-events: none;
-    transform: translate3d(0,0,0);
+    transform: translate3d(0, 0, 0);
   }
 
-  .dark .chart-card::after { opacity: 0.16; }
+  .dark .chart-card::after {
+    opacity: 0.16;
+  }
 
   .chart-card > * {
     position: relative;
     z-index: 1;
   }
 
-  /* Reusable container styles */
-  .card {
-    @apply bg-card text-fg border border-border rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out;
-  }
-  .card-p { @apply p-4 md:p-6; }
+  /* =========================
+     Landing Glass (Always readable on dark images)
+  ========================== */
 
-  .chart-container {
-    @apply bg-card p-6 md:p-8 rounded-2xl shadow-md border border-border overflow-hidden min-w-0;
+  .glass-landing {
+    @apply rounded-3xl;
+    position: relative;
+    overflow: hidden;
+
+    /* Always dark-tinted glass (works in light + dark) */
+    background: rgba(2, 6, 23, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 28px 90px rgba(0, 0, 0, 0.55),
+      0 1px 0 rgba(255, 255, 255, 0.10) inset;
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
   }
 
-  /* Glass morphism helpers */
-  .glass {
-    background: rgba(var(--glass-bg));
-    border: 1px solid rgba(var(--glass-border));
-    box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+  /* subtle premium sheen */
+  .glass-landing::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(900px 420px at 18% 0%, rgba(255,255,255,0.14), transparent 55%),
+      radial-gradient(700px 360px at 90% 80%, rgba(34,197,94,0.10), transparent 60%),
+      radial-gradient(700px 360px at 35% 85%, rgba(212,169,23,0.10), transparent 60%);
+    opacity: 0.9;
+    pointer-events: none;
   }
-  .glass-card { @apply glass rounded-2xl p-4 md:p-6; }
-  .hover-scale { @apply transition-transform duration-200 ease-in-out hover:scale-[1.01]; }
 
-  /* Gradient text utility */
+  /* optional: micro-noise feel (very light) */
+  .glass-landing::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 18px 18px;
+    opacity: 0.06;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
+  .glass-landing > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Landing feature cards inside the bottom area */
+  .landing-feature {
+    @apply rounded-2xl;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.20);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  /* Text readability helpers */
+  .landing-title {
+    text-shadow: 0 12px 36px rgba(0,0,0,0.45);
+  }
+
+  .landing-subtitle {
+    text-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  }
+
+  /* -------------------------
+     Utilities / UI bits
+  -------------------------- */
   .text-gradient {
     background: var(--gradient-primary);
     -webkit-background-clip: text;
@@ -239,20 +341,27 @@
     color: var(--fg);
     border-color: var(--border);
   }
+
   .form-control:focus {
     outline: none;
     box-shadow: 0 0 0 2px var(--ring);
     border-color: var(--ring);
   }
 
-  .form-hint { @apply text-xs; color: var(--muted-foreground); }
+  .form-hint {
+    @apply text-xs;
+    color: var(--muted-foreground);
+  }
 
   .btn-primary {
     @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-semibold;
     color: var(--primary-foreground);
     background: var(--primary);
   }
-  .btn-primary:hover { filter: brightness(1.03); }
+
+  .btn-primary:hover {
+    filter: brightness(1.03);
+  }
 
   /* Dashboard clock styling via tokens */
   .dashboard-clock {
@@ -260,15 +369,41 @@
     border: 2px solid var(--border);
     box-shadow: var(--shadow-md);
   }
-  .dashboard-clock__rim { box-shadow: var(--shadow-glow); }
-  .dashboard-clock__pivot { background: var(--fg); box-shadow: 0 0 0 2px var(--card); }
-  .dashboard-clock__hand--hour { background: var(--accent); }
-  .dashboard-clock__hand--minute { background: var(--fg); box-shadow: 0 0 0 1px var(--card); }
-  .dashboard-clock__hand--second { background: var(--neon-title); }
+
+  .dashboard-clock__rim {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .dashboard-clock__pivot {
+    background: var(--fg);
+    box-shadow: 0 0 0 2px var(--card);
+  }
+
+  .dashboard-clock__hand--hour {
+    background: var(--accent);
+  }
+
+  .dashboard-clock__hand--minute {
+    background: var(--fg);
+    box-shadow: 0 0 0 1px var(--card);
+  }
+
+  .dashboard-clock__hand--second {
+    background: var(--neon-title);
+  }
 
   /* Archive layout helpers */
-  .archive-grid { display: grid; gap: 1rem; }
-  @media (min-width: 640px) { .archive-grid { gap: 1.25rem; } }
+  .archive-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .archive-grid {
+      gap: 1.25rem;
+    }
+  }
+
   @media (min-width: 1024px) {
     .archive-grid {
       grid-template-columns: minmax(260px, 360px) 1fr;
@@ -309,11 +444,8 @@
     @apply flex items-center gap-2 px-3 py-2 rounded-lg transition-colors;
     color: var(--fg);
     position: relative;
-    transition:
-      background-color .2s ease,
-      color .2s ease,
-      transform .2s ease,
-      box-shadow .2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease,
+      transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .mini-sidebar-item:hover {
@@ -328,7 +460,7 @@
   }
 
   .mini-sidebar-item::before {
-    content: '';
+    content: "";
     position: absolute;
     inset-block-start: 15%;
     inset-inline-start: 0;
@@ -338,7 +470,7 @@
     border-radius: 2px;
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform .18s ease-out, background-color .2s ease;
+    transition: transform 0.18s ease-out, background-color 0.2s ease;
   }
 
   .mini-sidebar-item:hover::before,
@@ -354,8 +486,7 @@
   .dark .mini-sidebar-item.active {
     background: color-mix(in oklab, var(--neon-title) 16%, transparent);
     outline: 2px solid color-mix(in oklab, var(--neon-title) 28%, transparent);
-    box-shadow:
-      0 0 18px color-mix(in oklab, var(--neon-title) 22%, transparent),
+    box-shadow: 0 0 18px color-mix(in oklab, var(--neon-title) 22%, transparent),
       0 8px 22px color-mix(in oklab, var(--fg) 18%, transparent);
     transform: translateX(3px);
   }
@@ -364,7 +495,7 @@
     background: color-mix(in oklab, var(--neon-title) 55%, transparent);
   }
 
-  /* Section/page titles */
+  /* Titles */
   .section-title {
     color: var(--primary);
     text-shadow: 0 1px 0 color-mix(in oklab, var(--fg) 12%, transparent);
@@ -374,9 +505,8 @@
 
   .dark .section-title {
     color: var(--neon-title);
-    text-shadow:
-      0 0 2px  color-mix(in oklab, var(--neon-title) 35%, transparent),
-      0 0 6px  color-mix(in oklab, var(--neon-title) 25%, transparent),
+    text-shadow: 0 0 2px color-mix(in oklab, var(--neon-title) 35%, transparent),
+      0 0 6px color-mix(in oklab, var(--neon-title) 25%, transparent),
       0 0 12px color-mix(in oklab, var(--neon-title) 18%, transparent),
       0 0 20px color-mix(in oklab, var(--neon-title) 12%, transparent);
     letter-spacing: 0.5px;
@@ -388,15 +518,13 @@
     line-height: 1.1;
     letter-spacing: 0.2px;
     color: var(--primary);
-    text-shadow:
-      0 0 6px color-mix(in oklab, var(--primary) 20%, transparent),
+    text-shadow: 0 0 6px color-mix(in oklab, var(--primary) 20%, transparent),
       0 2px 0 color-mix(in oklab, var(--fg) 20%, transparent);
   }
 
   .dark .page-title {
     color: var(--neon-title);
-    text-shadow:
-      0 0 16px color-mix(in oklab, var(--neon-title) 55%, transparent),
+    text-shadow: 0 0 16px color-mix(in oklab, var(--neon-title) 55%, transparent),
       0 0 36px color-mix(in oklab, var(--neon-title) 35%, transparent),
       0 3px 0 color-mix(in oklab, var(--fg) 24%, transparent),
       0 12px 26px color-mix(in oklab, var(--fg) 22%, transparent);
@@ -413,18 +541,54 @@
 ========================= */
 @layer utilities {
   /* Responsive chart height utility */
-  .chart-h { height: 220px; }
-  @screen sm { .chart-h { height: 240px; } }
-  @screen md { .chart-h { height: 260px; } }
-  @screen xl { .chart-h { height: 300px; } }
+  .chart-h {
+    height: 220px;
+  }
 
-  .chart-2h { height: calc(220px * 2 + 24px); }
-  @screen sm { .chart-2h { height: calc(240px * 2 + 24px); } }
-  @screen md { .chart-2h { height: calc(260px * 2 + 24px); } }
-  @screen xl { .chart-2h { height: calc(300px * 2 + 24px); } }
+  @screen sm {
+    .chart-h {
+      height: 240px;
+    }
+  }
+
+  @screen md {
+    .chart-h {
+      height: 260px;
+    }
+  }
+
+  @screen xl {
+    .chart-h {
+      height: 300px;
+    }
+  }
+
+  .chart-2h {
+    height: calc(220px * 2 + 24px);
+  }
+
+  @screen sm {
+    .chart-2h {
+      height: calc(240px * 2 + 24px);
+    }
+  }
+
+  @screen md {
+    .chart-2h {
+      height: calc(260px * 2 + 24px);
+    }
+  }
+
+  @screen xl {
+    .chart-2h {
+      height: calc(300px * 2 + 24px);
+    }
+  }
 
   /* Map helpers */
-  .map-container { @apply w-full h-full flex items-center justify-center; }
+  .map-container {
+    @apply w-full h-full flex items-center justify-center;
+  }
 
   .map-label {
     font-family: var(--font-map);
@@ -445,38 +609,44 @@
 
   /* Subtle neon pulse used in dark mode */
   @keyframes neonPulse {
-    0%, 100% {
-      box-shadow:
-        0 0 30px color-mix(in oklab, var(--neon-title) 35%, transparent),
+    0%,
+    100% {
+      box-shadow: 0 0 30px color-mix(in oklab, var(--neon-title) 35%, transparent),
         0 0 60px color-mix(in oklab, var(--neon-title) 15%, transparent);
     }
     50% {
-      box-shadow:
-        0 0 45px color-mix(in oklab, var(--neon-title) 55%, transparent),
+      box-shadow: 0 0 45px color-mix(in oklab, var(--neon-title) 55%, transparent),
         0 0 80px color-mix(in oklab, var(--neon-title) 25%, transparent);
     }
   }
-  .neon-pulse-dark { animation: neonPulse 3s ease-in-out infinite; }
+
+  .neon-pulse-dark {
+    animation: neonPulse 3s ease-in-out infinite;
+  }
 
   @keyframes neonTitlePulse {
-    0%, 100% {
-      text-shadow:
-        0 0 8px  color-mix(in oklab, var(--neon-title) 40%, transparent),
+    0%,
+    100% {
+      text-shadow: 0 0 8px color-mix(in oklab, var(--neon-title) 40%, transparent),
         0 0 18px color-mix(in oklab, var(--neon-title) 25%, transparent),
-        0 2px 0  color-mix(in oklab, var(--fg) 22%, transparent),
+        0 2px 0 color-mix(in oklab, var(--fg) 22%, transparent),
         0 8px 18px color-mix(in oklab, var(--fg) 18%, transparent);
     }
     50% {
-      text-shadow:
-        0 0 14px color-mix(in oklab, var(--neon-title) 55%, transparent),
+      text-shadow: 0 0 14px color-mix(in oklab, var(--neon-title) 55%, transparent),
         0 0 28px color-mix(in oklab, var(--neon-title) 35%, transparent),
-        0 2px 0  color-mix(in oklab, var(--fg) 24%, transparent),
+        0 2px 0 color-mix(in oklab, var(--fg) 24%, transparent),
         0 10px 22px color-mix(in oklab, var(--fg) 20%, transparent);
     }
   }
 
-  .dark .section-title-animate { animation: neonTitlePulse 3.2s ease-in-out infinite; }
-  .page-title-animate { animation: neonTitlePulse 3.4s ease-in-out infinite; }
+  .dark .section-title-animate {
+    animation: neonTitlePulse 3.2s ease-in-out infinite;
+  }
+
+  .page-title-animate {
+    animation: neonTitlePulse 3.4s ease-in-out infinite;
+  }
 }
 
 /* =========================================
@@ -485,7 +655,6 @@
 .login-card-special {
   position: relative;
   overflow: hidden;
-
   border-radius: calc(var(--radius) + 14px);
 
   background: color-mix(in oklab, var(--card) 82%, transparent);
@@ -518,8 +687,13 @@
 }
 
 @keyframes loginAmbientDrift {
-  0%, 100% { transform: translate(-6%, -4%) scale(1.00); }
-  50%      { transform: translate( 6%,  4%) scale(1.08); }
+  0%,
+  100% {
+    transform: translate(-6%, -4%) scale(1);
+  }
+  50% {
+    transform: translate(6%, 4%) scale(1.08);
+  }
 }
 
 .login-card-special > * {
@@ -545,7 +719,10 @@
     animation: none !important;
   }
 }
-/* ===== Recharts Typography / Clarity ===== */
+
+/* =========================
+   Recharts Typography / Clarity
+========================= */
 .recharts-wrapper text,
 .recharts-wrapper tspan {
   font-family: var(--font-map) !important; /* Cairo/Roboto حسب lang */
@@ -559,25 +736,35 @@
   opacity: 1 !important;
 }
 
-/* Tooltip label/value */
 .recharts-tooltip-wrapper {
   outline: none;
 }
 
-/* Grid lines more stable */
 .recharts-cartesian-grid line {
   stroke: var(--chart-grid) !important;
   shape-rendering: crispEdges;
 }
+
+/* =========================
+   Landing / Visual Helpers
+========================= */
 .hero-gradient {
-  background: radial-gradient(80% 60% at 50% 35%, rgba(212,169,23,0.20), transparent 60%),
-              radial-gradient(60% 50% at 70% 60%, rgba(34,197,94,0.16), transparent 60%);
+  background: radial-gradient(
+      80% 60% at 50% 35%,
+      rgba(212, 169, 23, 0.2),
+      transparent 60%
+    ),
+    radial-gradient(
+      60% 50% at 70% 60%,
+      rgba(34, 197, 94, 0.16),
+      transparent 60%
+    );
 }
 
 .grid-pattern {
-  background-image:
-    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent
+        1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
@@ -586,14 +773,51 @@
 }
 
 .gold-glow {
-  text-shadow: 0 0 18px rgba(212,169,23,.35);
+  text-shadow: 0 0 18px rgba(212, 169, 23, 0.35);
 }
 
+/* =========================
+   Animations helpers
+========================= */
+@keyframes pulseSlow {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
 
-@keyframes pulseSlow { 0%,100%{opacity:.85} 50%{opacity:1} }
-@keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-@keyframes slideUp { from{opacity:0; transform:translateY(22px)} to{opacity:1; transform:translateY(0)} }
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
 
-.animate-pulse-slow { animation: pulseSlow 3.5s ease-in-out infinite; }
-.animate-float { animation: floatY 4s ease-in-out infinite; }
-.animate-slide-up { animation: slideUp .7s ease-out; }
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 3.5s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: floatY 4s ease-in-out infinite;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.7s ease-out;
+}
