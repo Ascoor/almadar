@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'sonner';
 import API_CONFIG from '../../config/config';
 
 // متغير لتخزين الدالة التي يتم استدعاؤها عند 401
@@ -35,6 +36,18 @@ api.interceptors.request.use((config) => {
     }
   } catch {
     // تجاهل في حال وجود خطأ
+  }
+
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    toast.error('لا يوجد اتصال بالإنترنت', {
+      description: 'تعذر إرسال الطلب. يرجى المحاولة بعد عودة الشبكة.',
+      duration: 4000,
+    });
+
+    const offlineError = new axios.Cancel('Network offline');
+    offlineError.code = 'ERR_OFFLINE';
+    offlineError.isOffline = true;
+    return Promise.reject(offlineError);
   }
   return config;
 });

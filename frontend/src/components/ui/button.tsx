@@ -2,6 +2,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { useNetworkStatus } from "@/context/NetworkStatusContext";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-sm font-medium transition shadow-sm active:shadow-none active:translate-y-[1px] focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 disabled:pointer-events-none",
@@ -37,15 +38,37 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  requiresNetwork?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    { className, variant, size, asChild = false, requiresNetwork, ...props },
+    ref,
+  ) => {
+    const { isOffline, offlineMessage } = useNetworkStatus();
     const Comp = asChild ? Slot : "button";
+    const shouldGuardNetwork =
+      typeof requiresNetwork === "boolean"
+        ? requiresNetwork
+        : props.type === "submit";
+
+    const isNetworkDisabled = Boolean(shouldGuardNetwork && isOffline);
+    const mergedDisabled = props.disabled || isNetworkDisabled;
+    const title =
+      isNetworkDisabled && !props.title
+        ? offlineMessage
+        : props.title;
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        aria-disabled={mergedDisabled}
+        data-offline={isNetworkDisabled || undefined}
+        data-requires-network={shouldGuardNetwork || undefined}
+        disabled={mergedDisabled}
+        title={title}
         {...props}
       />
     );

@@ -10,6 +10,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { initEcho } from '@/lib/echo';
 import API_CONFIG from '@/config/config';
+import { useNetworkStatus } from './NetworkStatusContext';
 
 // إنشاء الـ Context
 export const AuthContext = createContext({
@@ -27,6 +28,7 @@ export const AuthContext = createContext({
 
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
+  const { guardOnline } = useNetworkStatus();
   const [token, setToken] = useState(() =>
     sessionStorage.getItem('token')
       ? JSON.parse(sessionStorage.getItem('token'))
@@ -62,6 +64,13 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password) => {
+    if (!guardOnline('تسجيل الدخول يحتاج إلى اتصال بالشبكة.')) {
+      return {
+        success: false,
+        message: 'لا يمكن تسجيل الدخول بدون اتصال بالإنترنت.',
+      };
+    }
+
     try {
       await axios.get(`${API_CONFIG.baseURL}/sanctum/csrf-cookie`, {
         withCredentials: true,
