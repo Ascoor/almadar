@@ -5,7 +5,10 @@ import { Button } from '@/components/ui/button';
 import { LegalAdviceIcon } from '@/assets/icons';
 import { AuthContext } from '@/context/AuthContext';
 import { motion } from 'framer-motion';
-import { useLegalAdvices, useAdviceTypes } from '@/hooks/dataHooks';
+import {
+  useAdviceTypesQuery,
+  useLegalAdvicesQuery,
+} from '@/features/legal-advices/hooks/useLegalAdvices';
 import API_CONFIG from '@/config/config';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { deleteLegalAdvice } from '@/services/api/legalAdvices';
@@ -31,11 +34,8 @@ export default function LegalAdvicePage() {
   const [current, setCurrent] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const { data: advicesData, refetch: refetchAdvices } = useLegalAdvices();
-  const { data: adviceTypesData } = useAdviceTypes();
-
-  const advices = advicesData?.data || [];
-  const adviceTypes = adviceTypesData || [];
+  const { data: advices = [], refetch: refetchAdvices } = useLegalAdvicesQuery();
+  const { data: adviceTypes = [] } = useAdviceTypesQuery();
 
   const getAdviceTypeName = (typeId) => {
     const type = adviceTypes.find((t) => t.id === typeId);

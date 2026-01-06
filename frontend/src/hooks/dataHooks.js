@@ -3,8 +3,6 @@ import React from 'react';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 
-import * as adviceTypesApi from '@/services/api/adviceTypes';
-import * as legalAdvicesApi from '@/services/api/legalAdvices';
 import * as dashboardApi from '@/services/api/dashboard';
 
 import * as notificationsApi from '@/services/api/notifications';
@@ -12,6 +10,11 @@ import * as usersApi from '@/services/api/users';
 import * as contractsApi from '@/services/api/contracts';
 import * as investigationsApi from '@/services/api/investigations';
 import * as litigationsApi from '@/services/api/litigations';
+import {
+  useAdviceTypesQuery,
+  useLegalAdviceQuery,
+  useLegalAdvicesQuery,
+} from '@/features/legal-advices/hooks/useLegalAdvices';
 
 export const AppWithQuery = ({ children }) =>
   React.createElement(QueryClientProvider, { client: queryClient }, children);
@@ -26,32 +29,12 @@ export const useContractCategories = () => {
   });
 };
 
-export const useAdviceTypes = () => {
-  return useQuery({
-    queryKey: ['adviceTypes'],
-    queryFn: adviceTypesApi.getAdviceTypes,
-    select: (res) => (Array.isArray(res?.data) ? res.data : []),
-  });
-};
+export const useAdviceTypes = () => useAdviceTypesQuery();
 
-export const useLegalAdvices = () => {
-  return useQuery({
-    queryKey: ['legalAdvices'],
-    queryFn: legalAdvicesApi.getLegalAdvices, // ✅ الحرف A كبير هنا
-  });
-};
+export const useLegalAdvices = () => useLegalAdvicesQuery();
 
-export const useLegalAdvice = (id, options = {}) => {
-  const { enabled = true, ...rest } = options;
-
-  return useQuery({
-    queryKey: ['legalAdvice', id],
-    queryFn: () => legalAdvicesApi.getLegalAdviceById(id),
-    select: (res) => res?.data ?? res,
-    enabled: Boolean(id) && enabled,
-    ...rest,
-  });
-};
+export const useLegalAdvice = (id, options = {}) =>
+  useLegalAdviceQuery(id, options);
 export const useDashboardStats = () => {
   return useQuery({
     queryKey: ['dashboardStatus'],

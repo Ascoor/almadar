@@ -2,10 +2,10 @@ import { Suspense, lazy, useMemo, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
-  useLegalAdvice,
-  useLegalAdvices,
-  useAdviceTypes,
-} from '@/hooks/dataHooks';
+  useAdviceTypesQuery,
+  useLegalAdviceQuery,
+  useLegalAdvicesQuery,
+} from '@/features/legal-advices/hooks/useLegalAdvices';
 import {
   DetailsShell,
   InfoItem,
@@ -54,8 +54,8 @@ export default function LegalAdviceDetailsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // قائمة المشورات (للـ fallback)
-  const { data } = useLegalAdvices();
-  const advices = data?.data || data?.data?.data || [];
+  const { data = [] } = useLegalAdvicesQuery();
+  const advices = data;
 
   const fallbackAdvice = useMemo(
     () => location.state || advices.find((a) => a.id === Number(id)),
@@ -66,11 +66,11 @@ export default function LegalAdviceDetailsPage() {
     data: advice,
     isLoading,
     refetch,
-  } = useLegalAdvice(id, {
+  } = useLegalAdviceQuery(id, {
     initialData: fallbackAdvice,
   });
 
-  const { data: adviceTypes = [] } = useAdviceTypes();
+  const { data: adviceTypes = [] } = useAdviceTypesQuery();
 
   if (isLoading && !advice) {
     return <div className="p-4">جاري تحميل بيانات المشورة...</div>;

@@ -4,12 +4,14 @@ import ReactDOM from 'react-dom/client';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App';
 import { Suspense } from 'react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ThemeProvider from './context/ThemeContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { Toaster as SonnerToaster, toast } from 'sonner';
 import { LanguageProvider } from '@/context/LanguageContext';
-import { NetworkStatusProvider } from '@/context/NetworkStatusContext';
-import NetworkStatusBanner from '@/components/common/NetworkStatusBanner';
+import { SpinnerProvider } from './context/SpinnerContext';
+import { queryClient } from './lib/queryClient';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -35,28 +37,24 @@ const updateSW = registerSW({
 
 root.render(
   <React.StrictMode>
-    <NetworkStatusProvider>
+    <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <BrowserRouter>
-          <LanguageProvider>
-            <AuthProvider>
-              <SpinnerProvider>
-                <SonnerToaster
-                  position="top-center"
-                  toastOptions={{
-                    duration: 3000,
-                    className: 'touch-target',
-                  }}
-                />
-                <NetworkStatusBanner />
-                <Suspense fallback={null}>
-                  <App />
-                </Suspense>
-              </SpinnerProvider>
-            </AuthProvider>
-          </LanguageProvider>
-        </BrowserRouter>
+        <LanguageProvider>
+          <SpinnerProvider>
+            <SonnerToaster
+              position="top-center"
+              toastOptions={{
+                duration: 3000,
+                className: 'touch-target',
+              }}
+            />
+            <Suspense fallback={null}>
+              <App />
+            </Suspense>
+            <ReactQueryDevtools buttonPosition="bottom-left" />
+          </SpinnerProvider>
+        </LanguageProvider>
       </ThemeProvider>
-    </NetworkStatusProvider>
+    </QueryClientProvider>
   </React.StrictMode>,
 );
