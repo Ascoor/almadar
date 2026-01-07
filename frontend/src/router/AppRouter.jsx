@@ -65,9 +65,9 @@ export const routes = [
         children: [
           { path: 'dashboard', element: <Dashboard /> },
           { path: 'editor', element: <DocumentEditor /> },
+          { path: '*', element: <Dashboard /> },
         ],
       },
-      { path: '*', element: <Navigate to="/" replace /> },
     ],
   },
 ];
