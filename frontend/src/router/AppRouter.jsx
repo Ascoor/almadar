@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 
 const Login = lazy(() => import('@/components/organisms/Login'));
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Dashboard = lazy(() => import('@/pages/DashboardPage'));
 const DocumentEditor = lazy(() => import('@/components/editor/DocumentEditor'));
 const HomePage = lazy(() => import('@/pages/HomePage'));
 
