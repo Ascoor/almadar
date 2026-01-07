@@ -61,7 +61,7 @@ const AuthRoutes = () => {
       {loading && <GlobalSpinner />}
       <Suspense fallback={<GlobalSpinner />}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Home />} />
           <Route
             path="/spike/data-fetching"
             element={

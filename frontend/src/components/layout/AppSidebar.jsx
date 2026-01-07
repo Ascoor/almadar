@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -27,6 +27,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
   const { hasPermission } = useAuth();
   const { t, dir } = useLanguage();
   const isMobile = useIsMobile();
+  const location = useLocation();
 
   // ========= breakpoints =========
   const [isTabletUp, setIsTabletUp] = useState(() =>
@@ -98,8 +99,8 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
       [
         {
           id: 'home',
-          label: t('home'),
-          to: '/',
+          label: t('dashboard'),
+          to: '/dashboard',
           icon: <DashboardIcon size={20} />,
         },
 
@@ -202,6 +203,16 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
       return true;
     });
   }, [navConfig]);
+
+  useEffect(() => {
+    const activeParent = navConfig.find((item) =>
+      item.children?.some((child) =>
+        location.pathname.startsWith(child.to),
+      ),
+    );
+
+    setActiveSection(activeParent?.id ?? null);
+  }, [location.pathname, navConfig]);
 
   // ========= handlers =========
   const closeAll = () => {
