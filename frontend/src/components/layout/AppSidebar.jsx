@@ -147,7 +147,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
             {
               id: 'lists',
               label: t('lists'),
-              to: '/managment-lists',
+              to: '/management-lists',
               icon: <ListTree size={16} />,
             },
           ],

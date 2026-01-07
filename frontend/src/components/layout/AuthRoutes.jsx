@@ -6,6 +6,7 @@ import { lazy } from 'react';
 import Forbidden from '@/pages/Forbidden';
 import ProtectedRoute from '@/components/templates/ProtectedRoute.jsx';
 import ProfilePage from '../../pages/ProfilePage.jsx';
+import ManagementSettings from '../../pages/ManagementSettings.jsx';
 
 const Home = lazy(() => import('../../pages/Dashboard.jsx'));
 const Contracts = lazy(() => import('../../pages/ContractsPage.jsx'));
@@ -35,9 +36,6 @@ const UserManagementPage = lazy(
   () => import('../../pages/UserManagementPage.jsx'),
 );
 const ArchivePage = lazy(() => import('../../pages/ArchivePage.jsx'));
-const ManagementSettings = lazy(
-  () => import('../../pages/ManagementSettings.jsx'),
-);
 const ReportsPage = lazy(() => import('../../pages/ReportsPage.jsx'));
 const DocumentEditor = lazy(() => import('@/components/editor/DocumentEditor'));
 const NotFound = () => (
@@ -163,6 +161,14 @@ const AuthRoutes = () => {
           />
           <Route
             path="/managment-lists"
+            element={
+              <ProtectedRoute permission="view managment-lists">
+                <ManagementSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/management-lists"
             element={
               <ProtectedRoute permission="view managment-lists">
                 <ManagementSettings />
