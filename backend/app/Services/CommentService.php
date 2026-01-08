@@ -23,7 +23,7 @@ class CommentService
     private const MODULES = [
         'legal-advices' => [
             'model' => LegalAdvice::class,
-            'permissions' => ['legaladvices'],
+            'permissions' => ['legal-advices'],
             'title_field' => 'topic',
             'route' => '/legal/legal-advices',
         ],
@@ -41,7 +41,7 @@ class CommentService
         ],
         'litigations' => [
             'model' => Litigation::class,
-            'permissions' => ['litigations', 'litigation-from', 'litigation-against'],
+            'permissions' => ['litigations'],
             'title_field' => 'case_number',
             'route' => '/litigations',
         ],

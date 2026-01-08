@@ -29,7 +29,7 @@ Broadcast::channel('admins.{id}', function ($user, $id) {
 $modules = [
     'legal-advices' => [
         'model' => LegalAdvice::class,
-        'permissions' => ['legaladvices'],
+        'permissions' => ['legal-advices'],
     ],
     'contracts' => [
         'model' => Contract::class,
@@ -41,7 +41,7 @@ $modules = [
     ],
     'litigations' => [
         'model' => Litigation::class,
-        'permissions' => ['litigations', 'litigation-from', 'litigation-against'],
+        'permissions' => ['litigations'],
     ],
 ];
 

@@ -27,8 +27,7 @@ export default function LitigationActionsTable({
   const { data: litigationActionTypes = [] } = useActionTypes('litigation');
 
   const { hasPermission } = useContext(AuthContext);
-  const moduleName =
-    scope === 'from' ? 'litigation-from-actions' : 'litigation-against-actions';
+  const moduleName = 'litigation-actions';
   const can = (action) => hasPermission(`${action} ${moduleName}`);
 
   const handleSave = async (data) => {

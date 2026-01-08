@@ -22,14 +22,10 @@ class LitigationController extends Controller
         // list all of your "modules" here
         $modules = [
             'litigations',
-            'litigation-from',
-            'litigation-from-actions',
-            'litigation-against',
-            'litigation-against-actions',
         ];
 
         foreach ($map as $action => $methods) {
-            // build a pipe-separated list: "view litigations|view litigation-from|…"
+            // build a pipe-separated list: "view litigations|…"
             $perms = array_map(
                 fn($mod) => "$action $mod",
                 $modules

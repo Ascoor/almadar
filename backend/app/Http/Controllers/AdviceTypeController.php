@@ -15,10 +15,10 @@ class AdviceTypeController extends Controller
 
              public function __construct()
     {
-        $this->middleware('permission:view legaladvices')->only(['index','show']);
-        $this->middleware('permission:create legaladvices')->only('store');
-        $this->middleware('permission:edit legaladvices')->only('update');
-        $this->middleware('permission:delete legaladvices')->only('destroy');
+        $this->middleware('permission:view advice-types')->only(['index','show']);
+        $this->middleware('permission:create advice-types')->only('store');
+        $this->middleware('permission:edit advice-types')->only('update');
+        $this->middleware('permission:delete advice-types')->only('destroy');
     }
     /**
      * Display a listing of the legal advice types.

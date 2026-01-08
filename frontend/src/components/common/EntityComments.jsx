@@ -40,7 +40,7 @@ const COMMENT_FORBIDDEN = 'لا تملك الصلاحية لإضافة تعلي�
 
 const PERMISSION_MAP = {
   contracts: 'contracts',
-  'legal-advices': 'legaladvices',
+  'legal-advices': 'legal-advices',
   investigations: 'investigations',
   litigations: 'litigations',
 };

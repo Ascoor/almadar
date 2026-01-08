@@ -60,18 +60,20 @@ public function login(Request $request)
     ]);
 }
 
-    public function user(Request $request)
+    public function me(Request $request)
     {
         $user = $request->user();
 
-        $roles = $user->getRoleNames();
-        $permissions = $user->getAllPermissions()->pluck('name');
-
         return response()->json([
             'user' => $user,
-            'roles' => $roles,
-            'permissions' => $permissions,
+            'roles' => $user->getRoleNames(),
+            'permissions' => $user->getAllPermissions()->pluck('name'),
         ]);
+    }
+
+    public function user(Request $request)
+    {
+        return $this->me($request);
     }
 
     public function logout(Request $request)
