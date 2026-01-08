@@ -32,6 +32,7 @@ import {
 } from '@/services/dashboard.service';
 import { useLanguage } from '@/context/LanguageContext';
 import CityMiniMapResponsive from '@/features/dashboard/components/Map/CityMiniMapResponsive';
+import { CanAny } from '@/components/auth/Can';
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0, y: 12 },
@@ -113,153 +114,190 @@ export default function Dashboard() {
         <motion.div {...fadeIn(0.08)}>
           <Toolbar value={filters} onChange={setFilters} />
         </motion.div>
-        <motion.div
-          {...fadeIn(0.1)}
-          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6"
+        <CanAny
+          permissions={[
+            'view contracts',
+            'view investigations',
+            'view litigations',
+            'view legal-advices',
+          ]}
         >
-          <KpiCard
-            title={t('totalCases', lang)}
-            value={formatNumber(data.kpis.totalCases, lang)}
-            delta={12}
-            miniSeries={getMiniSeries(12)}
-            icon={Scale}
-          />
-          <KpiCard
-            title={t('wonCases', lang)}
-            value={formatNumber(data.kpis.wonCases, lang)}
-            delta={8}
-            miniSeries={getMiniSeries(12)}
-            icon={CheckCircle}
-          />
-          <KpiCard
-            title={t('successRate', lang)}
-            value={`${data.kpis.successRate}%`}
-            delta={5}
-            miniSeries={getMiniSeries(12)}
-            icon={TrendingUp}
-          />
-          <KpiCard
-            title={t('activeSessions', lang)}
-            value={formatNumber(data.kpis.activeSessions, lang)}
-            delta={-3}
-            miniSeries={getMiniSeries(12)}
-            icon={Users}
-          />
-        </motion.div>
+          <motion.div
+            {...fadeIn(0.1)}
+            className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6"
+          >
+            <KpiCard
+              title={t('totalCases', lang)}
+              value={formatNumber(data.kpis.totalCases, lang)}
+              delta={12}
+              miniSeries={getMiniSeries(12)}
+              icon={Scale}
+            />
+            <KpiCard
+              title={t('wonCases', lang)}
+              value={formatNumber(data.kpis.wonCases, lang)}
+              delta={8}
+              miniSeries={getMiniSeries(12)}
+              icon={CheckCircle}
+            />
+            <KpiCard
+              title={t('successRate', lang)}
+              value={`${data.kpis.successRate}%`}
+              delta={5}
+              miniSeries={getMiniSeries(12)}
+              icon={TrendingUp}
+            />
+            <KpiCard
+              title={t('activeSessions', lang)}
+              value={formatNumber(data.kpis.activeSessions, lang)}
+              delta={-3}
+              miniSeries={getMiniSeries(12)}
+              icon={Users}
+            />
+          </motion.div>
+        </CanAny>
 
         <section className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 min-w-0">
-          <motion.div
-            {...fadeIn(0.12)}
-            className="xl:col-span-3 space-y-6 lg:space-y-8 order-2 xl:order-1 min-w-0"
+          <CanAny
+            permissions={[
+              'view contracts',
+              'view investigations',
+              'view litigations',
+              'view legal-advices',
+            ]}
           >
-            <ChartCard
-              title={t('monthlyCases', lang)}
-              description={t('monthlyDescription', lang)}
-              actions={
-                <button className="p-2 rounded-lg hover:bg-muted/60 transition">
-                  <Download className="w-4 h-4 icon-3d" />
-                </button>
-              }
+            <motion.div
+              {...fadeIn(0.12)}
+              className="xl:col-span-3 space-y-6 lg:space-y-8 order-2 xl:order-1 min-w-0"
             >
-              <div className="chart-h w-full min-w-0">
-                <BarChartBasic data={data.trends} xKey="month" yKey="cases" />
-              </div>
-            </ChartCard>
-            <ChartCard
-              title={t('courtSessions', lang)}
-              description={t('sessionsDescription', lang)}
-              actions={
-                <button className="p-2 rounded-lg hover:bg-muted/60 transition">
-                  <Calendar className="w-4 h-4 icon-3d" />
-                </button>
-              }
-            >
-              <div className="chart-h w-full min-w-0">
-                <AreaChartBasic
-                  data={data.trends}
-                  xKey="month"
-                  yKey="sessions"
-                />
-              </div>
-            </ChartCard>
-          </motion.div>
-
-          <motion.div
-            {...fadeIn(0.18)}
-            className="xl:col-span-6 order-1 xl:order-2 space-y-6 lg:space-y-8 min-w-0"
-          >
-            <div className="relative">
               <ChartCard
-                title={t('geographicDistribution', lang)}
-                description={t('geoDescription', lang)}
+                title={t('monthlyCases', lang)}
+                description={t('monthlyDescription', lang)}
                 actions={
                   <button className="p-2 rounded-lg hover:bg-muted/60 transition">
                     <Download className="w-4 h-4 icon-3d" />
                   </button>
                 }
-                className="p-4"
               >
-                <div className="chart-2h w-full min-w-0">
-                  <CityMiniMapResponsive
-                    data={data.mapData}
-                    onRegionClick={handleRegionClick}
-                    width="100%"
-                    height="100%"
-                    zoom={6}
-                    showMarker={false}
+                <div className="chart-h w-full min-w-0">
+                  <BarChartBasic data={data.trends} xKey="month" yKey="cases" />
+                </div>
+              </ChartCard>
+              <ChartCard
+                title={t('courtSessions', lang)}
+                description={t('sessionsDescription', lang)}
+                actions={
+                  <button className="p-2 rounded-lg hover:bg-muted/60 transition">
+                    <Calendar className="w-4 h-4 icon-3d" />
+                  </button>
+                }
+              >
+                <div className="chart-h w-full min-w-0">
+                  <AreaChartBasic
+                    data={data.trends}
+                    xKey="month"
+                    yKey="sessions"
                   />
                 </div>
               </ChartCard>
-            </div>
-            <motion.div {...fadeIn(0.2)}>
-              <MapDetailsCard />
             </motion.div>
-          </motion.div>
+          </CanAny>
 
-          <motion.div
-            {...fadeIn(0.22)}
-            className="xl:col-span-3 space-y-6 lg:space-y-8 order-3 min-w-0"
+          <CanAny
+            permissions={[
+              'view contracts',
+              'view investigations',
+              'view litigations',
+            ]}
           >
+            <motion.div
+              {...fadeIn(0.18)}
+              className="xl:col-span-6 order-1 xl:order-2 space-y-6 lg:space-y-8 min-w-0"
+            >
+              <div className="relative">
+                <ChartCard
+                  title={t('geographicDistribution', lang)}
+                  description={t('geoDescription', lang)}
+                  actions={
+                    <button className="p-2 rounded-lg hover:bg-muted/60 transition">
+                      <Download className="w-4 h-4 icon-3d" />
+                    </button>
+                  }
+                  className="p-4"
+                >
+                  <div className="chart-2h w-full min-w-0">
+                    <CityMiniMapResponsive
+                      data={data.mapData}
+                      onRegionClick={handleRegionClick}
+                      width="100%"
+                      height="100%"
+                      zoom={6}
+                      showMarker={false}
+                    />
+                  </div>
+                </ChartCard>
+              </div>
+              <motion.div {...fadeIn(0.2)}>
+                <MapDetailsCard />
+              </motion.div>
+            </motion.div>
+          </CanAny>
+
+          <CanAny permissions={['view litigations', 'view investigations']}>
+            <motion.div
+              {...fadeIn(0.22)}
+              className="xl:col-span-3 space-y-6 lg:space-y-8 order-3 min-w-0"
+            >
+              <ChartCard
+                title={t('caseOutcomes', lang)}
+                description={t('outcomesDescription', lang)}
+                actions={
+                  <button className="p-2 rounded-lg hover:bg-muted/60 transition">
+                    <Filter className="w-4 h-4 icon-3d" />
+                  </button>
+                }
+              >
+                <div className="chart-h w-full min-w-0">
+                  <PieChartBasic data={data.distribution} innerRadius={56} />
+                </div>
+              </ChartCard>
+              <ChartCard
+                title={t('geographicDistribution', lang)}
+                description={t('geoDescription', lang)}
+                className="p-0 overflow-hidden"
+              >
+                {/* اجعل ارتفاع الكارت نفسه مرنًا حسب الـ breakpoint */}
+                <div className="relative w-full min-w-0 h-[300px] sm:h-[360px] md:h-[420px] lg:h-[480px] xl:h-[540px]">
+                  {/* الخريطة تملأ الكارت بالكامل */}
+                  <LegalCaseCategorysChart className="absolute inset-0" />
+                </div>
+              </ChartCard>
+            </motion.div>
+          </CanAny>
+        </section>
+
+        <CanAny
+          permissions={[
+            'view contracts',
+            'view investigations',
+            'view litigations',
+            'view legal-advices',
+          ]}
+        >
+          <motion.div {...fadeIn(0.28)}>
             <ChartCard
-              title={t('caseOutcomes', lang)}
-              description={t('outcomesDescription', lang)}
+              title={t('recentCases', lang)}
+              description={t('recentDescription', lang)}
               actions={
                 <button className="p-2 rounded-lg hover:bg-muted/60 transition">
-                  <Filter className="w-4 h-4 icon-3d" />
+                  <Download className="w-4 h-4" />
                 </button>
               }
             >
-              <div className="chart-h w-full min-w-0">
-                <PieChartBasic data={data.distribution} innerRadius={56} />
-              </div>
-            </ChartCard>
-            <ChartCard
-              title={t('geographicDistribution', lang)}
-              description={t('geoDescription', lang)}
-              className="p-0 overflow-hidden"
-            >
-              {/* اجعل ارتفاع الكارت نفسه مرنًا حسب الـ breakpoint */}
-              <div className="relative w-full min-w-0 h-[300px] sm:h-[360px] md:h-[420px] lg:h-[480px] xl:h-[540px]">
-                {/* الخريطة تملأ الكارت بالكامل */}
-                <LegalCaseCategorysChart className="absolute inset-0" />
-              </div>
+              <CompactTable rows={data.recentCases} language={lang} />
             </ChartCard>
           </motion.div>
-        </section>
-
-        <motion.div {...fadeIn(0.28)}>
-          <ChartCard
-            title={t('recentCases', lang)}
-            description={t('recentDescription', lang)}
-            actions={
-              <button className="p-2 rounded-lg hover:bg-muted/60 transition">
-                <Download className="w-4 h-4" />
-              </button>
-            }
-          >
-            <CompactTable rows={data.recentCases} language={lang} />
-          </ChartCard>
-        </motion.div>
+        </CanAny>
       </main>
     </div>
   );

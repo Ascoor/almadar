@@ -13,7 +13,8 @@ jest.mock('@/context/AuthContext', () => {
 });
 
 jest.mock('@/components/organisms/Login', () => () => <div>Login Page</div>);
-jest.mock('@/pages/Dashboard', () => () => <div>Dashboard Page</div>);
+jest.mock('@/pages/DashboardRouter', () => () => <div>Dashboard Page</div>);
+jest.mock('@/pages/DashboardPage', () => () => <div>Dashboard Layout</div>);
 jest.mock('@/components/editor/DocumentEditor', () => () => <div>Editor Page</div>);
 jest.mock('@/components/common/Spinners/AuthSpinner', () => () => (
   <div role="status">Loading...</div>
@@ -38,7 +39,7 @@ describe('AppRouter navigation', () => {
   });
 
   it('redirects unauthenticated users from root to the login flow', async () => {
-    useAuth.mockReturnValue({ user: null, isLoading: false });
+    useAuth.mockReturnValue({ user: null, isLoading: false, can: () => true });
 
     const { router } = renderRouter(['/']);
 
@@ -49,7 +50,7 @@ describe('AppRouter navigation', () => {
   });
 
   it('keeps authenticated users in the dashboard flow from root', async () => {
-    useAuth.mockReturnValue({ user: { id: 1 }, isLoading: false });
+    useAuth.mockReturnValue({ user: { id: 1 }, isLoading: false, can: () => true });
 
     const { router } = renderRouter(['/']);
 
@@ -60,7 +61,7 @@ describe('AppRouter navigation', () => {
   });
 
   it('prevents authenticated users from visiting the login page', async () => {
-    useAuth.mockReturnValue({ user: { id: 1 }, isLoading: false });
+    useAuth.mockReturnValue({ user: { id: 1 }, isLoading: false, can: () => true });
 
     const { router } = renderRouter(['/login']);
 

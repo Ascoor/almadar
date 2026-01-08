@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useContext, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { Outlet } from 'react-router-dom';
 
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
-import { AuthContext } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { AnimatePresence } from 'framer-motion';
 import { MobileThemeProvider } from '@/components/MobileThemeProvider';
 import { NotificationProvider } from '@/context/NotificationContext';
 
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'));
-const AuthRoutes = lazy(() => import('@/components/layout/AuthRoutes'));
 const ForcePasswordChangeModal = lazy(
   () => import('@/components/organisms/ForcePasswordChangeModal'),
 );
 
 const DashboardContent = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
   const [forcePasswordModal, setForcePasswordModal] = useState(false);
 
@@ -23,7 +23,7 @@ const DashboardContent = () => {
   return (
     <AppLayout user={user}>
       <Suspense fallback={<AuthSpinner />}>
-        <AuthRoutes />
+        <Outlet />
       </Suspense>
       <AnimatePresence>
         {forcePasswordModal && (

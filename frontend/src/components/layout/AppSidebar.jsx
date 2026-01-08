@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 
 export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
-  const { hasPermission } = useAuth();
+  const { can } = useAuth();
   const { t, dir } = useLanguage();
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -104,33 +104,33 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           icon: <DashboardIcon size={20} />,
         },
 
-        hasPermission('view contracts') && {
+        can('view contracts') && {
           id: 'contracts',
           label: t('contracts'),
           to: '/contracts',
           icon: <ContractsIcon size={20} />,
         },
 
-        (hasPermission('view investigations') ||
-          hasPermission('view legal-advices') ||
-          hasPermission('view litigations')) && {
+        can(['view investigations', 'view legal-advices', 'view litigations'], {
+          mode: 'any',
+        }) && {
           id: 'fatwa',
           label: t('fatwa'),
           icon: <ConsultationsIcon size={20} />,
           children: [
-            hasPermission('view investigations') && {
+            can('view investigations') && {
               id: 'investigations',
               label: t('investigations'),
               to: '/legal/investigations',
               icon: <LawsuitsIcon size={16} />,
             },
-            hasPermission('view legal-advices') && {
+            can('view legal-advices') && {
               id: 'legal-advices',
               label: t('legalAdvices'),
               to: '/legal/legal-advices',
               icon: <LawBookIcon size={16} />,
             },
-            hasPermission('view litigations') && {
+            can('view litigations') && {
               id: 'litigations',
               label: t('litigations'),
               to: '/legal/litigations',
@@ -139,7 +139,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ].filter(Boolean),
         },
 
-        hasPermission('view managment-lists') && {
+        can('view managment-lists') && {
           id: 'management',
           label: t('management'),
           icon: <Settings2 size={20} />,
@@ -153,7 +153,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ],
         },
 
-        hasPermission('view users') && {
+        can('view users') && {
           id: 'users',
           label: t('usersManagement'),
           icon: <UsersRound size={20} />,
@@ -167,7 +167,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ],
         },
 
-        hasPermission('view archives') && {
+        can('view archives') && {
           id: 'archive',
           label: t('archive'),
           icon: <ArchiveIcon size={20} />,
@@ -187,7 +187,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ],
         },
       ].filter(Boolean),
-    [hasPermission, t],
+    [can, t],
   );
 
   const miniItems = useMemo(() => {
