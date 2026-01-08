@@ -63,6 +63,7 @@ class UsersRolesPermissionsSeeder extends Seeder
 
         $canonicalRoles = [
             'admin'              => 'رئيس قسم',
+            'moderator'          => 'مشرف',
             'user'               => 'موظف',
             'legal_investigator' => 'محقق قانوني',
             'lawyer'             => 'محام',
@@ -71,9 +72,11 @@ class UsersRolesPermissionsSeeder extends Seeder
 
         $legacyRoleMapping = [
             'Admin' => 'admin',
+            'Moderator' => 'moderator',
             'Manager' => 'manager',
             'User' => 'user',
             'رئيس قسم' => 'admin',
+            'مشرف' => 'moderator',
             'مدير' => 'manager',
             'موظف' => 'user',
         ];
@@ -91,6 +94,15 @@ class UsersRolesPermissionsSeeder extends Seeder
         }
 
         $allPermissions = Permission::all();
+
+        $moderatorPermissions = Permission::whereIn('name', [
+            'view dashboard',
+            'view contracts', 'create contracts', 'edit contracts',
+            'view investigations', 'create investigations', 'edit investigations',
+            'view litigations', 'create litigations', 'edit litigations',
+            'view legal-advices', 'create legal-advices', 'edit legal-advices',
+            'view archives', 'create archives', 'edit archives',
+        ])->get();
 
         $managerPermissions = Permission::whereIn('name', [
             'view dashboard',
@@ -110,7 +122,6 @@ class UsersRolesPermissionsSeeder extends Seeder
             'view dashboard',
             'view profile', 'edit profile',
             'view legal-advices', 'create legal-advices',
-            'view advice-types',
         ])->get();
 
         $investigatorPermissions = Permission::whereIn('name', [
@@ -127,6 +138,7 @@ class UsersRolesPermissionsSeeder extends Seeder
 
         $rolePermissionMap = [
             'admin'              => $allPermissions,
+            'moderator'          => $moderatorPermissions,
             'manager'            => $managerPermissions,
             'user'               => $userPermissions,
             'legal_investigator' => $investigatorPermissions,
@@ -150,9 +162,19 @@ class UsersRolesPermissionsSeeder extends Seeder
             'manager' => [
                 ['name' => 'Manager User 1', 'email' => 'manager1@almadar.ly'],
             ],
+            'moderator' => [
+                ['name' => 'Moderator User 1', 'email' => 'moderator1@almadar.ly'],
+            ],
             'user' => [
                 ['name' => 'User 1', 'email' => 'user1@almadar.ly'],
             ],
+        ];
+
+        $passwordMap = [
+            'admin' => 'Askar@1984',
+            'manager' => 'Manager123!',
+            'moderator' => 'Moderator123!',
+            'user' => 'User123!',
         ];
 
         foreach ($seedUsers as $roleSlug => $accounts) {
@@ -161,13 +183,12 @@ class UsersRolesPermissionsSeeder extends Seeder
                     ['email' => $account['email']],
                     [
                         'name'             => $account['name'],
-                        'password'         => Hash::make($roleSlug === 'admin' ? 'Askar@1984' : ($roleSlug === 'manager' ? 'Manager123!' : 'User123!')),
+                        'password'         => Hash::make($passwordMap[$roleSlug] ?? 'User123!'),
                         'password_changed' => true,
                         'image'            => $account['image'] ?? null,
                     ]
                 );
                 $user->syncRoles([$roleInstances[$roleSlug]->name]);
-                $user->syncPermissions($rolePermissionMap[$roleSlug]);
             }
         }
 

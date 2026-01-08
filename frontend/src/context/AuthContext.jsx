@@ -115,6 +115,17 @@ export function AuthProvider({ children }) {
 
   const hasRole = (roleName) => roles.includes(roleName);
   const hasPermission = (permName) => permissions.includes(permName);
+  const hasAnyPermission = (permNames = []) =>
+    permNames.some((perm) => hasPermission(perm));
+  const hasAllPermissions = (permNames = []) =>
+    permNames.every((perm) => hasPermission(perm));
+  const can = (permNames, { mode = 'all' } = {}) => {
+    const list = Array.isArray(permNames) ? permNames : [permNames];
+    if (list.length === 0 || list.every((perm) => !perm)) return true;
+    return mode === 'any'
+      ? hasAnyPermission(list)
+      : hasAllPermissions(list);
+  };
 
   // Echo for real-time updates
   useEffect(() => {
@@ -156,6 +167,9 @@ export function AuthProvider({ children }) {
         logout,
         hasRole,
         hasPermission,
+        hasAnyPermission,
+        hasAllPermissions,
+        can,
         updateUserContext: (updatedUser) => {
           setUser(updatedUser);
           sessionStorage.setItem('user', JSON.stringify(updatedUser));

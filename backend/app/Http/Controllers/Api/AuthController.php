@@ -48,9 +48,10 @@ public function login(Request $request)
     $token = $user->createToken('api_token')->plainTextToken;
 
     // جلب الأدوار والصلاحيات
-    $roles       = $user->getRoleNames();            // يعيد Collection من أسماء الأدوار
-    $permissions = $user->getAllPermissions()        // يعيد Collection من Permission models
-                        ->pluck('name');             // نأخذ فقط الأسماء
+    $roles       = $user->getRoleNames()->values();            // يعيد Collection من أسماء الأدوار
+    $permissions = $user->getAllPermissions()                  // يعيد Collection من Permission models
+                        ->pluck('name')
+                        ->values();                            // نأخذ فقط الأسماء
 
     return response()->json([
         'user'        => $user,
@@ -66,8 +67,8 @@ public function login(Request $request)
 
         return response()->json([
             'user' => $user,
-            'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()->pluck('name'),
+            'roles' => $user->getRoleNames()->values(),
+            'permissions' => $user->getAllPermissions()->pluck('name')->values(),
         ]);
     }
 
