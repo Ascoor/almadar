@@ -46,7 +46,7 @@ class ArchiveController extends Controller
 
         event(new EntityActivityRecorded(
             entity: $archive,
-            section: 'archive',
+            section: 'archives',
             event: 'created',
             actorId: auth()->id(),
             actorName: auth()->user()?->name,
@@ -103,7 +103,7 @@ class ArchiveController extends Controller
 
         event(new EntityActivityRecorded(
             entity: $archive,
-            section: 'archive',
+            section: 'archives',
             event: 'updated',
             actorId: auth()->id(),
             actorName: auth()->user()?->name,

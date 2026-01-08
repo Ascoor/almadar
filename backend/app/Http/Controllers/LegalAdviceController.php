@@ -14,10 +14,10 @@ class LegalAdviceController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view legaladvices')->only(['index','show']);
-        $this->middleware('permission:create legaladvices')->only('store');
-        $this->middleware('permission:edit legaladvices')->only('update');
-        $this->middleware('permission:delete legaladvices')->only('destroy');
+        $this->middleware('permission:view legal-advices')->only(['index','show']);
+        $this->middleware('permission:create legal-advices')->only('store');
+        $this->middleware('permission:edit legal-advices')->only('update');
+        $this->middleware('permission:delete legal-advices')->only('destroy');
     }
     /**
      * Display a listing of all legal advices (with their types eager‐loaded).
@@ -63,7 +63,7 @@ class LegalAdviceController extends Controller
 
         event(new EntityActivityRecorded(
             entity: $advice,
-            section: 'legaladvices',
+            section: 'legal-advices',
             event: 'created',
             actorId: auth()->id(),
             actorName: auth()->user()?->name,
@@ -113,7 +113,7 @@ class LegalAdviceController extends Controller
 
         event(new EntityActivityRecorded(
             entity: $legalAdvice,
-            section: 'legaladvices',
+            section: 'legal-advices',
             event: 'updated',
             actorId: auth()->id(),
             actorName: auth()->user()?->name,

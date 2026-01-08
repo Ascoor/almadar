@@ -8,7 +8,7 @@ import ProtectedRoute from '@/components/templates/ProtectedRoute.jsx';
 import ProfilePage from '../../pages/ProfilePage.jsx';
 import ManagementSettings from '../../pages/ManagementSettings.jsx';
 
-const Home = lazy(() => import('../../pages/Dashboard.jsx'));
+const Home = lazy(() => import('../../pages/DashboardRouter.jsx'));
 const Contracts = lazy(() => import('../../pages/ContractsPage.jsx'));
 const ContractDetailsPage = lazy(
   () => import('../../pages/ContractDetailsPage.jsx'),
@@ -130,7 +130,7 @@ const AuthRoutes = () => {
           <Route
             path="/legal/legal-advices"
             element={
-              <ProtectedRoute permission="view legaladvices">
+              <ProtectedRoute permission="view legal-advices">
                 <LegalAdvices />
               </ProtectedRoute>
             }
@@ -138,7 +138,7 @@ const AuthRoutes = () => {
           <Route
             path="/legal/legal-advices/:id"
             element={
-              <ProtectedRoute permission="view legaladvices">
+              <ProtectedRoute permission="view legal-advices">
                 <LegalAdviceDetailsPage />
               </ProtectedRoute>
             }

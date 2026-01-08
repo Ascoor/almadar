@@ -112,7 +112,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
         },
 
         (hasPermission('view investigations') ||
-          hasPermission('view legaladvices') ||
+          hasPermission('view legal-advices') ||
           hasPermission('view litigations')) && {
           id: 'fatwa',
           label: t('fatwa'),
@@ -124,7 +124,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
               to: '/legal/investigations',
               icon: <LawsuitsIcon size={16} />,
             },
-            hasPermission('view legaladvices') && {
+            hasPermission('view legal-advices') && {
               id: 'legal-advices',
               label: t('legalAdvices'),
               to: '/legal/legal-advices',
@@ -167,7 +167,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ],
         },
 
-        hasPermission('view archive') && {
+        hasPermission('view archives') && {
           id: 'archive',
           label: t('archive'),
           icon: <ArchiveIcon size={20} />,

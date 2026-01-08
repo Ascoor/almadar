@@ -25,7 +25,7 @@ export default function LegalAdvicePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { hasPermission } = useContext(AuthContext);
-  const moduleName = 'legaladvices';
+  const moduleName = 'legal-advices';
   const can = (action) => hasPermission(`${action} ${moduleName}`);
 
   const [isModalOpen, setIsModalOpen] = useState(

@@ -33,22 +33,22 @@ class UsersRolesPermissionsSeeder extends Seeder
         }
 
         $modules = [
-            'archive'                   => ['view', 'create', 'edit', 'delete', 'listen'],
-            'legaladvices'              => ['view', 'create', 'edit', 'delete', 'listen'],
-            'litigations'               => ['view', 'create', 'edit', 'delete', 'listen'],
-            'litigation-from'           => ['view', 'create', 'edit', 'delete', 'listen'],
-            'litigation-from-actions'   => ['view', 'create', 'edit', 'delete', 'listen'],
-            'litigation-against'        => ['view', 'create', 'edit', 'delete', 'listen'],
-            'litigation-against-actions'=> ['view', 'create', 'edit', 'delete', 'listen'],
+            'dashboard'                 => ['view'],
             'contracts'                 => ['view', 'create', 'edit', 'delete', 'listen'],
+            'contract-categories'       => ['view', 'create', 'edit', 'delete'],
+            'archives'                  => ['view', 'create', 'edit', 'delete', 'listen'],
+            'legal-advices'             => ['view', 'create', 'edit', 'delete', 'listen'],
+            'advice-types'              => ['view', 'create', 'edit', 'delete'],
             'investigations'            => ['view', 'create', 'edit', 'delete', 'listen'],
             'investigation-actions'     => ['view', 'create', 'edit', 'delete', 'listen'],
+            'investigation-action-types'=> ['view', 'create', 'edit', 'delete'],
+            'litigations'               => ['view', 'create', 'edit', 'delete', 'listen'],
+            'litigation-actions'        => ['view', 'create', 'edit', 'delete', 'listen'],
+            'litigation-action-types'   => ['view', 'create', 'edit', 'delete'],
             'users'                     => ['view', 'create', 'edit', 'delete'],
-            'editor'                     => ['view', 'create', 'edit', 'delete'],
             'roles'                     => ['view', 'create', 'edit', 'delete'],
             'permissions'               => ['view', 'create', 'edit', 'delete'],
             'managment-lists'           => ['view', 'create', 'edit', 'delete'],
-            'reports'                   => ['view', 'create', 'edit', 'delete'],
             'profile'                   => ['view', 'edit'],
         ];
 
@@ -93,28 +93,36 @@ class UsersRolesPermissionsSeeder extends Seeder
         $allPermissions = Permission::all();
 
         $managerPermissions = Permission::whereIn('name', [
-            'view archive', 'view legaladvices', 'view litigations',
-            'view contracts', 'view investigations', 'view reports',
+            'view dashboard',
+            'view contracts', 'create contracts', 'edit contracts',
+            'view contract-categories',
+            'view legal-advices', 'create legal-advices', 'edit legal-advices',
+            'view advice-types',
+            'view investigations', 'create investigations', 'edit investigations',
+            'view litigations', 'create litigations', 'edit litigations',
+            'view archives',
+            'view managment-lists',
             'view profile', 'edit profile',
-            'listen archive', 'listen legaladvices', 'listen litigations', 'listen contracts', 'listen investigations', 'listen investigation-actions',
+            'listen archives', 'listen legal-advices', 'listen litigations', 'listen contracts', 'listen investigations', 'listen investigation-actions', 'listen litigation-actions',
         ])->get();
 
         $userPermissions = Permission::whereIn('name', [
-            'view legaladvices', 'view contracts', 'view profile', 'edit profile',
+            'view dashboard',
+            'view profile', 'edit profile',
+            'view legal-advices', 'create legal-advices',
+            'view advice-types',
         ])->get();
 
         $investigatorPermissions = Permission::whereIn('name', [
             'view investigations', 'create investigations', 'edit investigations', 'delete investigations',
             'view investigation-actions', 'create investigation-actions', 'edit investigation-actions', 'delete investigation-actions',
-            'view reports',
+            'view investigation-action-types',
         ])->get();
 
         $lawyerPermissions = Permission::whereIn('name', [
             'view litigations', 'create litigations', 'edit litigations', 'delete litigations',
-            'view litigation-from', 'create litigation-from', 'edit litigation-from', 'delete litigation-from',
-            'view litigation-from-actions', 'create litigation-from-actions', 'edit litigation-from-actions', 'delete litigation-from-actions',
-            'view litigation-against', 'create litigation-against', 'edit litigation-against', 'delete litigation-against',
-            'view litigation-against-actions', 'create litigation-against-actions', 'edit litigation-against-actions', 'delete litigation-against-actions',
+            'view litigation-actions', 'create litigation-actions', 'edit litigation-actions', 'delete litigation-actions',
+            'view litigation-action-types',
         ])->get();
 
         $rolePermissionMap = [

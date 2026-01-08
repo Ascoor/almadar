@@ -50,7 +50,7 @@ export default function LegalAdviceDetailsPage() {
   const { id } = useParams();
   const location = useLocation();
   const { hasPermission } = useAuth();
-  const canEdit = hasPermission('edit legaladvices');
+  const canEdit = hasPermission('edit legal-advices');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // قائمة المشورات (للـ fallback)
