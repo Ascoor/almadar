@@ -22,6 +22,7 @@ import {
   ChevronRight,
   FileText,
 } from 'lucide-react';
+import { permKey } from '@/auth/permissionCatalog';
 
 export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
   const { can } = useAuth();
@@ -104,33 +105,38 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           icon: <DashboardIcon size={20} />,
         },
 
-        can('view contracts') && {
+        can(permKey('view', 'contracts')) && {
           id: 'contracts',
           label: t('contracts'),
           to: '/contracts',
           icon: <ContractsIcon size={20} />,
         },
 
-        can(['view investigations', 'view legal-advices', 'view litigations'], {
-          mode: 'any',
-        }) && {
+        can(
+          [
+            permKey('view', 'investigations'),
+            permKey('view', 'legal-advices'),
+            permKey('view', 'litigations'),
+          ],
+          { mode: 'any' },
+        ) && {
           id: 'fatwa',
           label: t('fatwa'),
           icon: <ConsultationsIcon size={20} />,
           children: [
-            can('view investigations') && {
+            can(permKey('view', 'investigations')) && {
               id: 'investigations',
               label: t('investigations'),
               to: '/legal/investigations',
               icon: <LawsuitsIcon size={16} />,
             },
-            can('view legal-advices') && {
+            can(permKey('view', 'legal-advices')) && {
               id: 'legal-advices',
               label: t('legalAdvices'),
               to: '/legal/legal-advices',
               icon: <LawBookIcon size={16} />,
             },
-            can('view litigations') && {
+            can(permKey('view', 'litigations')) && {
               id: 'litigations',
               label: t('litigations'),
               to: '/legal/litigations',
@@ -139,7 +145,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ].filter(Boolean),
         },
 
-        can('view managment-lists') && {
+        can(permKey('view', 'management-lists')) && {
           id: 'management',
           label: t('management'),
           icon: <Settings2 size={20} />,
@@ -153,7 +159,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ],
         },
 
-        can('view users') && {
+        can(permKey('view', 'users')) && {
           id: 'users',
           label: t('usersManagement'),
           icon: <UsersRound size={20} />,
@@ -167,7 +173,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ],
         },
 
-        can('view archives') && {
+        can(permKey('view', 'archives')) && {
           id: 'archive',
           label: t('archive'),
           icon: <ArchiveIcon size={20} />,

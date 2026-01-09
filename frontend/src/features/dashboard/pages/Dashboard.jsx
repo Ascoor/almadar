@@ -33,6 +33,7 @@ import {
 import { useLanguage } from '@/context/LanguageContext';
 import CityMiniMapResponsive from '@/features/dashboard/components/Map/CityMiniMapResponsive';
 import { CanAny } from '@/components/auth/Can';
+import { permKey } from '@/auth/permissionCatalog';
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0, y: 12 },
@@ -116,10 +117,10 @@ export default function Dashboard() {
         </motion.div>
         <CanAny
           permissions={[
-            'view contracts',
-            'view investigations',
-            'view litigations',
-            'view legal-advices',
+            permKey('view', 'contracts'),
+            permKey('view', 'investigations'),
+            permKey('view', 'litigations'),
+            permKey('view', 'legal-advices'),
           ]}
         >
           <motion.div
@@ -160,10 +161,10 @@ export default function Dashboard() {
         <section className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 min-w-0">
           <CanAny
             permissions={[
-              'view contracts',
-              'view investigations',
-              'view litigations',
-              'view legal-advices',
+              permKey('view', 'contracts'),
+              permKey('view', 'investigations'),
+              permKey('view', 'litigations'),
+              permKey('view', 'legal-advices'),
             ]}
           >
             <motion.div
@@ -205,9 +206,9 @@ export default function Dashboard() {
 
           <CanAny
             permissions={[
-              'view contracts',
-              'view investigations',
-              'view litigations',
+              permKey('view', 'contracts'),
+              permKey('view', 'investigations'),
+              permKey('view', 'litigations'),
             ]}
           >
             <motion.div
@@ -243,7 +244,12 @@ export default function Dashboard() {
             </motion.div>
           </CanAny>
 
-          <CanAny permissions={['view litigations', 'view investigations']}>
+          <CanAny
+            permissions={[
+              permKey('view', 'litigations'),
+              permKey('view', 'investigations'),
+            ]}
+          >
             <motion.div
               {...fadeIn(0.22)}
               className="xl:col-span-3 space-y-6 lg:space-y-8 order-3 min-w-0"
@@ -278,10 +284,10 @@ export default function Dashboard() {
 
         <CanAny
           permissions={[
-            'view contracts',
-            'view investigations',
-            'view litigations',
-            'view legal-advices',
+            permKey('view', 'contracts'),
+            permKey('view', 'investigations'),
+            permKey('view', 'litigations'),
+            permKey('view', 'legal-advices'),
           ]}
         >
           <motion.div {...fadeIn(0.28)}>
