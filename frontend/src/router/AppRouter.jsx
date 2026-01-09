@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-rou
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import RequirePermission from '@/components/auth/RequirePermission';
+import { permKey } from '@/auth/permissionCatalog';
 
 const Login = lazy(() => import('@/components/organisms/Login'));
 const DashboardLayout = lazy(() => import('@/pages/DashboardPage'));
@@ -96,7 +97,7 @@ export const routes = [
               {
                 path: 'dashboard',
                 element: (
-                  <RequirePermission permission="view dashboard">
+                  <RequirePermission permission={permKey('view', 'dashboard')}>
                     <DashboardRouter />
                   </RequirePermission>
                 ),
@@ -106,7 +107,7 @@ export const routes = [
               {
                 path: 'archive',
                 element: (
-                  <RequirePermission permission="view archives">
+                  <RequirePermission permission={permKey('view', 'archives')}>
                     <ArchivePage />
                   </RequirePermission>
                 ),
@@ -114,7 +115,7 @@ export const routes = [
               {
                 path: 'editor',
                 element: (
-                  <RequirePermission permission="view archives">
+                  <RequirePermission permission={permKey('view', 'archives')}>
                     <DocumentEditor />
                   </RequirePermission>
                 ),
@@ -122,7 +123,7 @@ export const routes = [
               {
                 path: 'contracts',
                 element: (
-                  <RequirePermission permission="view contracts">
+                  <RequirePermission permission={permKey('view', 'contracts')}>
                     <Contracts />
                   </RequirePermission>
                 ),
@@ -130,7 +131,7 @@ export const routes = [
               {
                 path: 'contracts/:id',
                 element: (
-                  <RequirePermission permission="view contracts">
+                  <RequirePermission permission={permKey('view', 'contracts')}>
                     <ContractDetailsPage />
                   </RequirePermission>
                 ),
@@ -138,7 +139,7 @@ export const routes = [
               {
                 path: 'profile',
                 element: (
-                  <RequirePermission permission="view profile">
+                  <RequirePermission permission={permKey('view', 'profile')}>
                     <ProfilePage />
                   </RequirePermission>
                 ),
@@ -146,7 +147,7 @@ export const routes = [
               {
                 path: 'users',
                 element: (
-                  <RequirePermission permission="view users">
+                  <RequirePermission permission={permKey('view', 'users')}>
                     <UserManagementPage />
                   </RequirePermission>
                 ),
@@ -154,7 +155,7 @@ export const routes = [
               {
                 path: 'legal/investigations',
                 element: (
-                  <RequirePermission permission="view investigations">
+                  <RequirePermission permission={permKey('view', 'investigations')}>
                     <Investigations />
                   </RequirePermission>
                 ),
@@ -162,7 +163,7 @@ export const routes = [
               {
                 path: 'legal/investigations/:id',
                 element: (
-                  <RequirePermission permission="view investigations">
+                  <RequirePermission permission={permKey('view', 'investigations')}>
                     <InvestigationDetailsPage />
                   </RequirePermission>
                 ),
@@ -170,7 +171,7 @@ export const routes = [
               {
                 path: 'legal/investigation-action/:id',
                 element: (
-                  <RequirePermission permission="view investigations">
+                  <RequirePermission permission={permKey('view', 'investigations')}>
                     <InvestigationActionDetailsPage />
                   </RequirePermission>
                 ),
@@ -178,7 +179,7 @@ export const routes = [
               {
                 path: 'legal/legal-advices',
                 element: (
-                  <RequirePermission permission="view legal-advices">
+                  <RequirePermission permission={permKey('view', 'legal-advices')}>
                     <LegalAdvices />
                   </RequirePermission>
                 ),
@@ -186,7 +187,7 @@ export const routes = [
               {
                 path: 'legal/legal-advices/:id',
                 element: (
-                  <RequirePermission permission="view legal-advices">
+                  <RequirePermission permission={permKey('view', 'legal-advices')}>
                     <LegalAdviceDetailsPage />
                   </RequirePermission>
                 ),
@@ -194,7 +195,7 @@ export const routes = [
               {
                 path: 'legal/litigations',
                 element: (
-                  <RequirePermission permission="view litigations">
+                  <RequirePermission permission={permKey('view', 'litigations')}>
                     <Litigations />
                   </RequirePermission>
                 ),
@@ -202,7 +203,7 @@ export const routes = [
               {
                 path: 'legal/litigations/:id',
                 element: (
-                  <RequirePermission permission="view litigations">
+                  <RequirePermission permission={permKey('view', 'litigations')}>
                     <LitigationDetailsPage />
                   </RequirePermission>
                 ),
@@ -210,7 +211,7 @@ export const routes = [
               {
                 path: 'managment-lists',
                 element: (
-                  <RequirePermission permission="view managment-lists">
+                  <RequirePermission permission={permKey('view', 'management-lists')}>
                     <ManagementSettings />
                   </RequirePermission>
                 ),
@@ -218,7 +219,7 @@ export const routes = [
               {
                 path: 'management-lists',
                 element: (
-                  <RequirePermission permission="view managment-lists">
+                  <RequirePermission permission={permKey('view', 'management-lists')}>
                     <ManagementSettings />
                   </RequirePermission>
                 ),

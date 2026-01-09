@@ -12,6 +12,7 @@ import GlobalConfirmDeleteModal from '@/components/common/GlobalConfirmDeleteMod
 import { UsersIcon } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import API_CONFIG from '@/config/config';
+import { normalizePermissionName } from '@/auth/permissionCatalog';
 
 import {
   createUser,
@@ -108,14 +109,19 @@ export default function UsersManagementPage() {
         toast('تم تحديث الصلاحية');
       }
 
-      const [action, ...sectionParts] = permName.toLowerCase().split(' ');
+      const normalizedPerm = normalizePermissionName(permName);
+      const [action, ...sectionParts] = normalizedPerm.split(' ');
       const sectionPrefix = sectionParts.join(' ');
 
       let updatedPermissions;
 
       if (action === 'view' && !shouldEnable) {
         updatedPermissions = selectedUser.permissions.filter(
-          (p) => !p.name.toLowerCase().includes(sectionPrefix),
+          (p) => {
+            const normalizedName = normalizePermissionName(p.name);
+            const [, ...moduleParts] = normalizedName.split(' ');
+            return moduleParts.join(' ') !== sectionPrefix;
+          },
         );
       } else {
         const index = selectedUser.permissions.findIndex(

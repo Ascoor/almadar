@@ -11,6 +11,10 @@ import { useNavigate } from 'react-router-dom';
 import { initEcho } from '@/lib/echo';
 import API_CONFIG from '@/config/config';
 import { useNetworkStatus } from './NetworkStatusContext';
+import {
+  normalizePermissionName,
+  normalizePermissionsList,
+} from '@/auth/permissionCatalog';
 
 // إنشاء الـ Context
 export const AuthContext = createContext({
@@ -46,21 +50,27 @@ export function AuthProvider({ children }) {
   );
   const [permissions, setPermissions] = useState(() =>
     sessionStorage.getItem('permissions')
-      ? JSON.parse(sessionStorage.getItem('permissions'))
+      ? normalizePermissionsList(
+          JSON.parse(sessionStorage.getItem('permissions')),
+        )
       : [],
   );
   const [isLoading, setIsLoading] = useState(true);
 
   const saveAuth = ({ user, token, roles, permissions }) => {
+    const normalizedPermissions = normalizePermissionsList(permissions || []);
     sessionStorage.setItem('token', JSON.stringify(token));
     sessionStorage.setItem('user', JSON.stringify(user));
     sessionStorage.setItem('roles', JSON.stringify(roles));
-    sessionStorage.setItem('permissions', JSON.stringify(permissions));
+    sessionStorage.setItem(
+      'permissions',
+      JSON.stringify(normalizedPermissions),
+    );
 
     setToken(token);
     setUser(user);
     setRoles(roles);
-    setPermissions(permissions);
+    setPermissions(normalizedPermissions);
     navigate('/');
   };
 
@@ -114,7 +124,8 @@ export function AuthProvider({ children }) {
   };
 
   const hasRole = (roleName) => roles.includes(roleName);
-  const hasPermission = (permName) => permissions.includes(permName);
+  const hasPermission = (permName) =>
+    permissions.includes(normalizePermissionName(permName));
   const hasAnyPermission = (permNames = []) =>
     permNames.some((perm) => hasPermission(perm));
   const hasAllPermissions = (permNames = []) =>
@@ -135,10 +146,13 @@ export function AuthProvider({ children }) {
     const channel = echo.private(`user.${user.id}`);
     const handler = (eventData) => {
       if (eventData?.permissions) {
-        setPermissions(eventData.permissions);
+        const normalizedPermissions = normalizePermissionsList(
+          eventData.permissions,
+        );
+        setPermissions(normalizedPermissions);
         sessionStorage.setItem(
           'permissions',
-          JSON.stringify(eventData.permissions),
+          JSON.stringify(normalizedPermissions),
         );
         toast.success('تم تحديث صلاحياتك');
       }
@@ -175,8 +189,13 @@ export function AuthProvider({ children }) {
           sessionStorage.setItem('user', JSON.stringify(updatedUser));
         },
         updatePermissions: (newPermissions) => {
-          setPermissions(newPermissions);
-          sessionStorage.setItem('permissions', JSON.stringify(newPermissions));
+          const normalizedPermissions =
+            normalizePermissionsList(newPermissions);
+          setPermissions(normalizedPermissions);
+          sessionStorage.setItem(
+            'permissions',
+            JSON.stringify(normalizedPermissions),
+          );
         },
       }}
     >
