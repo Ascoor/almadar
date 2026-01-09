@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Artisan;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -200,5 +201,6 @@ class UsersRolesPermissionsSeeder extends Seeder
         ));
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
+        Artisan::call('optimize:clear');
     }
 }
