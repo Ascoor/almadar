@@ -7,9 +7,9 @@
   /* =========================
      Fonts + Radius
   ========================= */
-  --font-body: 'Roboto', 'Cairo', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-  --font-heading: 'Lora', 'Cairo', Georgia, 'Times New Roman', serif;
-  --font-map: 'Roboto', 'Cairo', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  --font-body: 'Tajawal', 'Cairo', 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  --font-heading: 'Tajawal', 'Cairo', 'Lora', Georgia, 'Times New Roman', serif;
+  --font-map: 'Tajawal', 'Cairo', 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 
   --radius: 1rem;
 

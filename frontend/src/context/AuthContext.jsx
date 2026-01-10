@@ -28,6 +28,8 @@ export const AuthContext = createContext({
   hasPermission: () => false,
   updateUserContext: () => {},
   updatePermissions: () => {},
+  canAny: () => false,
+  canAll: () => false,
 });
 
 export function AuthProvider({ children }) {
@@ -137,6 +139,8 @@ export function AuthProvider({ children }) {
       ? hasAnyPermission(list)
       : hasAllPermissions(list);
   };
+  const canAny = (permNames = []) => can(permNames, { mode: 'any' });
+  const canAll = (permNames = []) => can(permNames, { mode: 'all' });
 
   // Echo for real-time updates
   useEffect(() => {
@@ -184,6 +188,8 @@ export function AuthProvider({ children }) {
         hasAnyPermission,
         hasAllPermissions,
         can,
+        canAny,
+        canAll,
         updateUserContext: (updatedUser) => {
           setUser(updatedUser);
           sessionStorage.setItem('user', JSON.stringify(updatedUser));

@@ -31,7 +31,8 @@ const NotificationsPage = lazy(() => import('@/pages/NotificationsPage'));
 const UserManagementPage = lazy(() => import('@/pages/UserManagementPage'));
 const ArchivePage = lazy(() => import('@/pages/ArchivePage'));
 const ReportsPage = lazy(() => import('@/pages/ReportsPage'));
-const Forbidden = lazy(() => import('@/pages/Forbidden'));
+const Forbidden403 = lazy(() => import('@/pages/Forbidden403'));
+const NotFound404 = lazy(() => import('@/pages/NotFound404'));
 
 function Protected({ children }) {
   const { user, isLoading } = useAuth();
@@ -64,10 +65,6 @@ function HomeEntry() {
 
   return <HomePage />;
 }
-
-const NotFound = () => (
-  <h1 className="text-center text-red-500">404 - Page Not Found</h1>
-);
 
 export const routes = [
   {
@@ -226,8 +223,9 @@ export const routes = [
               },
               { path: 'reports-page', element: <ReportsPage /> },
               { path: 'notifications', element: <NotificationsPage /> },
-              { path: 'forbidden', element: <Forbidden /> },
-              { path: '*', element: <NotFound /> },
+              { path: 'forbidden', element: <Navigate to="/403" replace /> },
+              { path: '403', element: <Forbidden403 /> },
+              { path: '*', element: <NotFound404 /> },
             ],
           },
         ],
