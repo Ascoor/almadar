@@ -12,7 +12,7 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "deploy": "rsync -av --delete --exclude='.htaccess' dist/ /home/ask-ar.net/almadar/public_html/ && sudo systemctl restart reverb",
+    "deploy": "rsync -av --delete dist/ /home/ask-ar.net/almadar/public_html/ && sudo systemctl restart reverb",
     "release": "npm run build && npm run deploy",
     "lint": "eslint \"src/**/*.{js,jsx}\"",
     "lint-fix": "eslint \"src/**/*.{js,jsx}\" --fix",
