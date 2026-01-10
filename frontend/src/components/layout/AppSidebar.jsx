@@ -1,10 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { AnimatePresence, m } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { LogoNewArt } from '@/assets/images';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  useSidebar,
+} from '@/components/ui/sidebar';
 import {
   ContractsIcon,
   ConsultationsIcon,
@@ -25,84 +35,20 @@ import {
 } from 'lucide-react';
 import { permKey } from '@/auth/permissionCatalog';
 
-export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
+export default function AppSidebar() {
   const { can, roles } = useAuth();
-  const { t, dir } = useLanguage();
-  const isMobile = useIsMobile();
+  const { t, dir, lang } = useLanguage();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const location = useLocation();
   const isAdmin = Array.isArray(roles)
     ? roles.some((role) => String(role).toLowerCase() === 'admin')
     : false;
+  const isCollapsed = state === 'collapsed';
 
   const canView = (permission) => isAdmin || can(permission);
   const canViewAny = (permissions) =>
     isAdmin || can(permissions, { mode: 'any' });
 
-  // ========= breakpoints =========
-  const [isTabletUp, setIsTabletUp] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth >= 768 : true,
-  );
-
-  useEffect(() => {
-    const onResize = () => setIsTabletUp(window.innerWidth >= 768);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
-  // ========= theme detect =========
-  const [isDark, setIsDark] = useState(() => {
-    const root = document.documentElement;
-    return (
-      root.classList.contains('dark') ||
-      root.getAttribute('data-theme') === 'dark'
-    );
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const mo = new MutationObserver(() => {
-      setIsDark(
-        root.classList.contains('dark') ||
-          root.getAttribute('data-theme') === 'dark',
-      );
-    });
-    mo.observe(root, {
-      attributes: true,
-      attributeFilter: ['class', 'data-theme'],
-    });
-
-    const mq = window.matchMedia?.('(prefers-color-scheme: dark)');
-    const onMQ = (e) => {
-      setIsDark(
-        e.matches ||
-          root.classList.contains('dark') ||
-          root.getAttribute('data-theme') === 'dark',
-      );
-    };
-    mq?.addEventListener?.('change', onMQ);
-
-    return () => {
-      mo.disconnect();
-      mq?.removeEventListener?.('change', onMQ);
-    };
-  }, []);
-
-  // ========= state =========
-  const [activeSection, setActiveSection] = useState(null);
-
-  // ========= mode =========
-  // mobile dropdown only (no mini sidebar)
-  const showMobileDropdown = isMobile; // <768
-  // sidebar visible only tabletUp
-  const showSidebar = isTabletUp; // >=768
-
-  // Desktop/Tablet layout behavior:
-  // - if isOpen => full
-  // - else => collapsed icons
-  const showMiniNav = showSidebar && !isOpen;
-  const showFullNav = showSidebar && isOpen;
-
-  // ========= config =========
   const navConfig = useMemo(
     () =>
       [
@@ -203,19 +149,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
     [can, isAdmin, t],
   );
 
-  const miniItems = useMemo(() => {
-    const flat = [];
-    navConfig.forEach((item) => {
-      if (item.to) flat.push(item);
-      if (item.children) flat.push(...item.children);
-    });
-    const seen = new Set();
-    return flat.filter((x) => {
-      if (seen.has(x.id)) return false;
-      seen.add(x.id);
-      return true;
-    });
-  }, [navConfig]);
+  const [activeSection, setActiveSection] = useState(null);
 
   useEffect(() => {
     const activeParent = navConfig.find((item) =>
@@ -227,369 +161,119 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
     setActiveSection(activeParent?.id ?? null);
   }, [location.pathname, navConfig]);
 
-  // ========= handlers =========
-  const closeAll = () => {
-    setActiveSection(null);
-    onLinkClick?.();
-    if (isOpen) onToggle?.();
-  };
-
   const handleNavLinkClick = () => {
     setActiveSection(null);
-    onLinkClick?.();
-    // ✅ close dropdown on mobile
-    if (showMobileDropdown && isOpen) onToggle?.();
+    if (isMobile) setOpenMobile(false);
   };
 
   const handleSectionToggle = (id) => {
     setActiveSection((prev) => (prev === id ? null : id));
   };
 
-  // ========= styles =========
-  const desktopOpenWidth = '16rem';
-  const desktopCollapsedWidth = '72px';
-  const sidebarTransition = {
-    type: 'spring',
-    stiffness: 260,
-    damping: 30,
-  };
-  // ✅ dynamic mobile top: stick exactly under header
-  const [mobileTop, setMobileTop] = useState(0);
+  const isItemActive = (item) =>
+    Boolean(item.to && location.pathname.startsWith(item.to));
+  const isSectionActive = (item) =>
+    Boolean(
+      item.children?.some((child) =>
+        location.pathname.startsWith(child.to),
+      ),
+    );
 
-  useEffect(() => {
-    if (!showMobileDropdown) return;
+  const appName = lang === 'ar' ? 'المدار القانوني' : 'Almadar Legal';
 
-    const calcTop = () => {
-      const header = document.getElementById('app-header');
-      if (!header) return setMobileTop(0);
-
-      const rect = header.getBoundingClientRect();
-      // bottom relative to viewport + current scroll = absolute top in page
-      // لكن احنا بنستخدم position: fixed => نحتاج bottom داخل viewport فقط
-      setMobileTop(Math.max(0, Math.round(rect.bottom)));
-    };
-
-    calcTop();
-    window.addEventListener('resize', calcTop);
-    window.addEventListener('scroll', calcTop, { passive: true });
-
-    // لو الهيدر بيغير ارتفاعه (مثلاً بسبب ترجمة/خط/...) راقب تغيّره
-    const header = document.getElementById('app-header');
-    const ro = header ? new ResizeObserver(calcTop) : null;
-    if (header && ro) ro.observe(header);
-
-    return () => {
-      window.removeEventListener('resize', calcTop);
-      window.removeEventListener('scroll', calcTop);
-      ro?.disconnect();
-    };
-  }, [showMobileDropdown]);
-
-  // RTL translate for sidebar overlay (not used here because we don't do overlay slide on tablet)
-  const sideBorder = dir === 'rtl' ? 'border-l' : 'border-r';
-
-  // ========= RENDER =========
   return (
-    <>
-      {/* ===========================
-          MOBILE DROPDOWN (<768)
-          - hidden on md+
-          - appears below header
-      =========================== */}
-      {showMobileDropdown && (
-        <AnimatePresence>
-          {isOpen && (
-            <>
-              {/* Backdrop */}
-              <m.div
-                className="fixed inset-0 z-30 bg-black/40 md:hidden"
-                onClick={() => isOpen && onToggle?.()}
-                aria-hidden="true"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1, transition: sidebarTransition }}
-                exit={{ opacity: 0, transition: sidebarTransition }}
-              />
-
-              {/* Panel */}
-              <m.div
-                dir={dir}
-                className={`fixed left-0 right-0 z-40 md:hidden
-                  bg-sidebar text-sidebar-fg ${sideBorder} border-border origin-top
-                `}
-                style={{ top: `${mobileTop}px` }}
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0, transition: sidebarTransition }}
-                exit={{ opacity: 0, y: -8, transition: sidebarTransition }}
-              >
-                <div className="max-h-[70vh] overflow-y-auto px-6 py-6 space-y-2">
-                  {navConfig.map((item) => (
-                    <div key={item.id} className="rounded-xl">
-                      {item.to ? (
-                        <NavLink
-                          to={item.to}
-                          onClick={handleNavLinkClick}
-                          className={({ isActive }) =>
-                            `flex items-center gap-3 p-3 rounded-xl text-sm font-semibold
-                             transition-colors
-                             ${isActive ? 'bg-accent/40 text-sidebar-active' : 'hover:bg-accent/30'}`
-                          }
-                        >
-                          {item.icon}
-                          <span className="flex-1 truncate text-right">
-                            {item.label}
-                          </span>
-                        </NavLink>
-                      ) : (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => handleSectionToggle(item.id)}
-                            className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-semibold
-                              transition-colors
-                              ${activeSection === item.id ? 'bg-accent/35 text-sidebar-active' : 'hover:bg-accent/30'}`}
-                          >
-                            {item.icon}
-                            <span className="flex-1 truncate text-right">
-                              {item.label}
-                            </span>
-                            <ChevronRight
-                              className={`w-4 h-4 transition-transform ${
-                                activeSection === item.id
-                                  ? dir === 'rtl'
-                                    ? 'rotate-90'
-                                    : '-rotate-90'
-                                  : ''
-                              }`}
-                            />
-                          </button>
-
-                          {item.children && activeSection === item.id && (
-                            <div className="mt-1 ms-4 ps-3 border-s border-border space-y-1">
-                              {item.children.map((ch) => (
-                                <NavLink
-                                  key={ch.id}
-                                  to={ch.to}
-                                  onClick={handleNavLinkClick}
-                                  className={({ isActive }) =>
-                                    `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
-                                     transition-colors
-                                     ${isActive ? 'bg-accent/40 text-sidebar-active' : 'hover:bg-accent/25'}`
-                                  }
-                                >
-                                  {ch.icon}
-                                  <span className="truncate">{ch.label}</span>
-                                </NavLink>
-                              ))}
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </m.div>
-            </>
+    <Sidebar side={dir === 'rtl' ? 'right' : 'left'} collapsible="icon">
+      <SidebarHeader className="px-3 py-4">
+        <div className="flex items-center gap-3">
+          <img
+            src={LogoNewArt}
+            alt="Almadar"
+            className={`shrink-0 transition-all duration-300 ${
+              isCollapsed ? 'h-8 w-8' : 'h-10 w-auto'
+            }`}
+          />
+          {!isCollapsed && (
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-fg">
+                {appName}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Legal Luminary UI
+              </p>
+            </div>
           )}
-        </AnimatePresence>
-      )}
+        </div>
+      </SidebarHeader>
 
-      {/* ===========================
-          TABLET / DESKTOP SIDEBAR (>=768)
-          - hidden on mobile
-          - collapsed icons when closed
-          - full when open
-      =========================== */}
-      {showSidebar && (
-        <m.aside
-          dir={dir}
-          className={`
-            hidden md:block
-            fixed ${dir === 'rtl' ? 'right-0' : 'left-0'} top-0 z-20 h-full
-            bg-sidebar text-sidebar-fg ${sideBorder} border-border
-          `}
-          style={{
-            boxShadow: isDark ? '0 0 15px rgba(34,211,238,0.35)' : undefined,
-          }}
-          animate={{
-            width: isOpen ? desktopOpenWidth : desktopCollapsedWidth,
-          }}
-          transition={sidebarTransition}
-        >
-          {/* Header / Logo */}
-          <div
-            className={`relative flex items-center justify-center mt-6 min-w-0 ${isOpen ? 'px-2' : 'px-0'}`}
-          >
-            <img
-              src={LogoNewArt}
-              alt="Almadar Logo"
-              className={`transition-[width] duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
-            />
-
-            {isOpen && (
-              <button
-                onClick={onToggle}
-                className={`absolute top-2 ${dir === 'rtl' ? 'left-3' : 'right-3'} rounded-md px-2 py-1 text-sm
-                  hover:bg-accent/50 transition-colors`}
-                aria-label="Close sidebar"
-                type="button"
-              >
-                ×
-              </button>
-            )}
-          </div>
-
-          <nav
-            className={`h-full overflow-y-auto min-w-0 ${isOpen ? 'px-4 mt-6 space-y-3' : 'px-2 mt-8'}`}
-          >
-            {/* FULL NAV */}
-            {showFullNav && (
-              <>
-                {navConfig.map((item) => (
-                  <div key={item.id}>
-                    {item.to ? (
-                      <NavLink
-                        to={item.to}
-                        onClick={onLinkClick}
-                        className={({ isActive }) =>
-                          `group flex items-center gap-3 p-2 rounded-md text-sm font-semibold tracking-tight
-                           transition-colors duration-200
-                           ${isActive ? 'text-sidebar-active' : 'text-sidebar-fg hover:bg-accent/50 hover:text-fg'}`
-                        }
-                      >
-                        {({ isActive }) => (
-                          <>
-                            {React.cloneElement(item.icon, {
-                              className: `transition-colors duration-200 ${
-                                isActive
-                                  ? 'text-sidebar-active dark:text-[color:var(--neon-title)]'
-                                  : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
-                              }`,
-                            })}
-                            <span className="flex-1 text-right min-w-0 truncate">
-                              {item.label}
-                            </span>
-                          </>
-                        )}
-                      </NavLink>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => handleSectionToggle(item.id)}
-                          className={`group flex items-center gap-3 p-2 w-full rounded-md text-sm font-semibold tracking-tight
-                            transition-colors duration-200
-                            ${
-                              activeSection === item.id
-                                ? 'text-sidebar-active'
-                                : 'text-sidebar-fg hover:bg-accent/50 hover:text-fg'
-                            }`}
-                        >
-                          {React.cloneElement(item.icon, {
-                            className: `transition-colors duration-200 ${
-                              activeSection === item.id
-                                ? 'text-sidebar-active dark:text-[color:var(--neon-title)]'
-                                : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
-                            }`,
-                          })}
-                          <span className="flex-1 text-right min-w-0 truncate">
-                            {item.label}
-                          </span>
-                          {item.children && (
-                            <ChevronRight
-                              className={`w-4 h-4 transform transition-transform duration-200 ${
-                                activeSection === item.id
-                                  ? dir === 'rtl'
-                                    ? 'rotate-90'
-                                    : '-rotate-90'
-                                  : ''
-                              }`}
-                            />
-                          )}
-                        </button>
-
-                        {item.children && activeSection === item.id && (
-                          <div className="me-4 ps-4 border-s border-border space-y-1">
-                            {item.children.map((ch) => (
-                              <NavLink
-                                key={ch.id}
-                                to={ch.to}
-                                onClick={onLinkClick}
-                                className={({ isActive }) =>
-                                  `group flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium
-                                   transition-colors duration-200
-                                   ${
-                                     isActive
-                                       ? 'text-sidebar-active'
-                                       : 'text-sidebar-fg hover:bg-accent/50 hover:text-fg'
-                                   }`
-                                }
-                              >
-                                {({ isActive }) => (
-                                  <>
-                                    {React.cloneElement(ch.icon, {
-                                      className: `transition-colors duration-200 ${
-                                        isActive
-                                          ? 'text-sidebar-active dark:text-[color:var(--neon-title)]'
-                                          : 'text-sidebar-fg group-hover:text-fg dark:group-hover:text-[color:var(--neon-title)]'
-                                      }`,
-                                    })}
-                                    <span className="min-w-0 truncate">
-                                      {ch.label}
-                                    </span>
-                                  </>
-                                )}
-                              </NavLink>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
-
-            {/* MINI NAV (collapsed icons) */}
-            {showMiniNav && (
-              <div className="flex flex-col items-center space-y-3 pt-4">
-                {miniItems.map((it) => (
-                  <NavLink
-                    key={it.id}
-                    to={it.to}
-                    onClick={onLinkClick}
-                    title={it.label}
-                    className={({ isActive }) =>
-                      `group flex items-center justify-center w-11 h-11 rounded-xl
-                       transition-colors duration-200
-                       ${isActive ? 'bg-accent/50 text-sidebar-active shadow-sm' : 'text-sidebar-fg hover:bg-accent/40'}`
-                    }
-                  >
-                    {({ isActive }) =>
-                      React.cloneElement(it.icon, {
-                        className: `transition-colors duration-200 ${
-                          isActive
-                            ? 'text-sidebar-active dark:text-[color:var(--neon-title)]'
-                            : 'text-sidebar-fg group-hover:text-sidebar-active dark:group-hover:text-[color:var(--neon-title)]'
-                        }`,
-                      })
-                    }
-                  </NavLink>
-                ))}
-
-                <button
-                  type="button"
-                  onClick={onToggle}
-                  className="mt-3 w-11 h-11 rounded-xl border border-border bg-card/30 hover:bg-accent/30 transition-colors"
-                  title={t('open')}
-                  aria-label="Open sidebar"
+      <SidebarContent className="px-2 pb-4">
+        <SidebarMenu>
+          {navConfig.map((item) => (
+            <SidebarMenuItem key={item.id}>
+              {item.to ? (
+                <SidebarMenuButton
+                  asChild
+                  isActive={isItemActive(item)}
+                  tooltip={item.label}
                 >
-                  <span className="text-lg leading-none">≡</span>
-                </button>
-              </div>
-            )}
-          </nav>
-        </m.aside>
-      )}
-    </>
+                  <NavLink to={item.to} onClick={handleNavLinkClick}>
+                    {item.icon}
+                    <span className="flex-1 truncate text-start">
+                      {item.label}
+                    </span>
+                  </NavLink>
+                </SidebarMenuButton>
+              ) : (
+                <>
+                  <SidebarMenuButton
+                    type="button"
+                    onClick={() => handleSectionToggle(item.id)}
+                    isActive={isSectionActive(item)}
+                    tooltip={item.label}
+                    className="justify-start"
+                  >
+                    {item.icon}
+                    <span className="flex-1 truncate text-start">
+                      {item.label}
+                    </span>
+                    {item.children && (
+                      <ChevronRight
+                        className={`ms-auto h-4 w-4 transition-transform ${
+                          activeSection === item.id
+                            ? dir === 'rtl'
+                              ? 'rotate-90'
+                              : '-rotate-90'
+                            : ''
+                        }`}
+                      />
+                    )}
+                  </SidebarMenuButton>
+
+                  {item.children && activeSection === item.id && (
+                    <SidebarMenuSub>
+                      {item.children.map((child) => (
+                        <SidebarMenuSubItem key={child.id}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={isItemActive(child)}
+                          >
+                            <NavLink
+                              to={child.to}
+                              onClick={handleNavLinkClick}
+                            >
+                              {child.icon}
+                              <span className="truncate">{child.label}</span>
+                            </NavLink>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  )}
+                </>
+              )}
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarContent>
+    </Sidebar>
   );
 }

@@ -49,6 +49,10 @@
   html[lang="en"] {
     --font-map: "Roboto", var(--font-body);
   }
+  html.lang-ar body,
+  html.lang-en body {
+    font-family: var(--font-body);
+  }
 
   /* Selection (token-driven) */
   ::selection {

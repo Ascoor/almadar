@@ -38,8 +38,11 @@ export const LanguageProvider = ({ children }) => {
   const [lang, setLang] = useState(getInitialLanguage);
 
   useEffect(() => {
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = lang;
+    const root = document.documentElement;
+    root.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    root.lang = lang;
+    root.classList.toggle('lang-ar', lang === 'ar');
+    root.classList.toggle('lang-en', lang === 'en');
     localStorage.setItem('lang', lang);
   }, [lang]);
 
