@@ -4,12 +4,15 @@ import { useAuth } from '@/context/AuthContext';
 const RequirePermission = ({
   permission,
   mode = 'all',
-  redirectTo = '/forbidden',
+  redirectTo = '/403',
   children,
 }) => {
-  const { can } = useAuth();
+  const { can, roles } = useAuth();
+  const isAdmin = Array.isArray(roles)
+    ? roles.some((role) => String(role).toLowerCase() === 'admin')
+    : false;
 
-  if (!can(permission, { mode })) {
+  if (!isAdmin && !can(permission, { mode })) {
     return <Navigate to={redirectTo} replace />;
   }
 

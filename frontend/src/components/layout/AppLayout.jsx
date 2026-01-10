@@ -1,79 +1,74 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import ResponsiveLayout from '@/components/ResponsiveLayout';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/context/AuthContext';
 
-const Header = lazy(() => import('@/components/layout/DashboardHeader'));
-const AppSidebar = lazy(() => import('@/components/layout/AppSidebar'));
+const Header = lazy(() => import('@/components/layout/Header'));
+const Sidebar = lazy(() => import('@/components/layout/Sidebar'));
+const MiniSidebar = lazy(() => import('@/components/layout/MiniSidebar'));
 
-export default function AppLayout({ children, user }) {
+const SIDEBAR_WIDTH = 288;
+const MINI_SIDEBAR_WIDTH = 80;
+const HEADER_HEIGHT = 64;
+
+export default function AppLayout({ children }) {
   const location = useLocation();
   const isMobile = useIsMobile();
-
-  // tabletUp = >= 768
-  const [isTabletUp, setIsTabletUp] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth >= 768 : true,
-  );
+  const { user } = useAuth();
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const onResize = () => setIsTabletUp(window.innerWidth >= 768);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
+    if (isMobile) setIsMobileSidebarOpen(false);
+  }, [isMobile, location.pathname]);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarExpanded((prev) => !prev);
 
-  // ✅ على تغيير الصفحة: اقفل dropdown في الموبايل
-  useEffect(() => {
-    if (isMobile) setSidebarOpen(false);
-  }, [location.pathname, isMobile]);
-
-  // ✅ عند الدخول للتابلتUp: خليها collapsed افتراضياً
-  useEffect(() => {
-    if (isTabletUp) setSidebarOpen(false);
-  }, [isTabletUp]);
-
-  const toggleSidebar = () => setSidebarOpen((p) => !p);
-
-  // offsets فقط للتابلتUp لأن الموبايل مفيهوش sidebar جانبي
-  // محاذاة العرض مع قيم AppSidebar (16rem open / 72px collapsed)
-  const desktopSidebarWidth = 256;
-  const collapsedWidth = 72;
-  const sidebarOffset = isTabletUp
-    ? `${sidebarOpen ? desktopSidebarWidth : collapsedWidth}px`
-    : '0px';
+  const sidebarOffset = isMobile
+    ? '0px'
+    : `${isSidebarExpanded ? SIDEBAR_WIDTH : MINI_SIDEBAR_WIDTH}px`;
 
   const mainStyles = {
-    paddingTop: '80px',
+    paddingTop: `${HEADER_HEIGHT}px`,
     marginInlineStart: sidebarOffset,
     minHeight: '100vh',
     paddingBottom: '32px',
   };
 
   return (
-    <ResponsiveLayout className="min-h-screen w-full min-w-0 flex flex-col sm:flex-row relative overflow-x-hidden">
+    <ResponsiveLayout className="min-h-screen w-full min-w-0 flex flex-col relative overflow-x-hidden bg-bg">
       <Suspense fallback={null}>
-        <AppSidebar
-          isOpen={sidebarOpen}
-          onToggle={toggleSidebar}
-          onLinkClick={() => setSidebarOpen(false)}
-          mode={isMobile ? 'mobile-dropdown' : 'desktop-sidebar'}
-        />
+        {!isMobile && isSidebarExpanded && (
+          <Sidebar isOpen variant="desktop" onNavigate={() => {}} />
+        )}
+        {!isMobile && !isSidebarExpanded && (
+          <MiniSidebar onExpand={() => setIsSidebarExpanded(true)} />
+        )}
+        {isMobile && (
+          <Sidebar
+            isOpen={isMobileSidebarOpen}
+            variant="mobile"
+            onClose={() => setIsMobileSidebarOpen(false)}
+            onNavigate={() => setIsMobileSidebarOpen(false)}
+          />
+        )}
       </Suspense>
 
       <div className="flex-1 flex flex-col min-w-0 w-full">
         <Suspense fallback={null}>
           <Header
             user={user}
-            isOpen={sidebarOpen}
+            isSidebarExpanded={isSidebarExpanded}
             sidebarOffset={sidebarOffset}
             onToggleSidebar={toggleSidebar}
+            onOpenMobile={() => setIsMobileSidebarOpen(true)}
           />
         </Suspense>
 
         <main className="flex-1 bg-bg min-w-0 w-full pb-8" style={mainStyles}>
           <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 lg:space-y-8">
-            {children}
+            {children ?? <Outlet />}
           </div>
         </main>
       </div>

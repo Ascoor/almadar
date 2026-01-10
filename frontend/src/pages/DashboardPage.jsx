@@ -1,5 +1,4 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
 
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import { useAuth } from '@/context/AuthContext';
@@ -21,10 +20,8 @@ const DashboardContent = () => {
     if (user && user.password_changed === 0) setForcePasswordModal(true);
   }, [user]);
   return (
-    <AppLayout user={user}>
-      <Suspense fallback={<AuthSpinner />}>
-        <Outlet />
-      </Suspense>
+    <>
+      <AppLayout />
       <AnimatePresence>
         {forcePasswordModal && (
           <Suspense
@@ -41,7 +38,7 @@ const DashboardContent = () => {
           </Suspense>
         )}
       </AnimatePresence>
-    </AppLayout>
+    </>
   );
 };
 

@@ -176,6 +176,30 @@
     @apply p-4 md:p-6;
   }
 
+  .card-soft {
+    background: color-mix(in oklab, var(--card) 90%, var(--bg));
+    border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+    border-radius: calc(var(--radius) + 6px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .glass-card {
+    border-radius: calc(var(--radius) + 8px);
+    border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+    background: color-mix(in oklab, var(--card) 75%, transparent);
+    box-shadow: var(--shadow-glow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .hover-scale {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .hover-scale:hover {
+    transform: translateY(-2px);
+  }
+
   .chart-container {
     @apply bg-card p-6 md:p-8 rounded-2xl shadow-md border border-border overflow-hidden min-w-0;
   }
