@@ -76,20 +76,20 @@ export default function HomePage() {
       lang="ar"
     >
       {/* Background */}
-      <section className="absolute inset-0 z-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-          style={{ backgroundImage: `url(${LandingPage})` }}
-        />
-       <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]" />
-
-        <div className="absolute inset-0 hero-gradient" />
-      </section>
-
-      {/* Main Content */}
-      <section className="relative z-10 min-h-screen flex items-center justify-center px-6">
-        <div className="w-full max-w-5xl relative flex flex-col items-center justify-center min-h-[600px]">
-          <AnimatePresence mode="wait">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={LandingPage}
+          alt="Legal technology background"
+          className="w-full h-full object-cover"
+          loading="eager"
+        /> 
+     
+      </div>   
+  <div className="absolute inset-0 z-[2] pointer-events-none hidden lg:block">
+       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-16 pb-16">
+ <AnimatePresence mode="wait">
             {!showLoginForm ? (
            <motion.div
            variants={topCardVariants}
@@ -148,6 +148,7 @@ export default function HomePage() {
               </motion.div>
             ) : null}
           </AnimatePresence>
+        </div>
         </div>
       </section>
 
