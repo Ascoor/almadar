@@ -5,9 +5,9 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import RequirePermission from '@/components/auth/RequirePermission';
 import { permKey } from '@/auth/permissionCatalog';
+import DashboardLayout from '@/pages/DashboardPage';
 
 const Login = lazy(() => import('@/components/organisms/Login'));
-const DashboardLayout = lazy(() => import('@/pages/DashboardPage'));
 const DashboardRouter = lazy(() => import('@/pages/DashboardRouter'));
 const DocumentEditor = lazy(() => import('@/components/editor/DocumentEditor'));
 const HomePage = lazy(() => import('@/pages/HomePage'));
@@ -66,22 +66,24 @@ function HomeEntry() {
   return <HomePage />;
 }
 
+const withSuspense = (element, fallback = <AuthSpinner />) => (
+  <Suspense fallback={fallback}>{element}</Suspense>
+);
+
 export const routes = [
   {
     element: (
       <AuthProvider>
-        <Suspense fallback={<AuthSpinner />}>
-          <Outlet />
-        </Suspense>
+        <Outlet />
       </AuthProvider>
     ),
     children: [
-      { index: true, element: <HomeEntry /> },
+      { index: true, element: withSuspense(<HomeEntry />) },
       {
         path: 'login',
         element: (
           <PublicRoute>
-            <Login />
+            {withSuspense(<Login />)}
           </PublicRoute>
         ),
       },

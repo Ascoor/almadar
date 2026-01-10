@@ -5,8 +5,8 @@ import { useAuth } from '@/context/AuthContext';
 import { AnimatePresence } from 'framer-motion';
 import { MobileThemeProvider } from '@/components/MobileThemeProvider';
 import { NotificationProvider } from '@/context/NotificationContext';
+import AppLayout from '@/components/layout/AppLayout';
 
-const AppLayout = lazy(() => import('@/components/layout/AppLayout'));
 const ForcePasswordChangeModal = lazy(
   () => import('@/components/organisms/ForcePasswordChangeModal'),
 );
