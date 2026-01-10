@@ -70,7 +70,7 @@ export default function InvestigationActionDetailsCard({ selected, onClose }) {
 
           // fallback لو onClose غير موجود
           if (window.history.length > 1) window.history.back();
-          else window.location.href = '/'; // عدّلها لمسار مناسب عندك
+          else window.location.href = '/dashboard';
         }}
       >
         <XCircle className="size-5" />

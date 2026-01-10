@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { AnimatePresence, m } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -25,10 +26,17 @@ import {
 import { permKey } from '@/auth/permissionCatalog';
 
 export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
-  const { can } = useAuth();
+  const { can, roles } = useAuth();
   const { t, dir } = useLanguage();
   const isMobile = useIsMobile();
   const location = useLocation();
+  const isAdmin = Array.isArray(roles)
+    ? roles.some((role) => String(role).toLowerCase() === 'admin')
+    : false;
+
+  const canView = (permission) => isAdmin || can(permission);
+  const canViewAny = (permissions) =>
+    isAdmin || can(permissions, { mode: 'any' });
 
   // ========= breakpoints =========
   const [isTabletUp, setIsTabletUp] = useState(() =>
@@ -105,38 +113,37 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           icon: <DashboardIcon size={20} />,
         },
 
-        can(permKey('view', 'contracts')) && {
+        canView(permKey('view', 'contracts')) && {
           id: 'contracts',
           label: t('contracts'),
           to: '/contracts',
           icon: <ContractsIcon size={20} />,
         },
 
-        can(
+        canViewAny(
           [
             permKey('view', 'investigations'),
             permKey('view', 'legal-advices'),
             permKey('view', 'litigations'),
           ],
-          { mode: 'any' },
         ) && {
           id: 'fatwa',
           label: t('fatwa'),
           icon: <ConsultationsIcon size={20} />,
           children: [
-            can(permKey('view', 'investigations')) && {
+            canView(permKey('view', 'investigations')) && {
               id: 'investigations',
               label: t('investigations'),
               to: '/legal/investigations',
               icon: <LawsuitsIcon size={16} />,
             },
-            can(permKey('view', 'legal-advices')) && {
+            canView(permKey('view', 'legal-advices')) && {
               id: 'legal-advices',
               label: t('legalAdvices'),
               to: '/legal/legal-advices',
               icon: <LawBookIcon size={16} />,
             },
-            can(permKey('view', 'litigations')) && {
+            canView(permKey('view', 'litigations')) && {
               id: 'litigations',
               label: t('litigations'),
               to: '/legal/litigations',
@@ -145,7 +152,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ].filter(Boolean),
         },
 
-        can(permKey('view', 'management-lists')) && {
+        canView(permKey('view', 'management-lists')) && {
           id: 'management',
           label: t('management'),
           icon: <Settings2 size={20} />,
@@ -159,7 +166,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ],
         },
 
-        can(permKey('view', 'users')) && {
+        canView(permKey('view', 'users')) && {
           id: 'users',
           label: t('usersManagement'),
           icon: <UsersRound size={20} />,
@@ -173,7 +180,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ],
         },
 
-        can(permKey('view', 'archives')) && {
+        canView(permKey('view', 'archives')) && {
           id: 'archive',
           label: t('archive'),
           icon: <ArchiveIcon size={20} />,
@@ -193,7 +200,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           ],
         },
       ].filter(Boolean),
-    [can, t],
+    [can, isAdmin, t],
   );
 
   const miniItems = useMemo(() => {
@@ -241,6 +248,11 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
   // ========= styles =========
   const desktopOpenWidth = '16rem';
   const desktopCollapsedWidth = '72px';
+  const sidebarTransition = {
+    type: 'spring',
+    stiffness: 260,
+    damping: 30,
+  };
   // ✅ dynamic mobile top: stick exactly under header
   const [mobileTop, setMobileTop] = useState(0);
 
@@ -285,94 +297,100 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           - appears below header
       =========================== */}
       {showMobileDropdown && (
-        <>
-          {/* Backdrop */}
-          <div
-            className={`fixed inset-0 z-30 bg-black/40 transition-opacity duration-200 md:hidden ${
-              isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-            onClick={() => isOpen && onToggle?.()}
-            aria-hidden="true"
-          />
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              {/* Backdrop */}
+              <m.div
+                className="fixed inset-0 z-30 bg-black/40 md:hidden"
+                onClick={() => isOpen && onToggle?.()}
+                aria-hidden="true"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: sidebarTransition }}
+                exit={{ opacity: 0, transition: sidebarTransition }}
+              />
 
-          {/* Panel */}
-          <div
-            dir={dir}
-            className={`fixed left-0 right-0 z-40 md:hidden
-              bg-sidebar text-sidebar-fg ${sideBorder} border-border
-              transition-[transform,opacity] duration-200 origin-top
-              ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}
-            `}
-            style={{ top: `${mobileTop}px` }}
-          >
-            <div className="max-h-[70vh] overflow-y-auto px-6 py-6 space-y-2">
-              {navConfig.map((item) => (
-                <div key={item.id} className="rounded-xl">
-                  {item.to ? (
-                    <NavLink
-                      to={item.to}
-                      onClick={handleNavLinkClick}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 p-3 rounded-xl text-sm font-semibold
-                         transition-colors
-                         ${isActive ? 'bg-accent/40 text-sidebar-active' : 'hover:bg-accent/30'}`
-                      }
-                    >
-                      {item.icon}
-                      <span className="flex-1 truncate text-right">
-                        {item.label}
-                      </span>
-                    </NavLink>
-                  ) : (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => handleSectionToggle(item.id)}
-                        className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-semibold
-                          transition-colors
-                          ${activeSection === item.id ? 'bg-accent/35 text-sidebar-active' : 'hover:bg-accent/30'}`}
-                      >
-                        {item.icon}
-                        <span className="flex-1 truncate text-right">
-                          {item.label}
-                        </span>
-                        <ChevronRight
-                          className={`w-4 h-4 transition-transform ${
-                            activeSection === item.id
-                              ? dir === 'rtl'
-                                ? 'rotate-90'
-                                : '-rotate-90'
-                              : ''
-                          }`}
-                        />
-                      </button>
+              {/* Panel */}
+              <m.div
+                dir={dir}
+                className={`fixed left-0 right-0 z-40 md:hidden
+                  bg-sidebar text-sidebar-fg ${sideBorder} border-border origin-top
+                `}
+                style={{ top: `${mobileTop}px` }}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0, transition: sidebarTransition }}
+                exit={{ opacity: 0, y: -8, transition: sidebarTransition }}
+              >
+                <div className="max-h-[70vh] overflow-y-auto px-6 py-6 space-y-2">
+                  {navConfig.map((item) => (
+                    <div key={item.id} className="rounded-xl">
+                      {item.to ? (
+                        <NavLink
+                          to={item.to}
+                          onClick={handleNavLinkClick}
+                          className={({ isActive }) =>
+                            `flex items-center gap-3 p-3 rounded-xl text-sm font-semibold
+                             transition-colors
+                             ${isActive ? 'bg-accent/40 text-sidebar-active' : 'hover:bg-accent/30'}`
+                          }
+                        >
+                          {item.icon}
+                          <span className="flex-1 truncate text-right">
+                            {item.label}
+                          </span>
+                        </NavLink>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleSectionToggle(item.id)}
+                            className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-semibold
+                              transition-colors
+                              ${activeSection === item.id ? 'bg-accent/35 text-sidebar-active' : 'hover:bg-accent/30'}`}
+                          >
+                            {item.icon}
+                            <span className="flex-1 truncate text-right">
+                              {item.label}
+                            </span>
+                            <ChevronRight
+                              className={`w-4 h-4 transition-transform ${
+                                activeSection === item.id
+                                  ? dir === 'rtl'
+                                    ? 'rotate-90'
+                                    : '-rotate-90'
+                                  : ''
+                              }`}
+                            />
+                          </button>
 
-                      {item.children && activeSection === item.id && (
-                        <div className="mt-1 ms-4 ps-3 border-s border-border space-y-1">
-                          {item.children.map((ch) => (
-                            <NavLink
-                              key={ch.id}
-                              to={ch.to}
-                              onClick={handleNavLinkClick}
-                              className={({ isActive }) =>
-                                `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
-                                 transition-colors
-                                 ${isActive ? 'bg-accent/40 text-sidebar-active' : 'hover:bg-accent/25'}`
-                              }
-                            >
-                              {ch.icon}
-                              <span className="truncate">{ch.label}</span>
-                            </NavLink>
-                          ))}
-                        </div>
+                          {item.children && activeSection === item.id && (
+                            <div className="mt-1 ms-4 ps-3 border-s border-border space-y-1">
+                              {item.children.map((ch) => (
+                                <NavLink
+                                  key={ch.id}
+                                  to={ch.to}
+                                  onClick={handleNavLinkClick}
+                                  className={({ isActive }) =>
+                                    `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
+                                     transition-colors
+                                     ${isActive ? 'bg-accent/40 text-sidebar-active' : 'hover:bg-accent/25'}`
+                                  }
+                                >
+                                  {ch.icon}
+                                  <span className="truncate">{ch.label}</span>
+                                </NavLink>
+                              ))}
+                            </div>
+                          )}
+                        </>
                       )}
-                    </>
-                  )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        </>
+              </m.div>
+            </>
+          )}
+        </AnimatePresence>
       )}
 
       {/* ===========================
@@ -382,7 +400,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           - full when open
       =========================== */}
       {showSidebar && (
-        <aside
+        <m.aside
           dir={dir}
           className={`
             hidden md:block
@@ -391,8 +409,11 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
           `}
           style={{
             boxShadow: isDark ? '0 0 15px rgba(34,211,238,0.35)' : undefined,
+          }}
+          animate={{
             width: isOpen ? desktopOpenWidth : desktopCollapsedWidth,
           }}
+          transition={sidebarTransition}
         >
           {/* Header / Logo */}
           <div
@@ -401,7 +422,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
             <img
               src={LogoNewArt}
               alt="Almadar Logo"
-              className={`transition-[width] duration-200 ${isOpen ? 'w-36' : 'w-10'}`}
+              className={`transition-[width] duration-300 ${isOpen ? 'w-36' : 'w-10'}`}
             />
 
             {isOpen && (
@@ -567,7 +588,7 @@ export default function AppSidebar({ isOpen, onToggle, onLinkClick, mode }) {
               </div>
             )}
           </nav>
-        </aside>
+        </m.aside>
       )}
     </>
   );
