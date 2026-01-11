@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { AnimatePresence, m } from 'framer-motion';
 import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { buildNavConfig } from '@/config/navigation';
+import { normalizeRoles } from '@/auth/roleUtils';
 
 const isItemActive = (item, path) => Boolean(item.to && path === item.to);
 
@@ -40,16 +41,17 @@ const getChevronRotation = (isOpen, dir) => {
 };
 
 export default function AppSidebar() {
-  const { can, roles, logout } = useAuth();
+  const { can, roles, user, logout } = useAuth();
   const { t, dir, lang } = useLanguage();
   const { state, isMobile, setOpenMobile, toggleSidebar } = useSidebar();
   const location = useLocation();
+  const normalizedRoles = useMemo(
+    () => normalizeRoles(user, roles),
+    [user, roles],
+  );
   const isAdmin = useMemo(
-    () =>
-      Array.isArray(roles)
-        ? roles.some((role) => String(role).toLowerCase() === 'admin')
-        : false,
-    [roles],
+    () => normalizedRoles.includes('admin'),
+    [normalizedRoles],
   );
   const isCollapsed = state === 'collapsed';
 

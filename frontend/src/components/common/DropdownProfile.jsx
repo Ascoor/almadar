@@ -7,6 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import API_CONFIG from '@/config/config';
+import { normalizeRoles } from '@/auth/roleUtils';
 
 // Helper to build full avatar URL
 function buildImageUrl(imagePath) {
@@ -25,11 +26,8 @@ export default function UserMenu({ align = 'right' }) {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const normalizedRoles = useMemo(
-    () =>
-      Array.isArray(roles)
-        ? roles.map((role) => String(role).toLowerCase())
-        : [],
-    [roles],
+    () => normalizeRoles(user, roles),
+    [user, roles],
   );
 
   const roleBadges = useMemo(() => {
