@@ -2,6 +2,9 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import API_CONFIG from '../../config/config';
 
+axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
+
 // متغير لتخزين الدالة التي يتم استدعاؤها عند 401
 let onUnauthorized = null;
 
@@ -20,6 +23,7 @@ export const setOnUnauthorized = (callback) => {
 const api = axios.create({
   baseURL: API_CONFIG.baseURL,
   withCredentials: true,
+  withXSRFToken: true,
   headers: {
     Accept: 'application/json',
   },
