@@ -30,7 +30,10 @@ export default function AppLayout() {
 
   return (
     <LazyMotion features={domAnimation}>
-      <SidebarProvider className={dir === 'rtl' ? 'flex-row-reverse' : ''}>
+      <SidebarProvider
+        className={dir === 'rtl' ? 'flex-row-reverse' : ''}
+        style={{ '--app-header-height': '4rem' }}
+      >
         <ResponsiveLayout className="min-h-svh w-full min-w-0 overflow-x-hidden bg-bg">
           <AppSidebar />
           <SidebarInset className="min-w-0 flex-1">
