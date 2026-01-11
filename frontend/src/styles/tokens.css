@@ -4,235 +4,236 @@
    - Dark : .dark
 ========================= */
 :root {
-  /* =========================
-     Fonts + Radius
-  ========================= */
-  --font-body: 'Tajawal', 'Cairo', 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-  --font-heading: 'Tajawal', 'Cairo', 'Lora', Georgia, 'Times New Roman', serif;
-  --font-map: 'Tajawal', 'Cairo', 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-
-  --radius: 1rem;
-
-  /* =========================
-     Base (Premium daylight)
-     - background: very soft cool white
-     - foreground: deep ink
-  ========================= */
-  --bg: hsl(210 28% 98%);
-  --fg: hsl(222 26% 12%);
-
-  --card: hsl(0 0% 100%);
-  --popover: hsl(0 0% 100%);
-
-  /* =========================
-     Brand
-     - primary: premium teal (actions, active, buttons)
-     - secondary: emerald support
-     - accent: warm luxury (gold/amber-ish)
-  ========================= */
-  --primary: hsl(176 88% 30%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(156 62% 38%);
-  --accent: hsl(32 92% 56%);
-  --accent-foreground: hsl(222 26% 12%);
-
-  /* =========================
-     Neutral
-  ========================= */
-  --muted: hsl(210 22% 94%);
-  --muted-foreground: hsl(220 14% 42%);
-
-  /* =========================
-     Status
-  ========================= */
-  --success: hsl(156 70% 34%);
-  --warning: hsl(42 96% 54%);
-  --destructive: hsl(0 76% 52%);
-  --destructive-foreground: hsl(0 0% 100%);
-
-  /* =========================
-     Borders / Inputs / Ring
-     - border softer, input slightly stronger
-  ========================= */
-  --border: hsl(214 18% 85%);
-  --input: hsl(214 18% 82%);
-  --ring: hsl(176 88% 42%);
-
-  /* =========================
-     Sidebar
-     - slightly different from bg for depth
-  ========================= */
-  --sidebar-bg: hsl(210 26% 97%);
-  --sidebar-fg: hsl(222 22% 16%);
-  --sidebar-muted: hsl(210 18% 93%);
-  --sidebar-active: var(--primary);
-
-  /* =========================
-     Glass (Day)
-     - true premium glass: blur + subtle border + cinematic shadow
-  ========================= */
-  --glass-bg: 255 255 255 / 0.72;
-  --glass-border: 2 6 23 / 0.07;
-  --glass-shadow:
-    0 18px 48px rgba(2, 6, 23, 0.10),
-    0 2px 0 rgba(255, 255, 255, 0.55) inset;
-
-  /* =========================
-     Gradients
-  ========================= */
-  --gradient-primary: linear-gradient(
-    135deg,
-    color-mix(in oklab, var(--primary) 78%, white),
-    color-mix(in oklab, var(--accent) 62%, white)
-  );
-
-  --gradient-subtle: radial-gradient(
-    1000px 600px at 15% -10%,
-    color-mix(in oklab, var(--primary) 14%, transparent),
-    transparent 60%
-  );
-
-  /* =========================
-     Shadows (Day)
-     - more “premium” than default
-  ========================= */
-  --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.06);
-  --shadow-md: 0 14px 34px rgba(2, 6, 23, 0.12);
-  --shadow-lg: 0 28px 78px rgba(2, 6, 23, 0.16);
-
-  --shadow-glow:
-    0 0 0 2px color-mix(in oklab, var(--primary) 14%, transparent),
-    0 22px 70px color-mix(in oklab, var(--primary) 16%, transparent);
-
-  /* =========================
-     Neon (Day: controlled)
-     - keep it subtle (use for titles only)
-  ========================= */
-  --neon-title: color-mix(in oklab, var(--primary) 45%, white);
-
-  /* =========================
-     Comments Tokens
-  ========================= */
-  --comments-panel: color-mix(in oklab, var(--card) 82%, var(--muted));
-  --comments-item: color-mix(in oklab, var(--card) 94%, var(--bg));
-  --comments-soft: color-mix(in oklab, var(--muted) 62%, white);
-  --comments-halo: color-mix(in oklab, var(--primary) 12%, transparent);
-  --comments-outline: color-mix(in oklab, var(--primary) 12%, transparent);
-  --comments-divider: color-mix(in oklab, var(--border) 68%, transparent);
-
-  /* =========================
-     Chart palette (Light)
-  ========================= */
-  --chart-1: hsl(176 88% 30%);
-  --chart-2: hsl(156 62% 38%);
-  --chart-3: hsl(198 78% 42%);
-  --chart-4: hsl(32 92% 56%);
-  --chart-5: hsl(210 80% 46%);
-  --chart-6: hsl(260 70% 60%);
-  --chart-7: hsl(330 75% 52%);
-  --chart-8: hsl(42 96% 54%);
-
-  --chart-axis: color-mix(in oklab, var(--muted-foreground) 90%, transparent);
-  --chart-grid: color-mix(in oklab, var(--border) 86%, transparent);
-  --chart-tooltip-bg: color-mix(in oklab, var(--card) 96%, var(--bg));
-  --chart-tooltip-border: color-mix(in oklab, var(--border) 82%, transparent);
-
-  /* =========================
-     (Optional) Premium helpers
-     - use in components if you want extra luxury
-  ========================= */
-  --surface-1: color-mix(in oklab, var(--card) 92%, var(--bg));
-  --surface-2: color-mix(in oklab, var(--card) 86%, var(--muted));
-  --focus-soft: color-mix(in oklab, var(--ring) 28%, transparent);
-}
-
-/* ---------------------
-   Dark Theme Tokens
----------------------- */
-.dark {
-  /* Base */
-  --bg: hsl(190 85% 6%);     /* deep teal */
-  --fg: hsl(156 55% 92%);    /* soft mint-white */
-
-  --card: hsl(188 85% 9%);   /* slightly lifted from bg */
-  --popover: hsl(190 70% 10%);
-
-  /* Brand */
-  --primary: hsl(168 80% 52%);              /* clickable brand */
-  --primary-foreground: hsl(190 85% 6%);
-  --secondary: hsl(162 52% 20%);
-  --accent: hsl(44 95% 62%);                /* warm premium accent (gold) */
-
-  /* Neutrals */
-  --muted: hsl(190 22% 16%);
-  --muted-foreground: hsl(160 18% 72%);
-
-  /* Borders / inputs */
-  --border: hsl(190 22% 18%);
-  --input: hsl(190 22% 18%);
-  --ring: hsl(168 90% 60%);
-
-  /* Sidebar */
-  --sidebar-bg: hsl(190 80% 7%);
-  --sidebar-fg: hsl(156 55% 92%);
-  --sidebar-muted: hsl(190 22% 14%);
-  --sidebar-active: var(--primary);
-
-  /* Glass */
-  --glass-bg: 0 0 0 / 0.32;
-  --glass-border: 255 255 255 / 0.10;
-  --glass-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
-
-  /* Gradients */
-  --gradient-primary: linear-gradient(
-    135deg,
-    color-mix(in oklab, var(--primary) 65%, black),
-    color-mix(in oklab, hsl(200 85% 55%) 55%, black)
-  );
-
-  --gradient-subtle: radial-gradient(
-    1200px 600px at 15% -10%,
-    color-mix(in oklab, var(--primary) 16%, transparent),
-    transparent 60%
-  );
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 14px 40px rgba(0, 0, 0, 0.60);
-  --shadow-lg: 0 28px 90px rgba(0, 0, 0, 0.70);
-
-  --shadow-glow:
-    0 0 0 1px color-mix(in oklab, var(--ring) 20%, transparent),
-    0 18px 70px color-mix(in oklab, var(--primary) 18%, transparent);
-
-  /* Neon (controlled) */
-  --neon-title: color-mix(in oklab, var(--primary) 70%, white);
-
-  /* Charts */
-  --chart-1: hsl(168 95% 57%);
-  --chart-2: hsl(200 90% 62%);
-  --chart-3: hsl(176 88% 52%);
-  --chart-4: hsl(44 95% 62%);
-  --chart-5: hsl(260 80% 70%);
-  --chart-6: hsl(330 80% 62%);
-  --chart-axis: color-mix(in oklab, var(--fg) 72%, transparent);
-  --chart-grid: color-mix(in oklab, var(--border) 85%, transparent);
-  --chart-tooltip-bg: color-mix(in oklab, var(--card) 90%, var(--bg));
-  --chart-tooltip-border: color-mix(in oklab, var(--border) 88%, transparent);
-}
-
-
-/* Optional neon title helper */
-.neon-title {
-  color: var(--primary);
-  text-shadow:
-    0 1px 0 rgba(0,0,0,0.18),
-    0 2px 14px color-mix(in oklab, var(--primary) 32%, transparent);
-}
-
-.dark .neon-title {
-  color: var(--neon-title);
-  text-shadow:
-    0 0 10px rgba(0, 255, 210, 0.30),
-    0 0 22px rgba(0, 255, 210, 0.18);
-}
+   /* =========================
+      Fonts + Radius
+   ========================= */
+   --font-body: 'Tajawal', 'Cairo', 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+   --font-heading: 'Tajawal', 'Cairo', 'Lora', Georgia, 'Times New Roman', serif;
+   --font-map: 'Tajawal', 'Cairo', 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+ 
+   --radius: 1rem;
+ 
+   /* =========================
+      Base (Premium daylight)
+      - background: very soft cool white
+      - foreground: deep ink
+   ========================= */
+   --bg: hsl(210 28% 98%);
+   --fg: hsl(222 26% 12%);
+ 
+   --card: hsl(0 0% 100%);
+   --popover: hsl(0 0% 100%);
+ 
+   /* =========================
+      Brand
+      - primary: premium teal (actions, active, buttons)
+      - secondary: emerald support
+      - accent: warm luxury (gold/amber-ish)
+   ========================= */
+   --primary: hsl(176 88% 30%);
+   --primary-foreground: hsl(0 0% 100%);
+   --secondary: hsl(156 62% 38%);
+   --accent: hsl(32 92% 56%);
+   --accent-foreground: hsl(222 26% 12%);
+ 
+   /* =========================
+      Neutral
+   ========================= */
+   --muted: hsl(210 22% 94%);
+   --muted-foreground: hsl(220 14% 42%);
+ 
+   /* =========================
+      Status
+   ========================= */
+   --success: hsl(156 70% 34%);
+   --warning: hsl(42 96% 54%);
+   --destructive: hsl(0 76% 52%);
+   --destructive-foreground: hsl(0 0% 100%);
+ 
+   /* =========================
+      Borders / Inputs / Ring
+      - border softer, input slightly stronger
+   ========================= */
+   --border: hsl(214 18% 85%);
+   --input: hsl(214 18% 82%);
+   --ring: hsl(176 88% 42%);
+ 
+   /* =========================
+      Sidebar
+      - slightly different from bg for depth
+   ========================= */
+   --sidebar-bg: hsl(210 26% 97%);
+   --sidebar-fg: hsl(222 22% 16%);
+   --sidebar-muted: hsl(210 18% 93%);
+   --sidebar-active: var(--primary);
+ 
+   /* =========================
+      Glass (Day)
+      - true premium glass: blur + subtle border + cinematic shadow
+   ========================= */
+   --glass-bg: 255 255 255 / 0.72;
+   --glass-border: 2 6 23 / 0.07;
+   --glass-shadow:
+     0 18px 48px rgba(2, 6, 23, 0.10),
+     0 2px 0 rgba(255, 255, 255, 0.55) inset;
+ 
+   /* =========================
+      Gradients
+   ========================= */
+   --gradient-primary: linear-gradient(
+     135deg,
+     color-mix(in oklab, var(--primary) 78%, white),
+     color-mix(in oklab, var(--accent) 62%, white)
+   );
+ 
+   --gradient-subtle: radial-gradient(
+     1000px 600px at 15% -10%,
+     color-mix(in oklab, var(--primary) 14%, transparent),
+     transparent 60%
+   );
+ 
+   /* =========================
+      Shadows (Day)
+      - more “premium” than default
+   ========================= */
+   --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.06);
+   --shadow-md: 0 14px 34px rgba(2, 6, 23, 0.12);
+   --shadow-lg: 0 28px 78px rgba(2, 6, 23, 0.16);
+ 
+   --shadow-glow:
+     0 0 0 2px color-mix(in oklab, var(--primary) 14%, transparent),
+     0 22px 70px color-mix(in oklab, var(--primary) 16%, transparent);
+ 
+   /* =========================
+      Neon (Day: controlled)
+      - keep it subtle (use for titles only)
+   ========================= */
+   --neon-title: color-mix(in oklab, var(--primary) 45%, white);
+ 
+   /* =========================
+      Comments Tokens
+   ========================= */
+   --comments-panel: color-mix(in oklab, var(--card) 82%, var(--muted));
+   --comments-item: color-mix(in oklab, var(--card) 94%, var(--bg));
+   --comments-soft: color-mix(in oklab, var(--muted) 62%, white);
+   --comments-halo: color-mix(in oklab, var(--primary) 12%, transparent);
+   --comments-outline: color-mix(in oklab, var(--primary) 12%, transparent);
+   --comments-divider: color-mix(in oklab, var(--border) 68%, transparent);
+ 
+   /* =========================
+      Chart palette (Light)
+   ========================= */
+   --chart-1: hsl(176 88% 30%);
+   --chart-2: hsl(156 62% 38%);
+   --chart-3: hsl(198 78% 42%);
+   --chart-4: hsl(32 92% 56%);
+   --chart-5: hsl(210 80% 46%);
+   --chart-6: hsl(260 70% 60%);
+   --chart-7: hsl(330 75% 52%);
+   --chart-8: hsl(42 96% 54%);
+ 
+   --chart-axis: color-mix(in oklab, var(--muted-foreground) 90%, transparent);
+   --chart-grid: color-mix(in oklab, var(--border) 86%, transparent);
+   --chart-tooltip-bg: color-mix(in oklab, var(--card) 96%, var(--bg));
+   --chart-tooltip-border: color-mix(in oklab, var(--border) 82%, transparent);
+ 
+   /* =========================
+      (Optional) Premium helpers
+      - use in components if you want extra luxury
+   ========================= */
+   --surface-1: color-mix(in oklab, var(--card) 92%, var(--bg));
+   --surface-2: color-mix(in oklab, var(--card) 86%, var(--muted));
+   --focus-soft: color-mix(in oklab, var(--ring) 28%, transparent);
+ }
+ 
+ /* ---------------------
+    Dark Theme Tokens
+ ---------------------- */
+ .dark {
+   /* Base */
+   --bg: hsl(190 85% 6%);     /* deep teal */
+   --fg: hsl(156 55% 92%);    /* soft mint-white */
+ 
+   --card: hsl(188 85% 9%);   /* slightly lifted from bg */
+   --popover: hsl(190 70% 10%);
+ 
+   /* Brand */
+   --primary: hsl(168 80% 52%);              /* clickable brand */
+   --primary-foreground: hsl(190 85% 6%);
+   --secondary: hsl(162 52% 20%);
+   --accent: hsl(44 95% 62%);                /* warm premium accent (gold) */
+ 
+   /* Neutrals */
+   --muted: hsl(190 22% 16%);
+   --muted-foreground: hsl(160 18% 72%);
+ 
+   /* Borders / inputs */
+   --border: hsl(190 22% 18%);
+   --input: hsl(190 22% 18%);
+   --ring: hsl(168 90% 60%);
+ 
+   /* Sidebar */
+   --sidebar-bg: hsl(190 80% 7%);
+   --sidebar-fg: hsl(156 55% 92%);
+   --sidebar-muted: hsl(190 22% 14%);
+   --sidebar-active: var(--primary);
+ 
+   /* Glass */
+   --glass-bg: 0 0 0 / 0.32;
+   --glass-border: 255 255 255 / 0.10;
+   --glass-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+ 
+   /* Gradients */
+   --gradient-primary: linear-gradient(
+     135deg,
+     color-mix(in oklab, var(--primary) 65%, black),
+     color-mix(in oklab, hsl(200 85% 55%) 55%, black)
+   );
+ 
+   --gradient-subtle: radial-gradient(
+     1200px 600px at 15% -10%,
+     color-mix(in oklab, var(--primary) 16%, transparent),
+     transparent 60%
+   );
+ 
+   /* Shadows */
+   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+   --shadow-md: 0 14px 40px rgba(0, 0, 0, 0.60);
+   --shadow-lg: 0 28px 90px rgba(0, 0, 0, 0.70);
+ 
+   --shadow-glow:
+     0 0 0 1px color-mix(in oklab, var(--ring) 20%, transparent),
+     0 18px 70px color-mix(in oklab, var(--primary) 18%, transparent);
+ 
+   /* Neon (controlled) */
+   --neon-title: color-mix(in oklab, var(--primary) 70%, white);
+ 
+   /* Charts */
+   --chart-1: hsl(168 95% 57%);
+   --chart-2: hsl(200 90% 62%);
+   --chart-3: hsl(176 88% 52%);
+   --chart-4: hsl(44 95% 62%);
+   --chart-5: hsl(260 80% 70%);
+   --chart-6: hsl(330 80% 62%);
+   --chart-axis: color-mix(in oklab, var(--fg) 72%, transparent);
+   --chart-grid: color-mix(in oklab, var(--border) 85%, transparent);
+   --chart-tooltip-bg: color-mix(in oklab, var(--card) 90%, var(--bg));
+   --chart-tooltip-border: color-mix(in oklab, var(--border) 88%, transparent);
+ }
+ 
+ 
+ /* Optional neon title helper */
+ .neon-title {
+   color: var(--primary);
+   text-shadow:
+     0 1px 0 rgba(0,0,0,0.18),
+     0 2px 14px color-mix(in oklab, var(--primary) 32%, transparent);
+ }
+ 
+ .dark .neon-title {
+   color: var(--neon-title);
+   text-shadow:
+     0 0 10px rgba(0, 255, 210, 0.30),
+     0 0 22px rgba(0, 255, 210, 0.18);
+ }
+ 
