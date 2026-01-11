@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { LogoNewArt } from '@/assets/images';
@@ -43,6 +43,7 @@ export default function AppSidebar() {
   const { can, roles, logout } = useAuth();
   const { t, dir, lang } = useLanguage();
   const { state, isMobile, setOpenMobile, toggleSidebar } = useSidebar();
+  const navigate = useNavigate();
   const location = useLocation();
   const isAdmin = useMemo(
     () =>
@@ -77,6 +78,7 @@ export default function AppSidebar() {
   const [activeSection, setActiveSection] = useState(() =>
     getActiveSectionId(navConfig, location.pathname),
   );
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     setActiveSection(getActiveSectionId(navConfig, location.pathname));
@@ -87,8 +89,15 @@ export default function AppSidebar() {
   };
 
   const handleLogout = async () => {
+    if (isLoggingOut) return;
     if (isMobile) setOpenMobile(false);
-    await logout();
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      navigate('/', { replace: true });
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   const handleSectionToggle = (id) =>
@@ -259,10 +268,15 @@ export default function AppSidebar() {
               onClick={handleLogout}
               tooltip={logoutLabel}
               className="text-destructive hover:text-destructive data-[active=true]:bg-sidebar-primary"
+              disabled={isLoggingOut}
             >
               <LogOut className="h-4 w-4" />
               <span className="flex-1 truncate text-start group-data-[collapsible=icon]:hidden">
-                {logoutLabel}
+                {isLoggingOut
+                  ? lang === 'ar'
+                    ? 'جاري تسجيل الخروج...'
+                    : 'Signing out...'
+                  : logoutLabel}
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>

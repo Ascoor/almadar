@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -10,10 +11,12 @@ import LanguageToggle from "@/components/common/LanguageToggle";
 import { AuthContext } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { LogoNewArt } from "@/assets/images";
+import { getDashboardRoute } from "@/auth/getDashboardRoute";
 
 const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
   const { login } = useContext(AuthContext);
   const { lang, t } = useLanguage();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -94,7 +97,10 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
     setIsSubmitting(true);
 
     try {
-      const { success, message } = await login(email.trim(), password);
+      const { success, message, roles = [] } = await login(
+        email.trim(),
+        password,
+      );
 
       if (success) {
         if (rememberMe) localStorage.setItem("rememberedEmail", email.trim());
@@ -102,6 +108,7 @@ const Login = ({ onAuthStart, onAuthComplete, handleFormClose }) => {
 
         toast.success(labels.successTitle, { description: labels.successDescription });
         onAuthComplete?.(true);
+        navigate(getDashboardRoute(roles), { replace: true });
       } else {
         const errorMsg = message === "Bad credentials" ? labels.errorDescription : message;
         setFormError(errorMsg || labels.errorFallback);

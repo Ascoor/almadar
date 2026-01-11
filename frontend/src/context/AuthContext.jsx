@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { initEcho } from '@/lib/echo';
 import API_CONFIG from '@/config/config';
 import { useNetworkStatus } from './NetworkStatusContext';
@@ -15,7 +14,6 @@ import {
   normalizePermissionName,
   normalizePermissionsList,
 } from '@/auth/permissionCatalog';
-import { getDashboardRoute } from '@/auth/getDashboardRoute';
 
 // إنشاء الـ Context
 export const AuthContext = createContext({
@@ -34,7 +32,6 @@ export const AuthContext = createContext({
 });
 
 export function AuthProvider({ children }) {
-  const navigate = useNavigate();
   const { guardOnline } = useNetworkStatus();
   const [token, setToken] = useState(() =>
     sessionStorage.getItem('token')
@@ -74,7 +71,6 @@ export function AuthProvider({ children }) {
     setUser(user);
     setRoles(roles);
     setPermissions(normalizedPermissions);
-    navigate(getDashboardRoute(roles));
   };
 
   const login = async (email, password) => {
@@ -100,8 +96,12 @@ export function AuthProvider({ children }) {
       const { user, token, roles = [], permissions = [] } = response.data;
       if (user && token) {
         saveAuth({ user, token, roles, permissions });
-        return { success: true, user };
+        return { success: true, user, roles, permissions };
       }
+      return {
+        success: false,
+        message: 'بيانات تسجيل الدخول غير مكتملة.',
+      };
     } catch (err) {
       return {
         success: false,
@@ -113,8 +113,13 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
+    const echo = initEcho();
+    echo?.disconnect?.();
+
     try {
-      await axios.post('/api/logout');
+      await axios.post(`${API_CONFIG.baseURL}/api/logout`, null, {
+        withCredentials: true,
+      });
     } catch (error) {
       console.warn('Logout failed:', error);
     }
@@ -123,7 +128,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     setRoles([]);
     setPermissions([]);
-    navigate('/login');
+    return { success: true };
   };
 
   const hasRole = (roleName) => roles.includes(roleName);

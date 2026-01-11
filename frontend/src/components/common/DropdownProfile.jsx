@@ -21,6 +21,7 @@ export default function UserMenu({ align = 'right' }) {
   const { showSpinner, hideSpinner } = useSpinner();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [avatarSrc, setAvatarSrc] = useState('/default-profile.png');
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -102,17 +103,20 @@ export default function UserMenu({ align = 'right' }) {
   }, [dropdownOpen]);
 
   const handleLogout = async () => {
+    if (isLoggingOut) return;
     setDropdownOpen(false);
     showSpinner();
+    setIsLoggingOut(true);
     try {
       await logout();
       toast.success('✅ تم تسجيل الخروج بنجاح', {
         description: 'نراك قريبًا!',
       });
-      navigate('/login');
+      navigate('/', { replace: true });
     } catch {
       toast.error('❌ حدث خطأ أثناء تسجيل الخروج');
     } finally {
+      setIsLoggingOut(false);
       hideSpinner();
     }
   };
@@ -183,9 +187,16 @@ export default function UserMenu({ align = 'right' }) {
           <li>
             <button
               onClick={handleLogout}
-              className="flex items-center w-full px-4 py-2 text-destructive hover:bg-muted text-right"
+              className="flex items-center w-full px-4 py-2 text-destructive hover:bg-muted text-right disabled:opacity-60"
+              disabled={isLoggingOut}
             >
-              {lang === 'ar' ? 'تسجيل الخروج' : 'Sign Out'}
+              {isLoggingOut
+                ? lang === 'ar'
+                  ? 'جاري تسجيل الخروج...'
+                  : 'Signing out...'
+                : lang === 'ar'
+                  ? 'تسجيل الخروج'
+                  : 'Sign Out'}
             </button>
           </li>
         </ul>
