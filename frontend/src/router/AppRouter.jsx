@@ -72,6 +72,11 @@ function HomeEntry() {
 function DashboardEntry() {
   const { roles } = useAuth();
   const destination = getDashboardRoute(roles);
+
+  if (destination === '/dashboard') {
+    return <DashboardRouter />;
+  }
+
   return <Navigate to={destination} replace />;
 }
 
@@ -107,14 +112,6 @@ export const routes = [
                 element: (
                   <RequirePermission permission={permKey('view', 'dashboard')}>
                     <DashboardEntry />
-                  </RequirePermission>
-                ),
-              },
-              {
-                path: 'dashboard/admin',
-                element: (
-                  <RequirePermission permission={permKey('view', 'dashboard')}>
-                    <DashboardRouter />
                   </RequirePermission>
                 ),
               },

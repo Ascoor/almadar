@@ -16,10 +16,6 @@ import {
   normalizePermissionsList,
 } from '@/auth/permissionCatalog';
 import { getDashboardRoute } from '@/auth/getDashboardRoute';
-import { normalizeRoles, hasRole as roleMatches } from '@/auth/roleUtils';
-
-axios.defaults.withCredentials = true;
-axios.defaults.withXSRFToken = true;
 
 // إنشاء الـ Context
 export const AuthContext = createContext({
@@ -52,7 +48,7 @@ export function AuthProvider({ children }) {
   );
   const [roles, setRoles] = useState(() =>
     sessionStorage.getItem('roles')
-      ? normalizeRoles(null, JSON.parse(sessionStorage.getItem('roles')))
+      ? JSON.parse(sessionStorage.getItem('roles'))
       : [],
   );
   const [permissions, setPermissions] = useState(() =>
@@ -65,11 +61,10 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const saveAuth = ({ user, token, roles, permissions }) => {
-    const normalizedRoles = normalizeRoles(user, roles);
     const normalizedPermissions = normalizePermissionsList(permissions || []);
     sessionStorage.setItem('token', JSON.stringify(token));
     sessionStorage.setItem('user', JSON.stringify(user));
-    sessionStorage.setItem('roles', JSON.stringify(normalizedRoles));
+    sessionStorage.setItem('roles', JSON.stringify(roles));
     sessionStorage.setItem(
       'permissions',
       JSON.stringify(normalizedPermissions),
@@ -77,9 +72,9 @@ export function AuthProvider({ children }) {
 
     setToken(token);
     setUser(user);
-    setRoles(normalizedRoles);
+    setRoles(roles);
     setPermissions(normalizedPermissions);
-    navigate(getDashboardRoute(normalizedRoles));
+    navigate(getDashboardRoute(roles));
   };
 
   const login = async (email, password) => {
@@ -131,11 +126,7 @@ export function AuthProvider({ children }) {
     navigate('/login');
   };
 
-  const normalizedRoles = useMemo(
-    () => normalizeRoles(user, roles),
-    [user, roles],
-  );
-  const hasRole = (roleName) => roleMatches(normalizedRoles, roleName);
+  const hasRole = (roleName) => roles.includes(roleName);
   const hasPermission = (permName) =>
     permissions.includes(normalizePermissionName(permName));
   const hasAnyPermission = (permNames = []) =>
@@ -156,43 +147,26 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (!user?.id) return;
 
-    let channel;
-    let handler;
-
-    const connect = async () => {
-      try {
-        await axios.get(`${API_CONFIG.baseURL}/sanctum/csrf-cookie`, {
-          withCredentials: true,
-        });
-      } catch (error) {
-        console.warn('Failed to refresh CSRF cookie:', error);
+    const echo = initEcho();
+    const channel = echo.private(`user.${user.id}`);
+    const handler = (eventData) => {
+      if (eventData?.permissions) {
+        const normalizedPermissions = normalizePermissionsList(
+          eventData.permissions,
+        );
+        setPermissions(normalizedPermissions);
+        sessionStorage.setItem(
+          'permissions',
+          JSON.stringify(normalizedPermissions),
+        );
+        toast.success('تم تحديث صلاحياتك');
       }
-
-      const echo = initEcho();
-      channel = echo.private(`user.${user.id}`);
-      handler = (eventData) => {
-        if (eventData?.permissions) {
-          const normalizedPermissions = normalizePermissionsList(
-            eventData.permissions,
-          );
-          setPermissions(normalizedPermissions);
-          sessionStorage.setItem(
-            'permissions',
-            JSON.stringify(normalizedPermissions),
-          );
-          toast.success('تم تحديث صلاحياتك');
-        }
-      };
-
-      channel.listen('.permissions.updated', handler);
     };
 
-    connect();
+    channel.listen('.permissions.updated', handler);
 
     return () => {
-      if (channel && handler) {
-        channel.stopListening('.permissions.updated', handler);
-      }
+      channel.stopListening('.permissions.updated', handler);
     };
   }, [user]);
 
@@ -205,7 +179,7 @@ export function AuthProvider({ children }) {
       value={{
         user,
         token,
-        roles: normalizedRoles,
+        roles,
         permissions,
         isLoading,
         login,
