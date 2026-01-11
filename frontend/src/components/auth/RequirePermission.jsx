@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { normalizeRoles } from '@/auth/roles';
 
 const RequirePermission = ({
   permission,
@@ -8,9 +9,7 @@ const RequirePermission = ({
   children,
 }) => {
   const { can, roles } = useAuth();
-  const isAdmin = Array.isArray(roles)
-    ? roles.some((role) => String(role).toLowerCase() === 'admin')
-    : false;
+  const isAdmin = normalizeRoles(roles).includes('admin');
 
   if (!isAdmin && !can(permission, { mode })) {
     return <Navigate to={redirectTo} replace />;

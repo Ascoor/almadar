@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { normalizeRoles } from '@/auth/roles';
 
 type CanProps = {
   permission: string | string[];
@@ -15,9 +16,7 @@ export function Can({
   mode = 'all',
 }: CanProps) {
   const { can, roles } = useAuth();
-  const isAdmin = Array.isArray(roles)
-    ? roles.some((role) => String(role).toLowerCase() === 'admin')
-    : false;
+  const isAdmin = normalizeRoles(roles).includes('admin');
 
   if (allowAdmin && isAdmin) return <>{children}</>;
   if (!permission) return null;

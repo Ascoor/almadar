@@ -11,6 +11,7 @@ import {
 import { FileText, ListTree, Settings2, UserCheck, UsersRound } from 'lucide-react';
 import { permKey } from '@/auth/permissionCatalog';
 import { getDashboardRoute } from '@/auth/getDashboardRoute';
+import { normalizeRoles, type RoleInput } from '@/auth/roles';
 
 export type NavItem = {
   id: string;
@@ -30,18 +31,13 @@ type BuildNavConfigInput = {
   t: (key: string) => string;
   canView: (permission: string) => boolean;
   canViewAny: (permissions: string[]) => boolean;
-  role: string[] | undefined;
+  role: RoleInput[] | undefined;
   dir: string;
 };
 
 const isNavItem = (
   item: NavConfigItem | null,
 ): item is NavConfigItem => item !== null;
-
-const normalizeRoles = (roles: string[] | undefined) =>
-  Array.isArray(roles)
-    ? roles.map((role) => String(role).toLowerCase())
-    : [];
 
 export function buildNavConfig({
   t,

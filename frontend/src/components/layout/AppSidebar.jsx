@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { AnimatePresence, m } from 'framer-motion';
 import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { buildNavConfig } from '@/config/navigation';
+import { normalizeRoles } from '@/auth/roles';
 
 const isItemActive = (item, path) => Boolean(item.to && path === item.to);
 
@@ -45,10 +46,7 @@ export default function AppSidebar() {
   const { state, isMobile, setOpenMobile, toggleSidebar } = useSidebar();
   const location = useLocation();
   const isAdmin = useMemo(
-    () =>
-      Array.isArray(roles)
-        ? roles.some((role) => String(role).toLowerCase() === 'admin')
-        : false,
+    () => normalizeRoles(roles).includes('admin'),
     [roles],
   );
   const isCollapsed = state === 'collapsed';

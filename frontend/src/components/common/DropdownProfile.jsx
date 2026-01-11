@@ -7,6 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import API_CONFIG from '@/config/config';
+import { normalizeRoles } from '@/auth/roles';
 
 // Helper to build full avatar URL
 function buildImageUrl(imagePath) {
@@ -14,6 +15,15 @@ function buildImageUrl(imagePath) {
   if (/^https?:\/\//.test(imagePath)) return imagePath;
   return `${API_CONFIG.baseURL}/${imagePath}`;
 }
+
+const ROLE_LABELS = {
+  admin: { ar: 'رئيس قسم', en: 'Head of Department' },
+  moderator: { ar: 'مشرف', en: 'Moderator' },
+  user: { ar: 'موظف', en: 'Employee' },
+  legal_investigator: { ar: 'محقق قانوني', en: 'Legal Investigator' },
+  lawyer: { ar: 'محام', en: 'Lawyer' },
+  manager: { ar: 'مدير', en: 'Manager' },
+};
 
 export default function UserMenu({ align = 'right' }) {
   const { user, roles, logout } = useContext(AuthContext);
@@ -25,10 +35,7 @@ export default function UserMenu({ align = 'right' }) {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const normalizedRoles = useMemo(
-    () =>
-      Array.isArray(roles)
-        ? roles.map((role) => String(role).toLowerCase())
-        : [],
+    () => normalizeRoles(roles),
     [roles],
   );
 
@@ -37,30 +44,31 @@ export default function UserMenu({ align = 'right' }) {
       return [
         {
           key: 'user',
-          label: lang === 'ar' ? 'مستخدم' : 'User',
+          label: ROLE_LABELS.user?.[lang] || 'User',
           className: 'bg-primary text-primary-foreground border-transparent',
         },
       ];
     }
 
     return normalizedRoles.map((role) => {
+      const mappedLabel = ROLE_LABELS[role]?.[lang] || role;
       if (role === 'admin') {
         return {
           key: role,
-          label: lang === 'ar' ? 'مسؤول' : 'Admin',
+          label: mappedLabel,
           className: 'bg-rose-500 text-white border-transparent',
         };
       }
       if (role === 'moderator' || role === 'manager') {
         return {
           key: role,
-          label: lang === 'ar' ? 'مشرف' : 'Moderator',
+          label: mappedLabel,
           className: 'bg-amber-500 text-white border-transparent',
         };
       }
       return {
         key: role,
-        label: role,
+        label: mappedLabel,
         className: 'bg-primary text-primary-foreground border-transparent',
       };
     });

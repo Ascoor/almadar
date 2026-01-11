@@ -16,6 +16,7 @@ import {
   normalizePermissionsList,
 } from '@/auth/permissionCatalog';
 import { getDashboardRoute } from '@/auth/getDashboardRoute';
+import { normalizeRoles } from '@/auth/roles';
 
 // إنشاء الـ Context
 export const AuthContext = createContext({
@@ -126,7 +127,8 @@ export function AuthProvider({ children }) {
     navigate('/login');
   };
 
-  const hasRole = (roleName) => roles.includes(roleName);
+  const hasRole = (roleName) =>
+    normalizeRoles(roles).includes(String(roleName).toLowerCase());
   const hasPermission = (permName) =>
     permissions.includes(normalizePermissionName(permName));
   const hasAnyPermission = (permNames = []) =>

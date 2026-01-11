@@ -2,11 +2,7 @@ import { useAuth } from '@/context/AuthContext';
 import AdminDashboard from '@/pages/dashboards/AdminDashboard';
 import ModeratorDashboard from '@/pages/dashboards/ModeratorDashboard';
 import UserDashboard from '@/pages/dashboards/UserDashboard';
-
-const normalizeRoles = (roles) =>
-  Array.isArray(roles)
-    ? roles.map((role) => String(role).toLowerCase())
-    : [];
+import { normalizeRoles } from '@/auth/roles';
 
 export default function DashboardRouter() {
   const { roles } = useAuth();
