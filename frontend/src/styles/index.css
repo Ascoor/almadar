@@ -209,6 +209,116 @@
   }
 
   /* -------------------------
+     Sections / Tables (Token-driven)
+  -------------------------- */
+  .section-surface {
+    background: color-mix(in oklab, var(--card) 92%, var(--bg));
+    border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+    border-radius: calc(var(--radius) + 8px);
+    box-shadow: var(--shadow-md);
+    padding: 1rem;
+  }
+
+  @screen md {
+    .section-surface {
+      padding: 1.5rem;
+    }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .section-eyebrow {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    letter-spacing: 0.2px;
+  }
+
+  .table-shell {
+    background: color-mix(in oklab, var(--card) 94%, var(--bg));
+    border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+    border-radius: calc(var(--radius) + 6px);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem;
+  }
+
+  @screen md {
+    .table-shell {
+      padding: 1.25rem;
+    }
+  }
+
+  .table-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  @screen md {
+    .table-toolbar {
+      flex-direction: row;
+    }
+  }
+
+  .table-toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  .table-base {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 2px);
+  }
+
+  .table-head {
+    background: color-mix(in oklab, var(--muted) 70%, transparent);
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .table-cell {
+    padding: 0.75rem;
+    text-align: center;
+  }
+
+  .table-row {
+    transition: background-color 0.2s ease;
+  }
+
+  .table-row:hover {
+    background: color-mix(in oklab, var(--muted) 40%, transparent);
+  }
+
+  .table-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  /* -------------------------
      Chart Card (Premium surface)
   -------------------------- */
   .chart-card {

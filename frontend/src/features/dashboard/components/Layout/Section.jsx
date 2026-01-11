@@ -14,11 +14,11 @@ export default function Section({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
-      className={`card-soft hover-scale min-w-0 p-4 md:p-6 ${className}`}
+      className={`section-surface hover-scale min-w-0 ${className}`}
     >
       {(title || actions) && (
-        <div className="mb-4 flex items-center justify-between">
-          <div>
+        <div className="section-header">
+          <div className="section-header-stack">
             {title && (
               <h3 className="text-lg md:text-xl font-semibold section-title section-title-animate mb-1">
                 {title}
