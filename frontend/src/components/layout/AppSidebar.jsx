@@ -7,6 +7,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
+  SidebarFooter,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -15,11 +16,13 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { AnimatePresence, m } from 'framer-motion';
+import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { buildNavConfig } from '@/config/navigation';
 
-const isItemActive = (item, path) =>
-  Boolean(item.to && path.startsWith(item.to));
+const isItemActive = (item, path) => Boolean(item.to && path === item.to);
 
 const isSectionActive = (item, path) =>
   Boolean(item.children?.some((child) => isItemActive(child, path)));
@@ -37,9 +40,9 @@ const getChevronRotation = (isOpen, dir) => {
 };
 
 export default function AppSidebar() {
-  const { can, roles } = useAuth();
+  const { can, roles, logout } = useAuth();
   const { t, dir, lang } = useLanguage();
-  const { state, isMobile, setOpenMobile } = useSidebar();
+  const { state, isMobile, setOpenMobile, toggleSidebar } = useSidebar();
   const location = useLocation();
   const isAdmin = useMemo(
     () =>
@@ -83,10 +86,29 @@ export default function AppSidebar() {
     if (isMobile) setOpenMobile(false);
   };
 
+  const handleLogout = async () => {
+    if (isMobile) setOpenMobile(false);
+    await logout();
+  };
+
   const handleSectionToggle = (id) =>
     setActiveSection((prev) => (prev === id ? null : id));
 
   const appName = lang === 'ar' ? 'المدار القانوني' : 'Almadar Legal';
+  const logoutLabel = t('signOut');
+  const collapseLabel = isCollapsed
+    ? lang === 'ar'
+      ? 'توسيع الشريط الجانبي'
+      : 'Expand sidebar'
+    : lang === 'ar'
+      ? 'طي الشريط الجانبي'
+      : 'Collapse sidebar';
+  const collapseIcon =
+    dir === 'rtl' ? (
+      <ChevronLeft className="h-4 w-4" />
+    ) : (
+      <ChevronRight className="h-4 w-4" />
+    );
 
   return (
     <Sidebar side={dir === 'rtl' ? 'right' : 'left'} collapsible="icon">
@@ -110,6 +132,18 @@ export default function AppSidebar() {
             </div>
           )}
         </div>
+        <div className="hidden md:flex items-center justify-end">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            aria-label={collapseLabel}
+            className="h-8 w-8"
+          >
+            {collapseIcon}
+          </Button>
+        </div>
       </SidebarHeader>
 
       <SidebarContent className="px-2 pb-4">
@@ -120,6 +154,7 @@ export default function AppSidebar() {
             const sectionOpen = activeSection === item.id;
             const chevronClass = getChevronRotation(sectionOpen, dir);
             const tooltip = item.label;
+            const parentActive = sectionActive && !item.to;
 
             return (
               <SidebarMenuItem key={item.id}>
@@ -128,6 +163,7 @@ export default function AppSidebar() {
                     asChild
                     isActive={itemActive}
                     tooltip={tooltip}
+                    className="data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
                   >
                     <NavLink
                       to={item.to}
@@ -135,7 +171,7 @@ export default function AppSidebar() {
                       aria-current={itemActive ? 'page' : undefined}
                     >
                       {item.icon}
-                      <span className="flex-1 truncate text-start">
+                      <span className="flex-1 truncate text-start group-data-[collapsible=icon]:hidden">
                         {item.label}
                       </span>
                     </NavLink>
@@ -145,53 +181,70 @@ export default function AppSidebar() {
                     <SidebarMenuButton
                       type="button"
                       onClick={() => handleSectionToggle(item.id)}
-                      isActive={sectionActive}
+                      isActive={itemActive}
                       tooltip={tooltip}
-                      className="justify-start"
+                      className={cn(
+                        'justify-start data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground',
+                        parentActive && 'bg-sidebar-accent/50 text-sidebar-fg',
+                      )}
                       aria-expanded={sectionOpen}
                     >
                       {item.icon}
-                      <span className="flex-1 truncate text-start">
+                      <span className="flex-1 truncate text-start group-data-[collapsible=icon]:hidden">
                         {item.label}
                       </span>
                       {item.children && (
                         <ChevronRight
-                          className={`ms-auto h-4 w-4 transition-transform ${chevronClass}`}
+                          className={cn(
+                            'ms-auto h-4 w-4 transition-transform group-data-[collapsible=icon]:hidden',
+                            chevronClass,
+                          )}
                         />
                       )}
                     </SidebarMenuButton>
 
-                    {item.children && sectionOpen && (
-                      <SidebarMenuSub>
-                        {item.children.map((child) => {
-                          const childActive = isItemActive(
-                            child,
-                            location.pathname,
-                          );
-                          return (
-                            <SidebarMenuSubItem key={child.id}>
-                              <SidebarMenuSubButton
-                                asChild
-                                isActive={childActive}
-                              >
-                                <NavLink
-                                  to={child.to}
-                                  onClick={handleNavLinkClick}
-                                  aria-current={
-                                    childActive ? 'page' : undefined
-                                  }
-                                >
-                                  {child.icon}
-                                  <span className="truncate">
-                                    {child.label}
-                                  </span>
-                                </NavLink>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          );
-                        })}
-                      </SidebarMenuSub>
-                    )}
+                    <AnimatePresence initial={false}>
+                      {item.children && sectionOpen && (
+                        <m.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <SidebarMenuSub>
+                            {item.children.map((child) => {
+                              const childActive = isItemActive(
+                                child,
+                                location.pathname,
+                              );
+                              return (
+                                <SidebarMenuSubItem key={child.id}>
+                                  <SidebarMenuSubButton
+                                    asChild
+                                    isActive={childActive}
+                                    className="data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
+                                  >
+                                    <NavLink
+                                      to={child.to}
+                                      onClick={handleNavLinkClick}
+                                      aria-current={
+                                        childActive ? 'page' : undefined
+                                      }
+                                    >
+                                      {child.icon}
+                                      <span className="truncate">
+                                        {child.label}
+                                      </span>
+                                    </NavLink>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              );
+                            })}
+                          </SidebarMenuSub>
+                        </m.div>
+                      )}
+                    </AnimatePresence>
                   </>
                 )}
               </SidebarMenuItem>
@@ -199,6 +252,22 @@ export default function AppSidebar() {
           })}
         </SidebarMenu>
       </SidebarContent>
+      <SidebarFooter className="mt-auto px-2 pb-4">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              tooltip={logoutLabel}
+              className="text-destructive hover:text-destructive data-[active=true]:bg-sidebar-primary"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="flex-1 truncate text-start group-data-[collapsible=icon]:hidden">
+                {logoutLabel}
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

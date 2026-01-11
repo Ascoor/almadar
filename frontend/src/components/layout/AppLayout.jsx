@@ -1,7 +1,5 @@
 import React, { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
-import ResponsiveLayout from '@/components/ResponsiveLayout';
-import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LazyMotion, domAnimation } from 'framer-motion';
@@ -25,25 +23,27 @@ const DashboardSkeleton = () => (
 );
 
 export default function AppLayout() {
-  const { user } = useAuth();
   const { dir } = useLanguage();
 
   return (
     <LazyMotion features={domAnimation}>
-      <SidebarProvider className={dir === 'rtl' ? 'flex-row-reverse' : ''}>
-        <ResponsiveLayout className="min-h-svh w-full min-w-0 overflow-x-hidden bg-bg">
-          <AppSidebar />
-          <SidebarInset className="min-w-0 flex-1">
-            <Header user={user} />
-            <main className="flex-1 min-w-0 bg-bg pb-8">
-              <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 lg:space-y-8 pt-6">
-                <Suspense fallback={<DashboardSkeleton />}>
-                  <Outlet />
-                </Suspense>
-              </div>
-            </main>
-          </SidebarInset>
-        </ResponsiveLayout>
+      <SidebarProvider
+        className={`min-h-svh w-full min-w-0 overflow-x-hidden bg-bg ${
+          dir === 'rtl' ? 'flex-row-reverse' : ''
+        }`}
+        dir={dir}
+      >
+        <AppSidebar />
+        <SidebarInset className="min-w-0 flex-1">
+          <Header />
+          <main className="flex-1 min-w-0 bg-bg pb-8 pt-16">
+            <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 lg:space-y-8 pt-6">
+              <Suspense fallback={<DashboardSkeleton />}>
+                <Outlet />
+              </Suspense>
+            </div>
+          </main>
+        </SidebarInset>
       </SidebarProvider>
     </LazyMotion>
   );
