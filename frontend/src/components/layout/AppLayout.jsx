@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import ResponsiveLayout from '@/components/ResponsiveLayout';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import Header from '@/components/layout/Header';
@@ -25,10 +26,11 @@ const DashboardSkeleton = () => (
 
 export default function AppLayout() {
   const { user } = useAuth();
+  const { dir } = useLanguage();
 
   return (
     <LazyMotion features={domAnimation}>
-      <SidebarProvider>
+      <SidebarProvider className={dir === 'rtl' ? 'flex-row-reverse' : ''}>
         <ResponsiveLayout className="min-h-svh w-full min-w-0 overflow-x-hidden bg-bg">
           <AppSidebar />
           <SidebarInset className="min-w-0 flex-1">
