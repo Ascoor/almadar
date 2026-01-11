@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import AppRouter, { routes } from '@/router/AppRouter';
 import { useAuth } from '@/context/AuthContext';
+import { getDashboardRoute } from '@/auth/getDashboardRoute';
 
 jest.mock('@/context/AuthContext', () => {
   const React = require('react');
@@ -50,23 +51,35 @@ describe('AppRouter navigation', () => {
   });
 
   it('keeps authenticated users in the dashboard flow from root', async () => {
-    useAuth.mockReturnValue({ user: { id: 1 }, isLoading: false, can: () => true });
+    const roles = ['admin'];
+    useAuth.mockReturnValue({
+      user: { id: 1 },
+      isLoading: false,
+      can: () => true,
+      roles,
+    });
 
     const { router } = renderRouter(['/']);
 
     await waitFor(() => {
-      expect(router.state.location.pathname).toBe('/dashboard');
+      expect(router.state.location.pathname).toBe(getDashboardRoute(roles));
     });
     expect(screen.getByText('Dashboard Page')).toBeInTheDocument();
   });
 
   it('prevents authenticated users from visiting the login page', async () => {
-    useAuth.mockReturnValue({ user: { id: 1 }, isLoading: false, can: () => true });
+    const roles = ['admin'];
+    useAuth.mockReturnValue({
+      user: { id: 1 },
+      isLoading: false,
+      can: () => true,
+      roles,
+    });
 
     const { router } = renderRouter(['/login']);
 
     await waitFor(() => {
-      expect(router.state.location.pathname).toBe('/dashboard');
+      expect(router.state.location.pathname).toBe(getDashboardRoute(roles));
     });
     expect(screen.getByText('Dashboard Page')).toBeInTheDocument();
   });
