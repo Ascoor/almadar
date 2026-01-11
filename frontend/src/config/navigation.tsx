@@ -11,7 +11,6 @@ import {
 import { FileText, ListTree, Settings2, UserCheck, UsersRound } from 'lucide-react';
 import { permKey } from '@/auth/permissionCatalog';
 import { getDashboardRoute } from '@/auth/getDashboardRoute';
-import { normalizeRoles } from '@/auth/roleUtils';
 
 export type NavItem = {
   id: string;
@@ -39,6 +38,11 @@ const isNavItem = (
   item: NavConfigItem | null,
 ): item is NavConfigItem => item !== null;
 
+const normalizeRoles = (roles: string[] | undefined) =>
+  Array.isArray(roles)
+    ? roles.map((role) => String(role).toLowerCase())
+    : [];
+
 export function buildNavConfig({
   t,
   canView,
@@ -46,7 +50,7 @@ export function buildNavConfig({
   role,
   dir,
 }: BuildNavConfigInput): NavItem[] {
-  const normalizedRoles = normalizeRoles(null, role);
+  const normalizedRoles = normalizeRoles(role);
   const isAdmin = normalizedRoles.includes('admin');
 
   const matchesRole = (roles?: string[]) => {

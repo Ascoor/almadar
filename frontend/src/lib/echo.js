@@ -1,7 +1,6 @@
 // src/lib/echo.js
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import axios from 'axios';
 
 window.Pusher = Pusher;
 
@@ -13,9 +12,6 @@ export function initEcho(config = {}) {
   // ✅ اجلب التوكن من sessionStorage أو localStorage
   const token = JSON.parse(sessionStorage.getItem('token'));
 
-  axios.defaults.withCredentials = true;
-  axios.defaults.withXSRFToken = true;
-
   const defaultConfig = {
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,
@@ -24,7 +20,6 @@ export function initEcho(config = {}) {
     wsPort: import.meta.env.VITE_REVERB_PORT,
     forceTLS: false,
     encrypted: false,
-    withCredentials: true,
 
     disableStats: true,
     enabledTransports: ['ws'],

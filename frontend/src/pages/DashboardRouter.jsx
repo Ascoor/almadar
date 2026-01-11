@@ -1,17 +1,21 @@
-import React from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { normalizeRoles, hasRole } from '@/auth/roleUtils';
 import AdminDashboard from '@/pages/dashboards/AdminDashboard';
-import LegalDashboard from '@/pages/dashboards/LegalDashboard';
-import ContractsDashboard from '@/pages/dashboards/ContractsDashboard';
+import ModeratorDashboard from '@/pages/dashboards/ModeratorDashboard';
 import UserDashboard from '@/pages/dashboards/UserDashboard';
 
-export default function DashboardRouter() {
-  const auth = useAuth();
-  const roles = normalizeRoles(auth?.user, auth?.roles);
+const normalizeRoles = (roles) =>
+  Array.isArray(roles)
+    ? roles.map((role) => String(role).toLowerCase())
+    : [];
 
-  if (hasRole(roles, 'admin')) return <AdminDashboard />;
-  if (hasRole(roles, 'legal')) return <LegalDashboard />;
-  if (hasRole(roles, 'contracts')) return <ContractsDashboard />;
+export default function DashboardRouter() {
+  const { roles } = useAuth();
+  const normalizedRoles = normalizeRoles(roles);
+  const hasRole = (role) => normalizedRoles.includes(role);
+  const isAdmin = hasRole('admin');
+  const isModerator = hasRole('moderator') || hasRole('manager');
+
+  if (isAdmin) return <AdminDashboard />;
+  if (isModerator) return <ModeratorDashboard />;
   return <UserDashboard />;
 }
