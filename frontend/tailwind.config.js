@@ -22,8 +22,8 @@
 
           // brand & actions
           primary: { DEFAULT: 'var(--primary)', foreground: 'var(--primary-foreground)' },
-          secondary: 'var(--secondary)',
-          accent: 'var(--accent)',
+          secondary: { DEFAULT: 'var(--secondary)', foreground: 'var(--secondary-foreground)' },
+          accent: { DEFAULT: 'var(--accent)', foreground: 'var(--accent-foreground)' },
 
           // states
           success: 'var(--success)',

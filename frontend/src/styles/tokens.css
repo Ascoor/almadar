@@ -33,6 +33,7 @@
    --primary: hsl(176 88% 30%);
    --primary-foreground: hsl(0 0% 100%);
    --secondary: hsl(156 62% 38%);
+   --secondary-foreground: hsl(0 0% 100%);
    --accent: hsl(32 92% 56%);
    --accent-foreground: hsl(222 26% 12%);
  
@@ -161,7 +162,9 @@
    --primary: hsl(168 80% 52%);              /* clickable brand */
    --primary-foreground: hsl(190 85% 6%);
    --secondary: hsl(162 52% 20%);
+   --secondary-foreground: hsl(156 55% 92%);
    --accent: hsl(44 95% 62%);                /* warm premium accent (gold) */
+   --accent-foreground: hsl(190 85% 6%);
  
    /* Neutrals */
    --muted: hsl(190 22% 16%);
