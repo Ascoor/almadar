@@ -28,9 +28,7 @@ export default function AppLayout() {
   return (
     <LazyMotion features={domAnimation}>
       <SidebarProvider
-        className={`min-h-svh w-full min-w-0 overflow-x-hidden bg-bg ${
-          dir === 'rtl' ? 'flex-row-reverse' : ''
-        }`}
+        className="min-h-svh w-full min-w-0 overflow-x-hidden bg-bg"
         dir={dir}
       >
         <AppSidebar />
