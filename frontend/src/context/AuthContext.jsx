@@ -15,6 +15,7 @@ import {
   normalizePermissionName,
   normalizePermissionsList,
 } from '@/auth/permissionCatalog';
+import { getDashboardRoute } from '@/auth/getDashboardRoute';
 
 // إنشاء الـ Context
 export const AuthContext = createContext({
@@ -73,7 +74,7 @@ export function AuthProvider({ children }) {
     setUser(user);
     setRoles(roles);
     setPermissions(normalizedPermissions);
-    navigate('/');
+    navigate(getDashboardRoute(roles));
   };
 
   const login = async (email, password) => {

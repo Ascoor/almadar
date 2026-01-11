@@ -6,6 +6,7 @@ import AuthSpinner from '@/components/common/Spinners/AuthSpinner';
 import RequirePermission from '@/components/auth/RequirePermission';
 import { permKey } from '@/auth/permissionCatalog';
 import DashboardLayout from '@/pages/DashboardPage';
+import { getDashboardRoute } from '@/auth/getDashboardRoute';
 
 const Login = lazy(() => import('@/components/organisms/Login'));
 const DashboardRouter = lazy(() => import('@/pages/DashboardRouter'));
@@ -44,26 +45,39 @@ function Protected({ children }) {
 }
 
 function PublicRoute({ children }) {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, roles } = useAuth();
 
   if (isLoading) return <AuthSpinner />;
-  return user ? <Navigate to="/dashboard" replace /> : children;
+  return user ? <Navigate to={getDashboardRoute(roles)} replace /> : children;
 }
 
 function AuthRedirect() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, roles } = useAuth();
 
   if (isLoading) return <AuthSpinner />;
-  return <Navigate to={user ? '/dashboard' : '/login'} replace />;
+  return (
+    <Navigate to={user ? getDashboardRoute(roles) : '/login'} replace />
+  );
 }
 
 function HomeEntry() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, roles } = useAuth();
 
   if (isLoading) return <AuthSpinner />;
-  if (user) return <Navigate to="/dashboard" replace />;
+  if (user) return <Navigate to={getDashboardRoute(roles)} replace />;
 
   return <HomePage />;
+}
+
+function DashboardEntry() {
+  const { roles } = useAuth();
+  const destination = getDashboardRoute(roles);
+
+  if (destination === '/dashboard') {
+    return <DashboardRouter />;
+  }
+
+  return <Navigate to={destination} replace />;
 }
 
 const withSuspense = (element, fallback = <AuthSpinner />) => (
@@ -95,6 +109,30 @@ export const routes = [
             children: [
               {
                 path: 'dashboard',
+                element: (
+                  <RequirePermission permission={permKey('view', 'dashboard')}>
+                    <DashboardEntry />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'dashboard/home',
+                element: (
+                  <RequirePermission permission={permKey('view', 'dashboard')}>
+                    <DashboardRouter />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'dashboard/legal',
+                element: (
+                  <RequirePermission permission={permKey('view', 'dashboard')}>
+                    <DashboardRouter />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'dashboard/contracts',
                 element: (
                   <RequirePermission permission={permKey('view', 'dashboard')}>
                     <DashboardRouter />
