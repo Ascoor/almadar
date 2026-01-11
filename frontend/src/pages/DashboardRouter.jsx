@@ -3,46 +3,19 @@ import AdminDashboard from '@/pages/dashboards/AdminDashboard';
 import ModeratorDashboard from '@/pages/dashboards/ModeratorDashboard';
 import UserDashboard from '@/pages/dashboards/UserDashboard';
 
+const normalizeRoles = (roles) =>
+  Array.isArray(roles)
+    ? roles.map((role) => String(role).toLowerCase())
+    : [];
+
 export default function DashboardRouter() {
-  const { roles, can, hasAnyPermission } = useAuth();
-  const roleNames = Array.isArray(roles) ? roles : [];
-  const normalized = roleNames.map((role) => String(role).toLowerCase());
+  const { roles } = useAuth();
+  const normalizedRoles = normalizeRoles(roles);
+  const hasRole = (role) => normalizedRoles.includes(role);
+  const isAdmin = hasRole('admin');
+  const isModerator = hasRole('moderator') || hasRole('manager');
 
-  if (normalized.includes('admin')) return <AdminDashboard />;
-  if (normalized.includes('moderator') || normalized.includes('manager')) {
-    return <ModeratorDashboard />;
-  }
-  if (normalized.includes('user')) return <UserDashboard />;
-
-  if (
-    hasAnyPermission(['view users', 'view roles', 'view permissions']) ||
-    can(['create users', 'edit users'], { mode: 'any' })
-  ) {
-    return <AdminDashboard />;
-  }
-
-  if (
-    can(
-      [
-        'view contracts',
-        'create contracts',
-        'edit contracts',
-        'view investigations',
-        'create investigations',
-        'edit investigations',
-        'view litigations',
-        'create litigations',
-        'edit litigations',
-        'view legal-advices',
-        'create legal-advices',
-        'edit legal-advices',
-        'view archives',
-      ],
-      { mode: 'any' },
-    )
-  ) {
-    return <ModeratorDashboard />;
-  }
-
+  if (isAdmin) return <AdminDashboard />;
+  if (isModerator) return <ModeratorDashboard />;
   return <UserDashboard />;
 }
