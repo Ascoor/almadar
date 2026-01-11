@@ -208,11 +208,11 @@ export default function TableComponent({
   };
 
   return (
-    <div className="p-4 rounded-xl shadow-lg border border-border bg-card transition-all">
+    <div className="table-shell">
       {/* Toolbar */}
-      <div className="flex flex-col md:flex-row justify-between gap-3 mb-4 items-center">
+      <div className="table-toolbar">
         {renderAddButton?.render && can('create') && renderAddButton.render()}
-        <div className="flex flex-wrap gap-2">
+        <div className="table-toolbar-actions">
           <button
             onClick={() => exportTo('xlsx')}
             className="rounded-2xl px-3 py-1 text-sm bg-primary text-[color:var(--primary-foreground)] hover:shadow-glow transition"
@@ -235,11 +235,11 @@ export default function TableComponent({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto text-sm border rounded border-border">
-          <thead className="bg-secondary/80 text-fg">
+      <div className="table-scroll">
+        <table className="table-base">
+          <thead className="table-head">
             <tr>
-              <th className="p-3"></th>
+              <th className="table-cell"></th>
               {headers.map((h) => (
                 <th
                   key={h.key}
@@ -253,7 +253,7 @@ export default function TableComponent({
                       setSortDirection('asc');
                     }
                   }}
-                  className="p-3 cursor-pointer select-none text-center"
+                  className="table-cell cursor-pointer select-none"
                 >
                   <div className="flex items-center justify-center gap-1">
                     {h.text}
@@ -269,7 +269,7 @@ export default function TableComponent({
               {(onView && can('view')) ||
               (onEdit && can('edit')) ||
               (onDelete && can('delete')) ? (
-                <th className="p-3">إجراءات</th>
+                <th className="table-cell">إجراءات</th>
               ) : null}
             </tr>
           </thead>
@@ -277,10 +277,10 @@ export default function TableComponent({
             {paginatedData.map((row) => (
               <tr
                 key={row.id}
-                className="transition cursor-pointer hover:bg-secondary/30"
+                className="table-row cursor-pointer"
                 onClick={() => onRowClick?.(row)}
               >
-                <td className="p-2 text-center">
+                <td className="table-cell">
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(row.id)}
@@ -289,7 +289,7 @@ export default function TableComponent({
                   />
                 </td>
                 {headers.map((h) => (
-                  <td key={h.key} className="p-2 text-center">
+                  <td key={h.key} className="table-cell">
                     {h.key === 'attachment' ? (
                       row.attachment ? (
                         <a
@@ -308,7 +308,7 @@ export default function TableComponent({
                     )}
                   </td>
                 ))}
-                <td className="p-2 space-x-1 text-center">
+                <td className="table-cell space-x-1">
                   {onView && can('view') && (
                     <button
                       onClick={(e) => {
@@ -350,7 +350,7 @@ export default function TableComponent({
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center mt-6 gap-2">
+      <div className="table-pagination">
         {Array.from(
           { length: Math.ceil(filteredData.length / rowsPerPage) },
           (_, i) => (
