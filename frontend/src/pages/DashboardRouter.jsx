@@ -14,8 +14,11 @@ export default function DashboardRouter() {
   const hasRole = (role) => normalizedRoles.includes(role);
   const isAdmin = hasRole('admin');
   const isModerator = hasRole('moderator') || hasRole('manager');
+  const isContractsUser = hasRole('user') || hasRole('contracting_officer');
+  const isLegalUser = hasRole('legal_investigator') || hasRole('lawyer');
 
   if (isAdmin) return <AdminDashboard />;
   if (isModerator) return <ModeratorDashboard />;
+  if (isContractsUser || isLegalUser) return <UserDashboard />;
   return <UserDashboard />;
 }
