@@ -188,17 +188,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const title =
       isNetworkDisabled && !props.title ? offlineMessage : props.title;
 
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size }), className)}
-        ref={ref}
-        aria-disabled={mergedDisabled}
-        data-offline={isNetworkDisabled || undefined}
-        data-requires-network={shouldGuardNetwork || undefined}
-        disabled={mergedDisabled}
-        title={title}
-        {...props}
-      >
+    const content = asChild ? (
+      children
+    ) : (
+      <>
         {leftIcon ? (
           <span className="relative z-10 inline-flex items-center">
             {leftIcon}
@@ -212,6 +205,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {rightIcon}
           </span>
         ) : null}
+      </>
+    );
+
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size }), className)}
+        ref={ref}
+        aria-disabled={mergedDisabled}
+        data-offline={isNetworkDisabled || undefined}
+        data-requires-network={shouldGuardNetwork || undefined}
+        disabled={mergedDisabled}
+        title={title}
+        {...props}
+      >
+        {content}
       </Comp>
     );
   }
