@@ -114,18 +114,29 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await axios.post('/api/logout');
+      await axios.post(
+        `${API_CONFIG.baseURL}/api/logout`,
+        {},
+        { withCredentials: true }
+      );
     } catch (error) {
       console.warn('Logout failed:', error);
     }
+  
+    try {
+      const echo = initEcho();
+      echo?.disconnect?.();
+    } catch {}
+  
     sessionStorage.clear();
     setToken(null);
     setUser(null);
     setRoles([]);
     setPermissions([]);
-    navigate('/login');
+  
+    navigate('/', { replace: true });
   };
-
+  
   const hasRole = (roleName) => roles.includes(roleName);
   const hasPermission = (permName) =>
     permissions.includes(normalizePermissionName(permName));
