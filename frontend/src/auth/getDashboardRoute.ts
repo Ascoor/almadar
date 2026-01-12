@@ -4,9 +4,20 @@ export function getDashboardRoute(roles: string[] | undefined): string {
     : [];
 
   if (normalizedRoles.includes('admin')) return '/dashboard';
-  if (normalizedRoles.includes('legal')) return '/dashboard/legal';
-  if (normalizedRoles.includes('contracts') || normalizedRoles.includes('contract')) {
+  if (
+    normalizedRoles.includes('legal_investigator') ||
+    normalizedRoles.includes('lawyer')
+  ) {
+    return '/dashboard/legal';
+  }
+  if (
+    normalizedRoles.includes('contracting_officer') ||
+    normalizedRoles.includes('user')
+  ) {
     return '/dashboard/contracts';
+  }
+  if (normalizedRoles.includes('manager') || normalizedRoles.includes('moderator')) {
+    return '/dashboard/home';
   }
   return '/dashboard/home';
 }
