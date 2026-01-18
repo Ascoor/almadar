@@ -1,65 +1,93 @@
-@import "./theme-tokens.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* =========
+   Theme Tokens
+   ========== */
+:root {
+  /* Base */
+  --bg: 210 20% 99%;
+  --fg: 210 15% 12%;
+  --muted: 210 12% 45%;
+  --card: 0 0% 100%;
+  --border: 210 16% 92%;
+
+  /* Brand (Emerald ↔ Cyan) */
+  --primary: 160 84% 35%;     /* Emerald 600 */
+  --primary-fg: 160 100% 98%; /* Very light emerald */
+  --accent: 197 92% 50%;      /* Cyan 500 */
+  --accent-fg: 197 100% 98%;
+
+  /* States */
+  --success: 147 85% 34%;
+  --warning: 40 95% 45%;
+  --danger: 0 84% 58%;
+}
+
+[data-theme="dark"] {
+  --bg: 210 15% 9%;
+  --fg: 210 20% 96%;
+  --muted: 210 10% 70%;
+  --card: 210 15% 12%;
+  --border: 210 12% 22%;
+
+  --primary: 160 84% 42%;
+  --primary-fg: 160 100% 10%;
+  --accent: 197 92% 54%;
+  --accent-fg: 197 100% 10%;
+}
+
+/* =========
+   Base Layer
+   ========== */
 @layer base {
-  html {
-    scroll-behavior: smooth;
-    color-scheme: light;
-  }
-
-  html.dark {
-    color-scheme: dark;
-  }
-
+  html { color-scheme: light dark; }
   body {
-    min-height: 100vh;
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-family: "Inter", system-ui, -apple-system, sans-serif;
-    line-height: 1.6;
+    @apply bg-bg text-fg antialiased;
+    background-image: theme('backgroundImage.gradient-hero');
   }
 
-  * {
-    border-color: hsl(var(--border));
+  ::selection { @apply bg-accent text-accentFg; }
+}
+
+/* =========
+   Components
+   ========== */
+@layer components {
+  .card {
+    @apply bg-card rounded-2xl shadow-card border border-border;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-medium transition-all duration-200 ease-ease-soft focus:outline-none focus:ring-0;
+  }
+  .btn-primary {
+    @apply btn text-primaryFg bg-primary hover:opacity-95 active:opacity-90 shadow-soft;
+  }
+  .btn-outline {
+    @apply btn border border-border text-fg hover:bg-border/40;
+  }
+  .btn-ghost {
+    @apply btn text-fg hover:bg-border/50;
+  }
+  .input {
+    @apply w-full rounded-xl border border-border bg-card px-3 py-2 text-fg placeholder:opacity-70 focus:ring-0 focus:border-accent focus:shadow-focus;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs border border-border bg-card;
+  }
+  .pill {
+    @apply inline-flex rounded-full bg-gradient-brand text-primaryFg px-3 py-1 text-xs font-semibold shadow-soft;
   }
 }
 
+/* =========
+   Utilities
+   ========== */
 @layer utilities {
-  .glass-panel {
-    background: linear-gradient(
-      135deg,
-      hsl(var(--card) / 0.8),
-      hsl(var(--surface) / 0.45)
-    );
-    border: 1px solid hsl(var(--border) / 0.65);
-    box-shadow: var(--shadow-md);
-    backdrop-filter: blur(18px) saturate(120%);
-  }
-
-  .hero-aurora {
-    background:
-      radial-gradient(1200px 520px at 10% -10%, hsl(var(--accent) / 0.2), transparent 60%),
-      radial-gradient(900px 480px at 100% 0%, hsl(var(--primary) / 0.18), transparent 55%),
-      linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--surface)) 100%);
-  }
-
-  .noise-texture {
-    background-image: radial-gradient(
-      hsl(var(--foreground) / 0.08) 1px,
-      transparent 1px
-    );
-    background-size: 12px 12px;
-  }
-
-  .premium-gradient {
-    background-image: linear-gradient(
-      135deg,
-      hsl(var(--secondary)) 0%,
-      hsl(var(--background)) 40%,
-      hsl(var(--surface)) 100%
-    );
+  .glass {
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
   }
 }
